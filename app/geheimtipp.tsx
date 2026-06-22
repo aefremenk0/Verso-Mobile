@@ -34,8 +34,8 @@ export default function Geheimtipp() {
   // Pop-up als zentrierte Karte (~20% kleiner als der Screen) auf
   // abgedunkeltem Hintergrund -> deutlich weniger Vollflächen-Gelb.
   const { width, height } = useWindowDimensions();
-  const cardW = width * 0.84;
-  const cardH = height * 0.8;
+  const cardW = width * 0.92;
+  const cardH = height * 0.9;
 
   // ── Shared Values (laufen auf dem UI-Thread) ──
   const spin = useSharedValue(0); // Ring-Rotation 0..360
@@ -158,13 +158,13 @@ export default function Geheimtipp() {
 
   // ───────────── Reveal-Screen (gelb) ─────────────
   return (
-    <View
-      className="flex-1 items-center justify-center"
-      style={{ backgroundColor: "rgba(0,0,0,0.55)" }}
-    >
+    <View className="flex-1 items-center justify-center bg-screen px-4">
       <View
         className="bg-accent"
-        style={{ width: cardW, height: cardH, borderRadius: 40, overflow: "hidden" }}
+        style={[
+          { width: cardW, height: cardH, borderRadius: 40, overflow: "hidden" },
+          shadows.nav,
+        ]}
       >
       <View className="flex-row items-center justify-between px-5 pt-4">
         <View className="rounded-pill bg-night px-3.5 py-2">
@@ -203,7 +203,7 @@ export default function Geheimtipp() {
                     top: 0,
                     left: 0,
                     right: 0,
-                    height: 200,
+                    height: 236,
                     borderRadius: 24,
                     backgroundColor: "#1A1A1A",
                   },
@@ -211,7 +211,7 @@ export default function Geheimtipp() {
                 ]}
               />
               <Pressable onPress={openSpot}>
-                <ImagePlaceholder tone="green" height={200} radius={24}>
+                <ImagePlaceholder tone="green" height={236} radius={24}>
                   <View className="absolute left-3.5 top-3.5 rounded-pill bg-accent px-3 py-1.5">
                     <Text className="font-hk-semibold text-[9px] tracking-[1.5px] text-accent-ink">
                       {CATEGORY_LABEL[spot.category]} · {spot.neighborhood.split(",")[0].toUpperCase()} · {priceLabel(spot.priceLevel)}

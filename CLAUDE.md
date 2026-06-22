@@ -200,7 +200,12 @@ npx tsc --noEmit       # Typecheck
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-22 · Karte: Pin verrutscht nicht mehr beim Auswählen
+### (dieser Commit) · 2026-06-22 · Geheimtipp-Pop-up größer + Grau im Reveal weg
+- Reveal-Phase hatte noch den grauen Backdrop → jetzt auch Creme (`bg-screen`)
+  + Schatten (war beim früheren Fix wegen Einrückung übersehen worden).
+- Beide Karten größer: 0.84×0.8 → **0.92×0.9** des Screens; Reveal-Bild 236.
+
+### b73bb93 · 2026-06-22 · Karte: Pin verrutscht nicht mehr beim Auswählen
 - Das gelbe Label liegt jetzt **absolut über dem Punkt** (vorher im Layout
   darüber → Punkt wurde nach unten gedrückt). Punkt bleibt stationär.
 
