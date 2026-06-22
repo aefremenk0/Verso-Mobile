@@ -43,10 +43,10 @@ export default function SpotDetail() {
     <View className="flex-1 bg-screen">
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 40 }}
+        contentContainerStyle={{ flexGrow: 1 }}
       >
-        {/* Hero */}
-        <ImagePlaceholder tone={spot.tone} height={320} radius={0}>
+        {/* Hero (größer, damit unten kein leeres Feld bleibt) */}
+        <ImagePlaceholder tone={spot.tone} height={400} radius={0}>
           {/* Zurück + Merken (mit Safe-Area-Abstand oben) */}
           <View
             className="absolute left-0 right-0 flex-row items-center justify-between px-5"
@@ -69,8 +69,13 @@ export default function SpotDetail() {
           </View>
         </ImagePlaceholder>
 
-        {/* Inhalts-Sheet, leicht über das Hero gezogen */}
-        <View className="-mt-6 rounded-t-sheet bg-screen px-6 pt-7">
+        {/* Inhalts-Sheet, leicht über das Hero gezogen.
+            flex-1 + Spacer schieben die CTAs ans untere Ende -> kein leeres
+            weißes Feld mehr. */}
+        <View
+          className="-mt-6 flex-1 rounded-t-sheet bg-screen px-6 pt-7"
+          style={{ paddingBottom: insets.bottom + 16 }}
+        >
           <Text className="font-hk-bold text-[11px] tracking-[1.5px] text-ink-3">
             {metaLine}
           </Text>
@@ -129,8 +134,11 @@ export default function SpotDetail() {
             </Text>
           </View>
 
+          {/* Spacer: schiebt die CTAs ans untere Ende des Screens */}
+          <View className="min-h-[24px] flex-1" />
+
           {/* Haupt-CTA: Events -> Ticket, sonst immer OpenTable-Reservierung */}
-          <View className="mt-6">
+          <View>
             {isEvent ? (
               <Button
                 label="Ticket buchen"

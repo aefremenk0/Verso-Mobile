@@ -183,7 +183,11 @@ npx tsc --noEmit       # Typecheck
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-22 · Mehr Mocks, OpenTable-Button, Nav-Slider
+### (dieser Commit) · 2026-06-22 · Spot-Detail füllt den Screen
+- Inhalts-Sheet `flex-1` + Spacer → CTAs sitzen unten, kein leeres weißes
+  Feld mehr. Hero-Bild auf 400px erhöht. ScrollView `flexGrow:1`.
+
+### 67ab3f7 · 2026-06-22 · Mehr Mocks, OpenTable-Button, Nav-Slider
 - Spot-Detail: Überlappung Meta-Zeile/Name behoben (lineHeight 48);
   **OpenTable-„Tisch reservieren"** jetzt bei allen Orten (nicht nur mit
   `reserveUrl`).
