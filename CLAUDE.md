@@ -200,7 +200,11 @@ npx tsc --noEmit       # Typecheck
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-22 · Karte-Filter wirken + Budget-Slider ziehbar
+### (dieser Commit) · 2026-06-22 · Karte: Pin verrutscht nicht mehr beim Auswählen
+- Das gelbe Label liegt jetzt **absolut über dem Punkt** (vorher im Layout
+  darüber → Punkt wurde nach unten gedrückt). Punkt bleibt stationär.
+
+### 23b8db1 · 2026-06-22 · Karte-Filter wirken + Budget-Slider ziehbar
 - **Budget-Range-Slider** mit zwei ziehbaren Reglern (`RangeSlider`,
   PanResponder) — funktioniert in Expo Go.
 - Filter **wirken jetzt wirklich**: `lib/mapFilter.ts` filtert die Pins UND die

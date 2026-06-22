@@ -37,18 +37,25 @@ function cityCenter(spots: Spot[]): [number, number] {
   return [lng, lat];
 }
 
-// Pin-Inhalt (gelbes Label für den aktiven Spot, sonst Punkt).
+// Pin-Inhalt: Punkt + (wenn aktiv) gelbes Label.
+// Das Label liegt ABSOLUT über dem Punkt, damit der Punkt beim Auswählen
+// nicht verrutscht (vorher schob das Label im Layout den Punkt nach unten).
 function Pin({ spot, active }: { spot: Spot; active: boolean }) {
   return (
-    <View className="items-center">
+    <View className="items-center justify-center">
       {active ? (
         <View
-          className="mb-1 rounded-pill bg-accent px-3 py-1.5"
-          style={shadows.card}
+          pointerEvents="none"
+          style={{ position: "absolute", bottom: 22, left: -130, right: -130, alignItems: "center" }}
         >
-          <Text className="font-hk-extrabold text-[15px] text-accent-ink">
-            {spot.name}
-          </Text>
+          <View className="rounded-pill bg-accent px-3 py-1.5" style={shadows.card}>
+            <Text
+              className="font-hk-extrabold text-[15px] text-accent-ink"
+              numberOfLines={1}
+            >
+              {spot.name}
+            </Text>
+          </View>
         </View>
       ) : null}
       <View
