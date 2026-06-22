@@ -185,7 +185,11 @@ npx tsc --noEmit       # Typecheck
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-22 · Detail-Hook, einheitliches Stadt-Dropdown
+### (dieser Commit) · 2026-06-22 · CityDropdown: feste Zeilenhöhe
+- Kopfzeile in `CityDropdown` hat jetzt feste Höhe (42) → „Wien" sitzt auf
+  Feed/Viertel/Karte exakt gleich hoch, egal ob rechts ein Element steht.
+
+### ca19ee5 · 2026-06-22 · Detail-Hook, einheitliches Stadt-Dropdown
 - Spot-Detail: ADRESSE-Zeile an der Grundlinie ausgerichtet (`items-baseline`);
   Hook jetzt **kursiv + unterstrichen** statt gelber Box.
 - Geheimtipp-Lade-Screen: Umrandung ums „?" ist jetzt die **krummlinige

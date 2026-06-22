@@ -13,15 +13,22 @@ export function CityDropdown({ right }: { right?: ReactNode }) {
 
   return (
     <View>
-      <View className="flex-row items-center justify-between px-6 pt-2">
-        <Pressable
-          onPress={() => setOpen((v) => !v)}
-          className="flex-row items-center"
+      {/* Feste Zeilenhöhe -> "Wien" sitzt auf jeder Seite gleich, egal ob
+          rechts ein Element (Avatar/Toggle) steht oder nicht. */}
+      <View className="px-6 pt-2">
+        <View
+          className="flex-row items-center justify-between"
+          style={{ height: 42 }}
         >
-          <Text className="font-hk-extrabold text-title-md text-ink">{city}</Text>
-          <Text className="ml-1 font-hk-bold text-[18px] text-ink-3">▾</Text>
-        </Pressable>
-        {right ?? null}
+          <Pressable
+            onPress={() => setOpen((v) => !v)}
+            className="flex-row items-center"
+          >
+            <Text className="font-hk-extrabold text-title-md text-ink">{city}</Text>
+            <Text className="ml-1 font-hk-bold text-[18px] text-ink-3">▾</Text>
+          </Pressable>
+          {right ?? null}
+        </View>
       </View>
 
       {/* Aufklappbares Stadt-Menü — horizontal scrollbar */}
