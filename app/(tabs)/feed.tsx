@@ -66,12 +66,18 @@ export default function Feed() {
         </ScrollView>
       ) : null}
 
-      {/* Kategorie-Filter */}
-      <View className="mt-5">
+      {/* Kategorie-Bar — in der Höhe gestreckt: die Pills sitzen oben,
+          darunter bleibt Weiß INNERHALB der Bar (paddingBottom). */}
+      <View className="mt-4">
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{ paddingHorizontal: 24, gap: 8 }}
+          contentContainerStyle={{
+            paddingHorizontal: 24,
+            gap: 8,
+            paddingTop: 6,
+            paddingBottom: 34,
+          }}
         >
           {CATEGORY_FILTERS.map((f) => (
             <Pill
@@ -88,7 +94,7 @@ export default function Feed() {
       <ScrollView
         contentContainerStyle={{
           paddingHorizontal: 24,
-          paddingTop: 44, // viel Luft unter der Kategorie-Bar
+          paddingTop: 8,
           paddingBottom: 110, // Platz für die schwebende Nav
         }}
         showsVerticalScrollIndicator={false}

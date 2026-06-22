@@ -183,7 +183,11 @@ npx tsc --noEmit       # Typecheck
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-22 · UI-Runde: Nav-Puls, Reveal zentriert, Avatar-Initialen
+### (dieser Commit) · 2026-06-22 · Feed: Kategorie-Bar in der Höhe gestreckt
+- Weiß jetzt INNERHALB der Kategorie-Bar (Scroll-Content `paddingBottom` 34)
+  statt nur Abstand zur Liste — die Bar wirkt höher.
+
+### 28f9d72 · 2026-06-22 · UI-Runde: Nav-Puls, Reveal zentriert, Avatar-Initialen
 - Feed: noch mehr Luft unter der Kategorie-Bar (paddingTop 44).
 - Bottom-Nav: Aktiv-Pill auf **75%** Zellenbreite; „?" hat eine **pulsierende
   Squiggle-Umrandung** (`GeheimtippButton`, SVG + Reanimated-Puls).
