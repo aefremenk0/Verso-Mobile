@@ -183,7 +183,11 @@ npx tsc --noEmit       # Typecheck
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-22 · Welcome: Stadt-Chips kugelsicher zentriert
+### (dieser Commit) · 2026-06-22 · Auth-Logos hinter den Text
+- Apple-/Google-Logo steht jetzt **nach** „Weiter mit Apple/Google" (vorher
+  davor). Logos via `react-native-svg` — braucht `npm install` nach Pull.
+
+### 3ee5aaa · 2026-06-22 · Welcome: Stadt-Chips kugelsicher zentriert
 - Text in den Stadt-Chips exakt zentriert (lineHeight, textAlign,
   `includeFontPadding:false` für Android). Liste hat bereits 6 Städte.
 

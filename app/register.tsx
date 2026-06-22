@@ -85,20 +85,20 @@ export default function Register() {
             onPress={enter}
             className="flex-row items-center justify-center gap-2.5 rounded-[16px] bg-night py-4"
           >
-            <AppleLogo size={17} color="#FFFFFF" />
             <Text className="font-hk-semibold text-[14px] text-screen">
               Weiter mit Apple
             </Text>
+            <AppleLogo size={17} color="#FFFFFF" />
           </Pressable>
           <Pressable
             onPress={enter}
             className="flex-row items-center justify-center gap-2.5 rounded-[16px] bg-surface py-4"
             style={{ borderWidth: 1, borderColor: "rgba(26,26,26,0.16)" }}
           >
-            <GoogleLogo size={18} />
             <Text className="font-hk-semibold text-[14px] text-ink">
               Weiter mit Google
             </Text>
+            <GoogleLogo size={18} />
           </Pressable>
         </View>
 
