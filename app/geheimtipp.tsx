@@ -1,6 +1,6 @@
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { Pressable, Text, useWindowDimensions, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 import Animated, {
   Easing,
   useAnimatedStyle,
@@ -8,13 +8,13 @@ import Animated, {
   withRepeat,
   withTiming,
 } from "react-native-reanimated";
+import { SafeAreaView } from "react-native-safe-area-context";
 import Svg, { Path } from "react-native-svg";
 import { ImagePlaceholder } from "../src/components/ImagePlaceholder";
 import { CATEGORY_LABEL, priceLabel } from "../src/data/categories";
 import { getSpotById } from "../src/data/spots";
 import { GEHEIMTIPP } from "../src/data/user";
 import { useGeheimtipp } from "../src/store/geheimtipp";
-import { shadows } from "../src/theme";
 
 // Screen 08 — Geheimtipp der Woche.
 // Phase 1: dunkler Lade-Screen (drehender Ring ums "?", durchlaufender Balken).
@@ -30,12 +30,6 @@ export default function Geheimtipp() {
   const { markAbgeholt } = useGeheimtipp();
   const [phase, setPhase] = useState<"loading" | "reveal">("loading");
   const spot = getSpotById(GEHEIMTIPP.spotId);
-
-  // Pop-up als zentrierte Karte (~20% kleiner als der Screen) auf
-  // abgedunkeltem Hintergrund -> deutlich weniger Vollflächen-Gelb.
-  const { width, height } = useWindowDimensions();
-  const cardW = width * 0.92;
-  const cardH = height * 0.9;
 
   // ── Shared Values (laufen auf dem UI-Thread) ──
   const spin = useSharedValue(0); // Ring-Rotation 0..360
@@ -89,18 +83,11 @@ export default function Geheimtipp() {
     if (spot) router.push(`/spot/${spot.id}`);
   };
 
-  // ───────────── Lade-Screen (dunkel) ─────────────
+  // ───────────── Lade-Screen (dunkel, Vollbild) ─────────────
   if (phase === "loading") {
     return (
-      <View className="flex-1 items-center justify-center bg-screen px-4">
-        <View
-          className="bg-night"
-          style={[
-            { width: cardW, height: cardH, borderRadius: 40, overflow: "hidden" },
-            shadows.nav,
-          ]}
-        >
-        <View className="flex-row justify-end px-5 pt-4">
+      <SafeAreaView className="flex-1 bg-night" edges={["top", "bottom"]}>
+        <View className="flex-row justify-end px-6 pt-3">
           <Pressable
             onPress={() => router.back()}
             className="h-[42px] w-[42px] items-center justify-center rounded-pill"
@@ -148,25 +135,17 @@ export default function Geheimtipp() {
           </View>
         </View>
 
-        <Text className="pb-5 text-center font-hk-semibold text-[10px] tracking-[2px] text-screen/40">
+        <Text className="pb-6 text-center font-hk-semibold text-[10px] tracking-[2px] text-screen/40">
           FÜR ALLE · EINMAL WÖCHENTLICH
         </Text>
-        </View>
-      </View>
+      </SafeAreaView>
     );
   }
 
   // ───────────── Reveal-Screen (gelb) ─────────────
   return (
-    <View className="flex-1 items-center justify-center bg-screen px-4">
-      <View
-        className="bg-accent"
-        style={[
-          { width: cardW, height: cardH, borderRadius: 40, overflow: "hidden" },
-          shadows.nav,
-        ]}
-      >
-      <View className="flex-row items-center justify-between px-5 pt-4">
+    <SafeAreaView className="flex-1 bg-accent" edges={["top", "bottom"]}>
+      <View className="flex-row items-center justify-between px-6 pt-3">
         <View className="rounded-pill bg-night px-3.5 py-2">
           <Text className="font-hk-semibold text-[10px] tracking-[1.5px] text-accent">
             ✓ AUFGEDECKT
@@ -248,7 +227,6 @@ export default function Geheimtipp() {
           </View>
         </Pressable>
       </View>
-      </View>
-    </View>
+    </SafeAreaView>
   );
 }

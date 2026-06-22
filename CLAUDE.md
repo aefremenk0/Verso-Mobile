@@ -200,7 +200,11 @@ npx tsc --noEmit       # Typecheck
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-22 · Geheimtipp-Pop-up größer + Grau im Reveal weg
+### (dieser Commit) · 2026-06-22 · Geheimtipp-Pop-up auf Vollbild
+- Beide Phasen füllen jetzt den ganzen Screen (Vollbild-`SafeAreaView`), kein
+  cremefarbener Rand mehr. Karten-Wrapper (cardW/cardH) entfernt.
+
+### 47341b7 · 2026-06-22 · Geheimtipp-Pop-up größer + Grau im Reveal weg
 - Reveal-Phase hatte noch den grauen Backdrop → jetzt auch Creme (`bg-screen`)
   + Schatten (war beim früheren Fix wegen Einrückung übersehen worden).
 - Beide Karten größer: 0.84×0.8 → **0.92×0.9** des Screens; Reveal-Bild 236.
