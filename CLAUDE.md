@@ -183,7 +183,11 @@ npx tsc --noEmit       # Typecheck
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-22 · Feed: mehr Abstand unter Kategorie-Bar
+### (dieser Commit) · 2026-06-22 · Welcome: Stadt-Chips kugelsicher zentriert
+- Text in den Stadt-Chips exakt zentriert (lineHeight, textAlign,
+  `includeFontPadding:false` für Android). Liste hat bereits 6 Städte.
+
+### 835e671 · 2026-06-22 · Feed: mehr Abstand unter Kategorie-Bar
 - Klarere Trennung zwischen Kategorie-Pills und Karten (Liste `paddingTop` 28,
   Pills `mt-5`).
 

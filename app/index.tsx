@@ -64,13 +64,24 @@ export default function Welcome() {
                 onPress={() => setCity(c)}
                 className="items-center justify-center rounded-pill px-4"
                 style={{
-                  height: 40,
+                  height: 42,
                   backgroundColor: active ? "#FFE500" : "transparent",
                   borderWidth: 1,
                   borderColor: active ? "#FFE500" : "rgba(26,26,26,0.18)",
                 }}
               >
-                <Text className="font-hk-extrabold text-[19px] text-ink">{c}</Text>
+                <Text
+                  className="font-hk-extrabold text-[19px] text-ink"
+                  style={{
+                    // exakte vertikale Zentrierung – auch auf Android
+                    lineHeight: 22,
+                    textAlign: "center",
+                    textAlignVertical: "center",
+                    includeFontPadding: false,
+                  }}
+                >
+                  {c}
+                </Text>
               </Pressable>
             );
           })}
