@@ -1,5 +1,4 @@
 import Constants, { ExecutionEnvironment } from "expo-constants";
-import { useRouter } from "expo-router";
 import { Pressable, Text, View } from "react-native";
 import type { Spot } from "../data/types";
 import { shadows } from "../theme";
@@ -69,9 +68,15 @@ const FALLBACK_POS = [
   { top: "55%", left: "72%" },
 ] as const;
 
-export function CityMap({ spots }: { spots: Spot[] }) {
-  const router = useRouter();
+interface CityMapProps {
+  spots: Spot[];
+  /** Aktuell ausgewählter Spot (zeigt das gelbe Label am Pin). */
+  selectedId?: string;
+  /** Wird beim Antippen eines Pins aufgerufen -> Karte öffnet die Spot-Karte. */
+  onSelect: (spot: Spot) => void;
+}
 
+export function CityMap({ spots, selectedId, onSelect }: CityMapProps) {
   // ── Echte Mapbox-Karte (Dev Build mit Token) ──
   if (Mapbox) {
     const center = cityCenter(spots);
@@ -88,15 +93,15 @@ export function CityMap({ spots }: { spots: Spot[] }) {
           zoomLevel={12.5}
           animationDuration={0}
         />
-        {spots.map((spot, i) => (
+        {spots.map((spot) => (
           <Mapbox.MarkerView
             key={spot.id}
             id={spot.id}
             coordinate={[spot.lng, spot.lat]}
             anchor={{ x: 0.5, y: 1 }}
           >
-            <Pressable onPress={() => router.push(`/spot/${spot.id}`)}>
-              <Pin spot={spot} active={i === 0} />
+            <Pressable onPress={() => onSelect(spot)}>
+              <Pin spot={spot} active={spot.id === selectedId} />
             </Pressable>
           </Mapbox.MarkerView>
         ))}
@@ -134,14 +139,14 @@ export function CityMap({ spots }: { spots: Spot[] }) {
       {spots.slice(0, 5).map((spot, i) => (
         <Pressable
           key={spot.id}
-          onPress={() => router.push(`/spot/${spot.id}`)}
+          onPress={() => onSelect(spot)}
           className="absolute items-center"
           style={{
             top: FALLBACK_POS[i].top as `${number}%`,
             left: FALLBACK_POS[i].left as `${number}%`,
           }}
         >
-          <Pin spot={spot} active={i === 0} />
+          <Pin spot={spot} active={spot.id === selectedId} />
         </Pressable>
       ))}
     </View>

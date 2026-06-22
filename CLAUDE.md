@@ -112,7 +112,8 @@ src/
                           Pill, Button, SpotCard, BottomNav, DuAvatar,
                           CityDropdown (einheitlicher Stadt-Kopf), Logos,
                           GeheimtippButton (pulsierende Squiggle-"?"),
-                          CityMap (Mapbox + Expo-Go-Fallback)
+                          CityMap (Mapbox + Expo-Go-Fallback),
+                          MapFilterSheet (Karte-Filter-Panel)
 
 app.config.js             Expo-Config (ersetzt app.json; Mapbox-Token via Env)
   data/                   types.ts, spots.ts (18 Mocks), cities.ts,
@@ -197,7 +198,13 @@ npx tsc --noEmit       # Typecheck
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-22 · Mapbox hinter der Karte (mit Expo-Go-Fallback)
+### (dieser Commit) · 2026-06-22 · Karte: Pin-Auswahl, Filter-Sheet
+- Pins sind antippbar -> erst dann erscheint die Spot-Karte (vorher immer
+  sichtbar). Karte sitzt über der Nav (Safe-Area + Nav-Höhe), kein Überlappen.
+- Filter-Chips größer; neuer **FILTER ▾**-Button öffnet das neue
+  **MapFilterSheet** (Art / Budget / Bewertung / Ambiente, nach Mockup 04b).
+
+### 2794672 · 2026-06-22 · Mapbox hinter der Karte (mit Expo-Go-Fallback)
 - `@rnmapbox/maps` integriert: neue Komponente `CityMap` rendert im **Dev Build**
   (mit Token) die echte Karte mit Markern an den Spot-Koordinaten; in **Expo Go**
   automatisch die stilisierte Fallback-Karte.
