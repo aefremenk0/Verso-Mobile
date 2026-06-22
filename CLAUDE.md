@@ -183,7 +183,15 @@ npx tsc --noEmit       # Typecheck
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-22 · Auth-Logos hinter den Text
+### (dieser Commit) · 2026-06-22 · Mehr Mocks, OpenTable-Button, Nav-Slider
+- Spot-Detail: Überlappung Meta-Zeile/Name behoben (lineHeight 48);
+  **OpenTable-„Tisch reservieren"** jetzt bei allen Orten (nicht nur mit
+  `reserveUrl`).
+- Mock-Daten: je **+4 Spots** für Berlin und München (jetzt 7/7, Wien 12).
+- Bottom-Nav: 5 gleich breite Zellen; gelber Aktiv-Pill auf **50%**
+  Zellenbreite, **gleitet smooth** (Reanimated) statt zu springen.
+
+### dd96a5d · 2026-06-22 · Auth-Logos hinter den Text
 - Apple-/Google-Logo steht jetzt **nach** „Weiter mit Apple/Google" (vorher
   davor). Logos via `react-native-svg` — braucht `npm install` nach Pull.
 

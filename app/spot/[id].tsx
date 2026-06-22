@@ -74,7 +74,10 @@ export default function SpotDetail() {
           <Text className="font-hk-bold text-[11px] tracking-[1.5px] text-ink-3">
             {metaLine}
           </Text>
-          <Text className="mt-2 font-hk-extrabold text-title-xl text-ink">
+          <Text
+            className="mt-3 font-hk-extrabold text-ink"
+            style={{ fontSize: 46, lineHeight: 48 }}
+          >
             {spot.name}
           </Text>
 
@@ -126,7 +129,7 @@ export default function SpotDetail() {
             </Text>
           </View>
 
-          {/* Haupt-CTA */}
+          {/* Haupt-CTA: Events -> Ticket, sonst immer OpenTable-Reservierung */}
           <View className="mt-6">
             {isEvent ? (
               <Button
@@ -136,15 +139,17 @@ export default function SpotDetail() {
                 trailing="arrow"
                 onPress={() => spot.ticketUrl && openExternal(spot.ticketUrl)}
               />
-            ) : spot.reserveUrl ? (
+            ) : (
               <Button
                 label="Tisch reservieren"
                 variant="accent"
                 subtitle="über opentable"
                 trailing="arrow"
-                onPress={() => spot.reserveUrl && openExternal(spot.reserveUrl)}
+                onPress={() =>
+                  openExternal(spot.reserveUrl ?? "https://www.opentable.de/")
+                }
               />
-            ) : null}
+            )}
           </View>
 
           {/* Karten-Deep-Links */}
