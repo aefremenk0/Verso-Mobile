@@ -8,6 +8,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useGeheimtipp } from "../store/geheimtipp";
 import { shadows } from "../theme";
 import { GeheimtippButton } from "./GeheimtippButton";
 
@@ -28,7 +29,6 @@ const LABELS: Record<string, string> = {
 const PADDING = 7;
 const BAR_HEIGHT = 62;
 const PILL_HEIGHT = 44;
-const CELLS = 5; // 4 Reiter + "?"
 
 interface BottomNavProps {
   state: { index: number; routes: { key: string; name: string }[] };
@@ -38,13 +38,19 @@ interface BottomNavProps {
 export function BottomNav({ state, navigation }: BottomNavProps) {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { abgeholt } = useGeheimtipp();
   const [barWidth, setBarWidth] = useState(0);
 
   const tx = useSharedValue(0);
   const firstPlace = useSharedValue(true);
 
+  // Nach dem Abholen verschwindet die "?"-Zelle -> nur noch 4 Reiter,
+  // die sich gleichmäßig neu über die Breite verteilen.
+  const showTipp = !abgeholt;
+  const cells = showTipp ? 5 : 4;
+
   const inner = Math.max(0, barWidth - PADDING * 2);
-  const cellW = inner / CELLS;
+  const cellW = inner / cells;
   const pillW = cellW * 0.75; // 75% der Zellenbreite
 
   const activeName = state.routes[state.index]?.name ?? "feed";
@@ -128,10 +134,12 @@ export function BottomNav({ state, navigation }: BottomNavProps) {
           );
         })}
 
-        {/* "?"-Zelle: Geheimtipp mit pulsierender Umrandung (gleiche Breite) */}
-        <View className="flex-1 items-center justify-center">
-          <GeheimtippButton onPress={() => router.push("/geheimtipp")} />
-        </View>
+        {/* "?"-Zelle: nur solange der Tipp der Woche nicht abgeholt ist */}
+        {showTipp ? (
+          <View className="flex-1 items-center justify-center">
+            <GeheimtippButton onPress={() => router.push("/geheimtipp")} />
+          </View>
+        ) : null}
       </View>
     </View>
   );

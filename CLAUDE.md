@@ -90,9 +90,10 @@ app/                      Screens (Expo Router – Dateiname = Route)
     _layout.tsx           Tabs mit custom <BottomNav/>
     feed.tsx              02 Discovery-Feed (Stadt-Dropdown + Kategorie-Filter)
     viertel.tsx           05 Stadt-Übersicht
-    karte.tsx             Karte (Phase-1-Platzhalter)
+    karte.tsx             04 Kartenansicht (stilisierte Karte, Pins, Phase 1)
     profil.tsx            07 Profil
   spot/[id].tsx           03 Spot- UND Event-Detail (eine Route)
+  bezirk/[name].tsx       Bezirks-Detail (Spots eines Viertels)
   gespeichert.tsx         06 Gespeichert
   geheimtipp.tsx          08 Geheimtipp (Laden -> Reveal, Reanimated, modal)
   settings.tsx            07 Einstellungen (+ Abmelden)
@@ -186,7 +187,17 @@ npx tsc --noEmit       # Typecheck
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-22 · Profil bearbeiten + Passwort ändern
+### (dieser Commit) · 2026-06-22 · Viertel klickbar, Karte, Nav 5→4, Pop-up
+- Viertel-Zeilen klickbar → neuer **Bezirks-Screen** (`bezirk/[name]`) mit den
+  Spots des Viertels.
+- **Kartenansicht** gebaut: stilisierte Karte (Pins, schwebende Spot-Karte,
+  Filter-Optik) — läuft in Expo Go; echte Karte bleibt Phase 2.
+- Bottom-Nav: nach dem Reveal verschwindet das „?" → **4 statt 5** Zellen,
+  die sich gleichmäßig neu verteilen (`abgeholt` steuert die Zellenzahl).
+- Geheimtipp-Pop-up: Lade- und Reveal-Phase als **zentrierte Karte (~80%)**
+  auf abgedunkeltem Hintergrund → deutlich weniger Vollflächen-Gelb.
+
+### 9cea515 · 2026-06-22 · Profil bearbeiten + Passwort ändern
 - Zwei neue UI-Screens (`profil-bearbeiten`, `passwort-aendern`) nach Mockup
   07c/07d, aus den Einstellungen verlinkt.
 - Feed: Weiß unten in der Kategorie-Bar reduziert (paddingBottom 34 → 14).

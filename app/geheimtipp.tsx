@@ -1,6 +1,6 @@
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { Pressable, Text, View } from "react-native";
+import { Pressable, Text, useWindowDimensions, View } from "react-native";
 import Animated, {
   Easing,
   useAnimatedStyle,
@@ -8,7 +8,6 @@ import Animated, {
   withRepeat,
   withTiming,
 } from "react-native-reanimated";
-import { SafeAreaView } from "react-native-safe-area-context";
 import Svg, { Path } from "react-native-svg";
 import { ImagePlaceholder } from "../src/components/ImagePlaceholder";
 import { CATEGORY_LABEL, priceLabel } from "../src/data/categories";
@@ -30,6 +29,12 @@ export default function Geheimtipp() {
   const { markAbgeholt } = useGeheimtipp();
   const [phase, setPhase] = useState<"loading" | "reveal">("loading");
   const spot = getSpotById(GEHEIMTIPP.spotId);
+
+  // Pop-up als zentrierte Karte (~20% kleiner als der Screen) auf
+  // abgedunkeltem Hintergrund -> deutlich weniger Vollflächen-Gelb.
+  const { width, height } = useWindowDimensions();
+  const cardW = width * 0.84;
+  const cardH = height * 0.8;
 
   // ── Shared Values (laufen auf dem UI-Thread) ──
   const spin = useSharedValue(0); // Ring-Rotation 0..360
@@ -86,8 +91,15 @@ export default function Geheimtipp() {
   // ───────────── Lade-Screen (dunkel) ─────────────
   if (phase === "loading") {
     return (
-      <SafeAreaView className="flex-1 bg-night" edges={["top", "bottom"]}>
-        <View className="flex-row justify-end px-6 pt-3">
+      <View
+        className="flex-1 items-center justify-center"
+        style={{ backgroundColor: "rgba(0,0,0,0.55)" }}
+      >
+        <View
+          className="bg-night"
+          style={{ width: cardW, height: cardH, borderRadius: 40, overflow: "hidden" }}
+        >
+        <View className="flex-row justify-end px-5 pt-4">
           <Pressable
             onPress={() => router.back()}
             className="h-[42px] w-[42px] items-center justify-center rounded-pill"
@@ -97,7 +109,7 @@ export default function Geheimtipp() {
           </Pressable>
         </View>
 
-        <View className="flex-1 items-center justify-center px-10">
+        <View className="flex-1 items-center justify-center px-8">
           {/* "?" mit drehender, krummliniger Umrandung (Squiggle wie in der Nav) */}
           <View className="h-[150px] w-[150px] items-center justify-center">
             <Animated.View
@@ -135,17 +147,25 @@ export default function Geheimtipp() {
           </View>
         </View>
 
-        <Text className="pb-6 text-center font-hk-semibold text-[10px] tracking-[2px] text-screen/40">
+        <Text className="pb-5 text-center font-hk-semibold text-[10px] tracking-[2px] text-screen/40">
           FÜR ALLE · EINMAL WÖCHENTLICH
         </Text>
-      </SafeAreaView>
+        </View>
+      </View>
     );
   }
 
   // ───────────── Reveal-Screen (gelb) ─────────────
   return (
-    <SafeAreaView className="flex-1 bg-accent" edges={["top", "bottom"]}>
-      <View className="flex-row items-center justify-between px-6 pt-3">
+    <View
+      className="flex-1 items-center justify-center"
+      style={{ backgroundColor: "rgba(0,0,0,0.55)" }}
+    >
+      <View
+        className="bg-accent"
+        style={{ width: cardW, height: cardH, borderRadius: 40, overflow: "hidden" }}
+      >
+      <View className="flex-row items-center justify-between px-5 pt-4">
         <View className="rounded-pill bg-night px-3.5 py-2">
           <Text className="font-hk-semibold text-[10px] tracking-[1.5px] text-accent">
             ✓ AUFGEDECKT
@@ -160,8 +180,8 @@ export default function Geheimtipp() {
         </Pressable>
       </View>
 
-      {/* Café vertikal zentriert (weniger leeres Gelb) */}
-      <View className="flex-1 justify-center px-7">
+      {/* Café vertikal zentriert in der Karte */}
+      <View className="flex-1 justify-center px-6">
         <Text className="font-hk-semibold text-[10px] tracking-[2px] text-accent-ink/55">
           GEHEIMTIPP DER WOCHE
         </Text>
@@ -182,7 +202,7 @@ export default function Geheimtipp() {
                     top: 0,
                     left: 0,
                     right: 0,
-                    height: 236,
+                    height: 200,
                     borderRadius: 24,
                     backgroundColor: "#1A1A1A",
                   },
@@ -190,7 +210,7 @@ export default function Geheimtipp() {
                 ]}
               />
               <Pressable onPress={openSpot}>
-                <ImagePlaceholder tone="green" height={236} radius={24}>
+                <ImagePlaceholder tone="green" height={200} radius={24}>
                   <View className="absolute left-3.5 top-3.5 rounded-pill bg-accent px-3 py-1.5">
                     <Text className="font-hk-semibold text-[9px] tracking-[1.5px] text-accent-ink">
                       {CATEGORY_LABEL[spot.category]} · {spot.neighborhood.split(",")[0].toUpperCase()} · {priceLabel(spot.priceLevel)}
@@ -227,6 +247,7 @@ export default function Geheimtipp() {
           </View>
         </Pressable>
       </View>
-    </SafeAreaView>
+      </View>
+    </View>
   );
 }

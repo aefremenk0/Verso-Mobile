@@ -1,4 +1,5 @@
-import { ScrollView, Text, View } from "react-native";
+import { useRouter } from "expo-router";
+import { Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { CityDropdown } from "../../src/components/CityDropdown";
 import { NEIGHBORHOODS } from "../../src/data/cities";
@@ -8,6 +9,7 @@ import { useCity } from "../../src/store/city";
 // Einheitlicher Stadt-Kopf (wie Feed) + Stadtteile mit poetischen Einzeilern.
 
 export default function Viertel() {
+  const router = useRouter();
   const { city } = useCity();
   const hoods = NEIGHBORHOODS.filter((n) => n.city === city);
 
@@ -32,8 +34,9 @@ export default function Viertel() {
 
         <View className="mt-6">
           {hoods.map((n) => (
-            <View
+            <Pressable
               key={n.name}
+              onPress={() => router.push(`/bezirk/${encodeURIComponent(n.name)}`)}
               className="flex-row items-center border-b border-black/5 py-5"
             >
               <View className="flex-1 pr-4">
@@ -47,7 +50,7 @@ export default function Viertel() {
               <View className="h-9 w-9 items-center justify-center rounded-pill bg-accent">
                 <Text className="font-hk-bold text-[16px] text-accent-ink">→</Text>
               </View>
-            </View>
+            </Pressable>
           ))}
         </View>
       </ScrollView>
