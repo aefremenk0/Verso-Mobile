@@ -1,64 +1,75 @@
 import { useRouter } from "expo-router";
-import { Pressable, ScrollView, Text, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Brand } from "../src/components/Brand";
+import { Pressable, Text, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { StripeTexture } from "../src/components/StripeTexture";
 import { useCity } from "../src/store/city";
 
 // Screen 01 — Welcome.
-// Dunkles Hero, Wortmarke, Claim, gelbes Insider-Band, Stadt-Auswahl.
+// Immersives dunkles Hero (läuft unter die Statusleiste), gelbes Insider-Band,
+// Stadt-Auswahl, dunkler "Los geht's"-Button. Werte aus Verso_Mobile_v2.dc.html.
 
 export default function Welcome() {
   const router = useRouter();
   const { city, setCity, cities } = useCity();
+  const insets = useSafeAreaInsets();
 
   return (
-    <SafeAreaView className="flex-1 bg-night" edges={["top", "bottom"]}>
-      <ScrollView
-        contentContainerStyle={{ flexGrow: 1, paddingHorizontal: 28, paddingBottom: 24 }}
-        showsVerticalScrollIndicator={false}
+    <View className="flex-1 bg-screen">
+      {/* ── Dunkles Hero (full-bleed, unter die Statusleiste) ── */}
+      <View
+        className="overflow-hidden bg-night-2"
+        style={{ flex: 1.4, paddingTop: insets.top }}
       >
-        <Text className="mt-4 font-hk-medium-italic text-[13px] text-white/40">
+        {/* diagonale Streifen-Textur */}
+        <StripeTexture />
+        <Text className="mt-12 px-[30px] font-hk-semibold text-[10px] tracking-[2.2px] text-screen/60">
           // dein erster abend in einer fremden stadt
         </Text>
 
-        <View className="mt-16">
-          <Brand size={64} color="#FFFFFF" />
-          <Text className="mt-4 font-hk-semibold text-[18px] leading-[24px] text-white/80">
+        <View className="mt-auto px-[30px] pb-8">
+          <Text className="font-hk-extrabold-italic text-[92px] leading-[83px] text-screen">
+            verso
+          </Text>
+          <Text className="mt-3.5 max-w-[280px] font-hk-medium text-[14px] leading-[21px] text-screen/90">
             Echte Orte. Echte Menschen. Die Stadt, wie sie dir sonst niemand
             zeigt.
           </Text>
         </View>
+      </View>
 
-        {/* Gelbes Insider-Band */}
-        <View className="mt-8 rounded-card bg-accent px-5 py-4">
-          <Text className="font-hk-extrabold text-[18px] text-accent-ink">
-            Hi Insider.
-          </Text>
-          <Text className="mt-1 font-hk-medium text-[14px] leading-[19px] text-accent-ink/80">
-            Keine Listen für alle — nur Orte, die wir dir selbst zeigen würden.
-          </Text>
-        </View>
+      {/* ── Gelbes Insider-Band (flächig) ── */}
+      <View className="bg-accent px-[30px] py-[18px]">
+        <Text className="font-hk-extrabold text-[22px] leading-[22px] text-accent-ink">
+          Hi Insider.
+        </Text>
+        <Text className="mt-1.5 font-hk-medium text-[12.5px] leading-[18px] text-accent-ink/85">
+          Keine Listen für alle — nur Orte, die wir dir selbst zeigen würden.
+        </Text>
+      </View>
 
-        {/* Stadt-Auswahl */}
-        <Text className="mt-8 font-hk-bold text-[11px] tracking-[1.5px] text-white/40">
+      {/* ── Stadt-Auswahl + CTA ── */}
+      <View
+        className="px-[30px] pt-6"
+        style={{ flex: 1, paddingBottom: insets.bottom + 8 }}
+      >
+        <Text className="font-hk-semibold text-[10px] tracking-[2.2px] text-ink-3">
           WO FANGEN WIR AN?
         </Text>
-        <View className="mt-3 flex-row flex-wrap gap-2">
+        <View className="mt-4 flex-row flex-wrap gap-2">
           {cities.map((c) => {
             const active = c === city;
             return (
               <Pressable
                 key={c}
                 onPress={() => setCity(c)}
-                className={`rounded-pill px-4 py-2.5 ${
-                  active ? "bg-accent" : "border border-white/20"
-                }`}
+                className="rounded-pill px-[13px] py-2"
+                style={{
+                  backgroundColor: active ? "#FFE500" : "transparent",
+                  borderWidth: active ? 0 : 1,
+                  borderColor: "rgba(26,26,26,0.18)",
+                }}
               >
-                <Text
-                  className={`font-hk-semibold text-[14px] ${
-                    active ? "text-accent-ink" : "text-white"
-                  }`}
-                >
+                <Text className="font-hk-extrabold text-[19px] leading-[19px] text-ink">
                   {c}
                 </Text>
               </Pressable>
@@ -66,20 +77,16 @@ export default function Welcome() {
           })}
         </View>
 
-        <View className="flex-1" />
-
-        {/* CTA */}
         <Pressable
           onPress={() => router.push("/register")}
-          className="mt-10 flex-row items-center justify-between rounded-button bg-black px-6 py-4"
-          style={{ borderWidth: 1, borderColor: "rgba(255,255,255,0.12)" }}
+          className="mb-2 mt-auto flex-row items-center justify-between rounded-[18px] bg-night px-5 py-[18px]"
         >
-          <Text className="font-hk-bold text-[16px] text-white">Los geht's</Text>
-          <View className="h-8 w-8 items-center justify-center rounded-pill bg-white/10">
-            <Text className="font-hk-bold text-[16px] text-white">→</Text>
-          </View>
+          <Text className="font-hk-extrabold text-[18px] text-screen">
+            Los geht's
+          </Text>
+          <Text className="text-[18px] text-screen">→</Text>
         </Pressable>
-      </ScrollView>
-    </SafeAreaView>
+      </View>
+    </View>
   );
 }

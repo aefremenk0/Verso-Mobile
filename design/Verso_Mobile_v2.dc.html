@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#E3DFD7;}
+  @keyframes verso-spin{to{transform:rotate(360deg);}}
+  @keyframes verso-load{0%{left:-45%;}100%{left:100%;}}
+  @keyframes verso-pulse{0%,100%{opacity:0.35;}50%{opacity:1;}}
+  @keyframes verso-throb{0%{box-shadow:0 0 0 0 rgba(26,26,26,0.45);}70%{box-shadow:0 0 0 13px rgba(26,26,26,0);}100%{box-shadow:0 0 0 0 rgba(26,26,26,0);}}
+</style>
+</helmet>
+
+<div style="min-width:100%;min-height:100vh;width:max-content;box-sizing:border-box;padding:56px;background:#E3DFD7;font-family:'Hanken Grotesk',sans-serif;color:#1A1A1A;">
+
+  <div style="display:flex;align-items:baseline;gap:18px;margin-bottom:8px;">
+    <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-style:italic;font-size:32px;">verso</span>
+    <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:11px;letter-spacing:0.22em;text-transform:uppercase;color:#8A857C;">Mobile Discovery — v2 · Redaktionell, Gelb, weiche Formen</span>
+  </div>
+  <div style="font-family:'Hanken Grotesk',sans-serif;font-size:13px;color:#6E6A63;max-width:620px;margin-bottom:48px;line-height:1.5;">Gleiches Geheimtipp-Narrativ, neue Haut: Kleinschrift-Wortmarke, Stranger-Gelb als Signalfarbe, abgerundete Karten & eine schwebende Navigationsleiste.</div>
+
+  <div style="--accent:{{accentColor}};--accent-ink:{{accentInk}};--ov:{{overlayOpacity}};display:contents;">
+
+    <!-- ============ WORDMARK LOCKUPS ============ -->
+    <div style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:11px;letter-spacing:0.22em;text-transform:uppercase;color:#8A857C;margin-bottom:20px;">Wortzeichen — redaktionell, in Gelb</div>
+    <div style="display:flex;gap:36px;align-items:flex-start;margin-bottom:64px;">
+      <div style="display:flex;flex-direction:column;gap:14px;flex:none;">
+        <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:11px;letter-spacing:0.18em;color:#8A857C;">01 — Pur</span>
+        <div style="width:340px;height:200px;background:#F7F4EF;border-radius:24px;box-shadow:0 14px 44px rgba(30,24,18,0.13);display:flex;align-items:center;justify-content:center;">
+          <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-style:italic;font-size:64px;">verso</span>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:14px;flex:none;">
+        <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:11px;letter-spacing:0.18em;color:#8A857C;">02 — Highlight</span>
+        <div style="width:340px;height:200px;background:#F7F4EF;border-radius:24px;box-shadow:0 14px 44px rgba(30,24,18,0.13);display:flex;align-items:center;justify-content:center;">
+          <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-style:italic;font-size:64px;background:var(--accent,#FFE500);color:var(--accent-ink,#1A1A1A);padding:2px 18px;border-radius:14px;">verso</span>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:14px;flex:none;">
+        <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:11px;letter-spacing:0.18em;color:#8A857C;">03 — Punkt</span>
+        <div style="width:340px;height:200px;background:#F7F4EF;border-radius:24px;box-shadow:0 14px 44px rgba(30,24,18,0.13);display:flex;align-items:center;justify-content:center;">
+          <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-style:italic;font-size:64px;">verso<span style="display:inline-block;width:16px;height:16px;border-radius:50%;background:var(--accent,#FFE500);margin-left:4px;vertical-align:baseline;"></span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ SCREENS ============ -->
+    <div style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:11px;letter-spacing:0.22em;text-transform:uppercase;color:#8A857C;margin-bottom:20px;">Screens</div>
+    <div style="display:flex;gap:44px;align-items:flex-start;">
+
+      <!-- ===== 01 WELCOME ===== -->
+      <div style="display:flex;flex-direction:column;gap:14px;flex:none;">
+        <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:11px;letter-spacing:0.18em;color:#8A857C;">01 — Welcome</span>
+        <div data-screen-label="Welcome" style="width:390px;height:844px;background:#F7F4EF;position:relative;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 16px 50px rgba(30,24,18,0.18);border-radius:46px;">
+          <div style="position:relative;height:478px;flex:none;overflow:hidden;background:#231F1A;">
+            <div style="position:absolute;inset:0;background-image:repeating-linear-gradient(125deg,rgba(255,255,255,0.045) 0 1px,transparent 1px 8px);"></div>
+            <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,17,14,calc(var(--ov,0.45)*0.5)) 0%,rgba(20,17,14,calc(var(--ov,0.45)+0.28)) 100%);"></div>
+            <div style="position:absolute;top:14px;left:0;right:0;height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;color:#F7F4EF;">
+              <span style="font-size:14px;font-weight:600;">9:41</span>
+              <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:10px;letter-spacing:0.12em;opacity:0.85;">5G ▮▮▮</span>
+            </div>
+            <span style="position:absolute;top:130px;left:30px;right:30px;font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:10px;letter-spacing:0.22em;color:rgba(247,244,239,0.6);">// dein erster abend in einer fremden stadt</span>
+            <div style="position:absolute;left:30px;right:30px;bottom:32px;color:#F7F4EF;">
+              <div style="font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-style:italic;font-size:92px;line-height:0.9;">verso</div>
+              <div style="font-family:'Hanken Grotesk',sans-serif;font-size:14px;line-height:1.5;letter-spacing:0.01em;margin-top:14px;max-width:280px;opacity:0.92;">Echte Orte. Echte Menschen. Die Stadt, wie sie dir sonst niemand zeigt.</div>
+            </div>
+          </div>
+          <div style="background:var(--accent,#FFE500);color:var(--accent-ink,#1A1A1A);padding:18px 30px;flex:none;">
+            <div style="font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-size:22px;line-height:1;">Hi Insider.</div>
+            <div style="font-family:'Hanken Grotesk',sans-serif;font-size:12.5px;line-height:1.45;margin-top:6px;opacity:0.85;">Keine Listen für alle — nur Orte, die wir dir selbst zeigen würden.</div>
+          </div>
+          <div style="flex:1;padding:24px 30px 0;display:flex;flex-direction:column;">
+            <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:10px;letter-spacing:0.22em;text-transform:uppercase;color:#8A857C;">Wo fangen wir an?</span>
+            <div style="margin-top:16px;display:flex;flex-wrap:wrap;gap:8px;">
+              <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-size:19px;line-height:1;background:var(--accent,#FFE500);color:var(--accent-ink,#1A1A1A);padding:8px 13px;border-radius:999px;">München</span>
+              <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-size:19px;line-height:1;border:1px solid rgba(26,26,26,0.18);padding:8px 13px;border-radius:999px;">Berlin</span>
+              <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-size:19px;line-height:1;border:1px solid rgba(26,26,26,0.18);padding:8px 13px;border-radius:999px;">Frankfurt</span>
+              <div style="flex-basis:100%;height:0;"></div>
+              <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-size:19px;line-height:1;border:1px solid rgba(26,26,26,0.18);padding:8px 13px;border-radius:999px;">Düsseldorf</span>
+              <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-size:19px;line-height:1;border:1px solid rgba(26,26,26,0.18);padding:8px 13px;border-radius:999px;">Hamburg</span>
+            </div>
+            <div style="margin-top:auto;margin-bottom:28px;background:#1A1A1A;color:#F7F4EF;border-radius:18px;padding:18px;display:flex;align-items:center;justify-content:space-between;">
+              <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-size:18px;">Los geht's</span>
+              <span style="font-size:18px;">→</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 01b REGISTRIERUNG ===== -->
+      <div style="display:flex;flex-direction:column;gap:14px;flex:none;">
+        <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:11px;letter-spacing:0.18em;color:#8A857C;">01 — Registrierung / Anmelden</span>
+        <div data-screen-label="Registrierung" style="width:390px;height:844px;background:#F7F4EF;position:relative;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 16px 50px rgba(30,24,18,0.18);border-radius:46px;">
+          <div style="height:58px;flex:none;display:flex;align-items:flex-end;justify-content:space-between;padding:0 26px;">
+            <span style="font-size:14px;font-weight:600;">9:41</span>
+            <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:10px;letter-spacing:0.12em;">5G ▮▮▮</span>
+          </div>
+          <div style="flex:none;display:flex;align-items:center;justify-content:space-between;padding:10px 26px 0;">
+            <span style="width:42px;height:42px;border-radius:50%;border:1px solid rgba(26,26,26,0.18);display:flex;align-items:center;justify-content:center;font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-size:18px;">←</span>
+            <span style="font-family:'Hanken Grotesk',sans-serif;font-style:italic;font-weight:800;font-size:24px;">verso</span>
+            <span style="width:42px;"></span>
+          </div>
+          <div style="flex:1;padding:22px 28px 0;display:flex;flex-direction:column;">
+            <div style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:10px;letter-spacing:0.22em;text-transform:uppercase;color:#8A857C;">Konto</div>
+            <div style="font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-size:42px;line-height:0.95;margin-top:8px;">Fast drin.</div>
+            <div style="font-family:'Hanken Grotesk',sans-serif;font-size:13.5px;line-height:1.45;color:#6E6A63;margin-top:10px;max-width:280px;">Damit Verso sich merkt, was dir gefällt — und dir den Wochentipp aufhebt.</div>
+            <div style="display:flex;background:#EDE9E1;border-radius:999px;padding:4px;margin-top:20px;">
+              <span style="flex:1;text-align:center;padding:10px 0;border-radius:999px;font-family:'Hanken Grotesk',sans-serif;font-size:13px;font-weight:600;background:#FFFFFF;color:#1A1A1A;box-shadow:0 1px 3px rgba(0,0,0,0.08);">Registrieren</span>
+              <span style="flex:1;text-align:center;padding:10px 0;border-radius:999px;font-family:'Hanken Grotesk',sans-serif;font-size:13px;color:#8A857C;">Anmelden</span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:9px;margin-top:18px;">
+              <span style="background:#1A1A1A;color:#F7F4EF;border-radius:16px;padding:15px 0;display:flex;align-items:center;justify-content:center;gap:10px;font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:14px;"><svg viewBox="0 0 24 24" width="17" height="17" fill="#FFFFFF" style="display:block;"><path d="M17.05 12.5c0-2.1 1.7-3.1 1.78-3.18-.97-1.42-2.48-1.61-3.02-1.63-1.28-.13-2.5.76-3.15.76-.65 0-1.65-.74-2.72-.72-1.4.02-2.69.81-3.41 2.06-1.45 2.52-.37 6.25 1.04 8.3.69 1 1.51 2.13 2.58 2.09 1.04-.04 1.43-.67 2.69-.67 1.25 0 1.61.67 2.71.65 1.12-.02 1.83-1.02 2.51-2.03.79-1.16 1.12-2.28 1.14-2.34-.03-.01-2.18-.84-2.2-3.32zM14.97 6.34c.57-.69.96-1.65.85-2.61-.83.03-1.83.55-2.42 1.24-.53.61-.99 1.59-.87 2.53.92.07 1.87-.47 2.44-1.16z"/></svg>Weiter mit Apple</span>
+              <span style="background:#FFFFFF;border:1px solid rgba(26,26,26,0.16);color:#1A1A1A;border-radius:16px;padding:15px 0;display:flex;align-items:center;justify-content:center;gap:10px;font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:14px;"><svg viewBox="0 0 48 48" width="18" height="18" style="display:block;"><path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 12.955 4 4 12.955 4 24s8.955 20 20 20 20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"/><path fill="#FF3D00" d="M6.306 14.691l6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 16.318 4 9.656 8.337 6.306 14.691z"/><path fill="#4CAF50" d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238C29.211 35.091 26.715 36 24 36c-5.202 0-9.619-3.317-11.283-7.946l-6.522 5.025C9.505 39.556 16.227 44 24 44z"/><path fill="#1976D2" d="M43.611 20.083H42V20H24v8h11.303c-.792 2.237-2.231 4.166-4.087 5.571l6.19 5.238C36.971 39.205 44 34 44 24c0-1.341-.138-2.65-.389-3.917z"/></svg>Weiter mit Google</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;margin-top:18px;">
+              <div style="flex:1;height:1px;background:rgba(26,26,26,0.12);"></div>
+              <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:#8A857C;">oder mit E-Mail</span>
+              <div style="flex:1;height:1px;background:rgba(26,26,26,0.12);"></div>
+            </div>
+            <div style="border:1px solid rgba(26,26,26,0.2);border-radius:14px;padding:15px 16px;margin-top:16px;font-family:'Hanken Grotesk',sans-serif;font-size:14px;color:#8A857C;">Deine E-Mail-Adresse</div>
+            <div style="margin-top:10px;background:var(--accent,#FFE500);color:var(--accent-ink,#1A1A1A);border-radius:16px;padding:16px;display:flex;align-items:center;justify-content:space-between;">
+              <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-size:17px;white-space:nowrap;">Konto erstellen</span>
+              <span style="font-size:17px;">→</span>
+            </div>
+            <div style="margin-top:auto;padding-bottom:26px;">
+              <div style="font-family:'Hanken Grotesk',sans-serif;font-size:11px;line-height:1.4;color:#8A857C;">Mit der Registrierung akzeptierst du <span style="text-decoration:underline;color:#1A1A1A;">Bedingungen</span> &amp; <span style="text-decoration:underline;color:#1A1A1A;">Datenschutz</span>.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 02 DISCOVERY FEED ===== -->
+      <div style="display:flex;flex-direction:column;gap:14px;flex:none;">
+        <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:11px;letter-spacing:0.18em;color:#8A857C;">02 — Discovery-Feed</span>
+        <div data-screen-label="Discovery Feed" style="width:390px;height:844px;background:#F7F4EF;position:relative;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 16px 50px rgba(30,24,18,0.18);border-radius:46px;">
+          <div style="height:58px;flex:none;display:flex;align-items:flex-end;justify-content:space-between;padding:0 26px 0;">
+            <span style="font-size:14px;font-weight:600;">9:41</span>
+            <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:10px;letter-spacing:0.12em;">5G ▮▮▮</span>
+          </div>
+          <div style="padding:10px 26px 14px;flex:none;display:flex;align-items:flex-end;justify-content:space-between;">
+            <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-size:32px;line-height:1;">Wien <span style="font-size:16px;color:#8A857C;">▾</span></span>
+            <span style="width:38px;height:38px;border-radius:50%;border:1px solid rgba(26,26,26,0.18);display:flex;align-items:center;justify-content:center;font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:11px;">Du</span>
+          </div>
+          <div style="display:flex;gap:8px;padding:0 26px 16px;flex:none;overflow:hidden;">
+            <span style="background:var(--accent,#FFE500);color:var(--accent-ink,#1A1A1A);border-radius:999px;padding:8px 15px;font-family:'Hanken Grotesk',sans-serif;font-size:12px;font-weight:500;">Alle</span>
+            <span style="border:1px solid rgba(26,26,26,0.2);border-radius:999px;padding:8px 15px;font-family:'Hanken Grotesk',sans-serif;font-size:12px;color:#6E6A63;">Restaurant</span>
+            <span style="border:1px solid rgba(26,26,26,0.2);border-radius:999px;padding:8px 15px;font-family:'Hanken Grotesk',sans-serif;font-size:12px;color:#6E6A63;">Snack</span>
+            <span style="border:1px solid rgba(26,26,26,0.2);border-radius:999px;padding:8px 15px;font-family:'Hanken Grotesk',sans-serif;font-size:12px;color:#6E6A63;">Kaffee</span>
+            <span style="border:1px solid rgba(26,26,26,0.2);border-radius:999px;padding:8px 15px;font-family:'Hanken Grotesk',sans-serif;font-size:12px;color:#6E6A63;">Bars</span>
+            <span style="border:1px solid rgba(26,26,26,0.2);border-radius:999px;padding:8px 15px;font-family:'Hanken Grotesk',sans-serif;font-size:12px;color:#6E6A63;">Clubs</span>
+            <span style="border:1px solid rgba(26,26,26,0.2);border-radius:999px;padding:8px 15px;font-family:'Hanken Grotesk',sans-serif;font-size:12px;color:#6E6A63;">Events</span>
+          </div>
+          <div style="flex:1;overflow:hidden;padding-bottom:100px;">
+            <div style="padding:0 18px;">
+              <div style="position:relative;height:268px;background:#2A211C;overflow:hidden;border-radius:24px;">
+                <div style="position:absolute;inset:0;background-image:repeating-linear-gradient(125deg,rgba(255,255,255,0.045) 0 1px,transparent 1px 8px);"></div>
+                <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,17,14,0) 55%,rgba(20,17,14,calc(var(--ov,0.45)+0.1)) 100%);"></div>
+                <span style="position:absolute;top:14px;left:14px;background:var(--accent,#FFE500);color:var(--accent-ink,#1A1A1A);border-radius:999px;padding:5px 12px;font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:9px;letter-spacing:0.14em;">BAR</span>
+                <span style="position:absolute;bottom:13px;left:16px;font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:10px;letter-spacing:0.18em;color:rgba(247,244,239,0.55);">// kerzenlicht, sechs hocker</span>
+              </div>
+              <div style="padding:16px 8px 24px;">
+                <div style="font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-size:30px;line-height:1;">Kleinod</div>
+                <div style="font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-style:italic;font-size:18px;line-height:1.3;margin-top:8px;">Ein Hinterzimmer, das offiziell nicht existiert.</div>
+                <div style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:10px;letter-spacing:0.16em;color:#8A857C;margin-top:12px;">WIEDEN · NATURAL · SPÄT</div>
+                <div style="font-family:'Hanken Grotesk',sans-serif;font-size:11px;color:#6E6A63;margin-top:6px;">Schleifmühlgasse 12 · 1040 Wien</div>
+              </div>
+            </div>
+            <div style="padding:0 18px;">
+              <div style="position:relative;height:210px;background:#20251F;overflow:hidden;border-radius:24px;">
+                <div style="position:absolute;inset:0;background-image:repeating-linear-gradient(125deg,rgba(255,255,255,0.045) 0 1px,transparent 1px 8px);"></div>
+                <span style="position:absolute;top:14px;left:14px;background:var(--accent,#FFE500);color:var(--accent-ink,#1A1A1A);border-radius:999px;padding:5px 12px;font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:9px;letter-spacing:0.14em;">WEINBAR</span>
+                <span style="position:absolute;bottom:13px;left:16px;font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:10px;letter-spacing:0.18em;color:rgba(247,244,239,0.5);">// markt nach ladenschluss</span>
+              </div>
+              <div style="padding:16px 8px 0;">
+                <div style="font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-size:30px;line-height:1;">Marktlücke</div>
+              </div>
+            </div>
+          </div>
+          <div style="position:absolute;left:16px;right:16px;bottom:16px;height:62px;background:#FFFFFF;border:1px solid rgba(26,26,26,0.1);border-radius:24px;display:flex;align-items:center;padding:7px;box-shadow:0 10px 28px rgba(30,24,18,0.12);">
+            <span style="flex:1;text-align:center;background:var(--accent,#FFE500);color:var(--accent-ink,#1A1A1A);border-radius:17px;padding:13px 0;font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;font-weight:500;">Feed</span>
+            <span style="flex:1;text-align:center;padding:13px 0;font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:#8A857C;">Viertel</span>
+            <span style="flex:1;text-align:center;padding:13px 0;font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:#8A857C;">Karte</span>
+            <span style="flex:1;display:flex;align-items:center;justify-content:center;padding:8px 0;"><span style="position:relative;width:32px;height:32px;display:flex;align-items:center;justify-content:center;"><span style="width:26px;height:26px;border-radius:50%;background:#1A1A1A;color:var(--accent,#FFE500);display:flex;align-items:center;justify-content:center;font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-size:14px;">?</span><svg viewBox="0 0 56 56" fill="none" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:48px;height:48px;overflow:visible;"><path d="M27 8 C40 4 52 15 49 27 C52 41 38 52 26 49 C13 52 5 38 8 26 C4 14 16 5 31 9" style="stroke:var(--accent,#FFE500);" stroke-width="2.4" stroke-linecap="round"/></svg></span></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 03 SPOT DETAIL ===== -->
+      <div style="display:flex;flex-direction:column;gap:14px;flex:none;">
+        <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:11px;letter-spacing:0.18em;color:#8A857C;">03 — Spot-Detail</span>
+        <div data-screen-label="Spot Detail" style="width:390px;height:844px;background:#F7F4EF;position:relative;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 16px 50px rgba(30,24,18,0.18);border-radius:46px;">
+          <div style="position:relative;height:352px;flex:none;overflow:hidden;background:#281F1A;">
+            <div style="position:absolute;inset:0;background-image:repeating-linear-gradient(125deg,rgba(255,255,255,0.045) 0 1px,transparent 1px 8px);"></div>
+            <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,17,14,calc(var(--ov,0.45)*0.4)) 0%,rgba(20,17,14,0) 40%,rgba(20,17,14,0.25) 100%);"></div>
+            <div style="position:absolute;top:60px;left:0;right:0;display:flex;align-items:center;justify-content:space-between;padding:0 22px;">
+              <span style="width:42px;height:42px;border-radius:50%;background:rgba(247,244,239,0.92);display:flex;align-items:center;justify-content:center;font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-size:20px;">←</span>
+              <span style="background:var(--accent,#FFE500);color:var(--accent-ink,#1A1A1A);border-radius:999px;padding:11px 18px;font-family:'Hanken Grotesk',sans-serif;font-size:12px;font-weight:600;">Merken +</span>
+            </div>
+          </div>
+          <div style="flex:1;background:#F7F4EF;border-radius:30px 30px 0 0;margin-top:-30px;position:relative;padding:26px 28px;display:flex;flex-direction:column;">
+            <div style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:10px;letter-spacing:0.2em;color:#8A857C;">BAR · WIEDEN, 4. BEZIRK</div>
+            <div style="font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-size:46px;line-height:0.95;margin-top:8px;">Kleinod</div>
+            <div style="margin-top:14px;"><span style="font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-style:italic;font-size:20px;line-height:1.5;background:var(--accent,#FFE500);color:var(--accent-ink,#1A1A1A);padding:3px 8px;border-radius:8px;-webkit-box-decoration-break:clone;box-decoration-break:clone;">Ein Hinterzimmer, das offiziell nicht existiert.</span></div>
+            <div style="font-family:'Hanken Grotesk',sans-serif;font-size:14px;line-height:1.6;color:#6E6A63;margin-top:18px;">Hinter einer Tür ohne Schild, zwei Stockwerke über der Straße. Sechs Hocker, ein Barchef, der deinen Drink baut, ohne zu fragen. Komm früh — oder gar nicht.</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;">
+              <span style="border:1px solid rgba(26,26,26,0.18);border-radius:999px;padding:8px 14px;font-family:'Hanken Grotesk',sans-serif;font-size:12px;color:#1A1A1A;">Cocktails</span>
+              <span style="border:1px solid rgba(26,26,26,0.18);border-radius:999px;padding:8px 14px;font-family:'Hanken Grotesk',sans-serif;font-size:12px;color:#1A1A1A;">Natural</span>
+              <span style="border:1px solid rgba(26,26,26,0.18);border-radius:999px;padding:8px 14px;font-family:'Hanken Grotesk',sans-serif;font-size:12px;color:#1A1A1A;white-space:nowrap;">€€€</span>
+            </div>
+            <div style="display:flex;align-items:baseline;gap:8px;margin-top:16px;">
+              <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:9px;letter-spacing:0.18em;text-transform:uppercase;color:#8A857C;flex:none;">Adresse</span>
+              <span style="font-family:'Hanken Grotesk',sans-serif;font-size:13px;color:#6E6A63;">Schleifmühlgasse 12 · 1040 Wien</span>
+            </div>
+            <div style="margin-top:auto;display:flex;flex-direction:column;gap:9px;">
+              <div style="background:var(--accent,#FFE500);color:var(--accent-ink,#1A1A1A);border-radius:16px;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;">
+                <div style="display:flex;flex-direction:column;"><span style="font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-size:16px;line-height:1;white-space:nowrap;">Tisch reservieren</span><span style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:9px;letter-spacing:0.16em;opacity:0.62;margin-top:4px;">ÜBER OPENTABLE</span></div>
+                <span style="width:36px;height:36px;flex:none;border-radius:50%;background:#1A1A1A;color:#F7F4EF;display:flex;align-items:center;justify-content:center;font-size:16px;">→</span>
+              </div>
+              <div style="display:flex;gap:9px;">
+                <span style="flex:1;border:1px solid rgba(26,26,26,0.2);border-radius:16px;padding:14px 0;text-align:center;font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:13px;">Apple Karten <span style="color:#8A857C;">↗</span></span>
+                <span style="flex:1;border:1px solid rgba(26,26,26,0.2);border-radius:16px;padding:14px 0;text-align:center;font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:13px;">Google Maps <span style="color:#8A857C;">↗</span></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 03b EVENT-DETAIL ===== -->
+      <div style="display:flex;flex-direction:column;gap:14px;flex:none;">
+        <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:11px;letter-spacing:0.18em;color:#8A857C;">03 — Event-Detail</span>
+        <div data-screen-label="Event-Detail" style="width:390px;height:844px;background:#F7F4EF;position:relative;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 16px 50px rgba(30,24,18,0.18);border-radius:46px;">
+          <div style="position:relative;height:352px;flex:none;overflow:hidden;background:#1C1E22;">
+            <div style="position:absolute;inset:0;background-image:repeating-linear-gradient(125deg,rgba(255,255,255,0.045) 0 1px,transparent 1px 8px);"></div>
+            <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(16,16,20,calc(var(--ov,0.45)*0.4)) 0%,rgba(16,16,20,0) 40%,rgba(16,16,20,0.25) 100%);"></div>
+            <div style="position:absolute;top:60px;left:0;right:0;display:flex;align-items:center;justify-content:space-between;padding:0 22px;">
+              <span style="width:42px;height:42px;border-radius:50%;background:rgba(247,244,239,0.92);display:flex;align-items:center;justify-content:center;font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-size:20px;">←</span>
+              <span style="background:var(--accent,#FFE500);color:var(--accent-ink,#1A1A1A);border-radius:999px;padding:11px 18px;font-family:'Hanken Grotesk',sans-serif;font-size:12px;font-weight:600;">Merken +</span>
+            </div>
+            <span style="position:absolute;bottom:16px;left:24px;font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:10px;letter-spacing:0.18em;color:rgba(247,244,239,0.55);">// floß, anlage, kein lineup im netz</span>
+          </div>
+          <div style="flex:1;background:#F7F4EF;border-radius:30px 30px 0 0;margin-top:-30px;position:relative;padding:24px 28px;display:flex;flex-direction:column;">
+            <div style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:10px;letter-spacing:0.2em;color:#8A857C;">EVENT · DONAUKANAL</div>
+            <div style="font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-size:44px;line-height:0.95;margin-top:8px;">Nachtschicht</div>
+            <div style="margin-top:12px;"><span style="font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-style:italic;font-size:19px;line-height:1.5;background:var(--accent,#FFE500);color:var(--accent-ink,#1A1A1A);padding:3px 8px;border-radius:8px;-webkit-box-decoration-break:clone;box-decoration-break:clone;">Ein Floß, eine Anlage, kein Lineup im Netz.</span></div>
+            <div style="font-family:'Hanken Grotesk',sans-serif;font-size:14px;line-height:1.55;color:#6E6A63;margin-top:16px;">Der genaue Ort kommt per SMS am Nachmittag. Bring Bargeld, keine Erwartungen — und geh erst, wenn die Sonne aufgeht.</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;">
+              <span style="border:1px solid rgba(26,26,26,0.18);border-radius:999px;padding:8px 14px;font-family:'Hanken Grotesk',sans-serif;font-size:12px;color:#1A1A1A;">Techno</span>
+              <span style="border:1px solid rgba(26,26,26,0.18);border-radius:999px;padding:8px 14px;font-family:'Hanken Grotesk',sans-serif;font-size:12px;color:#1A1A1A;">Open Air</span>
+              <span style="border:1px solid rgba(26,26,26,0.18);border-radius:999px;padding:8px 14px;font-family:'Hanken Grotesk',sans-serif;font-size:12px;color:#1A1A1A;white-space:nowrap;">€€</span>
+            </div>
+            <div style="display:flex;align-items:baseline;gap:8px;margin-top:14px;">
+              <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:9px;letter-spacing:0.18em;text-transform:uppercase;color:#8A857C;flex:none;width:58px;">Wann</span>
+              <span style="font-family:'Hanken Grotesk',sans-serif;font-size:13px;color:#6E6A63;">Sa · 12. Juli · 22:00 – 06:00</span>
+            </div>
+            <div style="display:flex;align-items:baseline;gap:8px;margin-top:6px;">
+              <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:9px;letter-spacing:0.18em;text-transform:uppercase;color:#8A857C;flex:none;width:58px;">Treff</span>
+              <span style="font-family:'Hanken Grotesk',sans-serif;font-size:13px;color:#6E6A63;">Schemerlbrücke · 1020 Wien</span>
+            </div>
+            <div style="margin-top:auto;display:flex;flex-direction:column;gap:9px;">
+              <div style="background:var(--accent,#FFE500);color:var(--accent-ink,#1A1A1A);border-radius:16px;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;">
+                <div style="display:flex;flex-direction:column;"><span style="font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-size:16px;line-height:1;white-space:nowrap;">Ticket buchen</span><span style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:9px;letter-spacing:0.16em;opacity:0.62;margin-top:4px;">ÜBER OETICKET</span></div>
+                <span style="width:36px;height:36px;flex:none;border-radius:50%;background:#1A1A1A;color:#F7F4EF;display:flex;align-items:center;justify-content:center;font-size:16px;">→</span>
+              </div>
+              <div style="display:flex;gap:9px;">
+                <span style="flex:1;border:1px solid rgba(26,26,26,0.2);border-radius:16px;padding:14px 0;text-align:center;font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:13px;">Apple Karten <span style="color:#8A857C;">↗</span></span>
+                <span style="flex:1;border:1px solid rgba(26,26,26,0.2);border-radius:16px;padding:14px 0;text-align:center;font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:13px;">Google Maps <span style="color:#8A857C;">↗</span></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 04 KARTENANSICHT ===== -->
+      <div style="display:flex;flex-direction:column;gap:14px;flex:none;">
+        <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:11px;letter-spacing:0.18em;color:#8A857C;">04 — Kartenansicht</span>
+        <div data-screen-label="Kartenansicht" style="width:390px;height:844px;background:#F7F4EF;position:relative;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 16px 50px rgba(30,24,18,0.18);border-radius:46px;">
+          <div style="height:58px;flex:none;display:flex;align-items:flex-end;justify-content:space-between;padding:0 26px;">
+            <span style="font-size:14px;font-weight:600;">9:41</span>
+            <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:10px;letter-spacing:0.12em;">5G ▮▮▮</span>
+          </div>
+          <div style="padding:10px 26px 14px;flex:none;display:flex;align-items:center;justify-content:space-between;">
+            <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-size:30px;line-height:1;">Wien</span>
+            <span style="display:flex;background:#EDE9E1;border-radius:999px;padding:4px;">
+              <span style="padding:7px 14px;border-radius:999px;font-family:'Hanken Grotesk',sans-serif;font-size:12px;color:#8A857C;">Liste</span>
+              <span style="padding:7px 14px;border-radius:999px;font-family:'Hanken Grotesk',sans-serif;font-size:12px;font-weight:500;background:#FFFFFF;color:#1A1A1A;box-shadow:0 1px 3px rgba(0,0,0,0.08);">Karte</span>
+            </span>
+          </div>
+          <div style="padding:0 26px 10px;flex:none;display:flex;flex-direction:column;gap:9px;">
+            <div style="display:flex;gap:7px;justify-content:center;">
+              <span style="background:var(--accent,#FFE500);color:var(--accent-ink,#1A1A1A);border-radius:999px;padding:8px 13px;font-family:'Hanken Grotesk',sans-serif;font-size:12px;font-weight:600;">Art</span>
+              <span style="background:#FFFFFF;border:1px solid rgba(26,26,26,0.14);color:#1A1A1A;border-radius:999px;padding:8px 13px;font-family:'Hanken Grotesk',sans-serif;font-size:12px;">Budget</span>
+              <span style="background:#FFFFFF;border:1px solid rgba(26,26,26,0.14);color:#1A1A1A;border-radius:999px;padding:8px 13px;font-family:'Hanken Grotesk',sans-serif;font-size:12px;">Bewertung</span>
+              <span style="background:var(--accent,#FFE500);color:var(--accent-ink,#1A1A1A);border-radius:999px;padding:8px 13px;font-family:'Hanken Grotesk',sans-serif;font-size:12px;font-weight:600;">Ambiente</span>
+            </div>
+            <div style="background:#FFFFFF;border:1px solid rgba(26,26,26,0.14);border-radius:13px;padding:11px 0;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 3px 10px rgba(30,24,18,0.12);padding-top:8px;padding-bottom:8px;">
+              <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:#1A1A1A;">Filter</span>
+              <span style="font-size:11px;color:#1A1A1A;">▾</span>
+            </div>
+          </div>
+          <div style="flex:1;position:relative;overflow:hidden;">
+            <div style="position:absolute;inset:0;background:#E7E2D9;"></div>
+            <div style="position:absolute;inset:0;background-image:repeating-linear-gradient(0deg,rgba(26,26,26,0.05) 0 1.5px,transparent 1.5px 54px),repeating-linear-gradient(90deg,rgba(26,26,26,0.05) 0 1.5px,transparent 1.5px 54px);"></div>
+            <div style="position:absolute;top:-40px;left:130px;width:54px;height:140%;background:#F1ECE3;transform:rotate(20deg);"></div>
+            <div style="position:absolute;top:330px;left:-40px;width:150%;height:42px;background:#F1ECE3;transform:rotate(-7deg);"></div>
+            <div style="position:absolute;top:120px;left:36px;width:118px;height:86px;background:#D8E0CE;border-radius:16px;"></div>
+            <div style="position:absolute;bottom:200px;right:30px;width:96px;height:80px;background:#D8E0CE;border-radius:16px;"></div>
+            <div style="position:absolute;top:-60px;right:-26px;width:64px;height:170%;background:rgba(150,170,180,0.38);transform:rotate(26deg);"></div>
+            <!-- Straßennamen -->
+            <span style="position:absolute;top:70px;left:46px;font-family:'Hanken Grotesk',sans-serif;font-weight:500;font-size:10px;letter-spacing:0.04em;color:#9C978E;white-space:nowrap;">Operngasse</span>
+            <span style="position:absolute;top:150px;left:30px;font-family:'Hanken Grotesk',sans-serif;font-weight:500;font-size:10px;letter-spacing:0.04em;color:#9C978E;white-space:nowrap;">Margaretenstraße</span>
+            <span style="position:absolute;top:332px;left:24px;transform:rotate(-7deg);font-family:'Hanken Grotesk',sans-serif;font-weight:500;font-size:10px;letter-spacing:0.04em;color:#9C978E;white-space:nowrap;">Linke Wienzeile</span>
+            <span style="position:absolute;top:300px;left:232px;font-family:'Hanken Grotesk',sans-serif;font-weight:500;font-size:10px;letter-spacing:0.04em;color:#9C978E;white-space:nowrap;">Rechte Wienzeile</span>
+            <span style="position:absolute;top:455px;left:54px;font-family:'Hanken Grotesk',sans-serif;font-weight:500;font-size:10px;letter-spacing:0.04em;color:#9C978E;white-space:nowrap;">Kettenbrückengasse</span>
+            <span style="position:absolute;top:418px;left:214px;font-family:'Hanken Grotesk',sans-serif;font-weight:500;font-size:10px;letter-spacing:0.04em;color:#9C978E;white-space:nowrap;">Naschmarkt</span>
+            <!-- pins -->
+            <div style="position:absolute;top:96px;left:212px;width:15px;height:15px;border-radius:50%;background:#1A1A1A;border:2.5px solid #F7F4EF;box-shadow:0 2px 5px rgba(0,0,0,0.2);"></div>
+            <div style="position:absolute;top:182px;left:96px;display:flex;flex-direction:column;align-items:center;gap:5px;">
+              <span style="background:#1A1A1A;color:#F7F4EF;border-radius:999px;padding:7px 12px;font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-size:13px;line-height:1;white-space:nowrap;box-shadow:0 5px 14px rgba(0,0,0,0.25);">Nachtschicht <span style="color:var(--accent,#FFE500);">12.7</span></span>
+              <span style="width:11px;height:11px;border-radius:50%;background:#1A1A1A;border:2.5px solid #F7F4EF;box-shadow:0 2px 5px rgba(0,0,0,0.2);"></span>
+            </div>
+            <div style="position:absolute;top:386px;left:278px;display:flex;flex-direction:column;align-items:center;gap:5px;">
+              <span style="background:#1A1A1A;color:#F7F4EF;border-radius:999px;padding:7px 12px;font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-size:13px;line-height:1;white-space:nowrap;box-shadow:0 5px 14px rgba(0,0,0,0.25);">Hofkonzert <span style="color:var(--accent,#FFE500);">19.7</span></span>
+              <span style="width:11px;height:11px;border-radius:50%;background:#1A1A1A;border:2.5px solid #F7F4EF;box-shadow:0 2px 5px rgba(0,0,0,0.2);"></span>
+            </div>
+            <div style="position:absolute;top:300px;left:60px;width:15px;height:15px;border-radius:50%;background:#1A1A1A;border:2.5px solid #F7F4EF;box-shadow:0 2px 5px rgba(0,0,0,0.2);"></div>
+            <!-- active pin -->
+            <div style="position:absolute;top:236px;left:150px;display:flex;flex-direction:column;align-items:center;gap:5px;">
+              <span style="background:var(--accent,#FFE500);color:var(--accent-ink,#1A1A1A);border-radius:999px;padding:8px 15px;font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-size:17px;line-height:1;box-shadow:0 6px 16px rgba(0,0,0,0.22);">Kleinod</span>
+              <span style="width:13px;height:13px;border-radius:50%;background:#1A1A1A;border:3px solid #F7F4EF;box-shadow:0 2px 6px rgba(0,0,0,0.25);"></span>
+            </div>
+            <!-- Maßstabsskala (erscheint beim Zoomen) -->
+            <div style="position:absolute;top:16px;left:18px;display:flex;flex-direction:column;align-items:flex-start;gap:3px;">
+              <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:10px;letter-spacing:0.04em;color:#1A1A1A;background:rgba(247,244,239,0.72);padding:1px 5px;border-radius:4px;">500 m</span>
+              <div style="width:66px;height:6px;border:1.6px solid #1A1A1A;border-top:none;"></div>
+            </div>
+          </div>
+          <!-- floating spot card -->
+          <div style="position:absolute;left:16px;right:16px;bottom:94px;background:#FFFFFF;border-radius:24px;box-shadow:0 12px 32px rgba(30,24,18,0.18);padding:14px;display:flex;gap:14px;align-items:center;">
+            <div style="width:66px;height:66px;flex:none;border-radius:18px;background:#2A211C;background-image:repeating-linear-gradient(125deg,rgba(255,255,255,0.06) 0 1px,transparent 1px 7px);"></div>
+            <div style="flex:1;">
+              <div style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:9px;letter-spacing:0.16em;color:#8A857C;">BAR · WIEDEN · €€€</div>
+              <div style="font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-size:22px;line-height:1;margin-top:3px;">Kleinod</div>
+              <div style="font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-style:italic;font-size:13px;line-height:1.25;color:#6E6A63;margin-top:4px;">Ein Hinterzimmer, das nicht existiert.</div><div style="font-family:'Hanken Grotesk',sans-serif;font-size:11px;color:#6E6A63;margin-top:4px;">Schleifmühlgasse 12 · 1040 Wien</div>
+            </div>
+            <span style="width:40px;height:40px;flex:none;border-radius:50%;background:var(--accent,#FFE500);color:var(--accent-ink,#1A1A1A);display:flex;align-items:center;justify-content:center;font-size:17px;">→</span>
+          </div>
+          <div style="position:absolute;left:16px;right:16px;bottom:16px;height:62px;background:#FFFFFF;border:1px solid rgba(26,26,26,0.1);border-radius:24px;display:flex;align-items:center;padding:7px;box-shadow:0 10px 28px rgba(30,24,18,0.12);">
+            <span style="flex:1;text-align:center;padding:13px 0;font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:#8A857C;">Feed</span>
+            <span style="flex:1;text-align:center;padding:13px 0;font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:#8A857C;">Viertel</span>
+            <span style="flex:1;text-align:center;background:var(--accent,#FFE500);color:var(--accent-ink,#1A1A1A);border-radius:17px;padding:13px 0;font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;font-weight:500;">Karte</span>
+            <span style="flex:1;display:flex;align-items:center;justify-content:center;padding:8px 0;"><span style="position:relative;width:32px;height:32px;display:flex;align-items:center;justify-content:center;"><span style="width:26px;height:26px;border-radius:50%;background:#1A1A1A;color:var(--accent,#FFE500);display:flex;align-items:center;justify-content:center;font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-size:14px;">?</span><svg viewBox="0 0 56 56" fill="none" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:48px;height:48px;overflow:visible;"><path d="M27 8 C40 4 52 15 49 27 C52 41 38 52 26 49 C13 52 5 38 8 26 C4 14 16 5 31 9" style="stroke:var(--accent,#FFE500);" stroke-width="2.4" stroke-linecap="round"/></svg></span></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 04b KARTE · FILTER ===== -->
+      <div style="display:flex;flex-direction:column;gap:14px;flex:none;">
+        <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:11px;letter-spacing:0.18em;color:#8A857C;">04 — Karte · Filter</span>
+        <div data-screen-label="Karte Filter" style="width:390px;height:844px;background:#F7F4EF;position:relative;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 16px 50px rgba(30,24,18,0.18);border-radius:46px;">
+          <!-- dimmed map behind -->
+          <div style="position:absolute;inset:0;background:#E7E2D9;"></div>
+          <div style="position:absolute;inset:0;background-image:repeating-linear-gradient(0deg,rgba(26,26,26,0.05) 0 1.5px,transparent 1.5px 54px),repeating-linear-gradient(90deg,rgba(26,26,26,0.05) 0 1.5px,transparent 1.5px 54px);"></div>
+          <div style="position:absolute;top:50px;left:130px;width:54px;height:200px;background:#F1ECE3;transform:rotate(20deg);"></div>
+          <div style="position:absolute;inset:0;background:rgba(20,17,14,0.42);"></div>
+          <div style="position:absolute;top:14px;left:0;right:0;height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;color:#F7F4EF;">
+            <span style="font-size:14px;font-weight:600;">9:41</span>
+            <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:10px;letter-spacing:0.12em;opacity:0.85;">5G ▮▮▮</span>
+          </div>
+          <!-- filter panel — von oben eingefahren -->
+          <div style="position:absolute;left:0;right:0;top:0;bottom:52px;background:#F7F4EF;border-radius:0 0 32px 32px;display:flex;flex-direction:column;box-shadow:0 14px 44px rgba(20,17,14,0.3);">
+            <div style="height:58px;flex:none;display:flex;align-items:flex-end;justify-content:space-between;padding:0 28px;">
+              <span style="font-size:14px;font-weight:600;">9:41</span>
+              <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:10px;letter-spacing:0.12em;">5G ▮▮▮</span>
+            </div>
+            <div style="flex:none;padding:12px 26px 4px;display:flex;align-items:center;justify-content:space-between;">
+              <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-size:30px;line-height:1;">Filter</span>
+              <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#8A857C;">Zurücksetzen</span>
+            </div>
+            <div style="flex:1;overflow:hidden;padding:14px 26px 0;">
+              <div style="display:flex;gap:24px;">
+                <div style="flex:1;">
+                  <div style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:#8A857C;margin-bottom:10px;">Art</div>
+                  <div style="display:flex;flex-wrap:wrap;gap:8px;">
+                    <span style="background:var(--accent,#FFE500);color:var(--accent-ink,#1A1A1A);border-radius:999px;padding:8px 14px;font-family:'Hanken Grotesk',sans-serif;font-size:12px;font-weight:600;">Bar</span>
+                    <span style="border:1px solid rgba(26,26,26,0.2);border-radius:999px;padding:8px 14px;font-family:'Hanken Grotesk',sans-serif;font-size:12px;color:#6E6A63;">Restaurant</span>
+                    <span style="border:1px solid rgba(26,26,26,0.2);border-radius:999px;padding:8px 14px;font-family:'Hanken Grotesk',sans-serif;font-size:12px;color:#6E6A63;">Club</span>
+                    <span style="border:1px solid rgba(26,26,26,0.2);border-radius:999px;padding:8px 14px;font-family:'Hanken Grotesk',sans-serif;font-size:12px;color:#6E6A63;">Café</span>
+                  </div>
+                </div>
+              </div>
+              <div style="margin-top:18px;">
+                <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:6px;">
+                  <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:#8A857C;">Budget</span>
+                  <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-size:13px;white-space:nowrap;">15 € – 70 €</span>
+                </div>
+                <div style="position:relative;height:22px;margin-top:8px;">
+                  <span style="position:absolute;left:15%;transform:translateX(-50%);font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-size:12px;white-space:nowrap;">15 €</span>
+                  <span style="position:absolute;left:70%;transform:translateX(-50%);font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-size:12px;white-space:nowrap;">70 €</span>
+                </div>
+                <div style="position:relative;height:6px;background:rgba(26,26,26,0.12);border-radius:999px;margin-top:2px;">
+                  <div style="position:absolute;left:15%;right:30%;top:0;bottom:0;background:var(--accent,#FFE500);border-radius:999px;"></div>
+                  <div style="position:absolute;left:15%;top:50%;transform:translate(-50%,-50%);width:22px;height:22px;border-radius:50%;background:#FFFFFF;border:2px solid #1A1A1A;box-shadow:0 2px 6px rgba(0,0,0,0.18);"></div>
+                  <div style="position:absolute;left:70%;top:50%;transform:translate(-50%,-50%);width:22px;height:22px;border-radius:50%;background:#FFFFFF;border:2px solid #1A1A1A;box-shadow:0 2px 6px rgba(0,0,0,0.18);"></div>
+                </div>
+                <div style="display:flex;justify-content:space-between;margin-top:11px;">
+                  <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:11px;color:#8A857C;">0 €</span>
+                  <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:11px;color:#8A857C;">100+ €</span>
+                </div>
+              </div>
+              <div style="margin-top:18px;">
+                <div style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:#8A857C;margin-bottom:10px;">Bewertung</div>
+                <div style="display:flex;gap:8px;">
+                  <span style="border:1px solid rgba(26,26,26,0.2);border-radius:999px;padding:8px 16px;font-family:'Hanken Grotesk',sans-serif;font-size:13px;color:#6E6A63;white-space:nowrap;">Alle</span>
+                  <span style="border:1px solid rgba(26,26,26,0.2);border-radius:999px;padding:8px 16px;font-family:'Hanken Grotesk',sans-serif;font-size:13px;color:#6E6A63;white-space:nowrap;">4,0 ★</span>
+                  <span style="background:var(--accent,#FFE500);color:var(--accent-ink,#1A1A1A);border-radius:999px;padding:8px 16px;font-family:'Hanken Grotesk',sans-serif;font-size:13px;font-weight:600;white-space:nowrap;">4,5 ★</span>
+                </div>
+              </div>
+              <div style="margin-top:20px;">
+                <div style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:#8A857C;margin-bottom:10px;">Ambiente</div>
+                <div style="display:flex;flex-direction:column;gap:8px;">
+                  <div style="border:1px solid rgba(26,26,26,0.14);border-radius:14px;padding:10px 15px;"><span style="font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-size:15px;">Intim</span><span style="font-family:'Hanken Grotesk',sans-serif;font-size:12.5px;color:#6E6A63;"> — gedämpft, eng, für Dates &amp; ruhige Abende</span></div>
+                  <div style="border:1px solid rgba(26,26,26,0.14);border-radius:14px;padding:10px 15px;"><span style="font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-size:15px;">Lebhaft</span><span style="font-family:'Hanken Grotesk',sans-serif;font-size:12.5px;color:#6E6A63;"> — voll, energetisch, laut</span></div>
+                  <div style="border:1px solid rgba(26,26,26,0.14);border-radius:14px;padding:10px 15px;"><span style="font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-size:15px;">Gemütlich</span><span style="font-family:'Hanken Grotesk',sans-serif;font-size:12.5px;color:#6E6A63;"> — warm, entspannt, zum Verweilen</span></div>
+                  <div style="background:var(--accent,#FFE500);color:var(--accent-ink,#1A1A1A);border-radius:14px;padding:10px 15px;"><span style="font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-size:15px;">Underground</span><span style="font-family:'Hanken Grotesk',sans-serif;font-size:12.5px;opacity:0.72;"> — roh, versteckt, ungeschliffen</span></div>
+                  <div style="border:1px solid rgba(26,26,26,0.14);border-radius:14px;padding:10px 15px;"><span style="font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-size:15px;">Elegant</span><span style="font-family:'Hanken Grotesk',sans-serif;font-size:12.5px;color:#6E6A63;"> — schick, durchdesignt, besonderer Anlass</span></div>
+                  <div style="border:1px solid rgba(26,26,26,0.14);border-radius:14px;padding:10px 15px;"><span style="font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-size:15px;">Draußen</span><span style="font-family:'Hanken Grotesk',sans-serif;font-size:12.5px;color:#6E6A63;"> — Garten, Terrasse, Hof</span></div>
+                </div>
+              </div>
+            </div>
+            <div style="flex:none;margin:14px 26px 12px;background:#1A1A1A;color:#F7F4EF;border-radius:18px;padding:17px;display:flex;align-items:center;justify-content:center;gap:10px;">
+              <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-size:17px;white-space:nowrap;">18 Orte zeigen</span>
+              <span style="font-size:16px;">→</span>
+            </div>
+            <div style="flex:none;width:46px;height:5px;border-radius:999px;background:rgba(26,26,26,0.18);margin:0 auto 10px;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 05 STADT-ÜBERSICHT ===== -->
+      <div style="display:flex;flex-direction:column;gap:14px;flex:none;">
+        <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:11px;letter-spacing:0.18em;color:#8A857C;">05 — Stadt-Übersicht</span>
+        <div data-screen-label="Stadt-Übersicht" style="width:390px;height:844px;background:#F7F4EF;position:relative;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 16px 50px rgba(30,24,18,0.18);border-radius:46px;">
+          <div style="height:58px;flex:none;display:flex;align-items:flex-end;justify-content:space-between;padding:0 26px;">
+            <span style="font-size:14px;font-weight:600;">9:41</span>
+            <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:10px;letter-spacing:0.12em;">5G ▮▮▮</span>
+          </div>
+          <div style="padding:14px 28px 18px;flex:none;">
+            <div style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:10px;letter-spacing:0.22em;text-transform:uppercase;color:#8A857C;">Stadt</div>
+            <div style="font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-size:42px;line-height:1;margin-top:6px;">Wien</div>
+            <div style="font-family:'Hanken Grotesk',sans-serif;font-size:13px;color:#6E6A63;margin-top:8px;">Wo geht die Reise hin? Fünf Bezirke, fünf Stimmungen.</div>
+          </div>
+          <div style="flex:1;overflow:hidden;padding:0 18px 100px;display:flex;flex-direction:column;gap:11px;">
+            <div style="background:#FFFFFF;border:1px solid rgba(26,26,26,0.08);border-radius:20px;padding:16px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;">
+              <div><div style="font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-size:21px;line-height:1;">Innere Stadt</div><div style="font-family:'Hanken Grotesk',sans-serif;font-size:12.5px;color:#6E6A63;margin-top:5px;">Touristen oben, Eingeweihte im Keller.</div></div>
+              <span style="width:34px;height:34px;flex:none;border-radius:50%;background:var(--accent,#FFE500);color:var(--accent-ink,#1A1A1A);display:flex;align-items:center;justify-content:center;font-size:15px;">→</span>
+            </div>
+            <div style="background:#FFFFFF;border:1px solid rgba(26,26,26,0.08);border-radius:20px;padding:16px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;">
+              <div><div style="font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-size:21px;line-height:1;">Wieden</div><div style="font-family:'Hanken Grotesk',sans-serif;font-size:12.5px;color:#6E6A63;margin-top:5px;">Beamtenruhe bei Tag, klammheimlich bei Nacht.</div></div>
+              <span style="width:34px;height:34px;flex:none;border-radius:50%;border:1px solid rgba(26,26,26,0.18);display:flex;align-items:center;justify-content:center;font-size:15px;">→</span>
+            </div>
+            <div style="background:#FFFFFF;border:1px solid rgba(26,26,26,0.08);border-radius:20px;padding:16px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;">
+              <div><div style="font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-size:21px;line-height:1;">Neubau</div><div style="font-family:'Hanken Grotesk',sans-serif;font-size:12.5px;color:#6E6A63;margin-top:5px;">Concept Stores und die beste Pizza, über die keiner spricht.</div></div>
+              <span style="width:34px;height:34px;flex:none;border-radius:50%;border:1px solid rgba(26,26,26,0.18);display:flex;align-items:center;justify-content:center;font-size:15px;">→</span>
+            </div>
+            <div style="background:#FFFFFF;border:1px solid rgba(26,26,26,0.08);border-radius:20px;padding:16px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;">
+              <div><div style="font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-size:21px;line-height:1;">Leopoldstadt</div><div style="font-family:'Hanken Grotesk',sans-serif;font-size:12.5px;color:#6E6A63;margin-top:5px;">Hinter dem Prater fängt das echte Wien an.</div></div>
+              <span style="width:34px;height:34px;flex:none;border-radius:50%;border:1px solid rgba(26,26,26,0.18);display:flex;align-items:center;justify-content:center;font-size:15px;">→</span>
+            </div>
+            <div style="background:#FFFFFF;border:1px solid rgba(26,26,26,0.08);border-radius:20px;padding:16px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;">
+              <div><div style="font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-size:21px;line-height:1;">Favoriten</div><div style="font-family:'Hanken Grotesk',sans-serif;font-size:12.5px;color:#6E6A63;margin-top:5px;">Wo die Stadt aufhört, schön sein zu wollen.</div></div>
+              <span style="width:34px;height:34px;flex:none;border-radius:50%;border:1px solid rgba(26,26,26,0.18);display:flex;align-items:center;justify-content:center;font-size:15px;">→</span>
+            </div>
+          </div>
+          <div style="position:absolute;left:16px;right:16px;bottom:16px;height:62px;background:#FFFFFF;border:1px solid rgba(26,26,26,0.1);border-radius:24px;display:flex;align-items:center;padding:7px;box-shadow:0 10px 28px rgba(30,24,18,0.12);">
+            <span style="flex:1;text-align:center;padding:13px 0;font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:#8A857C;">Feed</span>
+            <span style="flex:1;text-align:center;background:var(--accent,#FFE500);color:var(--accent-ink,#1A1A1A);border-radius:17px;padding:13px 0;font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;font-weight:500;">Viertel</span>
+            <span style="flex:1;text-align:center;padding:13px 0;font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:#8A857C;">Karte</span>
+            <span style="flex:1;display:flex;align-items:center;justify-content:center;padding:8px 0;"><span style="position:relative;width:32px;height:32px;display:flex;align-items:center;justify-content:center;"><span style="width:26px;height:26px;border-radius:50%;background:#1A1A1A;color:var(--accent,#FFE500);display:flex;align-items:center;justify-content:center;font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-size:14px;">?</span><svg viewBox="0 0 56 56" fill="none" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:48px;height:48px;overflow:visible;"><path d="M27 8 C40 4 52 15 49 27 C52 41 38 52 26 49 C13 52 5 38 8 26 C4 14 16 5 31 9" style="stroke:var(--accent,#FFE500);" stroke-width="2.4" stroke-linecap="round"/></svg></span></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 06 GESPEICHERT ===== -->
+      <div style="display:flex;flex-direction:column;gap:14px;flex:none;">
+        <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:11px;letter-spacing:0.18em;color:#8A857C;">06 — Gespeichert</span>
+        <div data-screen-label="Gespeichert" style="width:390px;height:844px;background:#F7F4EF;position:relative;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 16px 50px rgba(30,24,18,0.18);border-radius:46px;">
+          <div style="height:58px;flex:none;display:flex;align-items:flex-end;justify-content:space-between;padding:0 26px;">
+            <span style="font-size:14px;font-weight:600;">9:41</span>
+            <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:10px;letter-spacing:0.12em;">5G ▮▮▮</span>
+          </div>
+          <div style="padding:8px 28px 12px;flex:none;">
+            <div style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:10px;letter-spacing:0.22em;text-transform:uppercase;color:#8A857C;">Gespeichert</div>
+            <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-top:5px;">
+              <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-size:32px;line-height:1;">Wien <span style="font-size:16px;color:#8A857C;">▾</span></span>
+              <span style="background:var(--accent,#FFE500);color:var(--accent-ink,#1A1A1A);border-radius:999px;padding:6px 13px;font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:10px;letter-spacing:0.1em;white-space:nowrap;">4 ORTE</span>
+            </div>
+          </div>
+          <div style="padding:0 28px 12px;flex:none;display:flex;flex-direction:column;gap:9px;">
+            <div style="display:flex;gap:7px;justify-content:center;">
+              <span style="background:var(--accent,#FFE500);color:var(--accent-ink,#1A1A1A);border-radius:999px;padding:8px 13px;font-family:'Hanken Grotesk',sans-serif;font-size:12px;font-weight:600;">Art</span>
+              <span style="background:#FFFFFF;border:1px solid rgba(26,26,26,0.14);color:#1A1A1A;border-radius:999px;padding:8px 13px;font-family:'Hanken Grotesk',sans-serif;font-size:12px;">Budget</span>
+              <span style="background:#FFFFFF;border:1px solid rgba(26,26,26,0.14);color:#1A1A1A;border-radius:999px;padding:8px 13px;font-family:'Hanken Grotesk',sans-serif;font-size:12px;">Bewertung</span>
+              <span style="background:var(--accent,#FFE500);color:var(--accent-ink,#1A1A1A);border-radius:999px;padding:8px 13px;font-family:'Hanken Grotesk',sans-serif;font-size:12px;font-weight:600;">Ambiente</span>
+            </div>
+            <div style="background:#FFFFFF;border:1px solid rgba(26,26,26,0.14);border-radius:13px;padding:11px 0;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 3px 10px rgba(30,24,18,0.12);padding-top:8px;padding-bottom:8px;">
+              <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:#1A1A1A;">Filter</span>
+              <span style="font-size:11px;color:#1A1A1A;">▾</span>
+            </div>
+          </div>
+          <div style="flex:1;overflow:hidden;padding:0 26px 100px;">
+            <div style="display:flex;gap:15px;padding:16px 0;border-bottom:1px solid rgba(26,26,26,0.1);align-items:flex-start;">
+              <div style="width:60px;height:76px;flex:none;border-radius:16px;background:#2A211C;background-image:repeating-linear-gradient(125deg,rgba(255,255,255,0.05) 0 1px,transparent 1px 7px);"></div>
+              <div style="flex:1;"><div style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:9px;letter-spacing:0.16em;color:#8A857C;">BAR · WIEDEN</div><div style="font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-size:22px;line-height:1;margin-top:4px;">Kleinod</div><div style="font-family:'Hanken Grotesk',sans-serif;font-size:12px;color:#6E6A63;margin-top:5px;">Ein Hinterzimmer, das offiziell nicht existiert.</div><div style="font-family:'Hanken Grotesk',sans-serif;font-size:11px;color:#6E6A63;margin-top:3px;">Schleifmühlgasse 12 · 1040 Wien</div></div>
+            </div>
+            <div style="display:flex;gap:15px;padding:16px 0;border-bottom:1px solid rgba(26,26,26,0.1);align-items:flex-start;">
+              <div style="width:60px;height:76px;flex:none;border-radius:16px;background:#20251F;background-image:repeating-linear-gradient(125deg,rgba(255,255,255,0.05) 0 1px,transparent 1px 7px);"></div>
+              <div style="flex:1;"><div style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:9px;letter-spacing:0.16em;color:#8A857C;">WEINBAR · NASCHMARKT</div><div style="font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-size:22px;line-height:1;margin-top:4px;">Marktlücke</div><div style="font-family:'Hanken Grotesk',sans-serif;font-size:12px;color:#6E6A63;margin-top:5px;">Der Greißler zieht abends den Rollladen halb runter.</div><div style="font-family:'Hanken Grotesk',sans-serif;font-size:11px;color:#6E6A63;margin-top:3px;">Naschmarkt 421 · 1060 Wien</div></div>
+            </div>
+            <div style="display:flex;gap:15px;padding:16px 0;border-bottom:1px solid rgba(26,26,26,0.1);align-items:flex-start;">
+              <div style="width:60px;height:76px;flex:none;border-radius:16px;background:#281F1A;background-image:repeating-linear-gradient(125deg,rgba(255,255,255,0.05) 0 1px,transparent 1px 7px);"></div>
+              <div style="flex:1;"><div style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:9px;letter-spacing:0.16em;color:#8A857C;">RESTAURANT · LEOPOLDSTADT</div><div style="font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-size:22px;line-height:1;margin-top:4px;">Dogenhof</div><div style="font-family:'Hanken Grotesk',sans-serif;font-size:12px;color:#6E6A63;margin-top:5px;">Venezianische Fassade, Pasta ohne Speisekarte.</div><div style="font-family:'Hanken Grotesk',sans-serif;font-size:11px;color:#6E6A63;margin-top:3px;">Praterstraße 70 · 1020 Wien</div></div>
+            </div>
+            <div style="display:flex;gap:15px;padding:16px 0;align-items:flex-start;">
+              <div style="width:60px;height:76px;flex:none;border-radius:16px;background:#232B25;background-image:repeating-linear-gradient(125deg,rgba(255,255,255,0.05) 0 1px,transparent 1px 7px);"></div>
+              <div style="flex:1;"><div style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:9px;letter-spacing:0.16em;color:#8A857C;">CAFÉ · NEUBAU</div><div style="font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-size:22px;line-height:1;margin-top:4px;">Halbe Stadt</div><div style="font-family:'Hanken Grotesk',sans-serif;font-size:12px;color:#6E6A63;margin-top:5px;">Espresso im Stehen, Stammgäste ohne Namen.</div><div style="font-family:'Hanken Grotesk',sans-serif;font-size:11px;color:#6E6A63;margin-top:3px;">Lindengasse 38 · 1070 Wien</div></div>
+            </div>
+          </div>
+          <div style="position:absolute;left:16px;right:16px;bottom:16px;height:62px;background:#FFFFFF;border:1px solid rgba(26,26,26,0.1);border-radius:24px;display:flex;align-items:center;padding:7px;box-shadow:0 10px 28px rgba(30,24,18,0.12);">
+            <span style="flex:1;text-align:center;padding:13px 0;font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:#8A857C;">Feed</span>
+            <span style="flex:1;text-align:center;padding:13px 0;font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:#8A857C;">Viertel</span>
+            <span style="flex:1;text-align:center;padding:13px 0;font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:#8A857C;">Karte</span>
+            <span style="flex:1;text-align:center;background:var(--accent,#FFE500);color:var(--accent-ink,#1A1A1A);border-radius:17px;padding:13px 0;font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;font-weight:500;">Du</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 07 PROFIL ===== -->
+      <div style="display:flex;flex-direction:column;gap:14px;flex:none;">
+        <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:11px;letter-spacing:0.18em;color:#8A857C;">07 — Profil</span>
+        <div data-screen-label="Profil" style="width:390px;height:844px;background:#F7F4EF;position:relative;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 16px 50px rgba(30,24,18,0.18);border-radius:46px;">
+          <div style="height:58px;flex:none;display:flex;align-items:flex-end;justify-content:space-between;padding:0 26px;">
+            <span style="font-size:14px;font-weight:600;">9:41</span>
+            <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:10px;letter-spacing:0.12em;">5G ▮▮▮</span>
+          </div>
+          <div style="flex:1;overflow:hidden;padding:14px 28px 100px;display:flex;flex-direction:column;">
+            <div style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:10px;letter-spacing:0.22em;text-transform:uppercase;color:#8A857C;">Profil</div>
+            <div style="display:flex;align-items:center;gap:16px;margin-top:14px;">
+              <div style="width:70px;height:70px;flex:none;border-radius:50%;background:#2A211C;background-image:repeating-linear-gradient(125deg,rgba(255,255,255,0.06) 0 1px,transparent 1px 7px);display:flex;align-items:center;justify-content:center;font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-style:italic;font-size:22px;color:#F7F4EF;">LH</div>
+              <div>
+                <div style="font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-size:27px;line-height:1;white-space:nowrap;">Lena Hofer</div>
+                <div style="display:flex;align-items:center;gap:8px;margin-top:9px;">
+                  <span style="border:1px solid rgba(26,26,26,0.25);border-radius:999px;padding:4px 10px;font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:#6E6A63;white-space:nowrap;">Noch kein Insider</span>
+                </div>
+              </div>
+            </div>
+            <div style="margin-top:16px;background:#1A1A1A;color:#F7F4EF;border-radius:20px;padding:16px 18px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+                <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:9px;letter-spacing:0.16em;text-transform:uppercase;color:rgba(247,244,239,0.55);">Geheimtipp der Woche · für alle</span>
+                <span style="width:32px;height:32px;flex:none;border-radius:50%;background:var(--accent,#FFE500);color:var(--accent-ink,#1A1A1A);display:flex;align-items:center;justify-content:center;font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-size:17px;">?</span>
+              </div>
+              <div style="font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-size:23px;line-height:1;margin-top:12px;">Café Schwarzraum</div>
+              <div style="font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-style:italic;font-size:14px;line-height:1.35;color:rgba(247,244,239,0.82);margin-top:6px;">Kein Schild, kein WLAN — nur Filterkaffee und die halbe Stadt, die so tut, als wüsste sie's nicht.</div>
+            </div>
+            <div style="display:flex;margin-top:16px;background:#FFFFFF;border:1px solid rgba(26,26,26,0.08);border-radius:20px;padding:16px 0;">
+              <div style="flex:1;text-align:center;border-right:1px solid rgba(26,26,26,0.1);">
+                <div style="font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-size:26px;line-height:1;">12</div>
+                <div style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:9px;letter-spacing:0.14em;text-transform:uppercase;color:#8A857C;margin-top:6px;">Gespeichert</div>
+              </div>
+              <div style="flex:1;text-align:center;border-right:1px solid rgba(26,26,26,0.1);">
+                <div style="font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-size:26px;line-height:1;">8</div>
+                <div style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:9px;letter-spacing:0.14em;text-transform:uppercase;color:#8A857C;margin-top:6px;">Viertel</div>
+              </div>
+              <div style="flex:1;text-align:center;">
+                <div style="font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-size:26px;line-height:1;">3</div>
+                <div style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:9px;letter-spacing:0.14em;text-transform:uppercase;color:#8A857C;margin-top:6px;">Städte</div>
+              </div>
+            </div>
+            <div style="margin-top:14px;background:var(--accent,#FFE500);color:var(--accent-ink,#1A1A1A);border-radius:20px;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;">
+              <div>
+                <div style="font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-style:italic;font-size:21px;line-height:1;">Verso Insider</div>
+                <div style="font-family:'Hanken Grotesk',sans-serif;font-size:12.5px;line-height:1.35;margin-top:6px;opacity:0.85;">Geheimtipps, bevor sie keine mehr sind.</div>
+              </div>
+              <span style="width:40px;height:40px;flex:none;border-radius:50%;background:#1A1A1A;color:#F7F4EF;display:flex;align-items:center;justify-content:center;font-size:17px;">→</span>
+            </div>
+            <div style="margin-top:12px;display:flex;flex-direction:column;gap:8px;">
+              <div style="background:#FFFFFF;border:1px solid rgba(26,26,26,0.08);border-radius:18px;padding:13px 18px;display:flex;align-items:center;justify-content:space-between;">
+                <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-size:16px;white-space:nowrap;">Gespeicherte Orte</span>
+                <span style="display:flex;align-items:center;gap:12px;"><span style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:13px;color:#8A857C;">12</span><span style="font-size:15px;color:#8A857C;">→</span></span>
+              </div>
+              <div style="background:#FFFFFF;border:1px solid rgba(26,26,26,0.08);border-radius:18px;padding:13px 18px;display:flex;align-items:center;justify-content:space-between;">
+                <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-size:16px;white-space:nowrap;">Einstellungen</span>
+                <span style="font-size:15px;color:#8A857C;">→</span>
+              </div>
+              <div style="background:#FFFFFF;border:1px solid rgba(26,26,26,0.08);border-radius:18px;padding:13px 18px;display:flex;align-items:center;justify-content:space-between;">
+                <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-size:16px;white-space:nowrap;">Verso unterstützen</span>
+                <span style="display:flex;align-items:center;gap:11px;"><span style="background:var(--accent,#FFE500);color:var(--accent-ink,#1A1A1A);border-radius:999px;padding:5px 11px;font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:10px;letter-spacing:0.08em;text-transform:uppercase;">Spende</span><span style="font-size:15px;color:#8A857C;">→</span></span>
+              </div>
+              <div style="background:#FFFFFF;border:1px solid rgba(26,26,26,0.08);border-radius:18px;padding:13px 18px;display:flex;align-items:center;justify-content:space-between;">
+                <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-size:16px;white-space:nowrap;">Vorschlag machen</span>
+                <span style="display:flex;align-items:center;gap:10px;"><span style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:#8A857C;">verso.app</span><span style="font-size:15px;color:#8A857C;">↗</span></span>
+              </div>
+            </div>
+          </div>
+          <div style="position:absolute;left:16px;right:16px;bottom:16px;height:62px;background:#FFFFFF;border:1px solid rgba(26,26,26,0.1);border-radius:24px;display:flex;align-items:center;padding:7px;box-shadow:0 10px 28px rgba(30,24,18,0.12);">
+            <span style="flex:1;text-align:center;padding:13px 0;font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:#8A857C;">Feed</span>
+            <span style="flex:1;text-align:center;padding:13px 0;font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:#8A857C;">Viertel</span>
+            <span style="flex:1;text-align:center;padding:13px 0;font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:#8A857C;">Karte</span>
+            <span style="flex:1;text-align:center;background:var(--accent,#FFE500);color:var(--accent-ink,#1A1A1A);border-radius:17px;padding:13px 0;font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;font-weight:500;">Du</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 07b EINSTELLUNGEN ===== -->
+      <div style="display:flex;flex-direction:column;gap:14px;flex:none;">
+        <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:11px;letter-spacing:0.18em;color:#8A857C;">07 — Einstellungen</span>
+        <div data-screen-label="Einstellungen" style="width:390px;height:844px;background:#F7F4EF;position:relative;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 16px 50px rgba(30,24,18,0.18);border-radius:46px;">
+          <div style="height:58px;flex:none;display:flex;align-items:flex-end;justify-content:space-between;padding:0 26px;">
+            <span style="font-size:14px;font-weight:600;">9:41</span>
+            <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:10px;letter-spacing:0.12em;">5G ▮▮▮</span>
+          </div>
+          <div style="flex:none;display:flex;align-items:center;gap:14px;padding:12px 26px 16px;">
+            <span style="width:42px;height:42px;border-radius:50%;border:1px solid rgba(26,26,26,0.18);display:flex;align-items:center;justify-content:center;font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-size:18px;">←</span>
+            <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-size:30px;line-height:1;">Einstellungen</span>
+          </div>
+          <div style="flex:1;overflow:hidden;padding:4px 24px 24px;display:flex;flex-direction:column;gap:18px;">
+            <div>
+              <div style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:#8A857C;margin-bottom:9px;">Konto</div>
+              <div style="background:#FFFFFF;border:1px solid rgba(26,26,26,0.08);border-radius:18px;overflow:hidden;">
+                <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid rgba(26,26,26,0.07);">
+                  <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-size:15px;">Profil bearbeiten</span>
+                  <span style="font-size:15px;color:#8A857C;">→</span>
+                </div>
+                <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid rgba(26,26,26,0.07);">
+                  <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-size:15px;">E-Mail</span>
+                  <span style="font-family:'Hanken Grotesk',sans-serif;font-size:13px;color:#8A857C;">lena@verso&#8203;.app</span>
+                </div>
+                <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;">
+                  <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-size:15px;">Passwort ändern</span>
+                  <span style="font-size:15px;color:#8A857C;">→</span>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:#8A857C;margin-bottom:9px;">Benachrichtigungen</div>
+              <div style="background:#FFFFFF;border:1px solid rgba(26,26,26,0.08);border-radius:18px;overflow:hidden;">
+                <div style="display:flex;align-items:center;justify-content:space-between;padding:13px 16px;border-bottom:1px solid rgba(26,26,26,0.07);">
+                  <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-size:15px;">Geheimtipp der Woche</span>
+                  <span style="width:42px;height:25px;border-radius:999px;background:var(--accent,#FFE500);position:relative;display:inline-block;flex:none;"><span style="position:absolute;top:2.5px;right:2.5px;width:20px;height:20px;border-radius:50%;background:#1A1A1A;"></span></span>
+                </div>
+                <div style="display:flex;align-items:center;justify-content:space-between;padding:13px 16px;border-bottom:1px solid rgba(26,26,26,0.07);">
+                  <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-size:15px;">Neue Spots in der Nähe</span>
+                  <span style="width:42px;height:25px;border-radius:999px;background:var(--accent,#FFE500);position:relative;display:inline-block;flex:none;"><span style="position:absolute;top:2.5px;right:2.5px;width:20px;height:20px;border-radius:50%;background:#1A1A1A;"></span></span>
+                </div>
+                <div style="display:flex;align-items:center;justify-content:space-between;padding:13px 16px;">
+                  <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-size:15px;">Events &amp; Termine</span>
+                  <span style="width:42px;height:25px;border-radius:999px;background:rgba(26,26,26,0.16);position:relative;display:inline-block;flex:none;"><span style="position:absolute;top:2.5px;left:2.5px;width:20px;height:20px;border-radius:50%;background:#FFFFFF;box-shadow:0 1px 2px rgba(0,0,0,0.2);"></span></span>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:#8A857C;margin-bottom:9px;">App</div>
+              <div style="background:#FFFFFF;border:1px solid rgba(26,26,26,0.08);border-radius:18px;overflow:hidden;">
+                <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid rgba(26,26,26,0.07);">
+                  <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-size:15px;">Sprache</span>
+                  <span style="font-family:'Hanken Grotesk',sans-serif;font-size:13px;color:#8A857C;">Deutsch</span>
+                </div>
+                <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid rgba(26,26,26,0.07);">
+                  <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-size:15px;">Erscheinungsbild</span>
+                  <span style="font-family:'Hanken Grotesk',sans-serif;font-size:13px;color:#8A857C;">Hell</span>
+                </div>
+                <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;">
+                  <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-size:15px;">Rechtliches &amp; Hilfe</span>
+                  <span style="font-size:15px;color:#8A857C;">→</span>
+                </div>
+              </div>
+            </div>
+            <div style="margin-top:auto;display:flex;flex-direction:column;align-items:center;gap:12px;padding-top:8px;">
+              <div style="width:100%;border:1px solid rgba(26,26,26,0.2);border-radius:16px;padding:15px;text-align:center;font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-size:15px;">Abmelden</div>
+              <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:11px;letter-spacing:0.06em;color:rgba(26,26,26,0.4);">Konto löschen</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 07c PROFIL BEARBEITEN ===== -->
+      <div style="display:flex;flex-direction:column;gap:14px;flex:none;">
+        <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:11px;letter-spacing:0.18em;color:#8A857C;">07 — Profil bearbeiten</span>
+        <div data-screen-label="Profil bearbeiten" style="width:390px;height:844px;background:#F7F4EF;position:relative;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 16px 50px rgba(30,24,18,0.18);border-radius:46px;">
+          <div style="height:58px;flex:none;display:flex;align-items:flex-end;justify-content:space-between;padding:0 26px;">
+            <span style="font-size:14px;font-weight:600;">9:41</span>
+            <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:10px;letter-spacing:0.12em;">5G ▮▮▮</span>
+          </div>
+          <div style="flex:none;display:flex;align-items:center;gap:14px;padding:12px 26px 14px;">
+            <span style="width:42px;height:42px;border-radius:50%;border:1px solid rgba(26,26,26,0.18);display:flex;align-items:center;justify-content:center;font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-size:18px;">←</span>
+            <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-size:28px;line-height:1;">Profil bearbeiten</span>
+          </div>
+          <div style="flex:1;overflow:hidden;padding:6px 28px 24px;display:flex;flex-direction:column;">
+            <div style="display:flex;flex-direction:column;align-items:center;gap:10px;margin-bottom:20px;">
+              <div style="position:relative;width:84px;height:84px;">
+                <div style="width:84px;height:84px;border-radius:50%;background:#2A211C;background-image:repeating-linear-gradient(125deg,rgba(255,255,255,0.06) 0 1px,transparent 1px 7px);display:flex;align-items:center;justify-content:center;font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-style:italic;font-size:26px;color:#F7F4EF;">LH</div>
+                <span style="position:absolute;bottom:-2px;right:-2px;width:30px;height:30px;border-radius:50%;background:var(--accent,#FFE500);color:#1A1A1A;border:3px solid #F7F4EF;display:flex;align-items:center;justify-content:center;font-size:13px;">✎</span>
+              </div>
+              <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:12px;text-decoration:underline;color:#1A1A1A;">Foto ändern</span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:14px;">
+              <div>
+                <div style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:#8A857C;margin-bottom:7px;">Name</div>
+                <div style="border:1px solid rgba(26,26,26,0.2);border-radius:14px;padding:14px 16px;font-family:'Hanken Grotesk',sans-serif;font-size:15px;color:#1A1A1A;background:#FFFFFF;">Lena Hofer</div>
+              </div>
+              <div>
+                <div style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:#8A857C;margin-bottom:7px;">Benutzername</div>
+                <div style="border:1px solid rgba(26,26,26,0.2);border-radius:14px;padding:14px 16px;font-family:'Hanken Grotesk',sans-serif;font-size:15px;color:#1A1A1A;background:#FFFFFF;">@lenahofer</div>
+              </div>
+              <div>
+                <div style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:#8A857C;margin-bottom:7px;">Bio</div>
+                <div style="border:1px solid rgba(26,26,26,0.2);border-radius:14px;padding:14px 16px;font-family:'Hanken Grotesk',sans-serif;font-size:15px;line-height:1.4;color:#1A1A1A;background:#FFFFFF;min-height:64px;">Sammelt Hinterzimmer und Plätze ohne Schild.</div>
+              </div>
+            </div>
+            <div style="margin-top:auto;background:var(--accent,#FFE500);color:var(--accent-ink,#1A1A1A);border-radius:16px;padding:16px;display:flex;align-items:center;justify-content:center;">
+              <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-size:17px;">Speichern</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 07d PASSWORT ÄNDERN ===== -->
+      <div style="display:flex;flex-direction:column;gap:14px;flex:none;">
+        <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:11px;letter-spacing:0.18em;color:#8A857C;">07 — Passwort ändern</span>
+        <div data-screen-label="Passwort ändern" style="width:390px;height:844px;background:#F7F4EF;position:relative;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 16px 50px rgba(30,24,18,0.18);border-radius:46px;">
+          <div style="height:58px;flex:none;display:flex;align-items:flex-end;justify-content:space-between;padding:0 26px;">
+            <span style="font-size:14px;font-weight:600;">9:41</span>
+            <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:10px;letter-spacing:0.12em;">5G ▮▮▮</span>
+          </div>
+          <div style="flex:none;display:flex;align-items:center;gap:14px;padding:12px 26px 14px;">
+            <span style="width:42px;height:42px;border-radius:50%;border:1px solid rgba(26,26,26,0.18);display:flex;align-items:center;justify-content:center;font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-size:18px;">←</span>
+            <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-size:28px;line-height:1;">Passwort ändern</span>
+          </div>
+          <div style="flex:1;overflow:hidden;padding:10px 28px 24px;display:flex;flex-direction:column;">
+            <div style="display:flex;flex-direction:column;gap:14px;">
+              <div>
+                <div style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:#8A857C;margin-bottom:7px;">Aktuelles Passwort</div>
+                <div style="border:1px solid rgba(26,26,26,0.2);border-radius:14px;padding:15px 16px;font-family:'Hanken Grotesk',sans-serif;font-size:16px;letter-spacing:0.12em;color:#1A1A1A;background:#FFFFFF;display:flex;align-items:center;justify-content:space-between;">••••••••<span style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:11px;letter-spacing:0;text-transform:uppercase;color:#8A857C;">Zeigen</span></div>
+              </div>
+              <div>
+                <div style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:#8A857C;margin-bottom:7px;">Neues Passwort</div>
+                <div style="border:1px solid rgba(26,26,26,0.2);border-radius:14px;padding:15px 16px;font-family:'Hanken Grotesk',sans-serif;font-size:16px;letter-spacing:0.12em;color:#1A1A1A;background:#FFFFFF;">••••••••••</div>
+              </div>
+              <div>
+                <div style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:#8A857C;margin-bottom:7px;">Neues Passwort bestätigen</div>
+                <div style="border:1px solid rgba(26,26,26,0.2);border-radius:14px;padding:15px 16px;font-family:'Hanken Grotesk',sans-serif;font-size:16px;letter-spacing:0.12em;color:#1A1A1A;background:#FFFFFF;">••••••••••</div>
+              </div>
+            </div>
+            <div style="font-family:'Hanken Grotesk',sans-serif;font-size:12px;line-height:1.45;color:#6E6A63;margin-top:14px;">Mindestens 8 Zeichen, davon eine Zahl und ein Sonderzeichen.</div>
+            <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:12px;text-decoration:underline;color:#1A1A1A;margin-top:16px;">Passwort vergessen?</span>
+            <div style="margin-top:auto;background:var(--accent,#FFE500);color:var(--accent-ink,#1A1A1A);border-radius:16px;padding:16px;display:flex;align-items:center;justify-content:center;">
+              <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-size:17px;">Passwort aktualisieren</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 08 GEHEIMTIPP LADESCREEN ===== -->
+      <div style="display:flex;flex-direction:column;gap:14px;flex:none;">
+        <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:11px;letter-spacing:0.18em;color:#8A857C;">08 — Geheimtipp (lädt)</span>
+        <div data-screen-label="Geheimtipp laden" style="width:390px;height:844px;background:#1A1A1A;position:relative;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 16px 50px rgba(30,24,18,0.18);border-radius:46px;">
+          <div style="height:58px;flex:none;display:flex;align-items:flex-end;justify-content:space-between;padding:0 26px;color:#F7F4EF;">
+            <span style="font-size:14px;font-weight:600;">9:41</span>
+            <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:10px;letter-spacing:0.12em;opacity:0.85;">5G ▮▮▮</span>
+          </div>
+          <div style="flex:none;display:flex;justify-content:flex-end;padding:12px 26px 0;">
+            <span style="width:42px;height:42px;border-radius:50%;border:1px solid rgba(247,244,239,0.25);display:flex;align-items:center;justify-content:center;font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-size:16px;color:#F7F4EF;">✕</span>
+          </div>
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 40px;">
+            <div style="position:relative;width:150px;height:150px;display:flex;align-items:center;justify-content:center;">
+              <svg viewBox="0 0 56 56" fill="none" style="position:absolute;inset:0;width:100%;height:100%;overflow:visible;animation:verso-spin 9s linear infinite;transform-origin:center;"><path d="M27 8 C40 4 52 15 49 27 C52 41 38 52 26 49 C13 52 5 38 8 26 C4 14 16 5 31 9" style="stroke:var(--accent,#FFE500);" stroke-width="1.6" stroke-linecap="round"/></svg>
+              <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-size:52px;color:var(--accent,#FFE500);">?</span>
+            </div>
+            <div style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:11px;letter-spacing:0.22em;text-transform:uppercase;color:rgba(247,244,239,0.55);margin-top:34px;">Geheimtipp der Woche</div>
+            <div style="font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-style:italic;font-size:22px;line-height:1.3;color:#F7F4EF;text-align:center;margin-top:12px;max-width:260px;">Wir kramen kurz<br>im Hinterzimmer …</div>
+            <div style="position:relative;width:170px;height:5px;background:rgba(247,244,239,0.14);border-radius:999px;overflow:hidden;margin-top:26px;">
+              <div style="position:absolute;top:0;bottom:0;width:45%;background:var(--accent,#FFE500);border-radius:999px;animation:verso-load 1.3s ease-in-out infinite;"></div>
+            </div>
+          </div>
+          <div style="flex:none;text-align:center;padding-bottom:36px;font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:rgba(247,244,239,0.4);">Für alle · einmal wöchentlich</div>
+        </div>
+      </div>
+
+      <!-- ===== 08b GEHEIMTIPP REVEAL ===== -->
+      <div style="display:flex;flex-direction:column;gap:14px;flex:none;">
+        <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:11px;letter-spacing:0.18em;color:#8A857C;">08 — Geheimtipp (Reveal)</span>
+        <div data-screen-label="Geheimtipp Reveal" style="width:390px;height:844px;background:var(--accent,#FFE500);position:relative;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 16px 50px rgba(30,24,18,0.18);border-radius:46px;color:#1A1A1A;">
+          <div style="height:58px;flex:none;display:flex;align-items:flex-end;justify-content:space-between;padding:0 26px;">
+            <span style="font-size:14px;font-weight:600;">9:41</span>
+            <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:10px;letter-spacing:0.12em;">5G ▮▮▮</span>
+          </div>
+          <div style="flex:none;display:flex;align-items:center;justify-content:space-between;padding:12px 26px 0;">
+            <span style="background:#1A1A1A;color:var(--accent,#FFE500);border-radius:999px;padding:7px 14px;font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;">✓ Aufgedeckt</span>
+            <span style="width:42px;height:42px;border-radius:50%;border:1px solid rgba(26,26,26,0.25);display:flex;align-items:center;justify-content:center;font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-size:16px;">✕</span>
+          </div>
+          <div style="flex:1;padding:18px 28px 0;display:flex;flex-direction:column;">
+            <div style="font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:10px;letter-spacing:0.22em;text-transform:uppercase;color:rgba(26,26,26,0.55);">Geheimtipp der Woche</div>
+            <div style="font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-size:44px;line-height:0.92;margin-top:8px;">Café Schwarzraum</div>
+            <div style="position:relative;height:236px;border-radius:24px;overflow:hidden;background:#232B25;margin-top:18px;animation:verso-throb 1.5s ease-in-out infinite;">
+              <div style="position:absolute;inset:0;background-image:repeating-linear-gradient(125deg,rgba(255,255,255,0.05) 0 1px,transparent 1px 8px);"></div>
+              <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(16,16,20,0) 50%,rgba(16,16,20,0.55) 100%);"></div>
+              <span style="position:absolute;top:14px;left:14px;background:var(--accent,#FFE500);color:#1A1A1A;border-radius:999px;padding:5px 12px;font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:9px;letter-spacing:0.14em;white-space:nowrap;">CAFÉ · NEUBAU · €</span>
+              <span style="position:absolute;bottom:13px;left:16px;right:16px;font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:11px;color:rgba(247,244,239,0.8);">Lerchenfelder Straße 14 · 1070 Wien</span>
+              <span style="position:absolute;top:12px;right:12px;width:34px;height:34px;border-radius:50%;background:var(--accent,#FFE500);color:#1A1A1A;display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:0 3px 10px rgba(0,0,0,0.28);">→</span>
+            </div>
+            <div style="font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-style:italic;font-size:18px;line-height:1.35;margin-top:16px;max-width:300px;">Kein Schild, kein WLAN — nur Filterkaffee und die halbe Stadt, die so tut, als wüsste sie's nicht.</div>
+            <div style="margin-top:auto;margin-bottom:26px;display:flex;flex-direction:column;gap:9px;">
+              <div style="background:#1A1A1A;color:#F7F4EF;border-radius:18px;padding:17px;display:flex;align-items:center;justify-content:space-between;">
+                <span style="font-family:'Hanken Grotesk',sans-serif;font-weight:800;font-size:17px;white-space:nowrap;">Weiter zu deinem Profil</span>
+                <span style="width:34px;height:34px;flex:none;border-radius:50%;background:var(--accent,#FFE500);color:#1A1A1A;display:flex;align-items:center;justify-content:center;font-size:16px;">→</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:2200,&quot;height&quot;:1500},&quot;accent&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Gelb&quot;,&quot;Terrakotta&quot;,&quot;Tiefgrün&quot;],&quot;default&quot;:&quot;Gelb&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;overlayOpacity&quot;:{&quot;editor&quot;:&quot;float&quot;,&quot;min&quot;:0,&quot;max&quot;:0.85,&quot;step&quot;:0.05,&quot;default&quot;:0.45,&quot;tsType&quot;:&quot;number&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    const map = {
+      'Gelb':       { c: '#FFE500', ink: '#1A1A1A' },
+      'Terrakotta': { c: '#B5532A', ink: '#F7F4EF' },
+      'Tiefgrün':   { c: '#2E4034', ink: '#F7F4EF' },
+    };
+    const sel = map[this.props.accent] || map['Gelb'];
+    return {
+      accentColor: sel.c,
+      accentInk: sel.ink,
+      overlayOpacity: this.props.overlayOpacity ?? 0.45,
+    };
+  }
+}
+</script>
+</body>
+</html>

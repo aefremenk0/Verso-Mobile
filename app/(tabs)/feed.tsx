@@ -1,7 +1,7 @@
-import { useRouter } from "expo-router";
 import { useMemo, useState } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { DuAvatar } from "../../src/components/DuAvatar";
 import { Pill } from "../../src/components/Pill";
 import { SpotCard } from "../../src/components/SpotCard";
 import { CATEGORY_FILTERS } from "../../src/data/categories";
@@ -13,7 +13,6 @@ import { useCity } from "../../src/store/city";
 // Stadt-Dropdown oben, Kategorie-Pills mit funktionierendem Filter, Spot-Karten.
 
 export default function Feed() {
-  const router = useRouter();
   const { city, setCity, cities } = useCity();
   const [activeCategory, setActiveCategory] = useState<Category | null>(null);
   const [cityMenu, setCityMenu] = useState(false);
@@ -40,12 +39,7 @@ export default function Feed() {
             <Text className="ml-1 font-hk-bold text-[18px] text-ink-3">▾</Text>
           </Pressable>
 
-          <Pressable
-            onPress={() => router.push("/(tabs)/profil")}
-            className="rounded-pill bg-chip px-4 py-2"
-          >
-            <Text className="font-hk-semibold text-[13px] text-ink-2">Du</Text>
-          </Pressable>
+          <DuAvatar />
         </View>
 
         {/* Aufklappbares Stadt-Menü */}

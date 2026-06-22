@@ -16,6 +16,8 @@ interface SavedContextValue {
   savedIds: string[];
   isSaved: (id: string) => boolean;
   toggle: (id: string) => void;
+  /** Beim Abmelden: zurück auf die Startwerte. */
+  reset: () => void;
 }
 
 const SavedContext = createContext<SavedContextValue | null>(null);
@@ -29,13 +31,16 @@ export function SavedProvider({ children }: { children: ReactNode }) {
     );
   }, []);
 
+  const reset = useCallback(() => setSavedIds(MOCK_USER.savedSpotIds), []);
+
   const value = useMemo<SavedContextValue>(
     () => ({
       savedIds,
       isSaved: (id: string) => savedIds.includes(id),
       toggle,
+      reset,
     }),
-    [savedIds, toggle],
+    [savedIds, toggle, reset],
   );
 
   return <SavedContext.Provider value={value}>{children}</SavedContext.Provider>;

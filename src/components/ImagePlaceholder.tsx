@@ -1,5 +1,6 @@
 import { Text, View, type ViewStyle } from "react-native";
 import type { PlaceholderTone } from "../data/types";
+import { StripeTexture } from "./StripeTexture";
 
 // Dunkler Bild-Platzhalter mit diagonalem Streifen-Overlay.
 //
@@ -26,9 +27,6 @@ interface ImagePlaceholderProps {
   style?: ViewStyle;
 }
 
-// Anzahl der diagonalen Streifen für die Textur.
-const STRIPES = Array.from({ length: 14 });
-
 export function ImagePlaceholder({
   tone = "charcoal",
   height = 180,
@@ -43,26 +41,7 @@ export function ImagePlaceholder({
       className="overflow-hidden"
     >
       {/* Diagonale Streifen-Textur (dekorativ, leicht aufgehellt). */}
-      <View
-        pointerEvents="none"
-        style={{
-          position: "absolute",
-          top: -height,
-          bottom: -height,
-          left: -height,
-          right: -height,
-          transform: [{ rotate: "30deg" }],
-          flexDirection: "row",
-          justifyContent: "space-between",
-        }}
-      >
-        {STRIPES.map((_, i) => (
-          <View
-            key={i}
-            style={{ width: 1, backgroundColor: "rgba(255,255,255,0.05)" }}
-          />
-        ))}
-      </View>
+      <StripeTexture />
 
       {note ? (
         <Text className="absolute bottom-3 left-4 font-hk-medium-italic text-[12px] text-white/45">

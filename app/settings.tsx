@@ -1,77 +1,143 @@
 import { useRouter } from "expo-router";
+import { useState } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { MOCK_USER } from "../src/data/user";
+import { useGeheimtipp } from "../src/store/geheimtipp";
+import { useSaved } from "../src/store/saved";
 
-// Screen 07 — Einstellungen (Phase-1-Platzhalter).
-//
-// Die vollwertigen Screens (Profil bearbeiten, Passwort ändern, Toggles)
-// kommen in Phase 2. Hier steht die Struktur, damit die Navigation schon passt.
+// Screen 07 — Einstellungen.
+// Gruppierte Karten nach Mockup. Die Toggles sind funktionsfähig (lokaler
+// State, keine echte Wirkung im MVP). "Abmelden" setzt den Mock-Zustand
+// zurück und führt zum Welcome-Screen.
 
-function Row({ label, value }: { label: string; value?: string }) {
+// Ein/Aus-Schalter im Verso-Stil (gelb = an).
+function Toggle({ value, onChange }: { value: boolean; onChange: () => void }) {
   return (
-    <View className="flex-row items-center justify-between border-b border-black/5 py-4">
-      <Text className="font-hk-semibold text-[16px] text-ink">{label}</Text>
-      <View className="flex-row items-center">
-        {value ? (
-          <Text className="mr-2 font-hk-medium text-[14px] text-ink-3">{value}</Text>
-        ) : null}
-        <View className="rounded-pill bg-chip px-2.5 py-1">
-          <Text className="font-hk-bold text-[10px] tracking-[1px] text-ink-3">BALD</Text>
-        </View>
-      </View>
+    <Pressable
+      onPress={onChange}
+      className="h-[25px] w-[42px] justify-center rounded-pill px-[2.5px]"
+      style={{ backgroundColor: value ? "#FFE500" : "rgba(26,26,26,0.16)" }}
+    >
+      <View
+        className="h-[20px] w-[20px] rounded-pill"
+        style={{
+          backgroundColor: value ? "#1A1A1A" : "#FFFFFF",
+          alignSelf: value ? "flex-end" : "flex-start",
+        }}
+      />
+    </Pressable>
+  );
+}
+
+function NavRow({
+  label,
+  value,
+  last,
+}: {
+  label: string;
+  value?: string;
+  last?: boolean;
+}) {
+  return (
+    <View
+      className={`flex-row items-center justify-between px-4 py-3.5 ${
+        last ? "" : "border-b border-black/5"
+      }`}
+    >
+      <Text className="font-hk-extrabold text-[15px] text-ink">{label}</Text>
+      {value ? (
+        <Text className="font-hk-medium text-[13px] text-ink-3">{value}</Text>
+      ) : (
+        <Text className="text-[15px] text-ink-3">→</Text>
+      )}
     </View>
   );
 }
 
 export default function Settings() {
   const router = useRouter();
+  const geheimtipp = useGeheimtipp();
+  const saved = useSaved();
+
+  const [tippN, setTippN] = useState(true);
+  const [spotsN, setSpotsN] = useState(true);
+  const [eventsN, setEventsN] = useState(false);
+
+  const abmelden = () => {
+    // Mock-Login zurücksetzen: Geheimtipp wieder frisch, Merkliste auf Start.
+    geheimtipp.reset();
+    saved.reset();
+    router.replace("/");
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-screen" edges={["top", "bottom"]}>
-      <View className="flex-row items-center px-6 pt-2">
+      {/* Topbar */}
+      <View className="flex-row items-center gap-3.5 px-6 pb-4 pt-3">
         <Pressable
           onPress={() => router.back()}
-          className="h-10 w-10 items-center justify-center rounded-pill bg-chip"
+          className="h-[42px] w-[42px] items-center justify-center rounded-pill"
+          style={{ borderWidth: 1, borderColor: "rgba(26,26,26,0.18)" }}
         >
-          <Text className="font-hk-bold text-[18px] text-ink">←</Text>
+          <Text className="font-hk-extrabold text-[18px] text-ink">←</Text>
         </Pressable>
-        <Text className="ml-4 font-hk-extrabold text-title-sm text-ink">
-          Einstellungen
-        </Text>
+        <Text className="font-hk-extrabold text-title-md text-ink">Einstellungen</Text>
       </View>
 
       <ScrollView
-        contentContainerStyle={{ paddingHorizontal: 24, paddingTop: 16 }}
+        contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 24 }}
         showsVerticalScrollIndicator={false}
       >
-        <Text className="font-hk-bold text-[11px] tracking-[1.5px] text-ink-3">KONTO</Text>
-        <View className="mt-1">
-          <Row label="Profil bearbeiten" />
-          <Row label="E-Mail" value="lena@verso.app" />
-          <Row label="Passwort ändern" />
+        {/* KONTO */}
+        <Text className="mb-2.5 font-hk-semibold text-[10px] tracking-[1.5px] text-ink-3">
+          KONTO
+        </Text>
+        <View className="overflow-hidden rounded-[18px] border border-black/[0.08] bg-surface">
+          <NavRow label="Profil bearbeiten" />
+          <NavRow label="E-Mail" value="lena@verso.app" />
+          <NavRow label="Passwort ändern" last />
         </View>
 
-        <Text className="mt-8 font-hk-bold text-[11px] tracking-[1.5px] text-ink-3">
+        {/* BENACHRICHTIGUNGEN */}
+        <Text className="mb-2.5 mt-7 font-hk-semibold text-[10px] tracking-[1.5px] text-ink-3">
           BENACHRICHTIGUNGEN
         </Text>
-        <View className="mt-1">
-          <Row label="Geheimtipp der Woche" />
-          <Row label="Neue Spots in der Nähe" />
-          <Row label="Events & Termine" />
+        <View className="overflow-hidden rounded-[18px] border border-black/[0.08] bg-surface">
+          <View className="flex-row items-center justify-between border-b border-black/5 px-4 py-3">
+            <Text className="font-hk-extrabold text-[15px] text-ink">Geheimtipp der Woche</Text>
+            <Toggle value={tippN} onChange={() => setTippN((v) => !v)} />
+          </View>
+          <View className="flex-row items-center justify-between border-b border-black/5 px-4 py-3">
+            <Text className="font-hk-extrabold text-[15px] text-ink">Neue Spots in der Nähe</Text>
+            <Toggle value={spotsN} onChange={() => setSpotsN((v) => !v)} />
+          </View>
+          <View className="flex-row items-center justify-between px-4 py-3">
+            <Text className="font-hk-extrabold text-[15px] text-ink">Events & Termine</Text>
+            <Toggle value={eventsN} onChange={() => setEventsN((v) => !v)} />
+          </View>
         </View>
 
-        <Text className="mt-8 font-hk-bold text-[11px] tracking-[1.5px] text-ink-3">APP</Text>
-        <View className="mt-1">
-          <Row label="Sprache" value="Deutsch" />
-          <Row label="Erscheinungsbild" value="Hell" />
-          <Row label="Rechtliches & Hilfe" />
+        {/* APP */}
+        <Text className="mb-2.5 mt-7 font-hk-semibold text-[10px] tracking-[1.5px] text-ink-3">
+          APP
+        </Text>
+        <View className="overflow-hidden rounded-[18px] border border-black/[0.08] bg-surface">
+          <NavRow label="Sprache" value="Deutsch" />
+          <NavRow label="Erscheinungsbild" value="Hell" />
+          <NavRow label="Rechtliches & Hilfe" last />
         </View>
 
-        <View className="mt-10 items-center rounded-card bg-surface p-5">
-          <Text className="text-center font-hk-medium-italic text-[14px] leading-[20px] text-ink-2">
-            Angemeldet als {MOCK_USER.name}. Die echten Einstellungen kommen in
-            Phase 2 — inklusive Profil bearbeiten und Passwort ändern.
+        {/* Abmelden */}
+        <View className="mt-8 items-center">
+          <Pressable
+            onPress={abmelden}
+            className="w-full items-center rounded-[16px] border py-4"
+            style={{ borderColor: "rgba(26,26,26,0.2)" }}
+          >
+            <Text className="font-hk-extrabold text-[15px] text-ink">Abmelden</Text>
+          </Pressable>
+          <Text className="mt-3 font-hk-semibold text-[11px] text-ink/40">
+            Konto löschen
           </Text>
         </View>
       </ScrollView>

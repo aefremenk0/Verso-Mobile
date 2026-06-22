@@ -7,6 +7,7 @@ import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { CityProvider } from "../src/store/city";
+import { GeheimtippProvider } from "../src/store/geheimtipp";
 import { SavedProvider } from "../src/store/saved";
 import { colors, fontMap } from "../src/theme";
 
@@ -29,6 +30,7 @@ export default function RootLayout() {
     <SafeAreaProvider>
       <CityProvider>
         <SavedProvider>
+          <GeheimtippProvider>
           <StatusBar style="dark" />
           <Stack
             screenOptions={{
@@ -50,6 +52,7 @@ export default function RootLayout() {
             />
             <Stack.Screen name="settings" />
           </Stack>
+          </GeheimtippProvider>
         </SavedProvider>
       </CityProvider>
     </SafeAreaProvider>

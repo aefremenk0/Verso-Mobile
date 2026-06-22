@@ -17,11 +17,13 @@ export function HookHighlight({ children, size = 17 }: HookHighlightProps) {
       className="self-start font-hk-extrabold-italic text-ink"
       style={{
         fontSize: size,
-        lineHeight: size * 1.35,
+        lineHeight: size * 1.5,
         backgroundColor: "#FFE500",
-        // kleine Innenabstände, damit das Gelb den Text "umarmt"
-        paddingHorizontal: 4,
-        paddingVertical: 1,
+        // Innenabstände + Rundung wie im Mockup (padding 3×8, radius 8)
+        paddingHorizontal: 8,
+        paddingVertical: 3,
+        borderRadius: 8,
+        overflow: "hidden",
       }}
     >
       {children}
