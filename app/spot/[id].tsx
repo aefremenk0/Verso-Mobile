@@ -2,7 +2,6 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Button } from "../../src/components/Button";
-import { HookHighlight } from "../../src/components/HookHighlight";
 import { ImagePlaceholder } from "../../src/components/ImagePlaceholder";
 import { Pill } from "../../src/components/Pill";
 import { CATEGORY_LABEL, priceLabel } from "../../src/data/categories";
@@ -86,9 +85,13 @@ export default function SpotDetail() {
             {spot.name}
           </Text>
 
-          <View className="mt-4">
-            <HookHighlight size={18}>{spot.hook}</HookHighlight>
-          </View>
+          {/* Hook: kursiv + unterstrichen (kein gelber Block) */}
+          <Text
+            className="mt-4 font-hk-extrabold-italic text-[20px] leading-[28px] text-ink"
+            style={{ textDecorationLine: "underline" }}
+          >
+            {spot.hook}
+          </Text>
 
           {/* Event-Block: Wann / Treffpunkt */}
           {isEvent ? (
@@ -124,10 +127,10 @@ export default function SpotDetail() {
             <Pill label={priceLabel(spot.priceLevel)} small />
           </View>
 
-          {/* Adresse */}
-          <View className="mt-5 flex-row">
-            <Text className="font-hk-bold text-[11px] tracking-[1px] text-ink-3">
-              ADRESSE{"  "}
+          {/* Adresse — Label und Wert an der Grundlinie ausgerichtet */}
+          <View className="mt-5 flex-row items-baseline">
+            <Text className="mr-2 font-hk-bold text-[11px] tracking-[1px] text-ink-3">
+              ADRESSE
             </Text>
             <Text className="flex-1 font-hk-medium text-[14px] text-ink-2">
               {spot.address}

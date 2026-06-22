@@ -1,7 +1,7 @@
 import { useRouter } from "expo-router";
 import { Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useCity } from "../../src/store/city";
+import { CityDropdown } from "../../src/components/CityDropdown";
 
 // Screen — Karte (Phase 1: Platzhalter).
 //
@@ -11,25 +11,26 @@ import { useCity } from "../../src/store/city";
 
 export default function Karte() {
   const router = useRouter();
-  const { city } = useCity();
+
+  // Liste/Karte-Umschalter rechts neben dem Stadt-Dropdown.
+  const toggle = (
+    <View className="flex-row rounded-pill bg-chip p-1">
+      <Pressable
+        onPress={() => router.push("/(tabs)/feed")}
+        className="rounded-pill px-4 py-2"
+      >
+        <Text className="font-hk-semibold text-[13px] text-ink-2">Liste</Text>
+      </Pressable>
+      <View className="rounded-pill bg-accent px-4 py-2">
+        <Text className="font-hk-semibold text-[13px] text-accent-ink">Karte</Text>
+      </View>
+    </View>
+  );
 
   return (
     <SafeAreaView className="flex-1 bg-screen" edges={["top"]}>
-      {/* Kopf mit Liste/Karte-Umschalter (Karte aktiv) */}
-      <View className="flex-row items-center justify-between px-6 pt-2">
-        <Text className="font-hk-extrabold text-title-md text-ink">{city}</Text>
-        <View className="flex-row rounded-pill bg-chip p-1">
-          <Pressable
-            onPress={() => router.push("/(tabs)/feed")}
-            className="rounded-pill px-4 py-2"
-          >
-            <Text className="font-hk-semibold text-[13px] text-ink-2">Liste</Text>
-          </Pressable>
-          <View className="rounded-pill bg-accent px-4 py-2">
-            <Text className="font-hk-semibold text-[13px] text-accent-ink">Karte</Text>
-          </View>
-        </View>
-      </View>
+      {/* Identischer Stadt-Kopf wie im Feed + Liste/Karte-Umschalter */}
+      <CityDropdown right={toggle} />
 
       {/* Platzhalter-Fläche in Karten-Optik */}
       <View className="flex-1 px-6 pb-28 pt-4">

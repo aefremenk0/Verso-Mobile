@@ -99,7 +99,9 @@ app/                      Screens (Expo Router – Dateiname = Route)
 
 src/
   components/             Brand, ImagePlaceholder, StripeTexture, HookHighlight,
-                          Pill, Button, SpotCard, BottomNav, DuAvatar
+                          Pill, Button, SpotCard, BottomNav, DuAvatar,
+                          CityDropdown (einheitlicher Stadt-Kopf), Logos,
+                          GeheimtippButton (pulsierende Squiggle-"?")
   data/                   types.ts, spots.ts (18 Mocks), cities.ts,
                           categories.ts, user.ts  (kein Backend)
   store/                  city.tsx, saved.tsx, geheimtipp.tsx  (React-Context,
@@ -183,7 +185,15 @@ npx tsc --noEmit       # Typecheck
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-22 · Feed: Kategorie-Bar in der Höhe gestreckt
+### (dieser Commit) · 2026-06-22 · Detail-Hook, einheitliches Stadt-Dropdown
+- Spot-Detail: ADRESSE-Zeile an der Grundlinie ausgerichtet (`items-baseline`);
+  Hook jetzt **kursiv + unterstrichen** statt gelber Box.
+- Geheimtipp-Lade-Screen: Umrandung ums „?" ist jetzt die **krummlinige
+  Squiggle** (SVG, dreht sich) — wie in der Nav.
+- Neue Komponente **`CityDropdown`**: identischer Stadt-Kopf mit Dropdown auf
+  Feed, Viertel und Karte.
+
+### efc75e3 · 2026-06-22 · Feed: Kategorie-Bar in der Höhe gestreckt
 - Weiß jetzt INNERHALB der Kategorie-Bar (Scroll-Content `paddingBottom` 34)
   statt nur Abstand zur Liste — die Bar wirkt höher.
 

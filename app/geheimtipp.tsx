@@ -9,6 +9,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Svg, { Path } from "react-native-svg";
 import { ImagePlaceholder } from "../src/components/ImagePlaceholder";
 import { CATEGORY_LABEL, priceLabel } from "../src/data/categories";
 import { getSpotById } from "../src/data/spots";
@@ -97,23 +98,21 @@ export default function Geheimtipp() {
         </View>
 
         <View className="flex-1 items-center justify-center px-10">
-          {/* "?" mit drehendem Ring */}
+          {/* "?" mit drehender, krummliniger Umrandung (Squiggle wie in der Nav) */}
           <View className="h-[150px] w-[150px] items-center justify-center">
             <Animated.View
-              style={[
-                {
-                  position: "absolute",
-                  width: 150,
-                  height: 150,
-                  borderRadius: 75,
-                  borderWidth: 1.6,
-                  borderColor: "#FFE500",
-                  borderTopColor: "transparent",
-                  borderLeftColor: "transparent",
-                },
-                ringStyle,
-              ]}
-            />
+              style={[{ position: "absolute", width: 150, height: 150 }, ringStyle]}
+            >
+              <Svg viewBox="0 0 56 56" width={150} height={150}>
+                <Path
+                  d="M27 8 C40 4 52 15 49 27 C52 41 38 52 26 49 C13 52 5 38 8 26 C4 14 16 5 31 9"
+                  stroke="#FFE500"
+                  strokeWidth={1.6}
+                  strokeLinecap="round"
+                  fill="none"
+                />
+              </Svg>
+            </Animated.View>
             <Text className="font-hk-extrabold text-[52px] text-accent">?</Text>
           </View>
 

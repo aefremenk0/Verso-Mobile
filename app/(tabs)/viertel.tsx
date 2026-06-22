@@ -1,10 +1,11 @@
 import { ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { CityDropdown } from "../../src/components/CityDropdown";
 import { NEIGHBORHOODS } from "../../src/data/cities";
 import { useCity } from "../../src/store/city";
 
 // Screen 05 — Stadt-Übersicht.
-// Stadtteile der aktuellen Stadt, je ein poetischer Einzeiler.
+// Einheitlicher Stadt-Kopf (wie Feed) + Stadtteile mit poetischen Einzeilern.
 
 export default function Viertel() {
   const { city } = useCity();
@@ -12,19 +13,18 @@ export default function Viertel() {
 
   return (
     <SafeAreaView className="flex-1 bg-screen" edges={["top"]}>
+      {/* Identischer Stadt-Kopf wie im Feed */}
+      <CityDropdown />
+
       <ScrollView
         contentContainerStyle={{
           paddingHorizontal: 24,
-          paddingTop: 8,
+          paddingTop: 14,
           paddingBottom: 110,
         }}
         showsVerticalScrollIndicator={false}
       >
-        <Text className="font-hk-bold text-[11px] tracking-[1.5px] text-ink-3">
-          STADT
-        </Text>
-        <Text className="mt-1 font-hk-extrabold text-title-lg text-ink">{city}</Text>
-        <Text className="mt-2 font-hk-medium text-[15px] leading-[21px] text-ink-2">
+        <Text className="font-hk-medium text-[15px] leading-[21px] text-ink-2">
           {hoods.length > 0
             ? `Wo geht die Reise hin? ${hoods.length} Bezirke, ${hoods.length} Stimmungen.`
             : "Diese Stadt kuratieren wir gerade. Bald geht's hier los."}

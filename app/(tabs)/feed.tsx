@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
-import { Pressable, ScrollView, Text, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { CityDropdown } from "../../src/components/CityDropdown";
 import { DuAvatar } from "../../src/components/DuAvatar";
 import { Pill } from "../../src/components/Pill";
 import { SpotCard } from "../../src/components/SpotCard";
@@ -13,9 +14,8 @@ import { useCity } from "../../src/store/city";
 // Stadt-Dropdown oben, Kategorie-Pills mit funktionierendem Filter, Spot-Karten.
 
 export default function Feed() {
-  const { city, setCity, cities } = useCity();
+  const { city } = useCity();
   const [activeCategory, setActiveCategory] = useState<Category | null>(null);
-  const [cityMenu, setCityMenu] = useState(false);
 
   // Filter: erst nach Stadt, dann (optional) nach Kategorie.
   const visibleSpots = useMemo(
@@ -28,43 +28,8 @@ export default function Feed() {
 
   return (
     <SafeAreaView className="flex-1 bg-screen" edges={["top"]}>
-      {/* Kopf: Stadt-Dropdown + "Du" */}
-      <View className="px-6 pt-2">
-        <View className="flex-row items-center justify-between">
-          <Pressable
-            onPress={() => setCityMenu((v) => !v)}
-            className="flex-row items-center"
-          >
-            <Text className="font-hk-extrabold text-title-md text-ink">{city}</Text>
-            <Text className="ml-1 font-hk-bold text-[18px] text-ink-3">▾</Text>
-          </Pressable>
-
-          <DuAvatar />
-        </View>
-
-      </View>
-
-      {/* Aufklappbares Stadt-Menü — horizontal scrollbar */}
-      {cityMenu ? (
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{ paddingHorizontal: 24, gap: 8 }}
-          className="mt-3 max-h-[44px] flex-none"
-        >
-          {cities.map((c) => (
-            <Pill
-              key={c}
-              label={c}
-              active={c === city}
-              onPress={() => {
-                setCity(c);
-                setCityMenu(false);
-              }}
-            />
-          ))}
-        </ScrollView>
-      ) : null}
+      {/* Kopf: einheitliches Stadt-Dropdown + "Du"-Avatar */}
+      <CityDropdown right={<DuAvatar />} />
 
       {/* Kategorie-Bar — in der Höhe gestreckt: die Pills sitzen oben,
           darunter bleibt Weiß INNERHALB der Bar (paddingBottom). */}
