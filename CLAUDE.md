@@ -183,7 +183,15 @@ npx tsc --noEmit       # Typecheck
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-22 · Spot-Detail füllt den Screen
+### (dieser Commit) · 2026-06-22 · UI-Runde: Nav-Puls, Reveal zentriert, Avatar-Initialen
+- Feed: noch mehr Luft unter der Kategorie-Bar (paddingTop 44).
+- Bottom-Nav: Aktiv-Pill auf **75%** Zellenbreite; „?" hat eine **pulsierende
+  Squiggle-Umrandung** (`GeheimtippButton`, SVG + Reanimated-Puls).
+- Geheimtipp-Reveal: Café **vertikal zentriert** (weniger leeres Gelb).
+- Gespeichert: Überlappung „GESPEICHERT"/„Deine Orte" behoben (lineHeight 40).
+- Feed-Avatar: zeigt **Initialen (LH) in Schwarz** statt „Du" in Grau.
+
+### 2423639 · 2026-06-22 · Spot-Detail füllt den Screen
 - Inhalts-Sheet `flex-1` + Spacer → CTAs sitzen unten, kein leeres weißes
   Feld mehr. Hero-Bild auf 400px erhöht. ScrollView `flexGrow:1`.
 

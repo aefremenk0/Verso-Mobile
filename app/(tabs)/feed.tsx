@@ -88,7 +88,7 @@ export default function Feed() {
       <ScrollView
         contentContainerStyle={{
           paddingHorizontal: 24,
-          paddingTop: 28, // klarer Abstand unter der Kategorie-Bar
+          paddingTop: 44, // viel Luft unter der Kategorie-Bar
           paddingBottom: 110, // Platz für die schwebende Nav
         }}
         showsVerticalScrollIndicator={false}

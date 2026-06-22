@@ -7,7 +7,16 @@ import Animated, {
   withDelay,
   withSpring,
 } from "react-native-reanimated";
+import { MOCK_USER } from "../data/user";
 import { useGeheimtipp } from "../store/geheimtipp";
+
+// Initialen aus dem Namen, z. B. "Lena Hofer" -> "LH".
+const INITIALS = MOCK_USER.name
+  .split(" ")
+  .map((w) => w[0])
+  .join("")
+  .slice(0, 2)
+  .toUpperCase();
 
 // Runder "Du"-Avatar oben rechts im Feed.
 // Solange der Geheimtipp der Woche nicht abgeholt ist, sitzt ein gelbes
@@ -39,7 +48,7 @@ export function DuAvatar() {
         className="h-[38px] w-[38px] items-center justify-center rounded-pill"
         style={{ borderWidth: 1, borderColor: "rgba(26,26,26,0.18)" }}
       >
-        <Text className="font-hk-semibold text-[11px] text-ink">Du</Text>
+        <Text className="font-hk-extrabold text-[13px] text-ink">{INITIALS}</Text>
       </Pressable>
 
       {/* "?"-Badge */}

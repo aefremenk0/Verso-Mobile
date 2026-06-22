@@ -161,7 +161,8 @@ export default function Geheimtipp() {
         </Pressable>
       </View>
 
-      <View className="flex-1 px-7 pt-5">
+      {/* Café vertikal zentriert (weniger leeres Gelb) */}
+      <View className="flex-1 justify-center px-7">
         <Text className="font-hk-semibold text-[10px] tracking-[2px] text-accent-ink/55">
           GEHEIMTIPP DER WOCHE
         </Text>
@@ -212,14 +213,12 @@ export default function Geheimtipp() {
           </>
         ) : null}
 
-        <View className="flex-1" />
-
         <Pressable
           onPress={() => {
             router.back();
             router.push("/(tabs)/profil");
           }}
-          className="mb-2 flex-row items-center justify-between rounded-[18px] bg-night px-5 py-4"
+          className="mt-7 flex-row items-center justify-between rounded-[18px] bg-night px-5 py-4"
         >
           <Text className="font-hk-extrabold text-[17px] text-screen">
             Weiter zu deinem Profil

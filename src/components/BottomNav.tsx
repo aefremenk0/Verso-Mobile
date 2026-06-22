@@ -9,6 +9,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { shadows } from "../theme";
+import { GeheimtippButton } from "./GeheimtippButton";
 
 // Schwebende Bottom-Navigation (weiße, abgerundete Leiste).
 //
@@ -44,7 +45,7 @@ export function BottomNav({ state, navigation }: BottomNavProps) {
 
   const inner = Math.max(0, barWidth - PADDING * 2);
   const cellW = inner / CELLS;
-  const pillW = cellW * 0.5; // 50% der Zellenbreite
+  const pillW = cellW * 0.75; // 75% der Zellenbreite
 
   const activeName = state.routes[state.index]?.name ?? "feed";
   const activeIndex = Math.max(0, TABS.indexOf(activeName as (typeof TABS)[number]));
@@ -127,20 +128,10 @@ export function BottomNav({ state, navigation }: BottomNavProps) {
           );
         })}
 
-        {/* "?"-Zelle: Geheimtipp-Schnellzugriff (gleiche Breite wie die Reiter) */}
-        <Pressable
-          onPress={() => router.push("/geheimtipp")}
-          className="flex-1 items-center justify-center"
-        >
-          <View
-            className="h-[40px] w-[40px] items-center justify-center rounded-pill"
-            style={{ borderWidth: 1.6, borderColor: "#FFE500" }}
-          >
-            <View className="h-[26px] w-[26px] items-center justify-center rounded-pill bg-night">
-              <Text className="font-hk-extrabold text-[14px] text-accent">?</Text>
-            </View>
-          </View>
-        </Pressable>
+        {/* "?"-Zelle: Geheimtipp mit pulsierender Umrandung (gleiche Breite) */}
+        <View className="flex-1 items-center justify-center">
+          <GeheimtippButton onPress={() => router.push("/geheimtipp")} />
+        </View>
       </View>
     </View>
   );

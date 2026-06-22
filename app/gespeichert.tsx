@@ -42,7 +42,10 @@ export default function Gespeichert() {
         <Text className="font-hk-bold text-[11px] tracking-[1.5px] text-ink-3">
           GESPEICHERT
         </Text>
-        <Text className="mt-1 font-hk-extrabold text-title-lg text-ink">
+        <Text
+          className="mt-2 font-hk-extrabold text-ink"
+          style={{ fontSize: 38, lineHeight: 40 }}
+        >
           Deine Orte
         </Text>
 
