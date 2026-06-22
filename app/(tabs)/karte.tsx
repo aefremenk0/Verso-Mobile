@@ -2,26 +2,18 @@ import { useRouter } from "expo-router";
 import { Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { CityDropdown } from "../../src/components/CityDropdown";
+import { CityMap } from "../../src/components/CityMap";
 import { ImagePlaceholder } from "../../src/components/ImagePlaceholder";
 import { CATEGORY_LABEL, priceLabel } from "../../src/data/categories";
 import { SPOTS } from "../../src/data/spots";
 import { useCity } from "../../src/store/city";
 import { shadows } from "../../src/theme";
 
-// Screen 04 — Kartenansicht (stilisierte Karte, Phase 1).
+// Screen 04 — Kartenansicht.
 //
-// Die ECHTE interaktive Karte braucht `react-native-maps` (Dev Build, Phase 2).
-// Hier eine designgetreue, stilisierte Karte mit Pins, die in Expo Go läuft:
-// gelbe Label-Pins, schwebende Spot-Karte, Filter-Leiste (Phase-2-Optik).
-
-// Feste Pin-Positionen (Prozent der Kartenfläche), zyklisch genutzt.
-const PIN_POS = [
-  { top: "40%", left: "40%" },
-  { top: "20%", left: "62%" },
-  { top: "60%", left: "20%" },
-  { top: "30%", left: "26%" },
-  { top: "55%", left: "72%" },
-];
+// Hintergrund = <CityMap/>: echte Mapbox-Karte im Dev Build (mit Token),
+// sonst stilisierte Karte (Expo Go). Darüber liegen Stadt-Dropdown,
+// Filter-Leiste und die schwebende Spot-Karte.
 
 export default function Karte() {
   const router = useRouter();
@@ -69,72 +61,9 @@ export default function Karte() {
         ))}
       </View>
 
-      {/* Stilisierte Kartenfläche */}
+      {/* Karte (Mapbox im Dev Build, sonst stilisiert) */}
       <View className="mt-3 flex-1 overflow-hidden">
-        <View className="absolute inset-0 bg-map-land" />
-        {/* Parks */}
-        <View
-          className="absolute h-[86px] w-[118px] rounded-[16px] bg-map-park"
-          style={{ top: 120, left: 36 }}
-        />
-        <View
-          className="absolute h-[80px] w-[96px] rounded-[16px] bg-map-park"
-          style={{ bottom: 220, right: 30 }}
-        />
-        {/* Wasser (diagonaler Streifen) */}
-        <View
-          className="absolute bg-map-water"
-          style={{ top: -60, right: -26, width: 60, height: "150%", transform: [{ rotate: "26deg" }] }}
-        />
-        {/* Straße */}
-        <View
-          className="absolute bg-[#F1ECE3]"
-          style={{ top: 40, left: 130, width: 50, height: "120%", transform: [{ rotate: "20deg" }] }}
-        />
-
-        {/* Straßennamen */}
-        <Text className="absolute font-hk-medium text-[10px] text-[#9C978E]" style={{ top: 80, left: 40 }}>
-          Operngasse
-        </Text>
-        <Text className="absolute font-hk-medium text-[10px] text-[#9C978E]" style={{ top: 300, left: 230 }}>
-          Rechte Wienzeile
-        </Text>
-
-        {/* Pins */}
-        {spots.slice(0, 5).map((spot, i) => {
-          const pos = PIN_POS[i];
-          const isActive = i === 0;
-          const hasLabel = i <= 2;
-          return (
-            <Pressable
-              key={spot.id}
-              onPress={() => router.push(`/spot/${spot.id}`)}
-              className="absolute items-center"
-              style={{ top: pos.top as `${number}%`, left: pos.left as `${number}%` }}
-            >
-              {hasLabel ? (
-                <View
-                  className={`mb-1 rounded-pill px-3 py-1.5 ${
-                    isActive ? "bg-accent" : "bg-night"
-                  }`}
-                  style={shadows.card}
-                >
-                  <Text
-                    className={`font-hk-extrabold ${
-                      isActive ? "text-[15px] text-accent-ink" : "text-[12px] text-white"
-                    }`}
-                  >
-                    {spot.name}
-                  </Text>
-                </View>
-              ) : null}
-              <View
-                className="rounded-pill bg-night"
-                style={{ width: 13, height: 13, borderWidth: 2.5, borderColor: "#F7F4EF" }}
-              />
-            </Pressable>
-          );
-        })}
+        <CityMap spots={spots} />
       </View>
 
       {/* Schwebende Spot-Karte */}

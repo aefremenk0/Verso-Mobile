@@ -48,6 +48,7 @@ Expo **SDK 54**. Diese Versionen sind bewusst gepinnt — siehe Stolperfallen.
 | react-native-reanimated | **4.1.1** (exakt) | für ALLE Animationen |
 | react-native-worklets | **0.5.1** (exakt) | von Reanimated 4 benötigt |
 | react-native-svg | **15.12.1** (exakt) | Logos/Vektorgrafik, in Expo Go |
+| @rnmapbox/maps | ^10.3.1 | echte Karte, **NUR Dev Build** (nicht Expo Go) |
 | @expo-google-fonts/hanken-grotesk | ^0.4.x | |
 | expo-image, expo-font, expo-splash-screen | SDK-54-Stände | |
 
@@ -74,8 +75,14 @@ Expo **SDK 54**. Diese Versionen sind bewusst gepinnt — siehe Stolperfallen.
 5. **`className`-Typen** — kommen aus `nativewind-env.d.ts`
    (`/// <reference types="nativewind/types" />`). Nur EINE react-native-Kopie
    im Baum, sonst greift die Augmentation nicht (`npm ls react-native` prüfen).
-6. **Keine nativen Module, die Expo Go nicht kennt** (z. B.
-   `react-native-maps`). Echte Karte erst in Phase 2 über einen Dev Build.
+6. **Mapbox (`@rnmapbox/maps`) läuft NICHT in Expo Go.** `src/components/CityMap.tsx`
+   lädt Mapbox per `require` nur, wenn (a) NICHT Expo Go
+   (`Constants.executionEnvironment`) und (b) `EXPO_PUBLIC_MAPBOX_TOKEN` gesetzt
+   ist — sonst stilisierte Fallback-Karte. Für die echte Karte braucht es einen
+   **Dev Build** + zwei Tokens: `MAPBOX_DOWNLOAD_TOKEN` (sk.*, Build-Zeit, in
+   `app.config.js`) und `EXPO_PUBLIC_MAPBOX_TOKEN` (pk.*, Laufzeit).
+7. **Config liegt in `app.config.js`** (nicht mehr `app.json`), damit der
+   geheime Mapbox-Token aus der Umgebung kommt.
 
 ---
 
@@ -104,7 +111,10 @@ src/
   components/             Brand, ImagePlaceholder, StripeTexture, HookHighlight,
                           Pill, Button, SpotCard, BottomNav, DuAvatar,
                           CityDropdown (einheitlicher Stadt-Kopf), Logos,
-                          GeheimtippButton (pulsierende Squiggle-"?")
+                          GeheimtippButton (pulsierende Squiggle-"?"),
+                          CityMap (Mapbox + Expo-Go-Fallback)
+
+app.config.js             Expo-Config (ersetzt app.json; Mapbox-Token via Env)
   data/                   types.ts, spots.ts (18 Mocks), cities.ts,
                           categories.ts, user.ts  (kein Backend)
   store/                  city.tsx, saved.tsx, geheimtipp.tsx  (React-Context,
@@ -187,7 +197,13 @@ npx tsc --noEmit       # Typecheck
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-22 · Geheimtipp-Pop-up: kein grauer Backdrop
+### (dieser Commit) · 2026-06-22 · Mapbox hinter der Karte (mit Expo-Go-Fallback)
+- `@rnmapbox/maps` integriert: neue Komponente `CityMap` rendert im **Dev Build**
+  (mit Token) die echte Karte mit Markern an den Spot-Koordinaten; in **Expo Go**
+  automatisch die stilisierte Fallback-Karte.
+- `app.json` → `app.config.js` (Mapbox-Download-Token aus Env, Plugin ergänzt).
+
+### 984c932 · 2026-06-22 · Geheimtipp-Pop-up: kein grauer Backdrop
 - Abgedunkelter (grauer) Hintergrund raus → Karte sitzt jetzt auf dem
   Creme-App-Hintergrund (`bg-screen`) mit weichem Schatten.
 
