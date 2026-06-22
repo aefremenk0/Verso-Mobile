@@ -96,6 +96,8 @@ app/                      Screens (Expo Router – Dateiname = Route)
   gespeichert.tsx         06 Gespeichert
   geheimtipp.tsx          08 Geheimtipp (Laden -> Reveal, Reanimated, modal)
   settings.tsx            07 Einstellungen (+ Abmelden)
+  profil-bearbeiten.tsx   07c Profil bearbeiten (UI)
+  passwort-aendern.tsx    07d Passwort ändern (UI)
 
 src/
   components/             Brand, ImagePlaceholder, StripeTexture, HookHighlight,
@@ -163,8 +165,7 @@ Gespeichert, Profil, Einstellungen, Geheimtipp). Karte-Tab = Platzhalter.
   Liste/Karte-Toggle, custom Map-Style, gelbe Pins.
 - **Karte-Filter-Sheet**: Art / Budget / Bewertung / Ambiente (Ambiente als
   Multi-Select, ODER innerhalb / UND zwischen Gruppen).
-- **Profil bearbeiten** & **Passwort ändern** als echte UI-Screens
-  (Mockup 07c/07d liegen vor).
+- (erledigt) ~~Profil bearbeiten & Passwort ändern~~ — UI-Screens stehen.
 
 ---
 
@@ -185,7 +186,12 @@ npx tsc --noEmit       # Typecheck
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-22 · CityDropdown: feste Zeilenhöhe
+### (dieser Commit) · 2026-06-22 · Profil bearbeiten + Passwort ändern
+- Zwei neue UI-Screens (`profil-bearbeiten`, `passwort-aendern`) nach Mockup
+  07c/07d, aus den Einstellungen verlinkt.
+- Feed: Weiß unten in der Kategorie-Bar reduziert (paddingBottom 34 → 14).
+
+### 4351372 · 2026-06-22 · CityDropdown: feste Zeilenhöhe
 - Kopfzeile in `CityDropdown` hat jetzt feste Höhe (42) → „Wien" sitzt auf
   Feed/Viertel/Karte exakt gleich hoch, egal ob rechts ein Element steht.
 

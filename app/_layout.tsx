@@ -51,6 +51,8 @@ export default function RootLayout() {
               options={{ presentation: "modal", animation: "fade" }}
             />
             <Stack.Screen name="settings" />
+            <Stack.Screen name="profil-bearbeiten" />
+            <Stack.Screen name="passwort-aendern" />
           </Stack>
           </GeheimtippProvider>
         </SavedProvider>

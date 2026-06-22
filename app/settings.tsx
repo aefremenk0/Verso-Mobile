@@ -33,13 +33,16 @@ function NavRow({
   label,
   value,
   last,
+  onPress,
 }: {
   label: string;
   value?: string;
   last?: boolean;
+  onPress?: () => void;
 }) {
   return (
-    <View
+    <Pressable
+      onPress={onPress}
       className={`flex-row items-center justify-between px-4 py-3.5 ${
         last ? "" : "border-b border-black/5"
       }`}
@@ -50,7 +53,7 @@ function NavRow({
       ) : (
         <Text className="text-[15px] text-ink-3">→</Text>
       )}
-    </View>
+    </Pressable>
   );
 }
 
@@ -93,9 +96,16 @@ export default function Settings() {
           KONTO
         </Text>
         <View className="overflow-hidden rounded-[18px] border border-black/[0.08] bg-surface">
-          <NavRow label="Profil bearbeiten" />
+          <NavRow
+            label="Profil bearbeiten"
+            onPress={() => router.push("/profil-bearbeiten")}
+          />
           <NavRow label="E-Mail" value="lena@verso.app" />
-          <NavRow label="Passwort ändern" last />
+          <NavRow
+            label="Passwort ändern"
+            last
+            onPress={() => router.push("/passwort-aendern")}
+          />
         </View>
 
         {/* BENACHRICHTIGUNGEN */}

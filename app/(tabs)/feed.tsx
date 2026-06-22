@@ -41,7 +41,7 @@ export default function Feed() {
             paddingHorizontal: 24,
             gap: 8,
             paddingTop: 6,
-            paddingBottom: 34,
+            paddingBottom: 14,
           }}
         >
           {CATEGORY_FILTERS.map((f) => (
