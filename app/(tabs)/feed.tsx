@@ -67,7 +67,7 @@ export default function Feed() {
       ) : null}
 
       {/* Kategorie-Filter */}
-      <View className="mt-4 pb-5">
+      <View className="mt-5">
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
@@ -88,7 +88,7 @@ export default function Feed() {
       <ScrollView
         contentContainerStyle={{
           paddingHorizontal: 24,
-          paddingTop: 4,
+          paddingTop: 28, // klarer Abstand unter der Kategorie-Bar
           paddingBottom: 110, // Platz für die schwebende Nav
         }}
         showsVerticalScrollIndicator={false}

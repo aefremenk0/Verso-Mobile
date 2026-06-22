@@ -183,7 +183,11 @@ npx tsc --noEmit       # Typecheck
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-22 · UI-Feinschliff nach Nutzer-Feedback
+### (dieser Commit) · 2026-06-22 · Feed: mehr Abstand unter Kategorie-Bar
+- Klarere Trennung zwischen Kategorie-Pills und Karten (Liste `paddingTop` 28,
+  Pills `mt-5`).
+
+### cb2096d · 2026-06-22 · UI-Feinschliff nach Nutzer-Feedback
 - Feed: mehr Abstand unter den Kategorie-Pills; Stadt-Dropdown jetzt
   **horizontal** (scrollbare Pill-Reihe statt vertikaler Liste).
 - Welcome: Stadtnamen in den Chips zentriert; Städte-Liste erweitert
