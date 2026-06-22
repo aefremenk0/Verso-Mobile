@@ -14,6 +14,7 @@ import { CATEGORY_LABEL, priceLabel } from "../src/data/categories";
 import { getSpotById } from "../src/data/spots";
 import { GEHEIMTIPP } from "../src/data/user";
 import { useGeheimtipp } from "../src/store/geheimtipp";
+import { shadows } from "../src/theme";
 
 // Screen 08 — Geheimtipp der Woche.
 // Phase 1: dunkler Lade-Screen (drehender Ring ums "?", durchlaufender Balken).
@@ -91,13 +92,13 @@ export default function Geheimtipp() {
   // ───────────── Lade-Screen (dunkel) ─────────────
   if (phase === "loading") {
     return (
-      <View
-        className="flex-1 items-center justify-center"
-        style={{ backgroundColor: "rgba(0,0,0,0.55)" }}
-      >
+      <View className="flex-1 items-center justify-center bg-screen px-4">
         <View
           className="bg-night"
-          style={{ width: cardW, height: cardH, borderRadius: 40, overflow: "hidden" }}
+          style={[
+            { width: cardW, height: cardH, borderRadius: 40, overflow: "hidden" },
+            shadows.nav,
+          ]}
         >
         <View className="flex-row justify-end px-5 pt-4">
           <Pressable

@@ -187,7 +187,11 @@ npx tsc --noEmit       # Typecheck
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-22 · Viertel klickbar, Karte, Nav 5→4, Pop-up
+### (dieser Commit) · 2026-06-22 · Geheimtipp-Pop-up: kein grauer Backdrop
+- Abgedunkelter (grauer) Hintergrund raus → Karte sitzt jetzt auf dem
+  Creme-App-Hintergrund (`bg-screen`) mit weichem Schatten.
+
+### 7160d3f · 2026-06-22 · Viertel klickbar, Karte, Nav 5→4, Pop-up
 - Viertel-Zeilen klickbar → neuer **Bezirks-Screen** (`bezirk/[name]`) mit den
   Spots des Viertels.
 - **Kartenansicht** gebaut: stilisierte Karte (Pins, schwebende Spot-Karte,
