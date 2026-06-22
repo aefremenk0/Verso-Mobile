@@ -113,7 +113,9 @@ src/
                           CityDropdown (einheitlicher Stadt-Kopf), Logos,
                           GeheimtippButton (pulsierende Squiggle-"?"),
                           CityMap (Mapbox + Expo-Go-Fallback),
-                          MapFilterSheet (Karte-Filter-Panel)
+                          MapFilterSheet (Karte-Filter-Panel),
+                          RangeSlider (Budget, PanResponder)
+  lib/mapFilter.ts        Filter-Typ + matchesFilter (Art/Budget/Bewertung/Ambiente)
 
 app.config.js             Expo-Config (ersetzt app.json; Mapbox-Token via Env)
   data/                   types.ts, spots.ts (18 Mocks), cities.ts,
@@ -198,7 +200,14 @@ npx tsc --noEmit       # Typecheck
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-22 · Karte: Pin-Auswahl, Filter-Sheet
+### (dieser Commit) · 2026-06-22 · Karte-Filter wirken + Budget-Slider ziehbar
+- **Budget-Range-Slider** mit zwei ziehbaren Reglern (`RangeSlider`,
+  PanResponder) — funktioniert in Expo Go.
+- Filter **wirken jetzt wirklich**: `lib/mapFilter.ts` filtert die Pins UND die
+  „X Orte zeigen"-Anzahl nach Art/Budget/Bewertung/Ambiente (ODER innerhalb,
+  UND zwischen Gruppen). Schnell-Chips oben zeigen aktive Gruppen.
+
+### a618e78 · 2026-06-22 · Karte: Pin-Auswahl, Filter-Sheet
 - Pins sind antippbar -> erst dann erscheint die Spot-Karte (vorher immer
   sichtbar). Karte sitzt über der Nav (Safe-Area + Nav-Höhe), kein Überlappen.
 - Filter-Chips größer; neuer **FILTER ▾**-Button öffnet das neue

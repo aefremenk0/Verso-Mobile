@@ -1,5 +1,5 @@
 import { useRouter } from "expo-router";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Pressable, Text, View } from "react-native";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { CityDropdown } from "../../src/components/CityDropdown";
@@ -9,21 +9,37 @@ import { MapFilterSheet } from "../../src/components/MapFilterSheet";
 import { CATEGORY_LABEL, priceLabel } from "../../src/data/categories";
 import { SPOTS } from "../../src/data/spots";
 import type { Spot } from "../../src/data/types";
+import {
+  DEFAULT_FILTER,
+  matchesFilter,
+  type MapFilter,
+} from "../../src/lib/mapFilter";
 import { useCity } from "../../src/store/city";
 import { shadows } from "../../src/theme";
 
 // Screen 04 — Kartenansicht.
 // Karte (Mapbox im Dev Build, sonst stilisiert). Pins sind antippbar -> erst
-// dann erscheint die kleine Spot-Karte. FILTER-Button öffnet das Filter-Sheet.
+// dann erscheint die kleine Spot-Karte. FILTER öffnet das Filter-Sheet, dessen
+// Auswahl Pins UND Anzahl sofort filtert.
 
 export default function Karte() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { city } = useCity();
 
-  const spots = SPOTS.filter((s) => s.city === city);
   const [selected, setSelected] = useState<Spot | null>(null);
   const [filterOpen, setFilterOpen] = useState(false);
+  const [filter, setFilter] = useState<MapFilter>(DEFAULT_FILTER);
+
+  // Stadt -> dann Filter anwenden.
+  const spots = useMemo(
+    () =>
+      SPOTS.filter((s) => s.city === city).filter((s) => matchesFilter(s, filter)),
+    [city, filter],
+  );
+
+  // Ausgewählter Spot nur zeigen, wenn er noch im gefilterten Ergebnis ist.
+  const card = selected && spots.some((s) => s.id === selected.id) ? selected : null;
 
   // Liste/Karte-Umschalter rechts neben dem Stadt-Dropdown.
   const toggle = (
@@ -47,20 +63,25 @@ export default function Karte() {
       {/* Filter-Schnellwahl + FILTER-Button */}
       <View className="mt-3 gap-2.5 px-6">
         <View className="flex-row justify-center gap-2">
-          {["Art", "Budget", "Bewertung", "Ambiente"].map((f, i) => (
+          {[
+            { label: "Art", on: filter.art.length > 0 },
+            { label: "Budget", on: filter.minPrice > 0 || filter.maxPrice < 100 },
+            { label: "Bewertung", on: filter.minRating > 0 },
+            { label: "Ambiente", on: filter.ambiente.length > 0 },
+          ].map((f) => (
             <Pressable
-              key={f}
+              key={f.label}
               onPress={() => setFilterOpen(true)}
               className={`rounded-pill px-4 py-2.5 ${
-                i === 0 || i === 3 ? "bg-accent" : "border border-black/10 bg-surface"
+                f.on ? "bg-accent" : "border border-black/10 bg-surface"
               }`}
             >
               <Text
                 className={`font-hk-semibold text-[13px] ${
-                  i === 0 || i === 3 ? "text-accent-ink" : "text-ink"
+                  f.on ? "text-accent-ink" : "text-ink"
                 }`}
               >
-                {f}
+                {f.label}
               </Text>
             </Pressable>
           ))}
@@ -82,27 +103,27 @@ export default function Karte() {
       <View className="mt-3 flex-1 overflow-hidden">
         <CityMap
           spots={spots}
-          selectedId={selected?.id}
+          selectedId={card?.id}
           onSelect={(s) => setSelected(s)}
         />
       </View>
 
       {/* Spot-Karte: erscheint erst, wenn ein Pin angetippt wurde.
           Sitzt über der schwebenden Nav (Safe-Area + Nav-Höhe). */}
-      {selected ? (
+      {card ? (
         <Pressable
-          onPress={() => router.push(`/spot/${selected.id}`)}
+          onPress={() => router.push(`/spot/${card.id}`)}
           className="absolute left-4 right-4 flex-row items-center gap-3.5 rounded-card bg-surface p-3.5"
           style={[{ bottom: insets.bottom + 92 }, shadows.card]}
         >
-          <ImagePlaceholder tone={selected.tone} height={66} radius={18} style={{ width: 66 }} />
+          <ImagePlaceholder tone={card.tone} height={66} radius={18} style={{ width: 66 }} />
           <View className="flex-1">
             <Text className="font-hk-semibold text-[9px] tracking-[1.5px] text-ink-3">
-              {CATEGORY_LABEL[selected.category]} · {selected.neighborhood.split(",")[0].toUpperCase()} · {priceLabel(selected.priceLevel)}
+              {CATEGORY_LABEL[card.category]} · {card.neighborhood.split(",")[0].toUpperCase()} · {priceLabel(card.priceLevel)}
             </Text>
-            <Text className="mt-0.5 font-hk-extrabold text-[22px] text-ink">{selected.name}</Text>
+            <Text className="mt-0.5 font-hk-extrabold text-[22px] text-ink">{card.name}</Text>
             <Text className="mt-0.5 font-hk-medium-italic text-[12px] text-ink-2" numberOfLines={1}>
-              {selected.hook}
+              {card.hook}
             </Text>
           </View>
           {/* Schließen (Auswahl aufheben) */}
@@ -118,7 +139,12 @@ export default function Karte() {
 
       {/* Filter-Sheet */}
       {filterOpen ? (
-        <MapFilterSheet count={spots.length} onClose={() => setFilterOpen(false)} />
+        <MapFilterSheet
+          filter={filter}
+          setFilter={setFilter}
+          count={spots.length}
+          onClose={() => setFilterOpen(false)}
+        />
       ) : null}
     </SafeAreaView>
   );
