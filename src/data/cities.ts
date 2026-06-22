@@ -1,8 +1,22 @@
 import type { Neighborhood } from "./types";
 
-/** Auswählbare Städte (Feed-Dropdown, Welcome-Auswahl). Wien ist Standard. */
-export const CITIES = ["Wien", "Berlin", "München"] as const;
+/**
+ * Auswählbare Städte (Feed-Dropdown, Welcome-Auswahl). Wien ist Standard.
+ * Inhalte (Spots/Bezirke) gibt es im MVP für Wien, Berlin und München;
+ * die übrigen Städte zeigen vorerst einen "kommt bald"-Leerzustand.
+ */
+export const CITIES = [
+  "Wien",
+  "München",
+  "Berlin",
+  "Frankfurt",
+  "Düsseldorf",
+  "Hamburg",
+] as const;
 export type City = (typeof CITIES)[number];
+
+/** Städte, für die es im MVP schon kuratierte Inhalte gibt. */
+export const CITIES_WITH_CONTENT: City[] = ["Wien", "München", "Berlin"];
 
 /** Stadtteile für die Stadt-Übersicht – je ein poetischer Einzeiler. */
 export const NEIGHBORHOODS: Neighborhood[] = [

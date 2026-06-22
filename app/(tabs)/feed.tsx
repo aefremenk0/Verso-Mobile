@@ -42,33 +42,32 @@ export default function Feed() {
           <DuAvatar />
         </View>
 
-        {/* Aufklappbares Stadt-Menü */}
-        {cityMenu ? (
-          <View className="mt-2 self-start rounded-card bg-surface p-2">
-            {cities.map((c) => (
-              <Pressable
-                key={c}
-                onPress={() => {
-                  setCity(c);
-                  setCityMenu(false);
-                }}
-                className="rounded-button px-4 py-2"
-              >
-                <Text
-                  className={`font-hk-semibold text-[15px] ${
-                    c === city ? "text-ink" : "text-ink-2"
-                  }`}
-                >
-                  {c}
-                </Text>
-              </Pressable>
-            ))}
-          </View>
-        ) : null}
       </View>
 
+      {/* Aufklappbares Stadt-Menü — horizontal scrollbar */}
+      {cityMenu ? (
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{ paddingHorizontal: 24, gap: 8 }}
+          className="mt-3 max-h-[44px] flex-none"
+        >
+          {cities.map((c) => (
+            <Pill
+              key={c}
+              label={c}
+              active={c === city}
+              onPress={() => {
+                setCity(c);
+                setCityMenu(false);
+              }}
+            />
+          ))}
+        </ScrollView>
+      ) : null}
+
       {/* Kategorie-Filter */}
-      <View className="mt-4">
+      <View className="mt-4 pb-5">
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
@@ -89,7 +88,7 @@ export default function Feed() {
       <ScrollView
         contentContainerStyle={{
           paddingHorizontal: 24,
-          paddingTop: 20,
+          paddingTop: 4,
           paddingBottom: 110, // Platz für die schwebende Nav
         }}
         showsVerticalScrollIndicator={false}

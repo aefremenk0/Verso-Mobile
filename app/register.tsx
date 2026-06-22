@@ -10,6 +10,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Brand } from "../src/components/Brand";
 import { Button } from "../src/components/Button";
+import { AppleLogo, GoogleLogo } from "../src/components/Logos";
 
 // Screen 01 — Registrierung / Anmelden.
 // Reine UI: Apple/Google/E-Mail sind Platzhalter. Jeder Weg führt in den Feed.
@@ -78,10 +79,27 @@ export default function Register() {
           })}
         </View>
 
-        {/* Social Login (Platzhalter) */}
-        <View className="mt-5 gap-3">
-          <Button label="Weiter mit Apple" variant="dark" leading="" onPress={enter} />
-          <Button label="Weiter mit Google" variant="light" leading="G" onPress={enter} />
+        {/* Social Login (nur UI). Eigene Buttons mit echten Logos. */}
+        <View className="mt-5 gap-2.5">
+          <Pressable
+            onPress={enter}
+            className="flex-row items-center justify-center gap-2.5 rounded-[16px] bg-night py-4"
+          >
+            <AppleLogo size={17} color="#FFFFFF" />
+            <Text className="font-hk-semibold text-[14px] text-screen">
+              Weiter mit Apple
+            </Text>
+          </Pressable>
+          <Pressable
+            onPress={enter}
+            className="flex-row items-center justify-center gap-2.5 rounded-[16px] bg-surface py-4"
+            style={{ borderWidth: 1, borderColor: "rgba(26,26,26,0.16)" }}
+          >
+            <GoogleLogo size={18} />
+            <Text className="font-hk-semibold text-[14px] text-ink">
+              Weiter mit Google
+            </Text>
+          </Pressable>
         </View>
 
         {/* Divider */}

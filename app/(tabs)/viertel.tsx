@@ -25,7 +25,9 @@ export default function Viertel() {
         </Text>
         <Text className="mt-1 font-hk-extrabold text-title-lg text-ink">{city}</Text>
         <Text className="mt-2 font-hk-medium text-[15px] leading-[21px] text-ink-2">
-          Wo geht die Reise hin? {hoods.length} Bezirke, {hoods.length} Stimmungen.
+          {hoods.length > 0
+            ? `Wo geht die Reise hin? ${hoods.length} Bezirke, ${hoods.length} Stimmungen.`
+            : "Diese Stadt kuratieren wir gerade. Bald geht's hier los."}
         </Text>
 
         <View className="mt-6">

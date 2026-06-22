@@ -62,16 +62,15 @@ export default function Welcome() {
               <Pressable
                 key={c}
                 onPress={() => setCity(c)}
-                className="rounded-pill px-[13px] py-2"
+                className="items-center justify-center rounded-pill px-4"
                 style={{
+                  height: 40,
                   backgroundColor: active ? "#FFE500" : "transparent",
-                  borderWidth: active ? 0 : 1,
-                  borderColor: "rgba(26,26,26,0.18)",
+                  borderWidth: 1,
+                  borderColor: active ? "#FFE500" : "rgba(26,26,26,0.18)",
                 }}
               >
-                <Text className="font-hk-extrabold text-[19px] leading-[19px] text-ink">
-                  {c}
-                </Text>
+                <Text className="font-hk-extrabold text-[19px] text-ink">{c}</Text>
               </Pressable>
             );
           })}

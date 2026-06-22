@@ -168,7 +168,7 @@ export default function Geheimtipp() {
 
         {spot ? (
           <>
-            <Text className="mt-2 font-hk-extrabold text-[44px] leading-[40px] text-accent-ink">
+            <Text className="mt-3 font-hk-extrabold text-[40px] leading-[44px] text-accent-ink">
               {spot.name}
             </Text>
 

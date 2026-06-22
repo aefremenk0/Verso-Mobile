@@ -47,6 +47,7 @@ Expo **SDK 54**. Diese Versionen sind bewusst gepinnt — siehe Stolperfallen.
 | tailwindcss | ^3.4.x (dev) | |
 | react-native-reanimated | **4.1.1** (exakt) | für ALLE Animationen |
 | react-native-worklets | **0.5.1** (exakt) | von Reanimated 4 benötigt |
+| react-native-svg | **15.12.1** (exakt) | Logos/Vektorgrafik, in Expo Go |
 | @expo-google-fonts/hanken-grotesk | ^0.4.x | |
 | expo-image, expo-font, expo-splash-screen | SDK-54-Stände | |
 
@@ -182,7 +183,18 @@ npx tsc --noEmit       # Typecheck
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-22 · CLAUDE.md hinzugefügt
+### (dieser Commit) · 2026-06-22 · UI-Feinschliff nach Nutzer-Feedback
+- Feed: mehr Abstand unter den Kategorie-Pills; Stadt-Dropdown jetzt
+  **horizontal** (scrollbare Pill-Reihe statt vertikaler Liste).
+- Welcome: Stadtnamen in den Chips zentriert; Städte-Liste erweitert
+  (`CITIES` = Wien/München/Berlin/Frankfurt/Düsseldorf/Hamburg,
+  `CITIES_WITH_CONTENT` markiert die mit Inhalten).
+- Registrierung: echte **Apple-/Google-Logos** (`react-native-svg`,
+  neue Komponente `Logos.tsx`).
+- Geheimtipp-Reveal: Überlappung Label/Name behoben (Zeilenhöhe/Abstand).
+- Viertel: Leerzustand für Städte ohne Bezirke.
+
+### 241b3e5 · 2026-06-22 · CLAUDE.md hinzugefügt
 - Projektgedächtnis angelegt: Überblick, Tech-Stack/Versionen, Stolperfallen,
   Architektur, Konventionen, Geheimtipp-Mechanik, Stand, Changelog.
 - Konvention etabliert: diese Datei bei **jedem** Commit mitpflegen.
