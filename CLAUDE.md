@@ -120,8 +120,9 @@ src/
   lib/mapFilter.ts        Filter-Typ + matchesFilter (Art/Budget/Bewertung/Ambiente)
 
 app.config.js             Expo-Config (ersetzt app.json; Mapbox-Token via Env)
-  data/                   types.ts, spots.ts (18 Mocks), cities.ts,
-                          categories.ts, user.ts  (kein Backend)
+  data/                   types.ts, spots.ts (Mock-Orte + Events, ≥2/Stadt),
+                          cities.ts (8 Viertel pro Stadt), categories.ts,
+                          user.ts  (kein Backend)
   store/                  city.tsx, saved.tsx, geheimtipp.tsx  (React-Context,
                           alles in-memory)
   lib/maps.ts             Deep-Links Apple/Google Maps
@@ -202,7 +203,16 @@ npx tsc --noEmit       # Typecheck
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-24 · Profil: Abstand zum Notch = „Wien"-Abstand im Feed
+### (dieser Commit) · 2026-06-24 · Daten: 8 Viertel + ≥2 Events pro Stadt
+- **`cities.ts`:** jede der 6 Städte hat jetzt **genau 8 Viertel** (Wien/Berlin/
+  München aufgestockt; Frankfurt/Düsseldorf/Hamburg neu, je 8) — mit poetischen
+  Einzeilern im Verso-Ton. `CITIES_WITH_CONTENT` = alle Städte (`[...CITIES]`).
+- **`spots.ts`:** **mindestens 2 Events pro Stadt** — 10 neue Events für Berlin,
+  München, Frankfurt, Düsseldorf, Hamburg (Wien hatte schon 2). Volle Felder
+  inkl. lat/lng, `dateLabel`, `meetingPoint`, `ticketUrl`.
+- Konvention notiert: **8 Viertel/Stadt**, **≥2 Events/Stadt**.
+
+### 20c8203 · 2026-06-24 · Profil: Abstand zum Notch = „Wien"-Abstand im Feed
 - Profil-Kopf-`paddingTop` 60 → **14**: „PROFIL" hat jetzt denselben Abstand zum
   Notch wie „Wien" im Feed (dort `pt-2` 8 + Zentrierung in der 42er-Zeile 6 = 14).
 
