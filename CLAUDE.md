@@ -204,7 +204,13 @@ npx tsc --noEmit       # Typecheck
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-24 · Welcome: „?"-Bubble-Easter-Egg auf „verso"
+### (dieser Commit) · 2026-06-24 · Profil-Footer: Abstand & Zitat einzeilig
+- Footer-Abstand `mt-10` → **`mt-8`** (8px nach oben) = derselbe Abstand wie die
+  Einladen-Karte zur Liste.
+- Zitat steht jetzt in **einer Zeile** (`numberOfLines={1}` + `adjustsFontSizeToFit`,
+  `max-w` entfernt) statt umzubrechen.
+
+### e7e854c · 2026-06-24 · Welcome: „?"-Bubble-Easter-Egg auf „verso"
 - Neue Komponente **`QuestionBubbles`** (ref-API `burst(x,y)`): gelbe „?"-Bubbles
   steigen per Reanimated von der Tipp-Stelle auf (Zufalls-Drift/Höhe/Größe/Dauer,
   Ein-/Ausfaden), entfernen sich nach dem Aufstieg selbst.

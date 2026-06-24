@@ -176,13 +176,19 @@ export default function Profil() {
           </View>
         </Pressable>
 
-        {/* Stille Signatur ganz unten */}
-        <View className="mt-10 items-center">
+        {/* Stille Signatur ganz unten. mt-8 = derselbe Abstand wie die
+            Einladen-Karte zur Liste (vorher mt-10 -> 8px nach oben geschoben). */}
+        <View className="mt-8 items-center">
           <Brand size={26} color="#8A857C" />
           <Text className="mt-2 font-hk-semibold text-[10px] tracking-[2px] text-ink-3">
             VERSION 0.1 · MADE IN WIEN
           </Text>
-          <Text className="mt-3 max-w-[260px] text-center font-hk-medium-italic text-[13px] leading-[18px] text-ink-3">
+          {/* Zitat in EINER Zeile: shrink-to-fit statt Umbruch. */}
+          <Text
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            className="mt-3 text-center font-hk-medium-italic text-[12px] leading-[18px] text-ink-3"
+          >
             Die Stadt gehört denen, die hinter die Türen schauen.
           </Text>
         </View>
