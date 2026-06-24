@@ -161,7 +161,7 @@ export default function Profil() {
         {/* Freund einladen — passt zur App-DNA (Tipps von Freund zu Freund). */}
         <Pressable
           onPress={onInvite}
-          className="mt-8 flex-row items-center justify-between rounded-card bg-night p-5"
+          className="mt-4 flex-row items-center justify-between rounded-card bg-night p-5"
         >
           <View className="flex-1 pr-3">
             <Text className="font-hk-extrabold-italic text-[18px] text-screen">
@@ -176,9 +176,9 @@ export default function Profil() {
           </View>
         </Pressable>
 
-        {/* Stille Signatur ganz unten. mt-8 = derselbe Abstand wie die
-            Einladen-Karte zur Liste (vorher mt-10 -> 8px nach oben geschoben). */}
-        <View className="mt-8 items-center">
+        {/* Stille Signatur ganz unten. mt-4 = derselbe Abstand wie die
+            Einladen-Karte zur Liste (beide Abstände halbiert). */}
+        <View className="mt-4 items-center">
           <Brand size={26} color="#8A857C" />
           <Text className="mt-2 font-hk-semibold text-[10px] tracking-[2px] text-ink-3">
             VERSION 0.1 · MADE IN WIEN

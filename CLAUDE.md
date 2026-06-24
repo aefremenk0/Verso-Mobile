@@ -204,9 +204,12 @@ npx tsc --noEmit       # Typecheck
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-24 · Profil-Footer: Abstand & Zitat einzeilig
-- Footer-Abstand `mt-10` → **`mt-8`** (8px nach oben) = derselbe Abstand wie die
-  Einladen-Karte zur Liste.
+### (dieser Commit) · 2026-06-24 · Profil-Footer: beide Abstände halbiert (mt-4)
+- Einladen-Karte UND Footer jetzt **`mt-4`** (vorher mt-8) — beide Abstände
+  gleich und halbiert.
+
+### e6d8464 · 2026-06-24 · Profil-Footer: Abstand & Zitat einzeilig
+- Footer-Abstand `mt-10` → `mt-8` = derselbe Abstand wie die Einladen-Karte.
 - Zitat steht jetzt in **einer Zeile** (`numberOfLines={1}` + `adjustsFontSizeToFit`,
   `max-w` entfernt) statt umzubrechen.
 
