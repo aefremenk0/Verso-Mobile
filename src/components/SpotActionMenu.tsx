@@ -1,0 +1,111 @@
+import { useEffect } from "react";
+import { Pressable, Text, View } from "react-native";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withDelay,
+  withSpring,
+} from "react-native-reanimated";
+import { shadows } from "../theme";
+
+// Aufplopp-Aktionsmenü über einer Spot-Karte (Pinterest-artig): zwei Kreise,
+// die per Long-Press erscheinen — „Merken" (Herz) und „Teilen" (Weiterleiten).
+// Tippen wählt, Tippen auf den abgedunkelten Hintergrund schließt.
+
+interface SpotActionMenuProps {
+  saved: boolean;
+  onSave: () => void;
+  onShare: () => void;
+  onClose: () => void;
+}
+
+// Ein einzelner Kreis + Label, der gestaffelt aufploppt (Spring).
+function Circle({
+  index,
+  circleClass,
+  glyph,
+  glyphColor,
+  glyphSize,
+  label,
+  onPress,
+}: {
+  index: number;
+  circleClass: string;
+  glyph: string;
+  glyphColor: string;
+  glyphSize: number;
+  label: string;
+  onPress: () => void;
+}) {
+  const p = useSharedValue(0);
+
+  useEffect(() => {
+    p.value = withDelay(
+      index * 70, // leichter Versatz -> sie ploppen nacheinander
+      withSpring(1, { damping: 12, stiffness: 200, mass: 0.6 }),
+    );
+    // nur beim Mounten
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const style = useAnimatedStyle(() => ({
+    opacity: p.value,
+    transform: [{ scale: 0.4 + p.value * 0.6 }, { translateY: (1 - p.value) * 12 }],
+  }));
+
+  return (
+    <View className="items-center">
+      <Animated.View style={style}>
+        <Pressable
+          onPress={onPress}
+          className={`h-16 w-16 items-center justify-center rounded-pill ${circleClass}`}
+          style={shadows.card}
+        >
+          <Text style={{ fontSize: glyphSize, color: glyphColor }}>{glyph}</Text>
+        </Pressable>
+      </Animated.View>
+      <Text className="mt-2 font-hk-bold text-[10px] tracking-[1.5px] text-screen">
+        {label}
+      </Text>
+    </View>
+  );
+}
+
+export function SpotActionMenu({
+  saved,
+  onSave,
+  onShare,
+  onClose,
+}: SpotActionMenuProps) {
+  return (
+    <View
+      className="absolute inset-0 items-center justify-center"
+      style={{ zIndex: 10 }}
+    >
+      {/* Abgedunkelter Hintergrund (deckt die Karte) — Tippen schließt. */}
+      <Pressable onPress={onClose} className="absolute inset-0 rounded-card bg-night/50" />
+
+      {/* Zwei Aktionskreise */}
+      <View className="flex-row gap-8">
+        <Circle
+          index={0}
+          circleClass="bg-accent"
+          glyph={saved ? "♥" : "♡"}
+          glyphColor="#1A1A1A"
+          glyphSize={26}
+          label="MERKEN"
+          onPress={onSave}
+        />
+        <Circle
+          index={1}
+          circleClass="bg-surface"
+          glyph="↗"
+          glyphColor="#1A1A1A"
+          glyphSize={24}
+          label="TEILEN"
+          onPress={onShare}
+        />
+      </View>
+    </View>
+  );
+}

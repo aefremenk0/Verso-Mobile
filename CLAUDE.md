@@ -115,6 +115,8 @@ src/
                           CityDropdown (einheitlicher Stadt-Kopf), Logos,
                           GeheimtippButton (pulsierende Squiggle-"?"),
                           MysticBadge ("???"-Badge, pulsierende Kontur),
+                          QuestionBubbles (aufsteigende Bubbles, konfig. Glyph),
+                          SpotActionMenu (Long-Press-Kreis-Menü: Merken/Teilen),
                           CityMap (Mapbox + Expo-Go-Fallback),
                           MapFilterSheet (Karte-Filter-Panel),
                           RangeSlider (Budget, PanResponder)
@@ -192,9 +194,11 @@ dokumentieren** (Trigger · Ort · Datei) — und unten bei „Ideen" abhaken/er
   „verso"-Wortmarke, steigen gelbe „?"-Bubbles von der Tipp-Stelle auf.
   → `src/components/QuestionBubbles.tsx` (jetzt mit Props `glyph`/`color`/
   `textColor`), eingebaut in `app/index.tsx`. Greift nur vor der Registrierung.
-- **SpotCard-Long-Press → „Merken" + Herz-Burst:** Eine Spot-Karte im Feed lange
-  drücken merkt den Spot (merkt immer, ent-merkt nie) und lässt **Herz-Bubbles**
-  (`QuestionBubbles glyph="♥"`) an der Druckstelle aufsteigen. → `SpotCard.tsx`.
+- **SpotCard-Long-Press → Pinterest-Kreis-Menü:** Eine Spot-Karte im Feed lange
+  drücken öffnet ein aufploppendes Menü aus zwei Kreisen (`SpotActionMenu`):
+  **„Merken"** (♥, merkt den Spot + Herz-Burst via `QuestionBubbles`) und
+  **„Teilen"** (↗, systemeigenes `Share`-Sheet → iMessage/WhatsApp/…).
+  → `SpotCard.tsx` + `src/components/SpotActionMenu.tsx`.
 - **Karte-Doppeltipp → alle Pins ploppen:** Doppeltipp auf die leere
   (Fallback-)Kartenfläche lässt **alle Pin-Labels gleichzeitig** kurz aufploppen
   (`popSeed` → `flash` je Pin). → `CityMap.tsx` (Expo-Go-Fallback; auf der echten
@@ -249,7 +253,12 @@ npx tsc --noEmit       # Typecheck
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-24 · Easter Eggs: SpotCard-Long-Press + Karte-Doppeltipp
+### (dieser Commit) · 2026-06-24 · SpotCard-Long-Press: Pinterest-Kreis-Menü
+- Long-Press öffnet jetzt ein **aufploppendes Kreis-Menü** (`SpotActionMenu`):
+  **Merken** (♥ + Herz-Burst) und **Teilen** (↗ → systemeigenes `Share`-Sheet,
+  iMessage/WhatsApp/…) — statt nur des Herz-Bursts.
+
+### 7eb87e5 · 2026-06-24 · Easter Eggs: SpotCard-Long-Press + Karte-Doppeltipp
 - **SpotCard Long-Press** → merkt den Spot + Herz-Bubble-Burst an der Druckstelle
   (`QuestionBubbles glyph="♥"`). `QuestionBubbles` nimmt jetzt `glyph/color/textColor`.
 - **Karte Doppeltipp** (leere Fläche) → alle Pin-Labels ploppen gleichzeitig auf
