@@ -1,5 +1,12 @@
 import Constants, { ExecutionEnvironment } from "expo-constants";
+import { useEffect } from "react";
 import { Pressable, Text, View } from "react-native";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+  withTiming,
+} from "react-native-reanimated";
 import type { Spot } from "../data/types";
 import { shadows } from "../theme";
 
@@ -40,24 +47,48 @@ function cityCenter(spots: Spot[]): [number, number] {
 // Pin-Inhalt: Punkt + (wenn aktiv) gelbes Label.
 // Das Label liegt ABSOLUT über dem Punkt, damit der Punkt beim Auswählen
 // nicht verrutscht (vorher schob das Label im Layout den Punkt nach unten).
+//
+// Das Label „ploppt" beim Auswählen auf: ein Reanimated-Wert (pop) fährt per
+// Spring von 0 -> 1 (Scale + leichtes Hochsteigen + Fade). Es bleibt immer
+// gemountet (kein `active ?`), damit es auch beim Abwählen sauber zurückfedert;
+// inaktiv ist es per Opacity 0 + pointerEvents unsichtbar.
 function Pin({ spot, active }: { spot: Spot; active: boolean }) {
+  // Startwert passend zum Zustand, damit der erste Pin nicht ungewollt animiert.
+  const pop = useSharedValue(active ? 1 : 0);
+
+  useEffect(() => {
+    pop.value = active
+      ? withSpring(1, { damping: 11, stiffness: 190, mass: 0.6 }) // federnder Pop
+      : withTiming(0, { duration: 120 }); // schnelles, ruhiges Ausblenden
+  }, [active, pop]);
+
+  // Aus 0->1: Scale 0.6->1, steigt 8px hoch, blendet ein.
+  const labelStyle = useAnimatedStyle(() => ({
+    opacity: pop.value,
+    transform: [
+      { translateY: (1 - pop.value) * 8 },
+      { scale: 0.6 + pop.value * 0.4 },
+    ],
+  }));
+
   return (
     <View className="items-center justify-center">
-      {active ? (
-        <View
-          pointerEvents="none"
-          style={{ position: "absolute", bottom: 22, left: -130, right: -130, alignItems: "center" }}
-        >
-          <View className="rounded-pill bg-accent px-3 py-1.5" style={shadows.card}>
-            <Text
-              className="font-hk-extrabold text-[15px] text-accent-ink"
-              numberOfLines={1}
-            >
-              {spot.name}
-            </Text>
-          </View>
+      <Animated.View
+        pointerEvents="none"
+        style={[
+          { position: "absolute", bottom: 22, left: -130, right: -130, alignItems: "center" },
+          labelStyle,
+        ]}
+      >
+        <View className="rounded-pill bg-accent px-3 py-1.5" style={shadows.card}>
+          <Text
+            className="font-hk-extrabold text-[15px] text-accent-ink"
+            numberOfLines={1}
+          >
+            {spot.name}
+          </Text>
         </View>
-      ) : null}
+      </Animated.View>
       <View
         className="rounded-pill bg-night"
         style={{ width: 14, height: 14, borderWidth: 2.5, borderColor: "#F7F4EF" }}

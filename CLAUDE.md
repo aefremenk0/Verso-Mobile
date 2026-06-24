@@ -200,7 +200,13 @@ npx tsc --noEmit       # Typecheck
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-22 · Geheimtipp-Pop-up auf Vollbild
+### (dieser Commit) · 2026-06-24 · Karte: gelbes Label „ploppt" beim Auswählen auf
+- `Pin` in `CityMap.tsx` animiert das gelbe Orts-Label jetzt per Reanimated-Spring
+  (`pop`-SharedValue 0→1: Scale 0.6→1, steigt 8px hoch, blendet ein) statt es hart
+  per `active ?` ein-/auszuschalten. Beim Abwählen federt es ruhig per `withTiming`
+  zurück. Label bleibt gemountet (inaktiv: Opacity 0 + `pointerEvents="none"`).
+
+### c4a3e62 · 2026-06-22 · Geheimtipp-Pop-up auf Vollbild
 - Beide Phasen füllen jetzt den ganzen Screen (Vollbild-`SafeAreaView`), kein
   cremefarbener Rand mehr. Karten-Wrapper (cardW/cardH) entfernt.
 
