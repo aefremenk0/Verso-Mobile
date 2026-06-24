@@ -190,8 +190,15 @@ dokumentieren** (Trigger · Ort · Datei) — und unten bei „Ideen" abhaken/er
 ### Eingebaut
 - **„verso"-Bubbles (Welcome):** Tippt man im braunen Hero auf die
   „verso"-Wortmarke, steigen gelbe „?"-Bubbles von der Tipp-Stelle auf.
-  → `src/components/QuestionBubbles.tsx`, eingebaut in `app/index.tsx`.
-  Greift bewusst nur vor der Registrierung.
+  → `src/components/QuestionBubbles.tsx` (jetzt mit Props `glyph`/`color`/
+  `textColor`), eingebaut in `app/index.tsx`. Greift nur vor der Registrierung.
+- **SpotCard-Long-Press → „Merken" + Herz-Burst:** Eine Spot-Karte im Feed lange
+  drücken merkt den Spot (merkt immer, ent-merkt nie) und lässt **Herz-Bubbles**
+  (`QuestionBubbles glyph="♥"`) an der Druckstelle aufsteigen. → `SpotCard.tsx`.
+- **Karte-Doppeltipp → alle Pins ploppen:** Doppeltipp auf die leere
+  (Fallback-)Kartenfläche lässt **alle Pin-Labels gleichzeitig** kurz aufploppen
+  (`popSeed` → `flash` je Pin). → `CityMap.tsx` (Expo-Go-Fallback; auf der echten
+  Mapbox-Karte bleibt der native Doppeltipp-Zoom).
 
 ### Ideen / Roadmap (offen)
 - **Logo-Tap-Combo (Bottom-Nav):** „?"-Squiggle mehrfach schnell tippen →
@@ -200,13 +207,10 @@ dokumentieren** (Trigger · Ort · Datei) — und unten bei „Ideen" abhaken/er
   zufälliger Spot („Überrasch mich"). (braucht `expo-sensors`, in Expo Go ok)
 - **Stats-Tap (Profil):** mehrfach auf eine Stat-Zahl tippen → das „???"-Badge
   lüftet kurz ein verborgenes Wort.
-- **Karte-Doppeltipp:** Doppeltipp auf leere Kartenfläche → alle Pins „ploppen"
-  gleichzeitig auf.
 - **„?" schon abgeholt:** Geheimtipp-„?" in der Nav nach dem Abholen antippen →
   verspielter Spruch „Schon abgeholt. Nächste Woche wieder."
 - **Begrüßungs-Zyklus:** „Hi Insider."-Band auf Welcome antippen → wechselt
   durch verspielte Grüße.
-- **SpotCard-Long-Press:** lange drücken → „Merken" mit kleinem Herz-/Bubble-Burst.
 - **Versteckter Spot:** ein geheimer Ort, der nur über eine bestimmte Geste oder
   Tipp-Sequenz auftaucht (passt perfekt zum „Geheimtipp"-Kern).
 
@@ -245,7 +249,13 @@ npx tsc --noEmit       # Typecheck
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-24 · Profil: Abstände 21px, Einladen-Text-Umbruch
+### (dieser Commit) · 2026-06-24 · Easter Eggs: SpotCard-Long-Press + Karte-Doppeltipp
+- **SpotCard Long-Press** → merkt den Spot + Herz-Bubble-Burst an der Druckstelle
+  (`QuestionBubbles glyph="♥"`). `QuestionBubbles` nimmt jetzt `glyph/color/textColor`.
+- **Karte Doppeltipp** (leere Fläche) → alle Pin-Labels ploppen gleichzeitig auf
+  (`popSeed` in `CityMap` → `flash` je `Pin`). Fallback-Karte (Expo Go).
+
+### 07e6c55 · 2026-06-24 · Profil: Abstände 21px, Einladen-Text-Umbruch
 - Einladen-Karte & Footer jetzt **21px** Abstand (mt-4=16 → `marginTop: 21`),
   beide gleich.
 - Einladen-Untertitel: manueller Umbruch → „Gib den Geheimtipp weiter." steht

@@ -38,7 +38,15 @@ function Bubble({
   x,
   y,
   onDone,
-}: BubbleData & { onDone: (id: number) => void }) {
+  glyph,
+  color,
+  textColor,
+}: BubbleData & {
+  onDone: (id: number) => void;
+  glyph: string;
+  color: string;
+  textColor: string;
+}) {
   const p = useSharedValue(0);
 
   // Zufallsparameter einmalig festlegen (jede Bubble fliegt etwas anders).
@@ -94,7 +102,7 @@ function Bubble({
           width: cfg.size,
           height: cfg.size,
           borderRadius: cfg.size / 2,
-          backgroundColor: "#FFE500",
+          backgroundColor: color,
           alignItems: "center",
           justifyContent: "center",
         },
@@ -106,18 +114,29 @@ function Bubble({
         style={{
           fontSize: cfg.size * 0.5,
           lineHeight: cfg.size * 0.62,
-          color: "#1A1A1A",
+          color: textColor,
         }}
       >
-        ?
+        {glyph}
       </Text>
     </Animated.View>
   );
 }
 
-export const QuestionBubbles = forwardRef<QuestionBubblesHandle>(
-  function QuestionBubbles(_props, ref) {
-    const [bubbles, setBubbles] = useState<BubbleData[]>([]);
+interface QuestionBubblesProps {
+  glyph?: string; // Standard „?"
+  color?: string; // Bubble-Hintergrund (Standard Signalgelb)
+  textColor?: string; // Glyph-Farbe
+}
+
+export const QuestionBubbles = forwardRef<
+  QuestionBubblesHandle,
+  QuestionBubblesProps
+>(function QuestionBubbles(
+  { glyph = "?", color = "#FFE500", textColor = "#1A1A1A" },
+  ref,
+) {
+  const [bubbles, setBubbles] = useState<BubbleData[]>([]);
 
     useImperativeHandle(ref, () => ({
       burst: (x, y) => {
@@ -137,7 +156,14 @@ export const QuestionBubbles = forwardRef<QuestionBubblesHandle>(
         style={{ position: "absolute", left: 0, top: 0, right: 0, bottom: 0 }}
       >
         {bubbles.map((b) => (
-          <Bubble key={b.id} {...b} onDone={remove} />
+          <Bubble
+            key={b.id}
+            {...b}
+            onDone={remove}
+            glyph={glyph}
+            color={color}
+            textColor={textColor}
+          />
         ))}
       </View>
     );

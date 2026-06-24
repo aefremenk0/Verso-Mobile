@@ -1,9 +1,11 @@
 import Constants, { ExecutionEnvironment } from "expo-constants";
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Pressable, Text, View } from "react-native";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
+  withDelay,
+  withSequence,
   withSpring,
   withTiming,
 } from "react-native-reanimated";
@@ -52,9 +54,19 @@ function cityCenter(spots: Spot[]): [number, number] {
 // Spring von 0 -> 1 (Scale + leichtes Hochsteigen + Fade). Es bleibt immer
 // gemountet (kein `active ?`), damit es auch beim Abwählen sauber zurückfedert;
 // inaktiv ist es per Opacity 0 + pointerEvents unsichtbar.
-function Pin({ spot, active }: { spot: Spot; active: boolean }) {
+function Pin({
+  spot,
+  active,
+  popSeed,
+}: {
+  spot: Spot;
+  active: boolean;
+  popSeed: number;
+}) {
   // Startwert passend zum Zustand, damit der erste Pin nicht ungewollt animiert.
   const pop = useSharedValue(active ? 1 : 0);
+  // Easter Egg: Doppeltipp auf die Karte lässt ALLE Labels kurz aufploppen.
+  const flash = useSharedValue(0);
 
   useEffect(() => {
     pop.value = active
@@ -62,14 +74,23 @@ function Pin({ spot, active }: { spot: Spot; active: boolean }) {
       : withTiming(0, { duration: 120 }); // schnelles, ruhiges Ausblenden
   }, [active, pop]);
 
-  // Aus 0->1: Scale 0.6->1, steigt 8px hoch, blendet ein.
-  const labelStyle = useAnimatedStyle(() => ({
-    opacity: pop.value,
-    transform: [
-      { translateY: (1 - pop.value) * 8 },
-      { scale: 0.6 + pop.value * 0.4 },
-    ],
-  }));
+  // Bei jedem Doppeltipp (popSeed steigt) kurz aufploppen und zurückfedern.
+  useEffect(() => {
+    if (popSeed === 0) return; // initialer Wert -> nicht feuern
+    flash.value = withSequence(
+      withSpring(1, { damping: 11, stiffness: 190, mass: 0.6 }),
+      withDelay(650, withTiming(0, { duration: 260 })),
+    );
+  }, [popSeed, flash]);
+
+  // Sichtbarkeit = stärkerer Wert aus Auswahl (pop) und Doppeltipp (flash).
+  const labelStyle = useAnimatedStyle(() => {
+    const v = Math.max(pop.value, flash.value);
+    return {
+      opacity: v,
+      transform: [{ translateY: (1 - v) * 8 }, { scale: 0.6 + v * 0.4 }],
+    };
+  });
 
   // Events heben sich farblich ab: gelber Punkt + schwarze Kontur, und das
   // Label ist eine schwarze Box mit gelbem Namen + gelbem Datum.
@@ -138,6 +159,19 @@ interface CityMapProps {
 }
 
 export function CityMap({ spots, selectedId, onSelect }: CityMapProps) {
+  // Easter Egg: Doppeltipp auf leere Kartenfläche -> alle Pins ploppen auf.
+  const [popSeed, setPopSeed] = useState(0);
+  const lastTap = useRef(0);
+  const handleBackgroundTap = () => {
+    const now = Date.now();
+    if (now - lastTap.current < 300) {
+      setPopSeed((s) => s + 1); // zweiter Tipp schnell genug -> Doppeltipp
+      lastTap.current = 0;
+    } else {
+      lastTap.current = now;
+    }
+  };
+
   // ── Echte Mapbox-Karte (Dev Build mit Token) ──
   if (Mapbox) {
     const center = cityCenter(spots);
@@ -162,7 +196,11 @@ export function CityMap({ spots, selectedId, onSelect }: CityMapProps) {
             anchor={{ x: 0.5, y: 1 }}
           >
             <Pressable onPress={() => onSelect(spot)}>
-              <Pin spot={spot} active={spot.id === selectedId} />
+              <Pin
+                spot={spot}
+                active={spot.id === selectedId}
+                popSeed={popSeed}
+              />
             </Pressable>
           </Mapbox.MarkerView>
         ))}
@@ -197,6 +235,13 @@ export function CityMap({ spots, selectedId, onSelect }: CityMapProps) {
         Rechte Wienzeile
       </Text>
 
+      {/* Tap-Fläche für den Doppeltipp (liegt HINTER den Pins, die danach
+          gerendert werden -> Pin-Taps gehen weiterhin durch). */}
+      <Pressable
+        onPress={handleBackgroundTap}
+        className="absolute inset-0"
+      />
+
       {spots.slice(0, 5).map((spot, i) => (
         <Pressable
           key={spot.id}
@@ -207,7 +252,7 @@ export function CityMap({ spots, selectedId, onSelect }: CityMapProps) {
             left: FALLBACK_POS[i].left as `${number}%`,
           }}
         >
-          <Pin spot={spot} active={spot.id === selectedId} />
+          <Pin spot={spot} active={spot.id === selectedId} popSeed={popSeed} />
         </Pressable>
       ))}
     </View>

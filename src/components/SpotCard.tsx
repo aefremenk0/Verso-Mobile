@@ -1,25 +1,45 @@
 import { useRouter } from "expo-router";
-import { Pressable, Text, View } from "react-native";
+import { useRef } from "react";
+import { type GestureResponderEvent, Pressable, Text, View } from "react-native";
 import { CATEGORY_LABEL } from "../data/categories";
 import type { Spot } from "../data/types";
+import { useSaved } from "../store/saved";
 import { shadows } from "../theme";
 import { ImagePlaceholder } from "./ImagePlaceholder";
+import {
+  QuestionBubbles,
+  type QuestionBubblesHandle,
+} from "./QuestionBubbles";
 
 // Eine Spot-Karte im Discovery-Feed.
 // Tippen öffnet das passende Detail (Spot oder Event teilen sich /spot/[id]).
+// Easter Egg: LANGE drücken merkt den Spot + lässt Herz-Bubbles aufsteigen.
 
 export function SpotCard({ spot }: { spot: Spot }) {
   const router = useRouter();
+  const { isSaved, toggle } = useSaved();
+  const burstRef = useRef<QuestionBubblesHandle>(null);
 
   // Caps-Zeile: Bezirk + erste zwei Tags (z. B. "WIEDEN · NATURAL · SPÄT").
   const metaLine = [spot.neighborhood.split(",")[0], ...spot.tags.slice(0, 2)]
     .join("  ·  ")
     .toUpperCase();
 
+  // Long-Press = „Merken" (merkt immer, ent-merkt nie) + Herz-Burst an der
+  // gedrückten Stelle.
+  const onLongPress = (e: GestureResponderEvent) => {
+    if (!isSaved(spot.id)) toggle(spot.id);
+    const { locationX, locationY } = e.nativeEvent;
+    burstRef.current?.burst(locationX, locationY);
+  };
+
   return (
+    <View className="mb-5">
     <Pressable
       onPress={() => router.push(`/spot/${spot.id}`)}
-      className="mb-5 overflow-hidden rounded-card bg-surface"
+      onLongPress={onLongPress}
+      delayLongPress={300}
+      className="overflow-hidden rounded-card bg-surface"
       style={shadows.card}
     >
       <ImagePlaceholder tone={spot.tone} height={150} radius={0} note={spot.imageNote}>
@@ -52,5 +72,9 @@ export function SpotCard({ spot }: { spot: Spot }) {
         </View>
       </View>
     </Pressable>
+
+      {/* Herz-Burst über der Karte (nicht vom rounded-card abgeschnitten) */}
+      <QuestionBubbles ref={burstRef} glyph="♥" textColor="#1A1A1A" />
+    </View>
   );
 }
