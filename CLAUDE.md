@@ -201,7 +201,13 @@ npx tsc --noEmit       # Typecheck
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-24 · Profil: Geheimtipp ohne Pop-up; Insider-Box mystisch
+### (dieser Commit) · 2026-06-24 · Profil: „???"-Badge + Kopf auf Höhe von „Deine Orte"
+- Badge unter dem Namen: „NOCH KEIN INSIDER" → **„???"** (mystisch, kurz).
+- Profil-Kopf („PROFIL" + Name) startet jetzt auf **gleicher Höhe** wie
+  „GESPEICHERT"/„Deine Orte" im Gespeichert-Screen: ScrollView-`paddingTop`
+  8 → **60** (gleicht die fehlende Topbar aus: dort Topbar 48 + paddingTop 12).
+
+### c25c748 · 2026-06-24 · Profil: Geheimtipp ohne Pop-up; Insider-Box mystisch
 - **Geheimtipp-Karte** im Profil führt jetzt **direkt zum Spot-Detail** (statt
   das Lade-/Reveal-Pop-up `/geheimtipp` zu öffnen) — der Tipp wird stationär
   gezeigt. Name + Hook stehen weiterhin auf der Karte selbst.

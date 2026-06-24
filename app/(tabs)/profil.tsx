@@ -59,7 +59,10 @@ export default function Profil() {
       <ScrollView
         contentContainerStyle={{
           paddingHorizontal: 24,
-          paddingTop: 8,
+          // Startet „PROFIL" auf gleicher Höhe wie „GESPEICHERT" im Gespeichert-
+          // Screen: dort schiebt die Topbar (pt-2 + h-10 = 48) + paddingTop 12
+          // die Überschrift auf inset+60. Hier (kein Topbar) entsprechend 60.
+          paddingTop: 60,
           paddingBottom: 110,
         }}
         showsVerticalScrollIndicator={false}
@@ -78,8 +81,8 @@ export default function Profil() {
               {MOCK_USER.name}
             </Text>
             <View className="mt-1 self-start rounded-pill bg-chip px-3 py-1">
-              <Text className="font-hk-bold text-[10px] tracking-[1px] text-ink-2">
-                NOCH KEIN INSIDER
+              <Text className="font-hk-bold text-[11px] tracking-[2px] text-ink-2">
+                ???
               </Text>
             </View>
           </View>
