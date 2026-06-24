@@ -245,7 +245,13 @@ npx tsc --noEmit       # Typecheck
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-24 · CLAUDE.md: Easter-Eggs-Sektion
+### (dieser Commit) · 2026-06-24 · Profil: Abstände 21px, Einladen-Text-Umbruch
+- Einladen-Karte & Footer jetzt **21px** Abstand (mt-4=16 → `marginTop: 21`),
+  beide gleich.
+- Einladen-Untertitel: manueller Umbruch → „Gib den Geheimtipp weiter." steht
+  in eigener Zeile.
+
+### ded6c4b · 2026-06-24 · CLAUDE.md: Easter-Eggs-Sektion
 - Neue prominente Sektion **„Easter Eggs 🥚"** (nach Geheimtipp-Mechanik):
   Konventionen, eingebautes Egg („verso"-Bubbles) + Ideen-Roadmap. Regel
   etabliert: jedes neue Egg dort dokumentieren.
