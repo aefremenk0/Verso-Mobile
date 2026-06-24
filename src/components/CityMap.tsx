@@ -4,8 +4,6 @@ import { Pressable, Text, View } from "react-native";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
-  withDelay,
-  withSequence,
   withSpring,
   withTiming,
 } from "react-native-reanimated";
@@ -57,15 +55,15 @@ function cityCenter(spots: Spot[]): [number, number] {
 function Pin({
   spot,
   active,
-  popSeed,
+  popAll,
 }: {
   spot: Spot;
   active: boolean;
-  popSeed: number;
+  popAll: boolean;
 }) {
   // Startwert passend zum Zustand, damit der erste Pin nicht ungewollt animiert.
   const pop = useSharedValue(active ? 1 : 0);
-  // Easter Egg: Doppeltipp auf die Karte lässt ALLE Labels kurz aufploppen.
+  // Easter Egg: Doppeltipp auf die Karte zeigt/versteckt ALLE Labels (Toggle).
   const flash = useSharedValue(0);
 
   useEffect(() => {
@@ -74,14 +72,12 @@ function Pin({
       : withTiming(0, { duration: 120 }); // schnelles, ruhiges Ausblenden
   }, [active, pop]);
 
-  // Bei jedem Doppeltipp (popSeed steigt) kurz aufploppen und zurückfedern.
+  // popAll an -> alle Labels ploppen auf und BLEIBEN; popAll aus -> wieder weg.
   useEffect(() => {
-    if (popSeed === 0) return; // initialer Wert -> nicht feuern
-    flash.value = withSequence(
-      withSpring(1, { damping: 11, stiffness: 190, mass: 0.6 }),
-      withDelay(650, withTiming(0, { duration: 260 })),
-    );
-  }, [popSeed, flash]);
+    flash.value = popAll
+      ? withSpring(1, { damping: 12, stiffness: 190, mass: 0.6 })
+      : withTiming(0, { duration: 200 });
+  }, [popAll, flash]);
 
   // Sichtbarkeit = stärkerer Wert aus Auswahl (pop) und Doppeltipp (flash).
   const labelStyle = useAnimatedStyle(() => {
@@ -159,13 +155,14 @@ interface CityMapProps {
 }
 
 export function CityMap({ spots, selectedId, onSelect }: CityMapProps) {
-  // Easter Egg: Doppeltipp auf leere Kartenfläche -> alle Pins ploppen auf.
-  const [popSeed, setPopSeed] = useState(0);
+  // Easter Egg: Doppeltipp auf leere Kartenfläche -> TOGGLE: alle Pins ploppen
+  // auf; nochmaliger Doppeltipp blendet sie wieder aus.
+  const [popAll, setPopAll] = useState(false);
   const lastTap = useRef(0);
   const handleBackgroundTap = () => {
     const now = Date.now();
     if (now - lastTap.current < 300) {
-      setPopSeed((s) => s + 1); // zweiter Tipp schnell genug -> Doppeltipp
+      setPopAll((v) => !v); // zweiter Tipp schnell genug -> Doppeltipp -> umschalten
       lastTap.current = 0;
     } else {
       lastTap.current = now;
@@ -199,7 +196,7 @@ export function CityMap({ spots, selectedId, onSelect }: CityMapProps) {
               <Pin
                 spot={spot}
                 active={spot.id === selectedId}
-                popSeed={popSeed}
+                popAll={popAll}
               />
             </Pressable>
           </Mapbox.MarkerView>
@@ -252,7 +249,7 @@ export function CityMap({ spots, selectedId, onSelect }: CityMapProps) {
             left: FALLBACK_POS[i].left as `${number}%`,
           }}
         >
-          <Pin spot={spot} active={spot.id === selectedId} popSeed={popSeed} />
+          <Pin spot={spot} active={spot.id === selectedId} popAll={popAll} />
         </Pressable>
       ))}
     </View>

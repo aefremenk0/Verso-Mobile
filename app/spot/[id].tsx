@@ -1,5 +1,5 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { Pressable, ScrollView, Text, View } from "react-native";
+import { Pressable, ScrollView, Share, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Button } from "../../src/components/Button";
 import { ImagePlaceholder } from "../../src/components/ImagePlaceholder";
@@ -38,6 +38,13 @@ export default function SpotDetail() {
   const saved = isSaved(spot.id);
   const metaLine = `${CATEGORY_LABEL[spot.category]} · ${spot.neighborhood.toUpperCase()}`;
 
+  // Ort/Event teilen über das systemeigene Share-Sheet (iMessage, WhatsApp, …).
+  const onShare = () => {
+    Share.share({
+      message: `${spot.name} — ${spot.hook}\nGefunden auf Verso: https://verso.app`,
+    }).catch(() => {});
+  };
+
   return (
     <View className="flex-1 bg-screen">
       <ScrollView
@@ -57,14 +64,23 @@ export default function SpotDetail() {
             >
               <Text className="font-hk-bold text-[18px] text-ink">←</Text>
             </Pressable>
-            <Pressable
-              onPress={() => toggle(spot.id)}
-              className="rounded-pill bg-accent px-4 py-2.5"
-            >
-              <Text className="font-hk-bold text-[13px] text-accent-ink">
-                {saved ? "Gemerkt ✓" : "Merken +"}
-              </Text>
-            </Pressable>
+            <View className="flex-row items-center gap-2">
+              {/* Teilen (Share-Sheet) */}
+              <Pressable
+                onPress={onShare}
+                className="h-10 w-10 items-center justify-center rounded-pill bg-surface"
+              >
+                <Text className="font-hk-bold text-[16px] text-ink">↗</Text>
+              </Pressable>
+              <Pressable
+                onPress={() => toggle(spot.id)}
+                className="rounded-pill bg-accent px-4 py-2.5"
+              >
+                <Text className="font-hk-bold text-[13px] text-accent-ink">
+                  {saved ? "Gemerkt ✓" : "Merken +"}
+                </Text>
+              </Pressable>
+            </View>
           </View>
         </ImagePlaceholder>
 

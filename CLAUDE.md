@@ -47,6 +47,7 @@ Expo **SDK 54**. Diese Versionen sind bewusst gepinnt — siehe Stolperfallen.
 | tailwindcss | ^3.4.x (dev) | |
 | react-native-reanimated | **4.1.1** (exakt) | für ALLE Animationen |
 | react-native-worklets | **0.5.1** (exakt) | von Reanimated 4 benötigt |
+| react-native-gesture-handler | ~2.28.0 | Swipe-Zeilen (Gespeichert), Expo-Go-ok |
 | react-native-svg | **15.12.1** (exakt) | Logos/Vektorgrafik, in Expo Go |
 | @rnmapbox/maps | ^10.3.1 | echte Karte, **NUR Dev Build** (nicht Expo Go) |
 | @expo-google-fonts/hanken-grotesk | ^0.4.x | |
@@ -83,6 +84,10 @@ Expo **SDK 54**. Diese Versionen sind bewusst gepinnt — siehe Stolperfallen.
    `app.config.js`) und `EXPO_PUBLIC_MAPBOX_TOKEN` (pk.*, Laufzeit).
 7. **Config liegt in `app.config.js`** (nicht mehr `app.json`), damit der
    geheime Mapbox-Token aus der Umgebung kommt.
+8. **`react-native-gesture-handler`** braucht zwingend `import
+   "react-native-gesture-handler"` als ERSTE Zeile in `app/_layout.tsx` und einen
+   `<GestureHandlerRootView style={{flex:1}}>` ganz außen — sonst reagieren die
+   Swipe-Zeilen (Gespeichert) nicht. Läuft in Expo Go.
 
 ---
 
@@ -199,10 +204,11 @@ dokumentieren** (Trigger · Ort · Datei) — und unten bei „Ideen" abhaken/er
   **„Merken"** (♥, merkt den Spot + Herz-Burst via `QuestionBubbles`) und
   **„Teilen"** (↗, systemeigenes `Share`-Sheet → iMessage/WhatsApp/…).
   → `SpotCard.tsx` + `src/components/SpotActionMenu.tsx`.
-- **Karte-Doppeltipp → alle Pins ploppen:** Doppeltipp auf die leere
-  (Fallback-)Kartenfläche lässt **alle Pin-Labels gleichzeitig** kurz aufploppen
-  (`popSeed` → `flash` je Pin). → `CityMap.tsx` (Expo-Go-Fallback; auf der echten
-  Mapbox-Karte bleibt der native Doppeltipp-Zoom).
+- **Karte-Doppeltipp → alle Pins ploppen (Toggle):** Doppeltipp auf die leere
+  (Fallback-)Kartenfläche lässt **alle Pin-Labels gleichzeitig** aufploppen und
+  BLEIBEN; ein weiterer Doppeltipp blendet sie wieder aus (`popAll`-Boolean →
+  `flash` je Pin). → `CityMap.tsx` (Expo-Go-Fallback; auf der echten Mapbox-Karte
+  bleibt der native Doppeltipp-Zoom).
 
 ### Ideen / Roadmap (offen)
 - **Logo-Tap-Combo (Bottom-Nav):** „?"-Squiggle mehrfach schnell tippen →
@@ -253,7 +259,16 @@ npx tsc --noEmit       # Typecheck
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-24 · SpotCard-Long-Press: Pinterest-Kreis-Menü
+### (dieser Commit) · 2026-06-24 · Swipe-Zeilen (Gespeichert), Detail-Share, Karte-Toggle
+- **`react-native-gesture-handler` (~2.28.0)** ergänzt; Root in `_layout.tsx` mit
+  `GestureHandlerRootView` umschlossen (+ `import "react-native-gesture-handler"`).
+- **Gespeichert:** Zeilen sind jetzt **wischbar** (`Swipeable`): nach **links →
+  Löschen** (rot), nach **rechts → Teilen** (`Share`, gelb). Wisch-Hinweis ergänzt.
+- **Spot-/Event-Detail:** **Share-Button** (↗) im Hero-Kopf neben „Merken".
+- **Karte-Doppeltipp ist jetzt ein Toggle**: zweiter Doppeltipp blendet alle
+  Labels wieder aus (`popSeed` → `popAll`-Boolean).
+
+### ad9e07c · 2026-06-24 · SpotCard-Long-Press: Pinterest-Kreis-Menü
 - Long-Press öffnet jetzt ein **aufploppendes Kreis-Menü** (`SpotActionMenu`):
   **Merken** (♥ + Herz-Burst) und **Teilen** (↗ → systemeigenes `Share`-Sheet,
   iMessage/WhatsApp/…) — statt nur des Herz-Bursts.

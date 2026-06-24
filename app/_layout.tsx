@@ -1,3 +1,4 @@
+import "react-native-gesture-handler";
 import "../global.css";
 
 import { useFonts } from "expo-font";
@@ -5,6 +6,7 @@ import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { CityProvider } from "../src/store/city";
 import { GeheimtippProvider } from "../src/store/geheimtipp";
@@ -27,6 +29,7 @@ export default function RootLayout() {
   if (!fontsLoaded && !fontError) return null;
 
   return (
+    <GestureHandlerRootView style={{ flex: 1 }}>
     <SafeAreaProvider>
       <CityProvider>
         <SavedProvider>
@@ -68,5 +71,6 @@ export default function RootLayout() {
         </SavedProvider>
       </CityProvider>
     </SafeAreaProvider>
+    </GestureHandlerRootView>
   );
 }
