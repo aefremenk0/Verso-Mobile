@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { CityDropdown } from "../../src/components/CityDropdown";
-import { DuAvatar } from "../../src/components/DuAvatar";
+import { ListMapToggle } from "../../src/components/ListMapToggle";
 import { Pill } from "../../src/components/Pill";
 import { SpotCard } from "../../src/components/SpotCard";
 import { CATEGORY_FILTERS } from "../../src/data/categories";
@@ -28,8 +28,8 @@ export default function Feed() {
 
   return (
     <SafeAreaView className="flex-1 bg-screen" edges={["top"]}>
-      {/* Kopf: einheitliches Stadt-Dropdown + "Du"-Avatar */}
-      <CityDropdown right={<DuAvatar />} />
+      {/* Kopf: einheitliches Stadt-Dropdown + Liste/Karte-Umschalter */}
+      <CityDropdown right={<ListMapToggle active="liste" />} />
 
       {/* Kategorie-Bar — in der Höhe gestreckt: die Pills sitzen oben,
           darunter bleibt Weiß INNERHALB der Bar (paddingBottom). */}

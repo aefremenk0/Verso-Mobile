@@ -109,7 +109,8 @@ app/                      Screens (Expo Router – Dateiname = Route)
 
 src/
   components/             Brand, ImagePlaceholder, StripeTexture, HookHighlight,
-                          Pill, Button, SpotCard, BottomNav, DuAvatar,
+                          Pill, Button, SpotCard, BottomNav, InitialsAvatar
+                          (Initialen-Kreis), ListMapToggle (Liste/Karte oben),
                           CityDropdown (einheitlicher Stadt-Kopf), Logos,
                           GeheimtippButton (pulsierende Squiggle-"?"),
                           CityMap (Mapbox + Expo-Go-Fallback),
@@ -200,7 +201,17 @@ npx tsc --noEmit       # Typecheck
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-24 · Navigation: horizontaler Slide statt Fade
+### (dieser Commit) · 2026-06-24 · Feed: Liste/Karte-Toggle; Nav: Profil-Icon statt „DU"
+- Feed-Kopf zeigt jetzt den **Liste/Karte-Umschalter** (oben rechts) statt des
+  Profil-Avatars. Toggle in neue Komponente **`ListMapToggle`** (`active`-Prop)
+  ausgelagert und auf Feed (`liste`) UND Karte (`karte`) wiederverwendet.
+- Bottom-Nav: der „profil"-Reiter zeigt jetzt das **Initialen-Icon** statt des
+  Text-Labels „DU".
+- Neue Komponente **`InitialsAvatar`** (Initialen-Kreis, eine Quelle für
+  Feed-Größe und Nav-Größe). **`DuAvatar` entfernt** (verwaist: Initialen → 
+  `InitialsAvatar`, Geheimtipp-Zugang → `GeheimtippButton` in der Nav).
+
+### 9a14f53 · 2026-06-24 · Navigation: horizontaler Slide statt Fade
 - Root-`Stack` in `app/_layout.tsx`: `animation` von `fade` auf
   **`slide_from_right`** umgestellt — neue Screens kommen von rechts herein
   (Inhalt wandert nach links), Zurück gleitet nach rechts hinaus. `gestureEnabled`

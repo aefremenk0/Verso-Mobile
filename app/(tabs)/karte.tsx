@@ -5,6 +5,7 @@ import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context"
 import { CityDropdown } from "../../src/components/CityDropdown";
 import { CityMap } from "../../src/components/CityMap";
 import { ImagePlaceholder } from "../../src/components/ImagePlaceholder";
+import { ListMapToggle } from "../../src/components/ListMapToggle";
 import { MapFilterSheet } from "../../src/components/MapFilterSheet";
 import { CATEGORY_LABEL, priceLabel } from "../../src/data/categories";
 import { SPOTS } from "../../src/data/spots";
@@ -41,24 +42,9 @@ export default function Karte() {
   // Ausgewählter Spot nur zeigen, wenn er noch im gefilterten Ergebnis ist.
   const card = selected && spots.some((s) => s.id === selected.id) ? selected : null;
 
-  // Liste/Karte-Umschalter rechts neben dem Stadt-Dropdown.
-  const toggle = (
-    <View className="flex-row rounded-pill bg-chip p-1">
-      <Pressable
-        onPress={() => router.push("/(tabs)/feed")}
-        className="rounded-pill px-4 py-2"
-      >
-        <Text className="font-hk-semibold text-[13px] text-ink-2">Liste</Text>
-      </Pressable>
-      <View className="rounded-pill bg-accent px-4 py-2">
-        <Text className="font-hk-semibold text-[13px] text-accent-ink">Karte</Text>
-      </View>
-    </View>
-  );
-
   return (
     <SafeAreaView className="flex-1 bg-screen" edges={["top"]}>
-      <CityDropdown right={toggle} />
+      <CityDropdown right={<ListMapToggle active="karte" />} />
 
       {/* Filter-Schnellwahl + FILTER-Button */}
       <View className="mt-3 gap-2.5 px-6">

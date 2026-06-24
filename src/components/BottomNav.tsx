@@ -11,19 +11,20 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useGeheimtipp } from "../store/geheimtipp";
 import { shadows } from "../theme";
 import { GeheimtippButton } from "./GeheimtippButton";
+import { InitialsAvatar } from "./InitialsAvatar";
 
 // Schwebende Bottom-Navigation (weiße, abgerundete Leiste).
 //
-// Fünf gleich breite Zellen: Feed · Viertel · Karte · Du · "?".
+// Fünf gleich breite Zellen: Feed · Viertel · Karte · Profil-Icon · "?".
 // Der gelbe Aktiv-Pill (50% Zellenbreite) gleitet smooth unter den aktiven
 // Reiter (Reanimated). Die "?"-Zelle (Geheimtipp) bekommt nie den Pill.
+// Der "profil"-Reiter zeigt statt eines Text-Labels das Initialen-Icon.
 
 const TABS = ["feed", "viertel", "karte", "profil"] as const;
 const LABELS: Record<string, string> = {
   feed: "Feed",
   viertel: "Viertel",
   karte: "Karte",
-  profil: "Du",
 };
 
 const PADDING = 7;
@@ -114,7 +115,7 @@ export function BottomNav({ state, navigation }: BottomNavProps) {
           />
         ) : null}
 
-        {/* Vier Reiter */}
+        {/* Vier Reiter — "profil" als Initialen-Icon, sonst Text-Label. */}
         {TABS.map((name) => {
           const focused = activeName === name;
           return (
@@ -123,13 +124,17 @@ export function BottomNav({ state, navigation }: BottomNavProps) {
               onPress={() => navigation.navigate(name)}
               className="flex-1 items-center justify-center"
             >
-              <Text
-                className={`font-hk-semibold text-[10px] tracking-[1px] ${
-                  focused ? "text-accent-ink" : "text-ink-3"
-                }`}
-              >
-                {LABELS[name].toUpperCase()}
-              </Text>
+              {name === "profil" ? (
+                <InitialsAvatar size={26} textSize={11} focused={focused} />
+              ) : (
+                <Text
+                  className={`font-hk-semibold text-[10px] tracking-[1px] ${
+                    focused ? "text-accent-ink" : "text-ink-3"
+                  }`}
+                >
+                  {LABELS[name].toUpperCase()}
+                </Text>
+              )}
             </Pressable>
           );
         })}
