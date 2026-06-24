@@ -201,7 +201,16 @@ npx tsc --noEmit       # Typecheck
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-24 · Feed: Liste/Karte-Toggle; Nav: Profil-Icon statt „DU"
+### (dieser Commit) · 2026-06-24 · Profil: Geheimtipp ohne Pop-up; Insider-Box mystisch
+- **Geheimtipp-Karte** im Profil führt jetzt **direkt zum Spot-Detail** (statt
+  das Lade-/Reveal-Pop-up `/geheimtipp` zu öffnen) — der Tipp wird stationär
+  gezeigt. Name + Hook stehen weiterhin auf der Karte selbst.
+- **Verso-Insider-Box** neu als **`InsiderTeaser`**: dunkel + mystisch
+  (Sternchen, sanft pulsierender Schimmer via Reanimated), Label
+  „DEMNÄCHST · NEUE VERSION" — signalisiert ein verborgenes, kommendes Feature
+  (führt bewusst nirgendwohin, kein Pfeil mehr).
+
+### 92b457b · 2026-06-24 · Feed: Liste/Karte-Toggle; Nav: Profil-Icon statt „DU"
 - Feed-Kopf zeigt jetzt den **Liste/Karte-Umschalter** (oben rechts) statt des
   Profil-Avatars. Toggle in neue Komponente **`ListMapToggle`** (`active`-Prop)
   ausgelagert und auf Feed (`liste`) UND Karte (`karte`) wiederverwendet.

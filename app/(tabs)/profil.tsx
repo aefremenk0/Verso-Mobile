@@ -1,6 +1,7 @@
 import { useRouter } from "expo-router";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { InsiderTeaser } from "../../src/components/InsiderTeaser";
 import { GEHEIMTIPP, MOCK_USER } from "../../src/data/user";
 import { getSpotById } from "../../src/data/spots";
 import { NEIGHBORHOODS } from "../../src/data/cities";
@@ -84,9 +85,10 @@ export default function Profil() {
           </View>
         </View>
 
-        {/* Geheimtipp-Karte (dunkel) */}
+        {/* Geheimtipp-Karte (dunkel). Zeigt den Tipp stationär an; Tippen führt
+            direkt zum Spot-Detail — KEIN Lade-/Reveal-Pop-up mehr. */}
         <Pressable
-          onPress={() => router.push("/geheimtipp")}
+          onPress={() => tippSpot && router.push(`/spot/${tippSpot.id}`)}
           className="mt-6 rounded-card bg-night p-5"
         >
           <View className="flex-row items-center justify-between">
@@ -128,20 +130,8 @@ export default function Profil() {
           ))}
         </View>
 
-        {/* Insider-Reihe (gelb) */}
-        <Pressable className="mt-4 flex-row items-center justify-between rounded-card bg-accent p-5">
-          <View className="flex-1 pr-3">
-            <Text className="font-hk-extrabold-italic text-[18px] text-accent-ink">
-              Verso Insider
-            </Text>
-            <Text className="mt-0.5 font-hk-medium text-[13px] text-accent-ink/70">
-              Geheimtipps, bevor sie keine mehr sind.
-            </Text>
-          </View>
-          <View className="h-9 w-9 items-center justify-center rounded-pill bg-night">
-            <Text className="font-hk-bold text-[16px] text-white">→</Text>
-          </View>
-        </Pressable>
+        {/* Verso Insider — verborgenes Feature, kommt in einer neuen Version. */}
+        <InsiderTeaser />
 
         {/* Einstiegspunkte */}
         <View className="mt-4">
