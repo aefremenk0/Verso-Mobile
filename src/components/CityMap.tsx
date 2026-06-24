@@ -85,8 +85,10 @@ function Pin({ spot, active }: { spot: Spot; active: boolean }) {
         ]}
       >
         {isEvent ? (
-          // Event: schwarze Box, gelber Name + gelbes Datum.
-          <View className="items-center rounded-card bg-night px-3 py-1.5" style={shadows.card}>
+          // Event: schwarzes abgerundetes RECHTECK (kein Oval) — Name + Datum
+          // passen so deutlich besser rein. Moderater Radius (rounded-button
+          // = 16px) statt rounded-card (24px), das auf der kleinen Box oval wirkte.
+          <View className="items-center rounded-button bg-night px-3.5 py-2" style={shadows.card}>
             <Text className="font-hk-extrabold text-[15px] text-accent" numberOfLines={1}>
               {spot.name}
             </Text>

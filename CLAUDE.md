@@ -204,7 +204,13 @@ npx tsc --noEmit       # Typecheck
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-24 · „???"-Badge öffnet Insider-Pop-up
+### (dieser Commit) · 2026-06-24 · Karte: Event-Label als abgerundetes Rechteck
+- Event-Pop-up-Label in `CityMap.tsx`: Radius von `rounded-card` (24px) auf
+  **`rounded-button` (16px)** + etwas mehr Padding (`px-3.5 py-2`). Das große
+  Oval wirkte auf der kleinen Name+Datum-Box gequetscht; das Rechteck mit
+  abgerundeten Ecken fasst den Infogehalt besser. Orts-Pille bleibt Pille.
+
+### c2984bf · 2026-06-24 · „???"-Badge öffnet Insider-Pop-up
 - Neuer modaler Screen **`app/insider.tsx`** im Geheimtipp-Pop-up-Stil (dunkel,
   drehende Squiggle ums „???"): sagt, das Feature ist **noch nicht verfügbar**,
   Button **„Zurück zum Profil"** (+ ✕). Als Modal (`slide_from_bottom`) im Root-
