@@ -113,6 +113,7 @@ src/
                           (Initialen-Kreis), ListMapToggle (Liste/Karte oben),
                           CityDropdown (einheitlicher Stadt-Kopf), Logos,
                           GeheimtippButton (pulsierende Squiggle-"?"),
+                          MysticBadge ("???"-Badge, pulsierende Kontur),
                           CityMap (Mapbox + Expo-Go-Fallback),
                           MapFilterSheet (Karte-Filter-Panel),
                           RangeSlider (Budget, PanResponder)
@@ -201,7 +202,17 @@ npx tsc --noEmit       # Typecheck
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-24 · Profil: „???"-Badge + Kopf auf Höhe von „Deine Orte"
+### (dieser Commit) · 2026-06-24 · Profil: „???"-Badge mystisch, Insider-Box raus
+- **„???"-Badge** im Profil-Kopf als neue Komponente **`MysticBadge`**: schwarze
+  Pille, gelbe „???", **sanft gelb pulsierende Kontur** (Reanimated
+  `interpolateColor`) — im Stil des früheren Insider-Sterns.
+- **Verso-Insider-Box komplett entfernt** (`InsiderTeaser` aus dem Profil und
+  die Komponenten-Datei gelöscht).
+- Profil-Kopf-Höhe (`paddingTop: 60`) **erneut geprüft**: „PROFIL"/Name liegen
+  bündig auf Höhe von „GESPEICHERT"/„Deine Orte" (beide inset+60, gleiches
+  Label-Styling + paddingHorizontal 24).
+
+### 53a1551 · 2026-06-24 · Profil: „???"-Badge + Kopf auf Höhe von „Deine Orte"
 - Badge unter dem Namen: „NOCH KEIN INSIDER" → **„???"** (mystisch, kurz).
 - Profil-Kopf („PROFIL" + Name) startet jetzt auf **gleicher Höhe** wie
   „GESPEICHERT"/„Deine Orte" im Gespeichert-Screen: ScrollView-`paddingTop`

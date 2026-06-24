@@ -1,7 +1,7 @@
 import { useRouter } from "expo-router";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { InsiderTeaser } from "../../src/components/InsiderTeaser";
+import { MysticBadge } from "../../src/components/MysticBadge";
 import { GEHEIMTIPP, MOCK_USER } from "../../src/data/user";
 import { getSpotById } from "../../src/data/spots";
 import { NEIGHBORHOODS } from "../../src/data/cities";
@@ -80,11 +80,7 @@ export default function Profil() {
             <Text className="font-hk-extrabold text-title-sm text-ink">
               {MOCK_USER.name}
             </Text>
-            <View className="mt-1 self-start rounded-pill bg-chip px-3 py-1">
-              <Text className="font-hk-bold text-[11px] tracking-[2px] text-ink-2">
-                ???
-              </Text>
-            </View>
+            <MysticBadge />
           </View>
         </View>
 
@@ -132,9 +128,6 @@ export default function Profil() {
             </View>
           ))}
         </View>
-
-        {/* Verso Insider — verborgenes Feature, kommt in einer neuen Version. */}
-        <InsiderTeaser />
 
         {/* Einstiegspunkte */}
         <View className="mt-4">
