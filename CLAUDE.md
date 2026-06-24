@@ -204,7 +204,13 @@ npx tsc --noEmit       # Typecheck
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-24 · Karte: Event-Label als abgerundetes Rechteck
+### (dieser Commit) · 2026-06-24 · Profil: Einladen-Karte + stiller Footer
+- Den White Space unter „Vorschlag machen" gefüllt: **„Freund einladen"-Karte**
+  (dunkel, öffnet das systemeigene `Share`-Sheet — kein neues Paket, Expo-Go-fest)
+  + **stiller Marken-Footer** (Wortmarke `Brand`, „VERSION 0.1 · MADE IN WIEN",
+  poetischer Einzeiler).
+
+### 3820ec6 · 2026-06-24 · Karte: Event-Label als abgerundetes Rechteck
 - Event-Pop-up-Label in `CityMap.tsx`: Radius von `rounded-card` (24px) auf
   **`rounded-button` (16px)** + etwas mehr Padding (`px-3.5 py-2`). Das große
   Oval wirkte auf der kleinen Name+Datum-Box gequetscht; das Rechteck mit

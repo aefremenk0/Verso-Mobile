@@ -1,6 +1,7 @@
 import { useRouter } from "expo-router";
-import { Pressable, ScrollView, Text, View } from "react-native";
+import { Pressable, ScrollView, Share, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { Brand } from "../../src/components/Brand";
 import { MysticBadge } from "../../src/components/MysticBadge";
 import { GEHEIMTIPP, MOCK_USER } from "../../src/data/user";
 import { getSpotById } from "../../src/data/spots";
@@ -53,6 +54,14 @@ export default function Profil() {
 
   const tippSpot = getSpotById(GEHEIMTIPP.spotId);
   const cityCount = new Set(NEIGHBORHOODS.map((n) => n.city)).size;
+
+  // Verso lebt von Mundpropaganda -> systemeigenes Teilen-Sheet öffnen.
+  const onInvite = () => {
+    Share.share({
+      message:
+        "Verso — kuratierte Orte, die kaum jemand kennt. Schau mal: https://verso.app",
+    }).catch(() => {});
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-screen" edges={["top"]}>
@@ -147,6 +156,35 @@ export default function Profil() {
             value="verso.app ↗"
             onPress={() => openExternal("https://verso.app")}
           />
+        </View>
+
+        {/* Freund einladen — passt zur App-DNA (Tipps von Freund zu Freund). */}
+        <Pressable
+          onPress={onInvite}
+          className="mt-8 flex-row items-center justify-between rounded-card bg-night p-5"
+        >
+          <View className="flex-1 pr-3">
+            <Text className="font-hk-extrabold-italic text-[18px] text-screen">
+              Kennst du jemanden mit Gespür?
+            </Text>
+            <Text className="mt-1 font-hk-medium text-[13px] leading-[18px] text-screen/60">
+              Verso lebt von Mundpropaganda. Gib den Geheimtipp weiter.
+            </Text>
+          </View>
+          <View className="h-10 w-10 items-center justify-center rounded-pill bg-accent">
+            <Text className="font-hk-bold text-[16px] text-accent-ink">↗</Text>
+          </View>
+        </Pressable>
+
+        {/* Stille Signatur ganz unten */}
+        <View className="mt-10 items-center">
+          <Brand size={26} color="#8A857C" />
+          <Text className="mt-2 font-hk-semibold text-[10px] tracking-[2px] text-ink-3">
+            VERSION 0.1 · MADE IN WIEN
+          </Text>
+          <Text className="mt-3 max-w-[260px] text-center font-hk-medium-italic text-[13px] leading-[18px] text-ink-3">
+            Die Stadt gehört denen, die hinter die Türen schauen.
+          </Text>
         </View>
       </ScrollView>
     </SafeAreaView>
