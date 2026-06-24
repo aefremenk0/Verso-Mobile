@@ -11,6 +11,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { CityProvider } from "../src/store/city";
 import { GeheimtippProvider } from "../src/store/geheimtipp";
 import { SavedProvider } from "../src/store/saved";
+import { SceneProvider } from "../src/store/scene";
 import { colors, fontMap } from "../src/theme";
 
 // Splash erst ausblenden, wenn die Schriften geladen sind (verhindert Flackern).
@@ -32,6 +33,7 @@ export default function RootLayout() {
     <GestureHandlerRootView style={{ flex: 1 }}>
     <SafeAreaProvider>
       <CityProvider>
+        <SceneProvider>
         <SavedProvider>
           <GeheimtippProvider>
           <StatusBar style="dark" />
@@ -69,6 +71,7 @@ export default function RootLayout() {
           </Stack>
           </GeheimtippProvider>
         </SavedProvider>
+        </SceneProvider>
       </CityProvider>
     </SafeAreaProvider>
     </GestureHandlerRootView>

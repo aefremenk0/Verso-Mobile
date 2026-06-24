@@ -122,10 +122,14 @@ src/
                           MysticBadge ("???"-Badge, pulsierende Kontur),
                           QuestionBubbles (aufsteigende Bubbles, konfig. Glyph),
                           SpotActionMenu (Long-Press-Kreis-Menü: Merken/Teilen),
+                          SceneToggle (Feiern/Essen oben rechts),
+                          TopToggles (Liste/Karte zentriert + SceneToggle),
                           CityMap (Mapbox + Expo-Go-Fallback),
                           MapFilterSheet (Karte-Filter-Panel),
                           RangeSlider (Budget, PanResponder)
   lib/mapFilter.ts        Filter-Typ + matchesFilter (Art/Budget/Bewertung/Ambiente)
+  lib/scene.ts            Szene (feiern/essen): Kategoriengruppen + Pills
+  store/scene.tsx         aktuelle Szene (Feiern vs. Essen), app-weit
 
 app.config.js             Expo-Config (ersetzt app.json; Mapbox-Token via Env)
   data/                   types.ts, spots.ts (Mock-Orte + Events, ≥2/Stadt),
@@ -259,7 +263,18 @@ npx tsc --noEmit       # Typecheck
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-24 · Swipe-Zeilen (Gespeichert), Detail-Share, Karte-Toggle
+### (dieser Commit) · 2026-06-24 · Szenen-Toggle (Feiern/Essen), zentrierter Liste/Karte-Toggle
+- **Szene** (neu): app-weiter Store (`store/scene.tsx`) + `lib/scene.ts` —
+  Umschalten zwischen **Feiern** (Bar/Club/Event) und **Essen**
+  (Restaurant/Snack/Café). `SceneToggle` (🎉/🍴) oben rechts auf Feed, Karte und
+  Bezirk; filtert Liste/Pins und die Kategorie-Hotbar.
+- **Header neu** via `TopToggles` (Feed+Karte): Liste/Karte-Umschalter **zentriert
+  unter dem Notch**, Szenen-Toggle rechts; Stadt-Dropdown darunter.
+- **Bezirk**: bekommt jetzt die **Kategorie-Hotbar** (szenenabhängig) + Szenen-Toggle.
+- **SpotCard-Menü:** Herz **toggelt** jetzt (erneut antippen entfernt den Ort wieder).
+- **Karte:** ausgewählten Pin **erneut antippen verdeckt** ihn wieder.
+
+### 15303fb · 2026-06-24 · Swipe-Zeilen (Gespeichert), Detail-Share, Karte-Toggle
 - **`react-native-gesture-handler` (~2.28.0)** ergänzt; Root in `_layout.tsx` mit
   `GestureHandlerRootView` umschlossen (+ `import "react-native-gesture-handler"`).
 - **Gespeichert:** Zeilen sind jetzt **wischbar** (`Swipeable`): nach **links →

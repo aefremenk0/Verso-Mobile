@@ -5,8 +5,8 @@ import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context"
 import { CityDropdown } from "../../src/components/CityDropdown";
 import { CityMap } from "../../src/components/CityMap";
 import { ImagePlaceholder } from "../../src/components/ImagePlaceholder";
-import { ListMapToggle } from "../../src/components/ListMapToggle";
 import { MapFilterSheet } from "../../src/components/MapFilterSheet";
+import { TopToggles } from "../../src/components/TopToggles";
 import { CATEGORY_LABEL, priceLabel } from "../../src/data/categories";
 import { SPOTS } from "../../src/data/spots";
 import type { Spot } from "../../src/data/types";
@@ -15,7 +15,9 @@ import {
   matchesFilter,
   type MapFilter,
 } from "../../src/lib/mapFilter";
+import { SCENE_CATEGORIES } from "../../src/lib/scene";
 import { useCity } from "../../src/store/city";
+import { useScene } from "../../src/store/scene";
 import { shadows } from "../../src/theme";
 
 // Screen 04 — Kartenansicht.
@@ -27,24 +29,33 @@ export default function Karte() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { city } = useCity();
+  const { scene } = useScene();
 
   const [selected, setSelected] = useState<Spot | null>(null);
   const [filterOpen, setFilterOpen] = useState(false);
   const [filter, setFilter] = useState<MapFilter>(DEFAULT_FILTER);
 
-  // Stadt -> dann Filter anwenden.
+  // Stadt -> Szene (Kategoriengruppe) -> dann Filter anwenden.
   const spots = useMemo(
     () =>
-      SPOTS.filter((s) => s.city === city).filter((s) => matchesFilter(s, filter)),
-    [city, filter],
+      SPOTS.filter((s) => s.city === city)
+        .filter((s) => SCENE_CATEGORIES[scene].includes(s.category))
+        .filter((s) => matchesFilter(s, filter)),
+    [city, scene, filter],
   );
 
   // Ausgewählter Spot nur zeigen, wenn er noch im gefilterten Ergebnis ist.
   const card = selected && spots.some((s) => s.id === selected.id) ? selected : null;
 
+  // Pin antippen: auswählen — erneut denselben antippen: wieder verdecken.
+  const onSelectSpot = (s: Spot) =>
+    setSelected((prev) => (prev?.id === s.id ? null : s));
+
   return (
     <SafeAreaView className="flex-1 bg-screen" edges={["top"]}>
-      <CityDropdown right={<ListMapToggle active="karte" />} />
+      {/* Toggles unter dem Notch: Liste/Karte zentriert, Szene rechts */}
+      <TopToggles active="karte" />
+      <CityDropdown />
 
       {/* Filter-Schnellwahl + FILTER-Button */}
       <View className="mt-3 gap-2.5 px-6">
@@ -90,7 +101,7 @@ export default function Karte() {
         <CityMap
           spots={spots}
           selectedId={card?.id}
-          onSelect={(s) => setSelected(s)}
+          onSelect={onSelectSpot}
         />
       </View>
 

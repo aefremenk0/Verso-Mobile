@@ -43,11 +43,13 @@ export function SpotCard({ spot }: { spot: Spot }) {
     setMenuOpen(true);
   };
 
-  // Merken (merkt immer, ent-merkt nie) + Herz-Burst an der Druckstelle.
+  // Herz toggelt: nicht gemerkt -> merken (+ Herz-Burst); schon gemerkt ->
+  // wieder aus „Deine Orte" entfernen (ohne Burst).
   const onSave = () => {
-    if (!isSaved(spot.id)) toggle(spot.id);
+    const wasSaved = isSaved(spot.id);
+    toggle(spot.id);
     setMenuOpen(false);
-    burstRef.current?.burst(pressPos.current.x, pressPos.current.y);
+    if (!wasSaved) burstRef.current?.burst(pressPos.current.x, pressPos.current.y);
   };
 
   // Teilen über das systemeigene Share-Sheet (iMessage, WhatsApp, …).
