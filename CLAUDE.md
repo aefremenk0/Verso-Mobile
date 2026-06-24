@@ -204,7 +204,15 @@ npx tsc --noEmit       # Typecheck
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-24 · Profil: Einladen-Karte + stiller Footer
+### (dieser Commit) · 2026-06-24 · Welcome: „?"-Bubble-Easter-Egg auf „verso"
+- Neue Komponente **`QuestionBubbles`** (ref-API `burst(x,y)`): gelbe „?"-Bubbles
+  steigen per Reanimated von der Tipp-Stelle auf (Zufalls-Drift/Höhe/Größe/Dauer,
+  Ein-/Ausfaden), entfernen sich nach dem Aufstieg selbst.
+- Welcome (`index.tsx`): „verso"-Wortmarke ist jetzt `Pressable`; `onPressIn`
+  löst über `pageX/pageY` einen Bubble-Schwung aus. Overlay als oberste Ebene
+  (pointerEvents none). Greift nur hier = vor der Registrierung.
+
+### 1873343 · 2026-06-24 · Profil: Einladen-Karte + stiller Footer
 - Den White Space unter „Vorschlag machen" gefüllt: **„Freund einladen"-Karte**
   (dunkel, öffnet das systemeigene `Share`-Sheet — kein neues Paket, Expo-Go-fest)
   + **stiller Marken-Footer** (Wortmarke `Brand`, „VERSION 0.1 · MADE IN WIEN",

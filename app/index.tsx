@@ -1,7 +1,12 @@
 import { useRouter } from "expo-router";
+import { useRef } from "react";
 import { Pressable, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { StripeTexture } from "../src/components/StripeTexture";
+import {
+  QuestionBubbles,
+  type QuestionBubblesHandle,
+} from "../src/components/QuestionBubbles";
 import { useCity } from "../src/store/city";
 
 // Screen 01 — Welcome.
@@ -12,6 +17,7 @@ export default function Welcome() {
   const router = useRouter();
   const { city, setCity, cities } = useCity();
   const insets = useSafeAreaInsets();
+  const bubblesRef = useRef<QuestionBubblesHandle>(null);
 
   return (
     <View className="flex-1 bg-screen">
@@ -27,9 +33,21 @@ export default function Welcome() {
         </Text>
 
         <View className="mt-auto px-[30px] pb-8">
-          <Text className="font-hk-extrabold-italic text-[92px] leading-[83px] text-screen">
-            verso
-          </Text>
+          {/* Easter Egg: auf „verso" tippen -> gelbe „?"-Bubbles steigen von
+              der Tipp-Stelle auf (nur hier, vor der Registrierung). */}
+          <Pressable
+            onPressIn={(e) =>
+              bubblesRef.current?.burst(
+                e.nativeEvent.pageX,
+                e.nativeEvent.pageY,
+              )
+            }
+            className="self-start"
+          >
+            <Text className="font-hk-extrabold-italic text-[92px] leading-[83px] text-screen">
+              verso
+            </Text>
+          </Pressable>
           <Text className="mt-3.5 max-w-[280px] font-hk-medium text-[14px] leading-[21px] text-screen/90">
             Echte Orte. Echte Menschen. Die Stadt, wie sie dir sonst niemand
             zeigt.
@@ -97,6 +115,9 @@ export default function Welcome() {
           <Text className="text-[18px] text-screen">→</Text>
         </Pressable>
       </View>
+
+      {/* Bubble-Overlay (über allem, lässt Tipps durch) */}
+      <QuestionBubbles ref={bubblesRef} />
     </View>
   );
 }
