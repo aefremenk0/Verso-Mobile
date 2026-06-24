@@ -200,7 +200,15 @@ npx tsc --noEmit       # Typecheck
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-24 · Karte: Events optisch abgesetzt (gelber Punkt + Datum)
+### (dieser Commit) · 2026-06-24 · Navigation: horizontaler Slide statt Fade
+- Root-`Stack` in `app/_layout.tsx`: `animation` von `fade` auf
+  **`slide_from_right`** umgestellt — neue Screens kommen von rechts herein
+  (Inhalt wandert nach links), Zurück gleitet nach rechts hinaus. `gestureEnabled`
+  aktiviert (Wischen vom linken Rand = zurück).
+- `geheimtipp`-Modal bleibt Pop-up, aber jetzt `slide_from_bottom` (statt `fade`),
+  damit es sich klar vom seitlichen Screen-Slide abhebt.
+
+### 8e70892 · 2026-06-24 · Karte: Events optisch abgesetzt (gelber Punkt + Datum)
 - `Pin` in `CityMap.tsx` unterscheidet jetzt Events (`category === "event"`):
   - **Punkt:** gelb mit schwarzer Kontur (statt schwarz mit heller Kontur).
   - **Label:** schwarze Box (`bg-night`) mit gelbem Namen + gelbem Datum

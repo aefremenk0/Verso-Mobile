@@ -36,8 +36,11 @@ export default function RootLayout() {
             screenOptions={{
               headerShown: false,
               contentStyle: { backgroundColor: colors.screen },
-              // sanfte Übergänge zwischen den Screens
-              animation: "fade",
+              // Horizontaler Slide: neuer Screen kommt von rechts herein
+              // (Inhalt wandert nach links), Zurück gleitet nach rechts hinaus.
+              animation: "slide_from_right",
+              // Per Wischen vom linken Rand zurück (wie nativ üblich).
+              gestureEnabled: true,
             }}
           >
             <Stack.Screen name="index" />
@@ -45,10 +48,11 @@ export default function RootLayout() {
             <Stack.Screen name="(tabs)" />
             <Stack.Screen name="spot/[id]" />
             <Stack.Screen name="gespeichert" />
-            {/* Geheimtipp als modaler Overlay-Screen */}
+            {/* Geheimtipp als modaler Overlay-Screen — bewusst als Pop-up von
+                unten (slide_from_bottom), nicht als seitlicher Slide. */}
             <Stack.Screen
               name="geheimtipp"
-              options={{ presentation: "modal", animation: "fade" }}
+              options={{ presentation: "modal", animation: "slide_from_bottom" }}
             />
             <Stack.Screen name="settings" />
             <Stack.Screen name="profil-bearbeiten" />
