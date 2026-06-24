@@ -171,6 +171,47 @@ Einmal pro Woche darf der Nutzer einen kuratierten Spot „abholen".
 
 ---
 
+## Easter Eggs 🥚 (bewusst gepflegt — wichtiger Teil der Marke!)
+
+Verso belohnt **Neugier**: versteckte, verspielte Details verstärken den
+Insider-/„Geheimtipp"-Ton. Easter Eggs sind hier **kein Beiwerk**, sondern
+gewollte Markensignatur. **Regel: Jedes neue Easter Egg in dieser Sektion
+dokumentieren** (Trigger · Ort · Datei) — und unten bei „Ideen" abhaken/ergänzen.
+
+### Konventionen für Easter Eggs
+- Animationen ausschließlich **Reanimated**, **Expo-Go-fest** (keine nativen
+  Module ohne Not).
+- **Wiederverwendbar** halten: `QuestionBubbles` (gelbe „?"-Bubbles) kann an
+  beliebiger Stelle einen Schwung auslösen — `ref.burst(x, y)` mit Bildschirm-
+  koordinaten.
+- **Dezent & überraschend**, nie den normalen Flow stören (Overlays
+  `pointerEvents="none"`).
+
+### Eingebaut
+- **„verso"-Bubbles (Welcome):** Tippt man im braunen Hero auf die
+  „verso"-Wortmarke, steigen gelbe „?"-Bubbles von der Tipp-Stelle auf.
+  → `src/components/QuestionBubbles.tsx`, eingebaut in `app/index.tsx`.
+  Greift bewusst nur vor der Registrierung.
+
+### Ideen / Roadmap (offen)
+- **Logo-Tap-Combo (Bottom-Nav):** „?"-Squiggle mehrfach schnell tippen →
+  Bubble-Burst über die ganze App (`QuestionBubbles` wiederverwenden).
+- **Shake-to-Surprise:** Gerät schütteln → „Wir mischen die Karten neu" →
+  zufälliger Spot („Überrasch mich"). (braucht `expo-sensors`, in Expo Go ok)
+- **Stats-Tap (Profil):** mehrfach auf eine Stat-Zahl tippen → das „???"-Badge
+  lüftet kurz ein verborgenes Wort.
+- **Karte-Doppeltipp:** Doppeltipp auf leere Kartenfläche → alle Pins „ploppen"
+  gleichzeitig auf.
+- **„?" schon abgeholt:** Geheimtipp-„?" in der Nav nach dem Abholen antippen →
+  verspielter Spruch „Schon abgeholt. Nächste Woche wieder."
+- **Begrüßungs-Zyklus:** „Hi Insider."-Band auf Welcome antippen → wechselt
+  durch verspielte Grüße.
+- **SpotCard-Long-Press:** lange drücken → „Merken" mit kleinem Herz-/Bubble-Burst.
+- **Versteckter Spot:** ein geheimer Ort, der nur über eine bestimmte Geste oder
+  Tipp-Sequenz auftaucht (passt perfekt zum „Geheimtipp"-Kern).
+
+---
+
 ## Aktueller Stand
 
 **Phase 1 (MVP) — fertig**, läuft komplett in Expo Go. Alle Screens 01–08
@@ -204,7 +245,12 @@ npx tsc --noEmit       # Typecheck
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-24 · Profil-Footer: beide Abstände halbiert (mt-4)
+### (dieser Commit) · 2026-06-24 · CLAUDE.md: Easter-Eggs-Sektion
+- Neue prominente Sektion **„Easter Eggs 🥚"** (nach Geheimtipp-Mechanik):
+  Konventionen, eingebautes Egg („verso"-Bubbles) + Ideen-Roadmap. Regel
+  etabliert: jedes neue Egg dort dokumentieren.
+
+### ff879f7 · 2026-06-24 · Profil-Footer: beide Abstände halbiert (mt-4)
 - Einladen-Karte UND Footer jetzt **`mt-4`** (vorher mt-8) — beide Abstände
   gleich und halbiert.
 
