@@ -200,7 +200,14 @@ npx tsc --noEmit       # Typecheck
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-24 · Karte: gelbes Label „ploppt" beim Auswählen auf
+### (dieser Commit) · 2026-06-24 · Karte: Events optisch abgesetzt (gelber Punkt + Datum)
+- `Pin` in `CityMap.tsx` unterscheidet jetzt Events (`category === "event"`):
+  - **Punkt:** gelb mit schwarzer Kontur (statt schwarz mit heller Kontur).
+  - **Label:** schwarze Box (`bg-night`) mit gelbem Namen + gelbem Datum
+    (`dateLabel`) — Orte behalten die gelbe Box mit schwarzem Namen.
+  - Events nutzen dieselbe Pop-Animation (Label-Wrapper ist der animierte View).
+
+### 2a68016 · 2026-06-24 · Karte: gelbes Label „ploppt" beim Auswählen auf
 - `Pin` in `CityMap.tsx` animiert das gelbe Orts-Label jetzt per Reanimated-Spring
   (`pop`-SharedValue 0→1: Scale 0.6→1, steigt 8px hoch, blendet ein) statt es hart
   per `active ?` ein-/auszuschalten. Beim Abwählen federt es ruhig per `withTiming`

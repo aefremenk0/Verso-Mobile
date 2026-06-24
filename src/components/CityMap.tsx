@@ -71,6 +71,10 @@ function Pin({ spot, active }: { spot: Spot; active: boolean }) {
     ],
   }));
 
+  // Events heben sich farblich ab: gelber Punkt + schwarze Kontur, und das
+  // Label ist eine schwarze Box mit gelbem Namen + gelbem Datum.
+  const isEvent = spot.category === "event";
+
   return (
     <View className="items-center justify-center">
       <Animated.View
@@ -80,18 +84,35 @@ function Pin({ spot, active }: { spot: Spot; active: boolean }) {
           labelStyle,
         ]}
       >
-        <View className="rounded-pill bg-accent px-3 py-1.5" style={shadows.card}>
-          <Text
-            className="font-hk-extrabold text-[15px] text-accent-ink"
-            numberOfLines={1}
-          >
-            {spot.name}
-          </Text>
-        </View>
+        {isEvent ? (
+          // Event: schwarze Box, gelber Name + gelbes Datum.
+          <View className="items-center rounded-card bg-night px-3 py-1.5" style={shadows.card}>
+            <Text className="font-hk-extrabold text-[15px] text-accent" numberOfLines={1}>
+              {spot.name}
+            </Text>
+            {spot.dateLabel ? (
+              <Text className="mt-0.5 font-hk-semibold text-[11px] text-accent" numberOfLines={1}>
+                {spot.dateLabel}
+              </Text>
+            ) : null}
+          </View>
+        ) : (
+          // Ort: gelbe Box, schwarzer Name.
+          <View className="rounded-pill bg-accent px-3 py-1.5" style={shadows.card}>
+            <Text className="font-hk-extrabold text-[15px] text-accent-ink" numberOfLines={1}>
+              {spot.name}
+            </Text>
+          </View>
+        )}
       </Animated.View>
       <View
-        className="rounded-pill bg-night"
-        style={{ width: 14, height: 14, borderWidth: 2.5, borderColor: "#F7F4EF" }}
+        className={`rounded-pill ${isEvent ? "bg-accent" : "bg-night"}`}
+        style={{
+          width: 14,
+          height: 14,
+          borderWidth: 2.5,
+          borderColor: isEvent ? "#1A1A1A" : "#F7F4EF",
+        }}
       />
     </View>
   );
