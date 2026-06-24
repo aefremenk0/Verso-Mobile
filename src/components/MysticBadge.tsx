@@ -1,5 +1,6 @@
+import { useRouter } from "expo-router";
 import { useEffect } from "react";
-import { Text } from "react-native";
+import { Pressable, Text } from "react-native";
 import Animated, {
   Easing,
   interpolateColor,
@@ -11,7 +12,9 @@ import Animated, {
 
 // Mystisches „???"-Badge im Profil-Kopf — im Stil des früheren Insider-Sterns:
 // schwarze Pille, gelbe „???", deren Kontur sanft gelb pulsiert (Reanimated).
+// Tippen öffnet den modalen „Verso Insider"-Hinweis (`/insider`).
 export function MysticBadge() {
+  const router = useRouter();
   const pulse = useSharedValue(0);
 
   useEffect(() => {
@@ -33,21 +36,23 @@ export function MysticBadge() {
   }));
 
   return (
-    <Animated.View
-      style={[
-        {
-          marginTop: 4,
-          alignSelf: "flex-start",
-          borderRadius: 999,
-          backgroundColor: "#1A1A1A",
-          paddingHorizontal: 12,
-          paddingVertical: 4,
-          borderWidth: 1.5,
-        },
-        borderStyle,
-      ]}
-    >
-      <Text className="font-hk-bold text-[11px] tracking-[2px] text-accent">???</Text>
-    </Animated.View>
+    <Pressable onPress={() => router.push("/insider")} hitSlop={8}>
+      <Animated.View
+        style={[
+          {
+            marginTop: 4,
+            alignSelf: "flex-start",
+            borderRadius: 999,
+            backgroundColor: "#1A1A1A",
+            paddingHorizontal: 12,
+            paddingVertical: 4,
+            borderWidth: 1.5,
+          },
+          borderStyle,
+        ]}
+      >
+        <Text className="font-hk-bold text-[11px] tracking-[2px] text-accent">???</Text>
+      </Animated.View>
+    </Pressable>
   );
 }

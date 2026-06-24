@@ -54,6 +54,11 @@ export default function RootLayout() {
               name="geheimtipp"
               options={{ presentation: "modal", animation: "slide_from_bottom" }}
             />
+            {/* „Verso Insider"-Hinweis (Feature noch nicht verfügbar) — Pop-up */}
+            <Stack.Screen
+              name="insider"
+              options={{ presentation: "modal", animation: "slide_from_bottom" }}
+            />
             <Stack.Screen name="settings" />
             <Stack.Screen name="profil-bearbeiten" />
             <Stack.Screen name="passwort-aendern" />

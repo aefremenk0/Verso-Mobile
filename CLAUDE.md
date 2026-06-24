@@ -103,6 +103,7 @@ app/                      Screens (Expo Router – Dateiname = Route)
   bezirk/[name].tsx       Bezirks-Detail (Spots eines Viertels)
   gespeichert.tsx         06 Gespeichert
   geheimtipp.tsx          08 Geheimtipp (Laden -> Reveal, Reanimated, modal)
+  insider.tsx             „Verso Insider"-Hinweis (Feature kommt noch, modal)
   settings.tsx            07 Einstellungen (+ Abmelden)
   profil-bearbeiten.tsx   07c Profil bearbeiten (UI)
   passwort-aendern.tsx    07d Passwort ändern (UI)
@@ -203,7 +204,14 @@ npx tsc --noEmit       # Typecheck
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-24 · Daten: 8 Viertel + ≥2 Events pro Stadt
+### (dieser Commit) · 2026-06-24 · „???"-Badge öffnet Insider-Pop-up
+- Neuer modaler Screen **`app/insider.tsx`** im Geheimtipp-Pop-up-Stil (dunkel,
+  drehende Squiggle ums „???"): sagt, das Feature ist **noch nicht verfügbar**,
+  Button **„Zurück zum Profil"** (+ ✕). Als Modal (`slide_from_bottom`) im Root-
+  Stack registriert.
+- **`MysticBadge`** ist jetzt antippbar → öffnet `/insider`.
+
+### 889be13 · 2026-06-24 · Daten: 8 Viertel + ≥2 Events pro Stadt
 - **`cities.ts`:** jede der 6 Städte hat jetzt **genau 8 Viertel** (Wien/Berlin/
   München aufgestockt; Frankfurt/Düsseldorf/Hamburg neu, je 8) — mit poetischen
   Einzeilern im Verso-Ton. `CITIES_WITH_CONTENT` = alle Städte (`[...CITIES]`).
