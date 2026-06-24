@@ -59,10 +59,10 @@ export default function Profil() {
       <ScrollView
         contentContainerStyle={{
           paddingHorizontal: 24,
-          // Startet „PROFIL" auf gleicher Höhe wie „GESPEICHERT" im Gespeichert-
-          // Screen: dort schiebt die Topbar (pt-2 + h-10 = 48) + paddingTop 12
-          // die Überschrift auf inset+60. Hier (kein Topbar) entsprechend 60.
-          paddingTop: 60,
+          // „PROFIL" soll denselben Abstand zum Notch haben wie „Wien" im Feed:
+          // dort Container pt-2 (8) + Zentrierung in der 42er-Zeile ((42-30)/2=6)
+          // = 14px unter dem Notch. Hier entsprechend 14.
+          paddingTop: 14,
           paddingBottom: 110,
         }}
         showsVerticalScrollIndicator={false}

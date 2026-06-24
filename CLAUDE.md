@@ -202,7 +202,11 @@ npx tsc --noEmit       # Typecheck
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-24 · Profil: „???"-Badge mystisch, Insider-Box raus
+### (dieser Commit) · 2026-06-24 · Profil: Abstand zum Notch = „Wien"-Abstand im Feed
+- Profil-Kopf-`paddingTop` 60 → **14**: „PROFIL" hat jetzt denselben Abstand zum
+  Notch wie „Wien" im Feed (dort `pt-2` 8 + Zentrierung in der 42er-Zeile 6 = 14).
+
+### 5fc9670 · 2026-06-24 · Profil: „???"-Badge mystisch, Insider-Box raus
 - **„???"-Badge** im Profil-Kopf als neue Komponente **`MysticBadge`**: schwarze
   Pille, gelbe „???", **sanft gelb pulsierende Kontur** (Reanimated
   `interpolateColor`) — im Stil des früheren Insider-Sterns.
