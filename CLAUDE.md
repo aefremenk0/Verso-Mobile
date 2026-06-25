@@ -301,7 +301,12 @@ npx tsc --noEmit       # Typecheck
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-25 · Feed: Long-Press-Geste signalisieren (Demo + Chip)
+### (dieser Commit) · 2026-06-25 · Stadt-Dropdown: animiertes Aufklappen
+- `CityDropdown`: Pfeil dreht beim Öffnen von ▾ zu ▴ (Reanimated), und die
+  Stadt-Pills **ploppen gestaffelt** per Spring herein (Fade + Scale + leichtes
+  Hochsteigen, `DropdownCity`). Konsistent zum Spring-Muster der App.
+
+### 9bb99fb · 2026-06-25 · Feed: Long-Press-Geste signalisieren (Demo + Chip)
 - Auf der **ersten** Feed-Karte (einmal pro Session, `feedHintShown` in-memory):
   **(A)** Kreis-Menü ploppt ~1,6 s automatisch auf/zu; **(B)** Hinweis-Chip **oben
   rechts auf der Karte** „Lange drücken: Merken & Teilen" (fadet aus).

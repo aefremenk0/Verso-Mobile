@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import {
   Pressable,
   ScrollView,
@@ -6,8 +6,47 @@ import {
   useWindowDimensions,
   View,
 } from "react-native";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withDelay,
+  withSpring,
+  withTiming,
+} from "react-native-reanimated";
 import { useCity } from "../store/city";
 import { Pill } from "./Pill";
+
+// Eine Stadt-Pille im Dropdown, die gestaffelt per Spring hereinploppt.
+function DropdownCity({
+  index,
+  label,
+  active,
+  onPress,
+}: {
+  index: number;
+  label: string;
+  active: boolean;
+  onPress: () => void;
+}) {
+  const p = useSharedValue(0);
+  useEffect(() => {
+    p.value = withDelay(
+      index * 45, // Versatz -> Pills erscheinen nacheinander
+      withSpring(1, { damping: 13, stiffness: 200, mass: 0.6 }),
+    );
+    // nur beim Mounten (Dropdown öffnet)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  const style = useAnimatedStyle(() => ({
+    opacity: p.value,
+    transform: [{ scale: 0.8 + p.value * 0.2 }, { translateY: (1 - p.value) * 8 }],
+  }));
+  return (
+    <Animated.View style={style}>
+      <Pill label={label} active={active} onPress={onPress} />
+    </Animated.View>
+  );
+}
 
 // Einheitlicher Stadt-Kopf mit Dropdown — identisch auf Feed, Viertel und Karte.
 // Zeigt "Wien ▾" links und klappt eine horizontale Reihe wählbarer Städte aus.
@@ -42,6 +81,15 @@ export function CityDropdown({
     Düsseldorf: -2,
   };
   const nudge = CITY_NUDGE[city] ?? 0;
+
+  // Pfeil dreht beim Öffnen von ▾ zu ▴ (180°).
+  const caret = useSharedValue(0);
+  useEffect(() => {
+    caret.value = withTiming(open ? 1 : 0, { duration: 220 });
+  }, [open, caret]);
+  const caretStyle = useAnimatedStyle(() => ({
+    transform: [{ rotate: `${caret.value * 180}deg` }],
+  }));
 
   return (
     <View>
@@ -84,7 +132,14 @@ export function CityDropdown({
               >
                 {city}
               </Text>
-              <Text className="ml-1 font-hk-bold text-[18px] text-ink-3">▾</Text>
+              <Animated.Text
+                style={[
+                  { marginLeft: 4, fontSize: 18, color: "#8A857C", fontWeight: "700" },
+                  caretStyle,
+                ]}
+              >
+                ▾
+              </Animated.Text>
             </Pressable>
             {right ?? null}
           </View>
@@ -99,9 +154,10 @@ export function CityDropdown({
           contentContainerStyle={{ paddingHorizontal: 24, gap: 8 }}
           className="mt-3 max-h-[44px] flex-none"
         >
-          {cities.map((c) => (
-            <Pill
+          {cities.map((c, i) => (
+            <DropdownCity
               key={c}
+              index={i}
               label={c}
               active={c === city}
               onPress={() => {
