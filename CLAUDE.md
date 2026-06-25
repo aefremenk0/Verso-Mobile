@@ -136,7 +136,8 @@ src/
 
 app.config.js             Expo-Config (ersetzt app.json; Mapbox-Token via Env)
   data/                   types.ts, spots.ts (Mock-Orte + Events, ≥2/Stadt),
-                          cities.ts (8 Viertel pro Stadt), categories.ts,
+                          cities.ts (Viertel pro Stadt, Anzahl variabel),
+                          categories.ts,
                           user.ts  (kein Backend)
   store/                  city.tsx, saved.tsx, geheimtipp.tsx  (React-Context,
                           alles in-memory)
@@ -302,7 +303,22 @@ npx tsc --noEmit       # Typecheck
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-25 · Pin-Farben: weißer Text (bar/snack), club Rot-Orange
+### (dieser Commit) · 2026-06-25 · Viertel an Nutzer-Liste angepasst + Spots für alle Städte
+- **`NEIGHBORHOODS` neu** nach der vom Nutzer vorgegebenen Liste (echte, bekannte
+  Viertel). Anzahl variiert jetzt pro Stadt (München 8 · Wien 7 · Zürich 5 ·
+  Berlin 7 · Hamburg 7 · Frankfurt 6 · Düsseldorf 6) — **NICHT mehr fix 8**.
+  Namen enthalten Bezirks-Nummern/Kreis (z. B. „Neubau (7.)", „Kreis 5 (Zürich
+  West)").
+- **`spots.ts` überarbeitet**: bestehende Spots auf die neuen Viertelnamen
+  remapped (Bezirks-Screen matcht via `neighborhood.startsWith(name)`), plus
+  **neue Mock-Locations** — vor allem für **Zürich, Hamburg, Frankfurt,
+  Düsseldorf** (hatten bisher 0 Spots). Jede Stadt hat jetzt einen eigenen Feed
+  mit beiden Szenen (Essen & Feiern). Alle Spot-IDs unverändert (Geheimtipp/
+  Saved-Referenzen intakt).
+- Konvention angepasst: **Viertelzahl pro Stadt variabel** (folgt der Liste),
+  weiterhin event-artige Kategorien (weintasting/sport) mit `dateLabel`/Ticket.
+
+### 23caa67 · 2026-06-25 · Pin-Farben: weißer Text (bar/snack), club Rot-Orange
 - **bar** und **snack** Innen-Text von Schwarz (`#1A1A1A`) auf **Weiß** (`#FFFFFF`)
   umgestellt — konsistent weißer Text in den farbigen Ovalen.
 - **club** von Blau-Violett auf **Knall-Rot-Orange** (`#FF4500`, weißer Text).

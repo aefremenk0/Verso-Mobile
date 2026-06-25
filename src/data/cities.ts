@@ -1,9 +1,8 @@
 import type { Neighborhood } from "./types";
 
 /**
- * Auswählbare Städte (Feed-Dropdown, Welcome-Auswahl). Wien ist Standard.
- * Inhalte (Spots/Bezirke) gibt es im MVP für Wien, Berlin und München;
- * die übrigen Städte zeigen vorerst einen "kommt bald"-Leerzustand.
+ * Auswählbare Städte (Feed-Dropdown, Welcome-Auswahl). München ist Standard.
+ * Jede Stadt hat eigene Viertel + Mock-Spots (Feed/Bezirk gefüllt).
  */
 export const CITIES = [
   "München",
@@ -17,59 +16,124 @@ export const CITIES = [
 export type City = (typeof CITIES)[number];
 
 /**
- * Städte, für die es im MVP schon kuratierte Inhalte gibt.
- * Jetzt alle sechs: jede Stadt hat 8 Viertel und mindestens 2 Events.
+ * Städte, für die es im MVP schon kuratierte Inhalte gibt — jetzt alle.
  */
 export const CITIES_WITH_CONTENT: City[] = [...CITIES];
 
 /**
  * Stadtteile für die Stadt-Übersicht – je ein poetischer Einzeiler.
- * Konvention: **genau 8 Viertel pro Stadt** (siehe CITIES).
+ * Die Viertel folgen der vom Nutzer vorgegebenen Liste (Anzahl variiert pro
+ * Stadt, NICHT mehr fix 8). Die Spot-`neighborhood`-Felder verwenden exakt
+ * diese Namen, damit der Bezirks-Screen (`startsWith(name)`) sie findet.
  */
 export const NEIGHBORHOODS: Neighborhood[] = [
-  // ── Wien (8) ──
+  // ── München ──
+  {
+    city: "München",
+    name: "Glockenbachviertel",
+    blurb: "Münchens wachste Nächte — queer, ohne Sperrstunde im Kopf.",
+  },
+  {
+    city: "München",
+    name: "Gärtnerplatzviertel",
+    blurb: "Brunch am Rondell, der in den nächsten Negroni übergeht.",
+  },
+  {
+    city: "München",
+    name: "Maxvorstadt",
+    blurb: "Zwischen Pinakothek und Kneipe, studentisch entspannt.",
+  },
+  {
+    city: "München",
+    name: "Schwabing",
+    blurb: "Boheme im Ruhestand, immer noch wach.",
+  },
+  {
+    city: "München",
+    name: "Isarvorstadt / Flaucher",
+    blurb: "Im Sommer das Wohnzimmer der Stadt — am Kiesufer.",
+  },
+  {
+    city: "München",
+    name: "Werksviertel",
+    blurb: "Wo der Beton tanzt: Clubs, Rooftops, ein Riesenrad.",
+  },
+  {
+    city: "München",
+    name: "Westend / Schwanthalerhöhe",
+    blurb: "Multikulti-Block mit den Tischen, von denen keiner spricht.",
+  },
+  {
+    city: "München",
+    name: "Haidhausen",
+    blurb: "Franzosenviertel, leiser Stolz.",
+  },
+
+  // ── Wien ──
   {
     city: "Wien",
-    name: "Innere Stadt",
-    blurb: "Touristen oben, Eingeweihte im Keller.",
+    name: "Innere Stadt (1.)",
+    blurb: "Touristen oben, Eingeweihte im Kaffeehaus-Eck.",
   },
   {
     city: "Wien",
-    name: "Wieden",
-    blurb: "Beamtenruhe bei Tag, klammheimlich bei Nacht.",
-  },
-  {
-    city: "Wien",
-    name: "Neubau",
+    name: "Neubau (7.)",
     blurb: "Concept Stores und die beste Pizza, über die keiner spricht.",
   },
   {
     city: "Wien",
-    name: "Leopoldstadt",
+    name: "Leopoldstadt (2.)",
     blurb: "Hinter dem Prater fängt das echte Wien an.",
   },
   {
     city: "Wien",
-    name: "Margareten",
-    blurb: "Wo die Stadt aufhört, schön sein zu wollen.",
+    name: "Mariahilf (6.)",
+    blurb: "Naschmarkt-Trubel, und einen Hof weiter Stille.",
   },
   {
     city: "Wien",
-    name: "Josefstadt",
+    name: "Wieden (4.)",
+    blurb: "Beamtenruhe bei Tag, klammheimlich bei Nacht.",
+  },
+  {
+    city: "Wien",
+    name: "Josefstadt (8.)",
     blurb: "Das kleinste Grätzl mit dem längsten Gedächtnis.",
   },
   {
     city: "Wien",
-    name: "Augarten",
-    blurb: "Barockmauer außen, Picknickdecke innen.",
-  },
-  {
-    city: "Wien",
-    name: "Spittelberg",
-    blurb: "Kopfsteinpflaster, das abends leiser wird.",
+    name: "Alsergrund (9.)",
+    blurb: "Servitenviertel: studentisch, leise, gut versteckt.",
   },
 
-  // ── Berlin (8) ──
+  // ── Zürich ──
+  {
+    city: "Zürich",
+    name: "Kreis 4 (Langstrasse)",
+    blurb: "Bei Tag Markt, bei Nacht eine andere Stadt.",
+  },
+  {
+    city: "Zürich",
+    name: "Kreis 5 (Zürich West)",
+    blurb: "Industrie von gestern, Apéro von heute.",
+  },
+  {
+    city: "Zürich",
+    name: "Niederdorf (Kreis 1)",
+    blurb: "Mittelalter-Gassen, Bars ohne Schild.",
+  },
+  {
+    city: "Zürich",
+    name: "Seefeld (Kreis 8)",
+    blurb: "See vor der Tür, Espresso im Hinterhof.",
+  },
+  {
+    city: "Zürich",
+    name: "Wiedikon (Kreis 3)",
+    blurb: "Quartierbeiz trifft Natural Wine.",
+  },
+
+  // ── Berlin ──
   {
     city: "Berlin",
     name: "Kreuzberg",
@@ -78,12 +142,12 @@ export const NEIGHBORHOODS: Neighborhood[] = [
   {
     city: "Berlin",
     name: "Friedrichshain",
-    blurb: "Der Späti ist die Speisekarte.",
+    blurb: "Boxhagener Ruhe bei Tag, RAW-Gelände-Bass bei Nacht.",
   },
   {
     city: "Berlin",
     name: "Neukölln",
-    blurb: "Industrie von gestern, Anlage von heute.",
+    blurb: "Weserstraße: kreativ, jung, nie ganz fertig.",
   },
   {
     city: "Berlin",
@@ -97,11 +161,6 @@ export const NEIGHBORHOODS: Neighborhood[] = [
   },
   {
     city: "Berlin",
-    name: "Wedding",
-    blurb: "Kommt angeblich noch — ist aber längst da.",
-  },
-  {
-    city: "Berlin",
     name: "Schöneberg",
     blurb: "Die Nacht hat hier nie ganz aufgehört.",
   },
@@ -111,53 +170,53 @@ export const NEIGHBORHOODS: Neighborhood[] = [
     blurb: "Alter Westen, neuer Espresso.",
   },
 
-  // ── München (8) ──
+  // ── Hamburg ──
   {
-    city: "München",
-    name: "Glockenbachviertel",
-    blurb: "Aus der Zeit gefallen, mit Absicht.",
+    city: "Hamburg",
+    name: "St. Pauli",
+    blurb: "Kiez bei Nacht, Kaffee am Morgen danach.",
   },
   {
-    city: "München",
-    name: "Au",
-    blurb: "Wirtshaus von außen, Feinkost von innen.",
+    city: "Hamburg",
+    name: "Sternschanze",
+    blurb: "Bauwagen, Bass und Brunch.",
   },
   {
-    city: "München",
-    name: "Maxvorstadt",
-    blurb: "Wenn der Föhn kommt, gehen die Fenster auf.",
+    city: "Hamburg",
+    name: "Karoviertel",
+    blurb: "Klein, eigensinnig, voller Designläden.",
   },
   {
-    city: "München",
-    name: "Haidhausen",
-    blurb: "Franzosenviertel, leiser Stolz.",
+    city: "Hamburg",
+    name: "St. Georg",
+    blurb: "Lange Reihe: bunt, queer, herzlich daneben.",
   },
   {
-    city: "München",
-    name: "Schwabing",
-    blurb: "Boheme im Ruhestand, immer noch wach.",
+    city: "Hamburg",
+    name: "Ottensen",
+    blurb: "Fabrikhof, jetzt mit Filterkaffee.",
   },
   {
-    city: "München",
-    name: "Lehel",
-    blurb: "Zwischen Isar und Museum, kaum ein Schild.",
+    city: "Hamburg",
+    name: "Eppendorf",
+    blurb: "Boutiquen, Kanäle, leise Eleganz.",
   },
   {
-    city: "München",
-    name: "Westend",
-    blurb: "Werkshallen, jetzt mit Sauerteig.",
-  },
-  {
-    city: "München",
-    name: "Sendling",
-    blurb: "Großmarkt-Lärm, dann plötzlich Stille.",
+    city: "Hamburg",
+    name: "HafenCity",
+    blurb: "Beton am Wasser, langsam belebt.",
   },
 
-  // ── Frankfurt (8) ──
+  // ── Frankfurt ──
   {
     city: "Frankfurt",
     name: "Sachsenhausen",
     blurb: "Apfelwein außen, neue Küche im Hinterzimmer.",
+  },
+  {
+    city: "Frankfurt",
+    name: "Bahnhofsviertel",
+    blurb: "Grell, laut — und plötzlich das beste Essen.",
   },
   {
     city: "Frankfurt",
@@ -171,35 +230,25 @@ export const NEIGHBORHOODS: Neighborhood[] = [
   },
   {
     city: "Frankfurt",
-    name: "Bahnhofsviertel",
-    blurb: "Grell, laut — und plötzlich das beste Essen.",
+    name: "Innenstadt / Zeil",
+    blurb: "Einkaufsmeile oben, stille Lokale ums Eck.",
   },
   {
     city: "Frankfurt",
     name: "Ostend",
     blurb: "Hafenkante, Kran und Kaffeerösterei.",
   },
-  {
-    city: "Frankfurt",
-    name: "Westend",
-    blurb: "Villen, in denen leise Bars wohnen.",
-  },
-  {
-    city: "Frankfurt",
-    name: "Bockenheim",
-    blurb: "Studentisch, eigensinnig, satt.",
-  },
-  {
-    city: "Frankfurt",
-    name: "Gallus",
-    blurb: "Gleise von gestern, Lokale von morgen.",
-  },
 
-  // ── Düsseldorf (8) ──
+  // ── Düsseldorf ──
   {
     city: "Düsseldorf",
     name: "Altstadt",
     blurb: "Längste Theke der Welt, kürzeste Wege.",
+  },
+  {
+    city: "Düsseldorf",
+    name: "Medienhafen",
+    blurb: "Schräge Fassaden, Bars mit Wasserblick.",
   },
   {
     city: "Düsseldorf",
@@ -209,115 +258,16 @@ export const NEIGHBORHOODS: Neighborhood[] = [
   {
     city: "Düsseldorf",
     name: "Pempelfort",
-    blurb: "Galerien und Gärten, ganz ohne Lärm.",
+    blurb: "Nordstraße: entspannt, satt, ganz ohne Lärm.",
   },
   {
     city: "Düsseldorf",
-    name: "Bilk",
-    blurb: "Studentisch jung, am Rhein gelassen.",
+    name: "Unterbilk / Friedrichstadt",
+    blurb: "Lorettoviertel: Boutiquen und stille Cafés.",
   },
   {
     city: "Düsseldorf",
     name: "Oberkassel",
     blurb: "Andere Rheinseite, andere Tonlage.",
-  },
-  {
-    city: "Düsseldorf",
-    name: "Unterbilk",
-    blurb: "Hafen wird Wohnzimmer.",
-  },
-  {
-    city: "Düsseldorf",
-    name: "Friedrichstadt",
-    blurb: "Backstein, Bahn und stille Lokale.",
-  },
-  {
-    city: "Düsseldorf",
-    name: "Derendorf",
-    blurb: "Brauerei-Erbe, frisch gezapft.",
-  },
-
-  // ── Hamburg (8) ──
-  {
-    city: "Hamburg",
-    name: "St. Pauli",
-    blurb: "Kiez bei Nacht, Kaffee am Morgen danach.",
-  },
-  {
-    city: "Hamburg",
-    name: "Sternschanze",
-    blurb: "Bauwagen, Bass und Brunch.",
-  },
-  {
-    city: "Hamburg",
-    name: "Altona",
-    blurb: "Vom Fischmarkt bis zur Elbe, alles zu Fuß.",
-  },
-  {
-    city: "Hamburg",
-    name: "Eimsbüttel",
-    blurb: "Backstein, Boule, beste Bäcker.",
-  },
-  {
-    city: "Hamburg",
-    name: "St. Georg",
-    blurb: "Bunt, laut und herzlich daneben.",
-  },
-  {
-    city: "Hamburg",
-    name: "Ottensen",
-    blurb: "Fabrikhof, jetzt mit Filterkaffee.",
-  },
-  {
-    city: "Hamburg",
-    name: "Winterhude",
-    blurb: "Kanäle, Kanus, leise Küchen.",
-  },
-  {
-    city: "Hamburg",
-    name: "HafenCity",
-    blurb: "Beton am Wasser, langsam belebt.",
-  },
-
-  // ── Zürich (8) ──
-  {
-    city: "Zürich",
-    name: "Niederdorf",
-    blurb: "Mittelalter-Gassen, Bars ohne Schild.",
-  },
-  {
-    city: "Zürich",
-    name: "Langstrasse",
-    blurb: "Bei Tag Markt, bei Nacht eine andere Stadt.",
-  },
-  {
-    city: "Zürich",
-    name: "Kreis 5",
-    blurb: "Industrie von gestern, Apéro von heute.",
-  },
-  {
-    city: "Zürich",
-    name: "Seefeld",
-    blurb: "See vor der Tür, Espresso im Hinterhof.",
-  },
-  {
-    city: "Zürich",
-    name: "Wiedikon",
-    blurb: "Quartierbeiz trifft Natural Wine.",
-  },
-  {
-    city: "Zürich",
-    name: "Enge",
-    blurb: "Seebad-Ruhe, leise Eleganz.",
-  },
-  {
-    city: "Zürich",
-    name: "Oberstrass",
-    blurb: "Studentisch über den Dächern.",
-  },
-  {
-    city: "Zürich",
-    name: "Hottingen",
-    blurb: "Villen, Tramklingeln, gut gehütete Cafés.",
   },
 ];
