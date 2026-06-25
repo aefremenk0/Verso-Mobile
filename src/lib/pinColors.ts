@@ -12,12 +12,17 @@ export interface PinColor {
   dot: string;
 }
 
+// Kräftige, klar voneinander getrennte Hues, damit die Punkte auf der Karte
+// gut unterscheidbar sind. Essen = warm/shiny, Feiern = kühl. Über den Farbkreis
+// verteilt (Rot · Orange · Grün · Teal · Blau · Violett · Magenta).
 export const PIN_COLORS: Record<Category, PinColor> = {
-  restaurant: { oval: "#6E1423", inner: "#FFF8F0", dot: "#6E1423" }, // Bordeaux (dunkelrot)
-  snack: { oval: "#2E5D3C", inner: "#FFFFFF", dot: "#2E5D3C" }, // Dunkelgrün, weißer Text
-  cafe: { oval: "#6F4A2E", inner: "#F7F4EF", dot: "#6F4A2E" }, // Espresso
-  bar: { oval: "#7A3E6B", inner: "#F7F4EF", dot: "#7A3E6B" }, // Pflaume
-  club: { oval: "#3A3A8C", inner: "#FFE500", dot: "#3A3A8C" }, // Indigo
-  weintasting: { oval: "#6B2D5A", inner: "#F7F4EF", dot: "#6B2D5A" }, // Wein / Cooking
-  sport: { oval: "#1E63B0", inner: "#FFFFFF", dot: "#1E63B0" }, // Sport (Blau)
+  // Essen (warm, shiny)
+  restaurant: { oval: "#E5392F", inner: "#FFFFFF", dot: "#E5392F" }, // Rot
+  snack: { oval: "#F7860D", inner: "#1A1A1A", dot: "#F7860D" }, // Orange
+  cafe: { oval: "#1E9E54", inner: "#FFFFFF", dot: "#1E9E54" }, // Grün
+  // Feiern (kühl)
+  club: { oval: "#3B49C7", inner: "#FFFFFF", dot: "#3B49C7" }, // Indigo
+  sport: { oval: "#0FB3C4", inner: "#FFFFFF", dot: "#0FB3C4" }, // Cyan/Teal
+  bar: { oval: "#8E44C9", inner: "#FFFFFF", dot: "#8E44C9" }, // Violett
+  weintasting: { oval: "#C0297A", inner: "#FFFFFF", dot: "#C0297A" }, // Magenta
 };

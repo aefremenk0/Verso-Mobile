@@ -1,5 +1,5 @@
 import { useRouter } from "expo-router";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Pressable, ScrollView, Share, Text, View } from "react-native";
 import { Swipeable } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -7,15 +7,14 @@ import { GoogleExportSheet } from "../src/components/GoogleExportSheet";
 import { ImagePlaceholder } from "../src/components/ImagePlaceholder";
 import { GoogleLogo } from "../src/components/Logos";
 import { Pill } from "../src/components/Pill";
-import {
-  CATEGORY_FILTERS,
-  CATEGORY_LABEL,
-  sortByCategory,
-} from "../src/data/categories";
+import { SceneToggle } from "../src/components/SceneToggle";
+import { CATEGORY_LABEL, sortByCategory } from "../src/data/categories";
 import { SPOTS } from "../src/data/spots";
 import type { Category, Spot } from "../src/data/types";
 import { PIN_COLORS } from "../src/lib/pinColors";
+import { SCENE_CATEGORIES, SCENE_FILTERS } from "../src/lib/scene";
 import { useSaved } from "../src/store/saved";
+import { useScene } from "../src/store/scene";
 import { shadows } from "../src/theme";
 
 // Screen 06 — Gespeichert.
@@ -112,22 +111,28 @@ function SavedRow({ spot }: { spot: Spot }) {
 export default function Gespeichert() {
   const router = useRouter();
   const { savedIds } = useSaved();
+  const { scene } = useScene();
   const [exportOpen, setExportOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState<Category | null>(null);
+
+  // Beim Szenenwechsel die Kategorie-Auswahl zurücksetzen.
+  useEffect(() => setActiveCategory(null), [scene]);
 
   // Reihenfolge der gemerkten Spots beibehalten.
   const saved = savedIds
     .map((id) => SPOTS.find((s) => s.id === id))
     .filter((s): s is (typeof SPOTS)[number] => Boolean(s));
 
-  // Hotbar-Filter nach Kategorie, dann nach Art gruppieren (nicht chaotisch).
+  // Nach Szene (Kategoriengruppe) + Hotbar-Kategorie filtern, nach Art gruppieren.
   const shown = sortByCategory(
-    saved.filter((s) => (activeCategory ? s.category === activeCategory : true)),
+    saved
+      .filter((s) => SCENE_CATEGORIES[scene].includes(s.category))
+      .filter((s) => (activeCategory ? s.category === activeCategory : true)),
   );
 
   return (
     <SafeAreaView className="flex-1 bg-screen" edges={["top", "bottom"]}>
-      {/* Topbar */}
+      {/* Topbar: zurück links, Szenen-Toggle rechts */}
       <View className="flex-row items-center justify-between px-6 pt-2">
         <Pressable
           onPress={() => router.back()}
@@ -135,11 +140,7 @@ export default function Gespeichert() {
         >
           <Text className="font-hk-bold text-[18px] text-ink">←</Text>
         </Pressable>
-        <View className="rounded-pill bg-accent px-3 py-1.5">
-          <Text className="font-hk-bold text-[11px] tracking-[1px] text-accent-ink">
-            {saved.length} ORTE
-          </Text>
-        </View>
+        <SceneToggle />
       </View>
 
       <ScrollView
@@ -153,12 +154,20 @@ export default function Gespeichert() {
         <Text className="font-hk-bold text-[11px] tracking-[1.5px] text-ink-3">
           GESPEICHERT
         </Text>
-        <Text
-          className="mt-2 font-hk-extrabold text-ink"
-          style={{ fontSize: 38, lineHeight: 40 }}
-        >
-          Deine Orte
-        </Text>
+        {/* „Deine Orte" + Anzahl-Badge auf gleicher Höhe (Grundlinie) */}
+        <View className="mt-2 flex-row items-end justify-between">
+          <Text
+            className="font-hk-extrabold text-ink"
+            style={{ fontSize: 38, lineHeight: 40 }}
+          >
+            Deine Orte
+          </Text>
+          <View className="mb-1.5 rounded-pill bg-accent px-3 py-1.5">
+            <Text className="font-hk-bold text-[11px] tracking-[1px] text-accent-ink">
+              {shown.length} ORTE
+            </Text>
+          </View>
+        </View>
 
         {saved.length === 0 ? (
           <Text className="mt-10 font-hk-medium-italic text-[15px] leading-[22px] text-ink-3">
@@ -174,7 +183,7 @@ export default function Gespeichert() {
                 showsHorizontalScrollIndicator={false}
                 contentContainerStyle={{ paddingHorizontal: 24, gap: 8 }}
               >
-                {CATEGORY_FILTERS.map((f) => {
+                {SCENE_FILTERS[scene].map((f) => {
                   const col = f.key ? PIN_COLORS[f.key] : null;
                   return (
                     <Pill
@@ -200,7 +209,7 @@ export default function Gespeichert() {
               ))}
               {shown.length === 0 ? (
                 <Text className="mt-6 font-hk-medium-italic text-[15px] text-ink-3">
-                  In dieser Kategorie hast du noch nichts gemerkt.
+                  Hier ist gerade nichts gemerkt — wechsle die Szene oder Kategorie.
                 </Text>
               ) : null}
             </View>

@@ -302,7 +302,15 @@ npx tsc --noEmit       # Typecheck
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-25 · Kategorien aufgeräumt: event/cooking/techno raus
+### (dieser Commit) · 2026-06-25 · Neue Pin-Palette + Gespeichert: Szene & Badge
+- **`PIN_COLORS` komplett neu**: kräftige, klar getrennte Hues über den Farbkreis
+  (Rot · Orange · Grün · Cyan · Indigo · Violett · Magenta) — Essen shiny, Feiern
+  kühl; auf der Karte deutlich besser unterscheidbar.
+- **Gespeichert**: Anzahl-Badge sitzt jetzt **auf Höhe von „Deine Orte"** (eigene
+  Zeile, Grundlinie); **Szenen-Toggle** oben rechts ergänzt → Liste/Hotbar jetzt
+  szenenabhängig (`SCENE_FILTERS`/`SCENE_CATEGORIES`), Reset bei Szenenwechsel.
+
+### c710dcf · 2026-06-25 · Kategorien aufgeräumt: event/cooking/techno raus
 - **event, cooking, techno** komplett entfernt (Typ, Filter, Labels, Order,
   `PIN_COLORS`, Szene, `ART_OPTIONS`, `EVENT_CATEGORIES`). Alle Event-Spots
   (14) gelöscht, Techno-Spot gelöscht, Cooking-Spot → `weintasting` umgetaggt.
