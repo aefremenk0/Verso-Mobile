@@ -231,6 +231,35 @@ dokumentieren** (Trigger · Ort · Datei) — und unten bei „Ideen" abhaken/er
 
 ---
 
+## Verso Insider — Premium-Features (geplant)
+
+> Produkt-Richtung für die kostenpflichtige „Insider"-Stufe. Aktuell zeigt die
+> App nur den mystischen „Demnächst"-Hinweis (`MysticBadge` → `app/insider.tsx`).
+> „Insider lüftet den Vorhang" — Free bleibt großzügig (Wochentipp, Feed, Karte).
+
+**1. Mehr vom Kern: Geheimtipps**
+- **Unbegrenzte Geheimtipps** statt 1/Woche — Free bekommt den Wochentipp, Insider
+  „kramt", so oft er will.
+- **Geheimtipp auf Anfrage**: „Date am Freitag, Budget €€, intim" → kuratierter,
+  auf den Anlass zugeschnittener Tipp.
+- **Die verborgene Ebene** (passt zum „?"): Orte, die **nur Insider** auf Karte/
+  Feed sehen — die wirklich geheimen Adressen.
+
+**2. Türöffner (stärkster, markentreuester Hebel)**
+- **Früher Event-Zugang**: Events sind bewusst klein („30 Klappstühle") — Insider
+  sehen/reservieren **vor allen anderen**.
+- **Priority-Reservierungen** bei schwer buchbaren Orten — „Sag, dass Verso dich
+  schickt."
+- **Exklusive Verso-Abende**: members-only Dinner/Sessions der Marke.
+
+**3. Reise & Reichweite**
+- **Neue Städte zuerst** freigeschaltet.
+- **Offline-Insider-Guide** pro Stadt (unterwegs/im Ausland).
+- **Export & Sync**: Google-Maps-Liste „?" (Mock schon angelegt,
+  `GoogleExportSheet`), Kalender-Sync für Events.
+
+---
+
 ## Aktueller Stand
 
 **Phase 1 (MVP) — fertig**, läuft komplett in Expo Go. Alle Screens 01–08
@@ -264,7 +293,14 @@ npx tsc --noEmit       # Typecheck
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-25 · Listen nach Kategorie sortiert (nicht mehr chaotisch)
+### (dieser Commit) · 2026-06-25 · Doku: Verso-Insider Premium-Features
+- Neue Sektion „Verso Insider — Premium-Features (geplant)": drei Säulen
+  (Geheimtipps · Türöffner · Reise & Reichweite) als Produkt-Richtung festgehalten.
+
+### 2fad320 · 2026-06-25 · Snack-Innenfarbe auf #E8DCC6
+- `snack.inner` von `#1A1A1A` (Schwarz) auf `#E8DCC6` (Creme) in `pinColors.ts`.
+
+### 5ace8ef · 2026-06-25 · Listen nach Kategorie sortiert (nicht mehr chaotisch)
 - Neuer Helper `sortByCategory` + `CATEGORY_ORDER` in `categories.ts` (Reihenfolge
   Restaurant→Snack→Café→Bar→Club→Event, stabil). Angewandt in **Feed**, **Bezirk**
   und **Gespeichert** → Karten erscheinen nach Art gruppiert.
