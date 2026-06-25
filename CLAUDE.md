@@ -302,7 +302,12 @@ npx tsc --noEmit       # Typecheck
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-25 · CityDropdown: Stadtname ohne Toggle in voller Größe
+### (dieser Commit) · 2026-06-25 · Pin-Farben: weißer Text (bar/snack), club Rot-Orange
+- **bar** und **snack** Innen-Text von Schwarz (`#1A1A1A`) auf **Weiß** (`#FFFFFF`)
+  umgestellt — konsistent weißer Text in den farbigen Ovalen.
+- **club** von Blau-Violett auf **Knall-Rot-Orange** (`#FF4500`, weißer Text).
+
+### 966170d · 2026-06-25 · CityDropdown: Stadtname ohne Toggle in voller Größe
 - In **„Deine Orte"** war der Stadtname kaum lesbar: `CityDropdown` nutzte das
   `adjustsFontSizeToFit`/`minimumFontScale={0.4}`-Schrumpfen **immer**, obwohl es
   nur für den Fall mit zentriertem Liste/Karte-Toggle (Feed/Karte) gedacht war.
