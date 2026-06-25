@@ -24,6 +24,7 @@ import {
 } from "../lib/mapFilter";
 import { PIN_COLORS } from "../lib/pinColors";
 import { SCENE_CATEGORIES } from "../lib/scene";
+import { useScene } from "../store/scene";
 import { shadows } from "../theme";
 import { AnimatedChip } from "./AnimatedChip";
 import { RangeSlider } from "./RangeSlider";
@@ -43,6 +44,7 @@ export function MapFilterSheet({
   onClose: () => void;
 }) {
   const { height: screenH } = useWindowDimensions();
+  const { scene } = useScene();
 
   // Eintritt: leicht von oben + einfaden. Austritt: nach oben raus + ausfaden.
   const ty = useSharedValue(-40);
@@ -99,9 +101,6 @@ export function MapFilterSheet({
     filter.maxPrice >= 100 ? "100+" : filter.maxPrice
   } €`;
 
-  // Art-Zeilen nach Szene: Zeile 1 = Essen, Zeile 2 = Feiern (je ≤ 4).
-  const ART_ROWS = [SCENE_CATEGORIES.essen, SCENE_CATEGORIES.feiern];
-
   return (
     <View className="absolute inset-0" style={{ zIndex: 100 }}>
       {/* Abgedunkelter Hintergrund (fadet mit) */}
@@ -121,60 +120,54 @@ export function MapFilterSheet({
           className="overflow-hidden rounded-b-[32px] bg-screen"
           style={shadows.nav}
         >
-          {/* Kopfzeile = Wisch-Griff (nach oben wischen schließt) */}
-          <GestureDetector gesture={pan}>
-            <View className="flex-row items-center justify-between px-7 pb-1 pt-3">
-              <Text className="font-hk-extrabold text-title-md text-ink">Filter</Text>
-              <Pressable onPress={() => setFilter(DEFAULT_FILTER)}>
-                <Text className="font-hk-semibold text-[11px] tracking-[1px] text-ink-3">
-                  ZURÜCKSETZEN
-                </Text>
-              </Pressable>
-            </View>
-          </GestureDetector>
+          {/* Kopfzeile */}
+          <View className="flex-row items-center justify-between px-7 pb-1 pt-3">
+            <Text className="font-hk-extrabold text-title-md text-ink">Filter</Text>
+            <Pressable onPress={() => setFilter(DEFAULT_FILTER)}>
+              <Text className="font-hk-semibold text-[11px] tracking-[1px] text-ink-3">
+                ZURÜCKSETZEN
+              </Text>
+            </Pressable>
+          </View>
 
           <ScrollView
             contentContainerStyle={{ paddingHorizontal: 26, paddingBottom: 8 }}
             showsVerticalScrollIndicator={false}
           >
-            {/* ART — zwei Zeilen: Essen / Feiern (max. 4 pro Zeile) */}
+            {/* ART — nur die Kategorien der aktuellen Szene (max. 4) */}
             <Text className="mb-2.5 mt-3 font-hk-semibold text-[10px] tracking-[1.5px] text-ink-3">
               ART
             </Text>
-            <View className="gap-2">
-              {ART_ROWS.map((row, ri) => (
-                <View key={ri} className="flex-row gap-2">
-                  {row.map((cat) => {
-                    const a = ART_OPTIONS.find((o) => o.cat === cat)!;
-                    const on = filter.art.includes(cat);
-                    const col = PIN_COLORS[cat];
-                    return (
-                      <AnimatedChip
-                        key={cat}
-                        active={on}
-                        onPress={() => toggleArt(cat)}
-                        activeBg={col.oval}
-                        inactiveBg="#FFFFFF"
-                        activeBorder={col.oval}
-                        inactiveBorder="rgba(0,0,0,0.2)"
-                        style={{
-                          borderRadius: 999,
-                          borderWidth: 1,
-                          paddingHorizontal: 14,
-                          paddingVertical: 8,
-                        }}
-                      >
-                        <Text
-                          className="font-hk-semibold text-[12px]"
-                          style={{ color: on ? col.inner : "#6E6A63" }}
-                        >
-                          {a.label}
-                        </Text>
-                      </AnimatedChip>
-                    );
-                  })}
-                </View>
-              ))}
+            <View className="flex-row flex-wrap gap-2">
+              {SCENE_CATEGORIES[scene].map((cat) => {
+                const a = ART_OPTIONS.find((o) => o.cat === cat)!;
+                const on = filter.art.includes(cat);
+                const col = PIN_COLORS[cat];
+                return (
+                  <AnimatedChip
+                    key={cat}
+                    active={on}
+                    onPress={() => toggleArt(cat)}
+                    activeBg={col.oval}
+                    inactiveBg="#FFFFFF"
+                    activeBorder={col.oval}
+                    inactiveBorder="rgba(0,0,0,0.2)"
+                    style={{
+                      borderRadius: 999,
+                      borderWidth: 1,
+                      paddingHorizontal: 14,
+                      paddingVertical: 8,
+                    }}
+                  >
+                    <Text
+                      className="font-hk-semibold text-[12px]"
+                      style={{ color: on ? col.inner : "#6E6A63" }}
+                    >
+                      {a.label}
+                    </Text>
+                  </AnimatedChip>
+                );
+              })}
             </View>
 
             {/* BUDGET */}
@@ -282,7 +275,12 @@ export function MapFilterSheet({
               <Text className="text-[16px] text-screen">→</Text>
             </Pressable>
           </View>
-          <View className="mb-2.5 h-[5px] w-[46px] self-center rounded-pill bg-black/15" />
+          {/* Grauer Griff unten = Wisch-Zone: nach oben wischen schließt das Sheet */}
+          <GestureDetector gesture={pan}>
+            <View className="items-center pb-3 pt-1">
+              <View className="h-[5px] w-[46px] rounded-pill bg-black/15" />
+            </View>
+          </GestureDetector>
         </SafeAreaView>
       </Animated.View>
     </View>

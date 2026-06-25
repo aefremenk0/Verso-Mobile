@@ -1,5 +1,5 @@
 import { useRouter } from "expo-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Pressable, Text, View } from "react-native";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { CityDropdown } from "../../src/components/CityDropdown";
@@ -35,6 +35,12 @@ export default function Karte() {
   const [selected, setSelected] = useState<Spot | null>(null);
   const [filterOpen, setFilterOpen] = useState(false);
   const [filter, setFilter] = useState<MapFilter>(DEFAULT_FILTER);
+
+  // Beim Szenenwechsel den Art-Filter leeren — sonst würden szenenfremde Arten
+  // (anderer Toggle) alle Orte wegfiltern.
+  useEffect(() => {
+    setFilter((f) => (f.art.length ? { ...f, art: [] } : f));
+  }, [scene]);
 
   // Stadt -> Szene (Kategoriengruppe) -> dann Filter anwenden.
   const spots = useMemo(

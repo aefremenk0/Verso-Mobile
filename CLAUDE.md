@@ -302,7 +302,14 @@ npx tsc --noEmit       # Typecheck
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-25 · Fix: Karte-Doppeltipp setzt Auswahl mit zurück
+### (dieser Commit) · 2026-06-25 · Filter: Art szenenabhängig; Swipe-Griff unten
+- **Art** zeigt jetzt nur die Kategorien der **aktuellen Szene** (`useScene` →
+  `SCENE_CATEGORIES[scene]`); `karte.tsx` leert den `art`-Filter beim Szenenwechsel
+  (sonst filtern szenenfremde Arten alles weg).
+- **Swipe-Griff** ist jetzt das **graue Oval unten**: dort nach oben wischen
+  schließt das Sheet (GestureDetector vom Header zum Grabber verschoben).
+
+### efba593 · 2026-06-25 · Fix: Karte-Doppeltipp setzt Auswahl mit zurück
 - Edge-Case: Doppeltipp (alle an) → Pin wählen → Doppeltipp ließ den gewählten
   Ort/die Karte hängen. Jetzt setzt der Doppeltipp **auch die Einzel-Auswahl**
   zurück (`onClearSelection` von `CityMap` → `setSelected(null)` in `karte.tsx`).
