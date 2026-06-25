@@ -1,39 +1,50 @@
 import { useRouter } from "expo-router";
-import { Pressable, Text, View } from "react-native";
+import { Text, View } from "react-native";
+import { AnimatedChip } from "./AnimatedChip";
 
-// Umschalter Liste/Karte (oben rechts im Feed UND auf der Karte).
-// `active` bestimmt, welche Seite gelb hervorgehoben ist; die jeweils andere
-// ist antippbar und navigiert zum passenden Tab.
+// Umschalter Liste/Karte (oben in Feed & Karte). Beide Hälften nutzen
+// AnimatedChip (Farb-Crossfade + Pop + Press), konsistent zu den übrigen
+// Auswahl-Elementen. `active` bestimmt die gelbe Seite; die andere navigiert.
 export function ListMapToggle({ active }: { active: "liste" | "karte" }) {
   const router = useRouter();
 
   return (
     <View className="flex-row rounded-pill bg-chip p-1">
-      {active === "liste" ? (
-        <View className="rounded-pill bg-accent px-4 py-2">
-          <Text className="font-hk-semibold text-[13px] text-accent-ink">Liste</Text>
-        </View>
-      ) : (
-        <Pressable
-          onPress={() => router.push("/(tabs)/feed")}
-          className="rounded-pill px-4 py-2"
+      <AnimatedChip
+        active={active === "liste"}
+        onPress={() => {
+          if (active !== "liste") router.push("/(tabs)/feed");
+        }}
+        activeBg="#FFE500"
+        inactiveBg="rgba(255,229,0,0)"
+        style={{ borderRadius: 999, paddingHorizontal: 16, paddingVertical: 8 }}
+      >
+        <Text
+          className={`font-hk-semibold text-[13px] ${
+            active === "liste" ? "text-accent-ink" : "text-ink-2"
+          }`}
         >
-          <Text className="font-hk-semibold text-[13px] text-ink-2">Liste</Text>
-        </Pressable>
-      )}
+          Liste
+        </Text>
+      </AnimatedChip>
 
-      {active === "karte" ? (
-        <View className="rounded-pill bg-accent px-4 py-2">
-          <Text className="font-hk-semibold text-[13px] text-accent-ink">Karte</Text>
-        </View>
-      ) : (
-        <Pressable
-          onPress={() => router.push("/(tabs)/karte")}
-          className="rounded-pill px-4 py-2"
+      <AnimatedChip
+        active={active === "karte"}
+        onPress={() => {
+          if (active !== "karte") router.push("/(tabs)/karte");
+        }}
+        activeBg="#FFE500"
+        inactiveBg="rgba(255,229,0,0)"
+        style={{ borderRadius: 999, paddingHorizontal: 16, paddingVertical: 8 }}
+      >
+        <Text
+          className={`font-hk-semibold text-[13px] ${
+            active === "karte" ? "text-accent-ink" : "text-ink-2"
+          }`}
         >
-          <Text className="font-hk-semibold text-[13px] text-ink-2">Karte</Text>
-        </Pressable>
-      )}
+          Karte
+        </Text>
+      </AnimatedChip>
     </View>
   );
 }

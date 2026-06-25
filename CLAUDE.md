@@ -302,7 +302,11 @@ npx tsc --noEmit       # Typecheck
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-25 · Auswahl-Animation: Crossfade + Pop + Press
+### (dieser Commit) · 2026-06-25 · Auswahl-Animation auch auf den Toggles
+- **`ListMapToggle`** (Liste/Karte) und **`SceneToggle`** (🎉/🍴) nutzen jetzt
+  ebenfalls `AnimatedChip` pro Hälfte → Crossfade + Pop + Press, konsistent.
+
+### b771f50 · 2026-06-25 · Auswahl-Animation: Crossfade + Pop + Press
 - Neue **`AnimatedChip`**: animierte Auswahl (Hintergrund/Border-**Crossfade** via
   `interpolateColor`, **Pop** beim Aktivieren, **Press-Down** beim Drücken).
 - Eingesetzt in **`Pill`** (Hotbar Feed/Bezirk/Gespeichert + Stadt-Dropdown),
