@@ -22,6 +22,7 @@ import {
   RATING_OPTIONS,
   type MapFilter,
 } from "../lib/mapFilter";
+import { tapSelection } from "../lib/haptics";
 import { PIN_COLORS } from "../lib/pinColors";
 import { SCENE_CATEGORIES } from "../lib/scene";
 import { useScene } from "../store/scene";
@@ -86,20 +87,24 @@ export function MapFilterSheet({
   }));
   const backdropStyle = useAnimatedStyle(() => ({ opacity: op.value }));
 
-  const toggleArt = (cat: MapFilter["art"][number]) =>
+  const toggleArt = (cat: MapFilter["art"][number]) => {
+    tapSelection();
     setFilter({
       ...filter,
       art: filter.art.includes(cat)
         ? filter.art.filter((x) => x !== cat)
         : [...filter.art, cat],
     });
-  const toggleAmb = (name: MapFilter["ambiente"][number]) =>
+  };
+  const toggleAmb = (name: MapFilter["ambiente"][number]) => {
+    tapSelection();
     setFilter({
       ...filter,
       ambiente: filter.ambiente.includes(name)
         ? filter.ambiente.filter((x) => x !== name)
         : [...filter.ambiente, name],
     });
+  };
 
   const budgetLabel = `${filter.minPrice} € – ${
     filter.maxPrice >= 100 ? "100+" : filter.maxPrice
@@ -208,7 +213,10 @@ export function MapFilterSheet({
                   <AnimatedChip
                     key={b.label}
                     active={on}
-                    onPress={() => setFilter({ ...filter, minRating: b.value })}
+                    onPress={() => {
+                      tapSelection();
+                      setFilter({ ...filter, minRating: b.value });
+                    }}
                     activeBg="#FFE500"
                     inactiveBg="#FFFFFF"
                     activeBorder="#FFE500"

@@ -440,7 +440,15 @@ npm test               # Unit-Tests der reinen Logik (vitest, src/**)
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-25 · Bezirks-Match exakt statt startsWith
+### (dieser Commit) · 2026-06-25 · Selektions-Haptik auf Kategorie-/Filter-Chips
+- **`Pill`** (interaktiv): `selectionAsync` (subtiles „tick") bei jeder Auswahl —
+  deckt die Kategorie-Hotbar (Feed/Bezirk/Gespeichert) und die Stadt-Dropdown-
+  Auswahl ab.
+- **`MapFilterSheet`**: `tapSelection` in `toggleArt`/`toggleAmb` und beim
+  Bewertungs-Chip. Gezielt an den Callsites (nicht in `AnimatedChip`), damit es
+  nicht mit dem Merken-/Szenen-Haptik doppelt feuert.
+
+### cd574ac · 2026-06-25 · Bezirks-Match exakt statt startsWith
 - `bezirk/[name].tsx`: `s.neighborhood.startsWith(name)` → **`=== name`** (die
   Spot-`neighborhood` entspricht seit dem Daten-Umbau exakt dem Viertelnamen).
   Beseitigt die Präfix-Fehlmatch-Falle.

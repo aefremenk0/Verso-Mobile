@@ -1,4 +1,5 @@
 import { Pressable, Text, View } from "react-native";
+import { tapSelection } from "../lib/haptics";
 import { AnimatedChip } from "./AnimatedChip";
 
 // Pill / Chip. Zwei Einsätze:
@@ -50,12 +51,16 @@ export function Pill({
     );
   }
 
-  // Interaktiv: Pop + Press + Farb-Crossfade (AnimatedChip).
+  // Interaktiv: Pop + Press + Farb-Crossfade (AnimatedChip) + Selektions-Haptik.
   const activeBg = customActive ? (activeColor as string) : "#FFE500";
+  const handlePress = () => {
+    tapSelection(); // subtiles „tick" bei jeder Chip-Auswahl
+    onPress();
+  };
   return (
     <AnimatedChip
       active={active}
-      onPress={onPress}
+      onPress={handlePress}
       activeBg={activeBg}
       inactiveBg="#EDE9E1"
       style={{
