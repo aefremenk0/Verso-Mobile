@@ -397,10 +397,10 @@ Gespeichert, Profil, Einstellungen, Geheimtipp). Karte-Tab = Platzhalter.
    **`FlatList`** (virtualisiert). Im Feed scrollt das Such-/Filter-/Kategorie-/
    Überrasch-Chrome als `ListHeaderComponent` mit weg — nur der Stadt-Kopf bleibt
    fix (weniger Dauer-Chrome über der ersten Karte).
-2. **Bezirks-Zuordnung per `startsWith(name)`** (`bezirk/[name].tsx`): fragil,
-   wenn je zwei Viertel **derselben Stadt** existieren, bei denen ein Name Präfix
-   des anderen ist (matcht beide). Aktuell konfliktfrei → besser exakter Match
-   oder `neighborhoodId`.
+2. (erledigt) ~~**Bezirks-Zuordnung per `startsWith`**~~ → jetzt **exakter Match**
+   (`s.neighborhood === name`), da die Spot-`neighborhood` exakt dem Viertelnamen
+   entspricht. Ein Test sichert das ab (jede Spot-`neighborhood` ist ein gültiges
+   Viertel ihrer Stadt).
 3. (teilw. erledigt) **Farb-Kontrast & Verwechslung**: bar/snack-Ovale **vertieft**
    (`bar #6FA82B`, `snack #D9700A`) → besserer Weiß-Kontrast; **`club` von
    `#FF4500` auf `#FF7A00`** (reines Orange) gerückt, klarer von restaurant-Rot
@@ -440,7 +440,14 @@ npm test               # Unit-Tests der reinen Logik (vitest, src/**)
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-25 · Stadtname immer volle Größe (Schrumpf-Logik raus)
+### (dieser Commit) · 2026-06-25 · Bezirks-Match exakt statt startsWith
+- `bezirk/[name].tsx`: `s.neighborhood.startsWith(name)` → **`=== name`** (die
+  Spot-`neighborhood` entspricht seit dem Daten-Umbau exakt dem Viertelnamen).
+  Beseitigt die Präfix-Fehlmatch-Falle.
+- **Test** ergänzt (jetzt 18): jede Spot-`neighborhood` ist ein gültiges Viertel
+  ihrer Stadt → schützt den exakten Match vor künftigen Daten-Tippfehlern.
+
+### 3de9b8e · 2026-06-25 · Stadtname immer volle Größe (Schrumpf-Logik raus)
 - Nach dem Entfernen des Liste/Karte-Toggles war die Schrumpf-Maschinerie im
   `CityDropdown` toter, potenziell begrenzender Code. **Komplett entfernt**:
   `center`-Prop, `cityMaxWidth`/`maxWidth`, `adjustsFontSizeToFit`/

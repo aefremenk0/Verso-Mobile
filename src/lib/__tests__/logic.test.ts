@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { isEventCategory, sortByCategory } from "../../data/categories";
+import { NEIGHBORHOODS } from "../../data/cities";
 import { SPOTS } from "../../data/spots";
 import type { Spot } from "../../data/types";
 import { DEFAULT_FILTER, matchesFilter } from "../mapFilter";
@@ -147,6 +148,16 @@ describe("SPOTS-Daten (Integrität)", () => {
   it("Events tragen ein dateLabel", () => {
     for (const s of SPOTS) {
       if (isEventCategory(s.category)) expect(s.dateLabel).toBeTruthy();
+    }
+  });
+
+  it("jede Spot-neighborhood ist ein exaktes Viertel ihrer Stadt", () => {
+    // Sichert den exakten Bezirks-Match (bezirk/[name].tsx === statt startsWith).
+    for (const s of SPOTS) {
+      const valid = NEIGHBORHOODS.some(
+        (n) => n.city === s.city && n.name === s.neighborhood,
+      );
+      expect(valid, `${s.id}: "${s.neighborhood}" (${s.city})`).toBe(true);
     }
   });
 });

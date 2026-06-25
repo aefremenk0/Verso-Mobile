@@ -32,10 +32,11 @@ export default function Bezirk() {
     (n) => n.city === city && n.name === name,
   )?.blurb;
 
-  // Spot-Bezirk steht z. B. als "Wieden, 4. Bezirk" -> Anfang vergleichen.
+  // Spot-`neighborhood` entspricht jetzt EXAKT dem Viertelnamen (Daten-Umbau)
+  // -> exakter Vergleich statt fragilem `startsWith` (kein Präfix-Fehlmatch mehr).
   // Dann nach Szene (Kategoriengruppe) und gewählter Kategorie filtern.
   const spots = sortByCategory(
-    SPOTS.filter((s) => s.city === city && s.neighborhood.startsWith(name ?? ""))
+    SPOTS.filter((s) => s.city === city && s.neighborhood === name)
       .filter((s) => SCENE_CATEGORIES[scene].includes(s.category))
       .filter((s) => (activeCategory ? s.category === activeCategory : true)),
   );
