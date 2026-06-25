@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { CATEGORY_LABEL } from "../data/categories";
 import type { Spot } from "../data/types";
+import { PIN_COLORS } from "../lib/pinColors";
 import { useSaved } from "../store/saved";
 import { shadows } from "../theme";
 import { ImagePlaceholder } from "./ImagePlaceholder";
@@ -34,6 +35,9 @@ export function SpotCard({ spot }: { spot: Spot }) {
   const metaLine = [spot.neighborhood.split(",")[0], ...spot.tags.slice(0, 2)]
     .join("  ·  ")
     .toUpperCase();
+
+  // Kategorie-Farbe (oben links) — dieselbe Quelle wie Karten-Pins.
+  const col = PIN_COLORS[spot.category];
 
   const onLongPress = (e: GestureResponderEvent) => {
     pressPos.current = {
@@ -70,9 +74,15 @@ export function SpotCard({ spot }: { spot: Spot }) {
         style={shadows.card}
       >
         <ImagePlaceholder tone={spot.tone} height={150} radius={0} note={spot.imageNote}>
-          {/* Kategorie-Badge oben links */}
-          <View className="absolute left-4 top-4 rounded-pill bg-accent px-3 py-1">
-            <Text className="font-hk-bold text-[11px] tracking-[1px] text-accent-ink">
+          {/* Kategorie-Badge oben links — in der Kategorie-Farbe */}
+          <View
+            className="absolute left-4 top-4 rounded-pill px-3 py-1"
+            style={{ backgroundColor: col.oval }}
+          >
+            <Text
+              className="font-hk-bold text-[11px] tracking-[1px]"
+              style={{ color: col.inner }}
+            >
               {CATEGORY_LABEL[spot.category]}
             </Text>
           </View>

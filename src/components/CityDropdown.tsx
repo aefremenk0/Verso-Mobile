@@ -25,11 +25,20 @@ export function CityDropdown({
           rechts/zentriert ein Element steht oder nicht. */}
       <View className="px-6 pt-2">
         <View className="justify-center" style={{ height: 42 }}>
-          {/* Zentriertes Element (z. B. Liste/Karte) — exakt in der Mitte. */}
+          {/* Zentriertes Element (z. B. Liste/Karte) — horizontal UND vertikal
+              mittig, damit es auf einer Linie mit „Wien"/dem rechten Element sitzt. */}
           {center ? (
             <View
               pointerEvents="box-none"
-              style={{ position: "absolute", left: 0, right: 0, alignItems: "center" }}
+              style={{
+                position: "absolute",
+                left: 0,
+                right: 0,
+                top: 0,
+                bottom: 0,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
             >
               {center}
             </View>

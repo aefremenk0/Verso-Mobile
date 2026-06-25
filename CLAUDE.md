@@ -264,7 +264,13 @@ npx tsc --noEmit       # Typecheck
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-25 · Gespeichert: Kategorie-Hotbar + Export-Button höher
+### (dieser Commit) · 2026-06-25 · SpotCard-Badge in Kategorie-Farbe; Wien-Ausrichtung
+- **SpotCard:** Kategorie-Badge oben links jetzt in der **Kategorie-Farbe**
+  (`PIN_COLORS`, oval+inner) statt fest Gelb — gilt in Feed & Bezirk-Karten.
+- **CityDropdown:** zentriertes Element (Liste/Karte) jetzt auch **vertikal mittig**
+  → „Wien" sitzt auf einer Linie mit Liste/Karte & Szene (war ein paar px tiefer).
+
+### b620063 · 2026-06-25 · Gespeichert: Kategorie-Hotbar + Export-Button höher
 - **Gespeichert** bekommt eine **Kategorie-Hotbar** (alle Kategorien, Farben pro
   Kategorie) zum Filtern der gemerkten Orte; Leerzustand pro Kategorie ergänzt.
 - **„Nach Google Maps exportieren"**-Button 10px höher (bottom 16 → 26) und mit
