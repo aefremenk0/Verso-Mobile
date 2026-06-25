@@ -118,9 +118,9 @@ src/
                           StripeTexture, HookHighlight,
                           Pill, Button, SpotCard, BottomNav, InitialsAvatar,
                           AnimatedChip (Auswahl: Crossfade+Pop+Press),
-                          (Initialen-Kreis), ListMapToggle (Liste/Karte oben),
-                          CityDropdown (Stadt-Kopf; center+right-Props für
-                          zentrierten Toggle & rechtes Element), Logos,
+                          (Initialen-Kreis),
+                          CityDropdown (Stadt-Kopf; right-Prop für rechtes
+                          Element, optionales center), Logos,
                           GeheimtippButton (pulsierende Squiggle-"?"),
                           MysticBadge ("???"-Badge, pulsierende Kontur),
                           QuestionBubbles (aufsteigende Bubbles, konfig. Glyph),
@@ -440,7 +440,13 @@ npm test               # Unit-Tests der reinen Logik (vitest, src/**)
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-25 · Farb-Kontrast: bar/snack vertieft, club reines Orange
+### (dieser Commit) · 2026-06-25 · Liste/Karte-Toggle entfernt
+- **`ListMapToggle` überall gelöscht** (Feed & Karte) + Komponente entfernt. Die
+  Karte bleibt über den **„Karte"-Reiter der Bottom-Nav** erreichbar — der Toggle
+  war redundant. `CityDropdown` wird in Feed/Karte jetzt ohne `center` genutzt →
+  Stadtname links in voller Größe, Szenen-Toggle rechts.
+
+### 0cd6b6d · 2026-06-25 · Farb-Kontrast: bar/snack vertieft, club reines Orange
 - **bar** `#8BC53F → #6FA82B` und **snack** `#F7860D → #D9700A` vertieft
   (besserer Kontrast zum weißen Text, weißer Text bleibt — Nutzer-Wunsch).
 - **club** `#FF4500 → #FF7A00` (reines Orange) — klar getrennt von restaurant-Rot

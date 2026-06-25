@@ -4,7 +4,6 @@ import { FlatList, Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Svg, { Path } from "react-native-svg";
 import { CityDropdown } from "../../src/components/CityDropdown";
-import { ListMapToggle } from "../../src/components/ListMapToggle";
 import { MapFilterSheet } from "../../src/components/MapFilterSheet";
 import { Pill } from "../../src/components/Pill";
 import { SceneToggle } from "../../src/components/SceneToggle";
@@ -118,10 +117,7 @@ export default function Feed() {
       {/* Fix: nur der Stadt-Kopf bleibt oben stehen. Suche/Filter/Kategorie/
           Überrasch-mich wandern in den Listen-Header und scrollen mit weg —
           so ist über der ersten Karte nicht dauerhaft so viel Chrome. */}
-      <CityDropdown
-        center={<ListMapToggle active="liste" />}
-        right={<SceneToggle />}
-      />
+      <CityDropdown right={<SceneToggle />} />
 
       <FlatList
         data={personalizedSpots}
