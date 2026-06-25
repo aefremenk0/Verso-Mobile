@@ -8,9 +8,12 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { AnimatedChip } from "../src/components/AnimatedChip";
 import { Brand } from "../src/components/Brand";
 import { Button } from "../src/components/Button";
 import { AppleLogo, GoogleLogo } from "../src/components/Logos";
+import { AMBIENTE_OPTIONS } from "../src/lib/mapFilter";
+import { useInterests } from "../src/store/interests";
 
 // Screen 01 — Registrierung / Anmelden.
 // Reine UI: Apple/Google/E-Mail sind Platzhalter. Jeder Weg führt in den Feed.
@@ -19,6 +22,7 @@ export default function Register() {
   const router = useRouter();
   const [mode, setMode] = useState<"register" | "login">("register");
   const [email, setEmail] = useState("");
+  const { interests, toggle, max } = useInterests();
 
   // Im MVP kein echtes Login – wir ersetzen den Screen durch den Feed,
   // damit der Zurück-Button nicht wieder hierher führt.
@@ -54,6 +58,48 @@ export default function Register() {
           Damit Verso sich merkt, was dir gefällt — und dir den Wochentipp
           aufhebt.
         </Text>
+
+        {/* Onboarding-Personalisierung: Vibe wählen (nur beim Registrieren).
+            Stimmt den Feed sanft ab (passende Spots nach oben). */}
+        {mode === "register" ? (
+          <View className="mt-6">
+            <Text className="font-hk-bold text-[11px] tracking-[1.5px] text-ink-3">
+              DEIN VIBE
+            </Text>
+            <Text className="mt-1.5 font-hk-medium text-[13px] leading-[18px] text-ink-2">
+              Wähle bis zu {max} — wir stimmen deinen Feed darauf ab. (Optional)
+            </Text>
+            <View className="mt-3 flex-row flex-wrap gap-2">
+              {AMBIENTE_OPTIONS.map((a) => {
+                const on = interests.includes(a.name);
+                return (
+                  <AnimatedChip
+                    key={a.name}
+                    active={on}
+                    onPress={() => toggle(a.name)}
+                    activeBg="#FFE500"
+                    inactiveBg="#FFFFFF"
+                    activeBorder="#FFE500"
+                    inactiveBorder="rgba(0,0,0,0.18)"
+                    style={{
+                      borderRadius: 999,
+                      borderWidth: 1,
+                      paddingHorizontal: 15,
+                      paddingVertical: 9,
+                    }}
+                  >
+                    <Text
+                      className="font-hk-semibold text-[13px]"
+                      style={{ color: on ? "#1A1A1A" : "#6E6A63" }}
+                    >
+                      {a.label}
+                    </Text>
+                  </AnimatedChip>
+                );
+              })}
+            </View>
+          </View>
+        ) : null}
 
         {/* Segmented Toggle */}
         <View className="mt-6 flex-row rounded-pill bg-chip p-1">

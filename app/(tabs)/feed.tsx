@@ -18,6 +18,7 @@ import { DEFAULT_FILTER, matchesFilter, type MapFilter } from "../../src/lib/map
 import { PIN_COLORS } from "../../src/lib/pinColors";
 import { SCENE_CATEGORIES, SCENE_FILTERS } from "../../src/lib/scene";
 import { useCity } from "../../src/store/city";
+import { useInterests } from "../../src/store/interests";
 import { useScene } from "../../src/store/scene";
 
 // Trichter-Icon (Filter) — SVG, passt zum redaktionellen Ton (kein Emoji).
@@ -43,6 +44,7 @@ export default function Feed() {
   const router = useRouter();
   const { city } = useCity();
   const { scene } = useScene();
+  const { interests } = useInterests();
   const [activeCategory, setActiveCategory] = useState<Category | null>(null);
   const [query, setQuery] = useState("");
   // Budget/Bewertung/Ambiente-Filter (wie auf der Karte). „Art" macht hier die
@@ -82,6 +84,17 @@ export default function Feed() {
       ),
     [city, scene, activeCategory, q, filter],
   );
+
+  // Onboarding-Personalisierung: Spots, deren Ambiente einen der gewählten Vibes
+  // trifft, sanft nach oben (stabil — Array.sort ist in Hermes stabil, also
+  // bleibt die Kategorie-Reihenfolge innerhalb der Gruppen erhalten). Nichts
+  // wird ausgeblendet; ohne gewählte Vibes bleibt alles wie es ist.
+  const personalizedSpots = useMemo(() => {
+    if (interests.length === 0) return visibleSpots;
+    const fits = (s: (typeof visibleSpots)[number]) =>
+      s.ambience.some((a) => interests.includes(a));
+    return [...visibleSpots].sort((a, b) => Number(fits(b)) - Number(fits(a)));
+  }, [visibleSpots, interests]);
 
   // „Überrasch mich" zieht aus dem breiten Stadt+Szene-Pool (bewusst NICHT aus
   // der gefilterten Liste — sonst wär's keine Überraschung).
@@ -173,11 +186,18 @@ export default function Feed() {
           </View>
         ) : null}
 
-        {visibleSpots.map((spot, i) => (
+        {/* Dezenter Hinweis, wenn der Feed auf den Vibe abgestimmt ist */}
+        {interests.length > 0 && !q ? (
+          <Text className="mb-3 font-hk-semibold text-[11px] tracking-[1px] text-ink-3">
+            ✦ AUF DEINEN VIBE ABGESTIMMT
+          </Text>
+        ) : null}
+
+        {personalizedSpots.map((spot, i) => (
           <SpotCard key={spot.id} spot={spot} hintCandidate={i === 0} />
         ))}
 
-        {visibleSpots.length === 0 ? (
+        {personalizedSpots.length === 0 ? (
           <Text className="mt-10 text-center font-hk-medium-italic text-[15px] text-ink-3">
             {q || filterActive
               ? "Nichts passt zu Suche/Filter. Lockere die Kriterien."

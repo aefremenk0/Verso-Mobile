@@ -10,6 +10,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { CityProvider } from "../src/store/city";
 import { GeheimtippProvider } from "../src/store/geheimtipp";
+import { InterestsProvider } from "../src/store/interests";
 import { SavedProvider } from "../src/store/saved";
 import { SceneProvider } from "../src/store/scene";
 import { colors, fontMap } from "../src/theme";
@@ -36,6 +37,7 @@ export default function RootLayout() {
         <SceneProvider>
         <SavedProvider>
           <GeheimtippProvider>
+          <InterestsProvider>
           <StatusBar style="dark" />
           <Stack
             screenOptions={{
@@ -69,6 +71,7 @@ export default function RootLayout() {
             <Stack.Screen name="passwort-aendern" />
             <Stack.Screen name="bezirk/[name]" />
           </Stack>
+          </InterestsProvider>
           </GeheimtippProvider>
         </SavedProvider>
         </SceneProvider>

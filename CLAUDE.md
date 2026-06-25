@@ -142,7 +142,8 @@ app.config.js             Expo-Config (ersetzt app.json; Mapbox-Token via Env)
                           cities.ts (Viertel pro Stadt, Anzahl variabel),
                           categories.ts,
                           user.ts  (kein Backend)
-  store/                  city.tsx, saved.tsx, geheimtipp.tsx  (React-Context,
+  store/                  city.tsx, saved.tsx, geheimtipp.tsx,
+                          interests.tsx (Onboarding-Vibes, max 3)  (React-Context,
                           alles in-memory)
   lib/maps.ts             Deep-Links Apple/Google Maps
   theme.ts                Design-Tokens als JS (Fonts, Farben, Schatten)
@@ -367,8 +368,10 @@ Gespeichert, Profil, Einstellungen, Geheimtipp). Karte-Tab = Platzhalter.
 - (erledigt) ~~**„Überrasch mich" / Shuffle**~~ — sichtbarer `SurpriseButton`
   oben im Feed; zufälliger Ort aus Stadt+Szene-Pool → Spot-Detail. (Shake-Geste
   bleibt separat in der Easter-Egg-Roadmap.)
-- **Onboarding-Personalisierung**: bei Registrierung 2–3 Interessen wählen →
-  Feed/Geheimtipp leicht tunen.
+- (erledigt) ~~**Onboarding-Personalisierung**~~ — bei Registrierung bis zu 3
+  **Vibes** (Ambiente) wählen (`store/interests.tsx`); Feed sortiert passende
+  Spots sanft nach oben (nichts ausgeblendet) + Hinweis „auf deinen Vibe
+  abgestimmt". (Geheimtipp bleibt bewusst kuratiert pro Stadt.)
 - **Spot-Detail-Tiefe**: „Jetzt geöffnet?"-Badge, Entfernung, Mini-Karte.
 
 ### 🔴 Größer (strategisch / Architektur)
@@ -424,7 +427,17 @@ npx tsc --noEmit       # Typecheck
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-25 · „Überrasch mich"-Button im Feed
+### (dieser Commit) · 2026-06-25 · Onboarding-Personalisierung (Vibes)
+- Neuer **`store/interests.tsx`** (In-Memory, max 3 Ambiente-„Vibes").
+  `InterestsProvider` in `_layout.tsx` ergänzt; Abmelden in `settings.tsx`
+  leert die Vibes mit.
+- **Registrierung**: „DEIN VIBE"-Auswahl (bis zu 3 Ambiente-Chips, optional) —
+  nur im Register-Modus.
+- **Feed**: sortiert Spots, deren Ambiente einen Vibe trifft, **sanft nach oben**
+  (stabiler Sort → Kategorie-Reihenfolge bleibt; nichts ausgeblendet) + dezenter
+  Hinweis „✦ auf deinen Vibe abgestimmt". Geheimtipp bleibt bewusst kuratiert.
+
+### e880de3 · 2026-06-25 · „Überrasch mich"-Button im Feed
 - Neue **`SurpriseButton`**-Komponente (dunkle Pille, gelbe Sparkle,
   Press-Bounce via Reanimated) oben im Feed.
 - Zieht einen **zufälligen Ort** aus dem breiten **Stadt+Szene-Pool** (bewusst

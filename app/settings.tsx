@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useGeheimtipp } from "../src/store/geheimtipp";
+import { useInterests } from "../src/store/interests";
 import { useSaved } from "../src/store/saved";
 
 // Screen 07 — Einstellungen.
@@ -61,15 +62,18 @@ export default function Settings() {
   const router = useRouter();
   const geheimtipp = useGeheimtipp();
   const saved = useSaved();
+  const interests = useInterests();
 
   const [tippN, setTippN] = useState(true);
   const [spotsN, setSpotsN] = useState(true);
   const [eventsN, setEventsN] = useState(false);
 
   const abmelden = () => {
-    // Mock-Login zurücksetzen: Geheimtipp wieder frisch, Merkliste auf Start.
+    // Mock-Login zurücksetzen: Geheimtipp wieder frisch, Merkliste auf Start,
+    // gewählte Vibes/Interessen leeren.
     geheimtipp.reset();
     saved.reset();
+    interests.reset();
     router.replace("/");
   };
 
