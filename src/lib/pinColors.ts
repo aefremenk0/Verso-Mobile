@@ -14,7 +14,7 @@ export interface PinColor {
 
 export const PIN_COLORS: Record<Category, PinColor> = {
   restaurant: { oval: "#E2402F", inner: "#FFF8F0", dot: "#E2402F" }, // Tomatenrot
-  snack: { oval: "#F2A33C", inner: "#1A1A1A", dot: "#F2A33C" }, // Amber
+  snack: { oval: "#F2A33C", inner: "#E8DCC6", dot: "#F2A33C" }, // Amber
   cafe: { oval: "#6F4A2E", inner: "#F7F4EF", dot: "#6F4A2E" }, // Espresso
   bar: { oval: "#7A3E6B", inner: "#F7F4EF", dot: "#7A3E6B" }, // Pflaume
   club: { oval: "#3A3A8C", inner: "#FFE500", dot: "#3A3A8C" }, // Indigo
