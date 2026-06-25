@@ -1,5 +1,5 @@
 import { useRouter } from "expo-router";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   type GestureResponderEvent,
   Pressable,
@@ -7,6 +7,13 @@ import {
   Text,
   View,
 } from "react-native";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withDelay,
+  withSequence,
+  withTiming,
+} from "react-native-reanimated";
 import { CATEGORY_LABEL } from "../data/categories";
 import type { Spot } from "../data/types";
 import { PIN_COLORS } from "../lib/pinColors";
@@ -23,13 +30,48 @@ import { SpotActionMenu } from "./SpotActionMenu";
 // Tippen öffnet das passende Detail (Spot oder Event teilen sich /spot/[id]).
 // LANGE drücken öffnet ein Pinterest-artiges Kreis-Menü (Merken / Teilen).
 
-export function SpotCard({ spot }: { spot: Spot }) {
+// Einmal pro Session: auf der ersten Feed-Karte die Long-Press-Geste zeigen
+// (Menü ploppt kurz auf + Hinweis-Chip). In-memory, kein Speicher nötig.
+let feedHintShown = false;
+
+export function SpotCard({
+  spot,
+  hintCandidate = false,
+}: {
+  spot: Spot;
+  /** true nur für die erste Karte im Feed -> zeigt einmalig die Geste. */
+  hintCandidate?: boolean;
+}) {
   const router = useRouter();
   const { isSaved, toggle } = useSaved();
   const burstRef = useRef<QuestionBubblesHandle>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   // Druckstelle merken, damit der Herz-Burst von dort startet.
   const pressPos = useRef({ x: 0, y: 0 });
+
+  // Hinweis-Chip (B) + Auto-Demo (A) für die Long-Press-Geste.
+  const [hint, setHint] = useState(false);
+  const hintOpacity = useSharedValue(0);
+  const hintStyle = useAnimatedStyle(() => ({ opacity: hintOpacity.value }));
+
+  useEffect(() => {
+    if (!hintCandidate || feedHintShown) return;
+    feedHintShown = true;
+    setMenuOpen(true); // A: Kreis-Menü kurz aufploppen lassen
+    setHint(true); // B: Hinweis-Chip oben rechts
+    hintOpacity.value = withSequence(
+      withTiming(1, { duration: 300 }),
+      withDelay(3000, withTiming(0, { duration: 500 })),
+    );
+    const t1 = setTimeout(() => setMenuOpen(false), 1600);
+    const t2 = setTimeout(() => setHint(false), 3900);
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+    };
+    // nur beim ersten Mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Caps-Zeile: Bezirk + erste zwei Tags (z. B. "WIEDEN · NATURAL · SPÄT").
   const metaLine = [spot.neighborhood.split(",")[0], ...spot.tags.slice(0, 2)]
@@ -118,6 +160,20 @@ export function SpotCard({ spot }: { spot: Spot }) {
           onShare={onShare}
           onClose={() => setMenuOpen(false)}
         />
+      ) : null}
+
+      {/* Hinweis-Chip oben rechts (B) — nur einmalig auf der ersten Karte. */}
+      {hint ? (
+        <Animated.View
+          pointerEvents="none"
+          style={[{ position: "absolute", top: 12, right: 12, zIndex: 15 }, hintStyle]}
+        >
+          <View className="rounded-pill bg-night px-3 py-1.5" style={shadows.card}>
+            <Text className="font-hk-semibold text-[11px] text-screen">
+              Lange drücken: Merken & Teilen
+            </Text>
+          </View>
+        </Animated.View>
       ) : null}
 
       {/* Herz-Burst über der Karte (nicht vom rounded-card abgeschnitten) */}

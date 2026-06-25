@@ -85,8 +85,8 @@ export default function Feed() {
         }}
         showsVerticalScrollIndicator={false}
       >
-        {visibleSpots.map((spot) => (
-          <SpotCard key={spot.id} spot={spot} />
+        {visibleSpots.map((spot, i) => (
+          <SpotCard key={spot.id} spot={spot} hintCandidate={i === 0} />
         ))}
 
         {visibleSpots.length === 0 ? (

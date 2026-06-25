@@ -210,6 +210,10 @@ dokumentieren** (Trigger · Ort · Datei) — und unten bei „Ideen" abhaken/er
   **„Merken"** (♥, merkt den Spot + Herz-Burst via `QuestionBubbles`) und
   **„Teilen"** (↗, systemeigenes `Share`-Sheet → iMessage/WhatsApp/…).
   → `SpotCard.tsx` + `src/components/SpotActionMenu.tsx`.
+  - **Signalisierung (einmal pro Session):** auf der **ersten** Feed-Karte
+    (`hintCandidate`) ploppt das Menü kurz auto-auf (Demo) + Hinweis-Chip **oben
+    rechts auf der Karte** „Lange drücken: Merken & Teilen" (fadet aus). Flag
+    `feedHintShown` (in-memory).
 - **Karte-Doppeltipp → alle Pins ploppen (Toggle):** Doppeltipp auf die leere
   (Fallback-)Kartenfläche lässt **alle Pin-Labels gleichzeitig** aufploppen und
   BLEIBEN; ein weiterer Doppeltipp blendet sie wieder aus (`popAll`-Boolean →
@@ -297,7 +301,13 @@ npx tsc --noEmit       # Typecheck
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-25 · Karte: Doppeltipp-Geste signalisieren (Demo + Chip)
+### (dieser Commit) · 2026-06-25 · Feed: Long-Press-Geste signalisieren (Demo + Chip)
+- Auf der **ersten** Feed-Karte (einmal pro Session, `feedHintShown` in-memory):
+  **(A)** Kreis-Menü ploppt ~1,6 s automatisch auf/zu; **(B)** Hinweis-Chip **oben
+  rechts auf der Karte** „Lange drücken: Merken & Teilen" (fadet aus).
+  → `SpotCard.tsx` (`hintCandidate`-Prop, im Feed an Index 0).
+
+### 65a1088 · 2026-06-25 · Karte: Doppeltipp-Geste signalisieren (Demo + Chip)
 - Beim **ersten** Kartenbesuch (einmal pro Session, `demoShown` in-memory):
   **(A)** alle Pin-Labels ploppen ~1,6 s automatisch auf und wieder zu;
   **(B)** Hinweis-Chip **oben rechts in der Karte** „Doppeltippen zeigt alle Orte"
