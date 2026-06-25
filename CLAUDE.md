@@ -401,10 +401,11 @@ Gespeichert, Profil, Einstellungen, Geheimtipp). Karte-Tab = Platzhalter.
    wenn je zwei Viertel **derselben Stadt** existieren, bei denen ein Name Präfix
    des anderen ist (matcht beide). Aktuell konfliktfrei → besser exakter Match
    oder `neighborhoodId`.
-3. **Farb-Kontrast & Verwechslung**: weißer Text auf **Lime (`bar`)** und
-   **Orange (`snack`)** ist WCAG-grenzwertig (bei Sonne schwer lesbar);
-   **`club #FF4500` ≈ `restaurant #E5392F`** (nur durch Szene getrennt). Im Auge
-   behalten, falls Lesbarkeit/Unterscheidung leidet.
+3. (teilw. erledigt) **Farb-Kontrast & Verwechslung**: bar/snack-Ovale **vertieft**
+   (`bar #6FA82B`, `snack #D9700A`) → besserer Weiß-Kontrast; **`club` von
+   `#FF4500` auf `#FF7A00`** (reines Orange) gerückt, klarer von restaurant-Rot
+   getrennt. Weißer Text bleibt überall (Nutzer-Wunsch). Lime ist auch vertieft
+   noch hell — bei Bedarf weiter beobachten.
 4. **Easter Eggs vs. Auffindbarkeit**: versteckte Gesten sind charmant, aber
    Kernaktionen (Merken/Teilen) müssen **auch** ohne Geste erreichbar bleiben
    (sind sie im Detail — so halten).
@@ -439,7 +440,13 @@ npm test               # Unit-Tests der reinen Logik (vitest, src/**)
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-25 · Tests: vitest für die reine Logik
+### (dieser Commit) · 2026-06-25 · Farb-Kontrast: bar/snack vertieft, club reines Orange
+- **bar** `#8BC53F → #6FA82B` und **snack** `#F7860D → #D9700A` vertieft
+  (besserer Kontrast zum weißen Text, weißer Text bleibt — Nutzer-Wunsch).
+- **club** `#FF4500 → #FF7A00` (reines Orange) — klar getrennt von restaurant-Rot
+  `#E5392F`. Feiern-Hues jetzt: Lime · Cyan · Orange · Magenta.
+
+### ed3c4e8 · 2026-06-25 · Tests: vitest für die reine Logik
 - **vitest** als devDependency (^2.1.9) + `vitest.config.ts` (node-Env, nur
   `src/**`-Logik, RN-frei) + `npm test`-Script.
 - **17 Tests** (`src/lib/__tests__/logic.test.ts`): `matchesFilter` (Art/Budget/
