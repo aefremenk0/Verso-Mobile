@@ -2,11 +2,11 @@ import { useEffect, useState, type ReactNode } from "react";
 import {
   Pressable,
   ScrollView,
-  Text,
   useWindowDimensions,
   View,
 } from "react-native";
 import Animated, {
+  runOnJS,
   useAnimatedStyle,
   useSharedValue,
   withDelay,
@@ -15,6 +15,72 @@ import Animated, {
 } from "react-native-reanimated";
 import { useCity } from "../store/city";
 import { Pill } from "./Pill";
+
+// Stadtname mit „Roll + Fade"-Wechsel: beim Stadtwechsel rollt der alte Name
+// nach oben weg (fadet aus), der neue rollt von unten herein (fadet ein) —
+// wie eine ruhige Anzeigetafel. Beide Namen liegen kurz übereinander (der
+// abgehende absolut darüber, damit die Layout-Breite dem NEUEN Namen folgt).
+const ROLL = 20; // Roll-Distanz in px (Schrift ist 30px) — dezent, nicht hart.
+
+function CityName({ city, shrink }: { city: string; shrink: boolean }) {
+  // `display` = aktuell sichtbarer (hereinkommender) Name, `outgoing` = der
+  // gerade hinausrollende alte Name (null, wenn nichts animiert).
+  const [display, setDisplay] = useState(city);
+  const [outgoing, setOutgoing] = useState<string | null>(null);
+  const progress = useSharedValue(1); // 1 = Ruhezustand (kein Roll)
+
+  useEffect(() => {
+    if (city === display) return;
+    setOutgoing(display); // alter Name rollt raus
+    setDisplay(city); // neuer Name rollt rein
+    progress.value = 0;
+    progress.value = withTiming(1, { duration: 340 }, (finished) => {
+      if (finished) runOnJS(setOutgoing)(null); // nach dem Roll aufräumen
+    });
+    // nur auf Stadtwechsel reagieren
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [city]);
+
+  // Hereinkommend: von +ROLL nach 0, Opacity 0 -> 1.
+  const incomingStyle = useAnimatedStyle(() => ({
+    opacity: progress.value,
+    transform: [{ translateY: (1 - progress.value) * ROLL }],
+  }));
+  // Abgehend: von 0 nach -ROLL, Opacity 1 -> 0.
+  const outgoingStyle = useAnimatedStyle(() => ({
+    opacity: 1 - progress.value,
+    transform: [{ translateY: progress.value * -ROLL }],
+  }));
+
+  // Schrumpf-Logik nur mit zentriertem Toggle (Feed/Karte) — siehe unten.
+  const shrinkProps = shrink
+    ? { adjustsFontSizeToFit: true, minimumFontScale: 0.4 }
+    : {};
+
+  return (
+    <View>
+      <Animated.Text
+        className="font-hk-extrabold text-title-md text-ink"
+        numberOfLines={1}
+        style={[incomingStyle, shrink ? { flexShrink: 1 } : null]}
+        {...shrinkProps}
+      >
+        {display}
+      </Animated.Text>
+      {outgoing !== null ? (
+        <Animated.Text
+          className="font-hk-extrabold text-title-md text-ink"
+          numberOfLines={1}
+          pointerEvents="none"
+          style={[{ position: "absolute", left: 0, top: 0 }, outgoingStyle]}
+          {...shrinkProps}
+        >
+          {outgoing}
+        </Animated.Text>
+      ) : null}
+    </View>
+  );
+}
 
 // Eine Stadt-Pille im Dropdown, die gestaffelt per Spring hereinploppt.
 function DropdownCity({
@@ -124,27 +190,9 @@ export function CityDropdown({
               className="flex-row items-center"
               style={{ maxWidth: cityMaxWidth, transform: [{ translateY: nudge }] }}
             >
-              {center ? (
-                // Mit zentriertem Toggle: bei langen Namen schrumpfen, damit
-                // nichts überlappt.
-                <Text
-                  className="font-hk-extrabold text-title-md text-ink"
-                  numberOfLines={1}
-                  adjustsFontSizeToFit
-                  minimumFontScale={0.4}
-                  style={{ flexShrink: 1 }}
-                >
-                  {city}
-                </Text>
-              ) : (
-                // Ohne zentrierten Toggle (z. B. Gespeichert/Viertel): volle Größe.
-                <Text
-                  className="font-hk-extrabold text-title-md text-ink"
-                  numberOfLines={1}
-                >
-                  {city}
-                </Text>
-              )}
+              {/* Stadtname mit Roll+Fade-Wechsel. `shrink` (nur mit zentriertem
+                  Toggle) verkleinert lange Namen, damit nichts überlappt. */}
+              <CityName city={city} shrink={!!center} />
               <Animated.Text
                 style={[
                   { marginLeft: 4, fontSize: 18, color: "#8A857C", fontWeight: "700" },

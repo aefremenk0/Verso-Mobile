@@ -351,7 +351,15 @@ npx tsc --noEmit       # Typecheck
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-25 · Doku: Monetarisierung (B2C/B2B)
+### (dieser Commit) · 2026-06-25 · Stadt-Toggle: Stadtname rollt + fadet beim Wechsel
+- Beim Stadtwechsel sprang der Name im `CityDropdown` hart um. Jetzt **Roll +
+  Fade** (neue Sub-Komponente `CityName`): alter Name rollt nach oben weg und
+  fadet aus, neuer rollt von unten herein und fadet ein (`withTiming` 340 ms,
+  ROLL 20 px). Abgehender Name liegt absolut über dem neuen → Layout-Breite folgt
+  dem neuen Namen; `runOnJS` räumt ihn nach dem Roll auf. Schrumpf-Logik
+  (`shrink`) bleibt an den zentrierten Toggle (Feed/Karte) gekoppelt.
+
+### 692b196 · 2026-06-25 · Doku: Monetarisierung (B2C/B2B)
 - Neue Sektion **„Monetarisierung (Produkt-Richtung)"**: B2C (Insider-Abo,
   Geschenk-Mitgliedschaft, Stadt-Packs, Affiliate) klar getrennt von B2B
   (verifizierte Orts-Profile, Ticketing-Provision, Verso-Abende, City-Marketing,
