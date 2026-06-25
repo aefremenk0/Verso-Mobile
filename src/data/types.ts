@@ -7,11 +7,8 @@ export type Category =
   | "cafe"
   | "bar"
   | "club"
-  | "event"
-  // Spezifischere Party-/Event-Arten (alle „event-artig": mit Datum/Ticket):
+  // Spezifischere Party-Arten (event-artig: mit Datum/Ticket):
   | "weintasting"
-  | "cooking"
-  | "techno"
   | "sport";
 
 /** Ambiente-Werte (Karte-Filter in Phase 2, als Tag schon im MVP nutzbar). */

@@ -17,10 +17,7 @@ export const CATEGORY_FILTERS: CategoryFilter[] = [
   { key: "cafe", label: "Kaffee" },
   { key: "bar", label: "Bars" },
   { key: "club", label: "Clubs" },
-  { key: "event", label: "Events" },
-  { key: "weintasting", label: "Weintasting" },
-  { key: "cooking", label: "Cooking" },
-  { key: "techno", label: "Techno" },
+  { key: "weintasting", label: "Wein / Cooking" },
   { key: "sport", label: "Sport" },
 ];
 
@@ -31,22 +28,13 @@ export const CATEGORY_LABEL: Record<Category, string> = {
   cafe: "CAFÉ",
   bar: "BAR",
   club: "CLUB",
-  event: "EVENT",
-  weintasting: "WEINTASTING",
-  cooking: "COOKING",
-  techno: "TECHNO",
+  weintasting: "WEIN / COOKING",
   sport: "SPORT",
 };
 
 // „Event-artige" Kategorien: zeigen Datum/Treffpunkt/Ticket und auf der Karte
 // die Rechteck-Box mit Datum.
-export const EVENT_CATEGORIES: Category[] = [
-  "event",
-  "weintasting",
-  "cooking",
-  "techno",
-  "sport",
-];
+export const EVENT_CATEGORIES: Category[] = ["weintasting", "sport"];
 export const isEventCategory = (c: Category) => EVENT_CATEGORIES.includes(c);
 
 /** €-Anzeige aus dem priceLevel (1–3). */
@@ -62,11 +50,8 @@ export const CATEGORY_ORDER: Record<Category, number> = {
   cafe: 2,
   bar: 3,
   club: 4,
-  event: 5,
-  weintasting: 6,
-  cooking: 7,
-  techno: 8,
-  sport: 9,
+  weintasting: 5,
+  sport: 6,
 };
 
 // Sortiert Spots nach Kategorie (stabil -> Reihenfolge innerhalb gleicher

@@ -40,10 +40,7 @@ export const ART_OPTIONS: { label: string; cat: Category }[] = [
   { label: "Club", cat: "club" },
   { label: "Café", cat: "cafe" },
   { label: "Snack", cat: "snack" },
-  { label: "Event", cat: "event" },
-  { label: "Weintasting", cat: "weintasting" },
-  { label: "Cooking", cat: "cooking" },
-  { label: "Techno", cat: "techno" },
+  { label: "Wein / Cooking", cat: "weintasting" },
   { label: "Sport", cat: "sport" },
 ];
 

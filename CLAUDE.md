@@ -302,7 +302,14 @@ npx tsc --noEmit       # Typecheck
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-25 · Fix: Gespeichert — Tipp nach Teilen navigiert nicht
+### (dieser Commit) · 2026-06-25 · Kategorien aufgeräumt: event/cooking/techno raus
+- **event, cooking, techno** komplett entfernt (Typ, Filter, Labels, Order,
+  `PIN_COLORS`, Szene, `ART_OPTIONS`, `EVENT_CATEGORIES`). Alle Event-Spots
+  (14) gelöscht, Techno-Spot gelöscht, Cooking-Spot → `weintasting` umgetaggt.
+- **weintasting** umbenannt zu Label **„Wein / Cooking"**. Party-Kategorien jetzt:
+  Bar · Clubs · Wein / Cooking · Sport.
+
+### 7b9bdb5 · 2026-06-25 · Fix: Gespeichert — Tipp nach Teilen navigiert nicht
 - Nach dem Teilen (Swipe rechts) bleibt die Zeile offen; ein Tipp **schließt sie
   nur** (statt zur Spot-Detailseite zu springen). `openRef` via
   `onSwipeableWillOpen/Close`; Row-`onPress` prüft das zuerst.

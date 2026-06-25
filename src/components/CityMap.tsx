@@ -100,8 +100,8 @@ function Pin({
   // Event-artige Kategorien behalten die Sonderform (Rechteck mit Datum).
   const isEvent = isEventCategory(spot.category);
   const c = PIN_COLORS[spot.category];
-  // Heller Punkt (Gelb) braucht eine dunkle Kontur, sonst eine cremefarbene.
-  const dotBorder = spot.category === "event" ? "#1A1A1A" : "#F7F4EF";
+  // Cremefarbene Kontur für Sichtbarkeit auf der Karte.
+  const dotBorder = "#F7F4EF";
 
   // Pulsierende Kontur um den Punkt (wie das Geheimtipp-„?") — in Pin-Farbe.
   const pulse = useSharedValue(0);
