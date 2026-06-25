@@ -61,10 +61,10 @@ export function SpotCard({
     setHint(true); // B: Hinweis-Chip oben rechts
     hintOpacity.value = withSequence(
       withTiming(1, { duration: 300 }),
-      withDelay(3000, withTiming(0, { duration: 500 })),
+      withDelay(3800, withTiming(0, { duration: 500 })),
     );
-    const t1 = setTimeout(() => setMenuOpen(false), 1600);
-    const t2 = setTimeout(() => setHint(false), 3900);
+    const t1 = setTimeout(() => setMenuOpen(false), 2400); // Menü länger offen
+    const t2 = setTimeout(() => setHint(false), 4700); // Chip länger sichtbar
     return () => {
       clearTimeout(t1);
       clearTimeout(t2);
