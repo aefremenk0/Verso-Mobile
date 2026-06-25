@@ -339,6 +339,69 @@ Gespeichert, Profil, Einstellungen, Geheimtipp). Karte-Tab = Platzhalter.
 
 ---
 
+## Verbesserungs-Backlog (Review 2026-06-25)
+
+> Strukturierte Review-Ergebnisse (Features · Design · UI · Risiken). Sortiert
+> nach Aufwand/Wirkung. **⚠️ = aktiv aufpassen / latente Falle.** Beim Abarbeiten
+> Punkte hier abhaken und in den Changelog verschieben.
+
+### 🟢 Quick Wins (billig, hohe Wirkung)
+- **Haptik** (`expo-haptics`, Expo-Go-fest) bei Merken, Szenen-Toggle,
+  Geheimtipp-Reveal — lässt die App sofort „teuer" wirken.
+- **⚠️ Profil-Stat „8 VIERTEL" ist hart codiert** (`profil.tsx`, `n: 8`), obwohl
+  die Viertelzahl jetzt pro Stadt variiert (München 8, Wien 7, Zürich 5 …).
+  → dynamisch aus `NEIGHBORHOODS` für die aktuelle Stadt ableiten.
+- **⚠️ Icon-Buttons ohne `accessibilityLabel`** (✕ / → / ♥ / ←) — für Screenreader
+  unbeschriftet. Schnell nachrüstbar.
+- **`reduce motion` respektieren** (`AccessibilityInfo.isReduceMotionEnabled`):
+  ruhigere Varianten für Puls/Roll/Bubbles bei aktivierter iOS-Einstellung.
+
+### 🟡 Mittel (klare Produktverbesserung)
+- **Suche** fehlt komplett (Ort/Viertel/Tag) — für Discovery zentral.
+- **Feed-Filter = nur Kategorie-Hotbar**: Budget/Bewertung/Ambiente gibt's nur
+  auf der Karte (`MapFilterSheet`) — auch im Feed anbieten.
+- **„Überrasch mich" / Shuffle** als sichtbarer Button (passt zum Geheimtipp-Kern;
+  steht auch in der Easter-Egg-Roadmap als Shake).
+- **Onboarding-Personalisierung**: bei Registrierung 2–3 Interessen wählen →
+  Feed/Geheimtipp leicht tunen.
+- **Spot-Detail-Tiefe**: „Jetzt geöffnet?"-Badge, Entfernung, Mini-Karte.
+
+### 🔴 Größer (strategisch / Architektur)
+- **⚠️⚠️ Persistenz fehlt** — *wichtigster Punkt.* Alle Stores (`saved`, `scene`,
+  `city`, `geheimtipp`) sind rein in-memory → App schließen = gemerkte Orte,
+  abgeholter Tipp, gewählte Stadt sind weg. Lösung: `AsyncStorage`/MMKV hinter
+  die Stores. Überschaubarer Aufwand, riesiger gefühlter Unterschied.
+- **⚠️ Kein Backend / Daten nur als Mock**: Orte ändern sich, aber die Liste
+  steckt im App-Bundle → Aktualisieren nur per App-Store-Update. (= frühere
+  Google-Sheets/CMS-Diskussion.)
+- **⚠️ Auth ist nur UI** (`register` → Feed). Für Sync/Personalisierung später
+  echtes Auth nötig.
+
+### ⚠️ Aktiv geflaggte Risiken / latente Fallen
+1. **Listen ohne Virtualisierung**: Feed/Gespeichert nutzen `ScrollView` + `.map`.
+   Bei wachsenden Daten speicher-/scroll-lastig → auf **`FlatList`** umstellen.
+2. **Bezirks-Zuordnung per `startsWith(name)`** (`bezirk/[name].tsx`): fragil,
+   wenn je zwei Viertel **derselben Stadt** existieren, bei denen ein Name Präfix
+   des anderen ist (matcht beide). Aktuell konfliktfrei → besser exakter Match
+   oder `neighborhoodId`.
+3. **Farb-Kontrast & Verwechslung**: weißer Text auf **Lime (`bar`)** und
+   **Orange (`snack`)** ist WCAG-grenzwertig (bei Sonne schwer lesbar);
+   **`club #FF4500` ≈ `restaurant #E5392F`** (nur durch Szene getrennt). Im Auge
+   behalten, falls Lesbarkeit/Unterscheidung leidet.
+4. **Easter Eggs vs. Auffindbarkeit**: versteckte Gesten sind charmant, aber
+   Kernaktionen (Merken/Teilen) müssen **auch** ohne Geste erreichbar bleiben
+   (sind sie im Detail — so halten).
+5. **Keine Tests** (anders als Schwester-Projekt „Lügen"): reine Helfer
+   (`mapFilter`, `sortByCategory`, `scene`, künftige Persistenz) sind leicht
+   testbar → vor dem nächsten Daten-Umbau einziehen.
+
+### Empfohlene Reihenfolge
+1. **Persistenz** (AsyncStorage hinter die Stores).
+2. **Politur-Paket**: Profil-Stat dynamisch + a11y-Labels + Haptik.
+3. **FlatList** für Feed/Gespeichert (bevor die Daten wachsen).
+
+---
+
 ## Befehle
 
 ```bash
@@ -356,7 +419,15 @@ npx tsc --noEmit       # Typecheck
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-25 · Geheimtipp der Woche jetzt pro Stadt
+### (dieser Commit) · 2026-06-25 · Doku: Verbesserungs-Backlog (Review)
+- Neue Sektion **„Verbesserungs-Backlog (Review)"** (nach Phase 2): strukturierte
+  Review-Ergebnisse — Quick Wins (Haptik, dynamische Profil-Stat, a11y-Labels,
+  reduce-motion), mittlere Features (Suche, Feed-Filter, Shuffle, Onboarding),
+  größere Architektur (⚠️ Persistenz, Backend/CMS, Auth) und aktiv geflaggte
+  Risiken (ScrollView→FlatList, `startsWith`-Bezirksmatch, Farb-Kontrast,
+  Easter-Egg-Auffindbarkeit, fehlende Tests) + empfohlene Reihenfolge.
+
+### ac9f7d3 · 2026-06-25 · Geheimtipp der Woche jetzt pro Stadt
 - Der Wochentipp war fix das Wiener „Café Schwarzraum" — auch wenn der Nutzer
   München gewählt hatte. Jetzt **pro Stadt** ein kuratierter Tipp
   (`GEHEIMTIPP_BY_CITY` in `user.ts`, je ein „versteckter" Spot der Stadt).
