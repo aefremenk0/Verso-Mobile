@@ -7,7 +7,15 @@ import {
   QuestionBubbles,
   type QuestionBubblesHandle,
 } from "../src/components/QuestionBubbles";
+import { type City } from "../src/data/cities";
 import { useCity } from "../src/store/city";
+
+// Feste Anordnung der Städte auf dem Welcome-Screen (3 Zeilen, wie gewünscht).
+const WELCOME_ROWS: City[][] = [
+  ["München", "Zürich", "Wien"],
+  ["Berlin", "Frankfurt", "Hamburg"],
+  ["Düsseldorf"],
+];
 
 // Screen 01 — Welcome.
 // Immersives dunkles Hero (läuft unter die Statusleiste), gelbes Insider-Band,
@@ -15,7 +23,7 @@ import { useCity } from "../src/store/city";
 
 export default function Welcome() {
   const router = useRouter();
-  const { city, setCity, cities } = useCity();
+  const { city, setCity } = useCity();
   const insets = useSafeAreaInsets();
   const bubblesRef = useRef<QuestionBubblesHandle>(null);
 
@@ -73,36 +81,40 @@ export default function Welcome() {
         <Text className="font-hk-semibold text-[10px] tracking-[2.2px] text-ink-3">
           WO FANGEN WIR AN?
         </Text>
-        <View className="mt-4 flex-row flex-wrap gap-2">
-          {cities.map((c) => {
-            const active = c === city;
-            return (
-              <Pressable
-                key={c}
-                onPress={() => setCity(c)}
-                className="items-center justify-center rounded-pill px-4"
-                style={{
-                  height: 42,
-                  backgroundColor: active ? "#FFE500" : "transparent",
-                  borderWidth: 1,
-                  borderColor: active ? "#FFE500" : "rgba(26,26,26,0.18)",
-                }}
-              >
-                <Text
-                  className="font-hk-extrabold text-[19px] text-ink"
-                  style={{
-                    // exakte vertikale Zentrierung – auch auf Android
-                    lineHeight: 22,
-                    textAlign: "center",
-                    textAlignVertical: "center",
-                    includeFontPadding: false,
-                  }}
-                >
-                  {c}
-                </Text>
-              </Pressable>
-            );
-          })}
+        <View className="mt-4 gap-2">
+          {WELCOME_ROWS.map((row, ri) => (
+            <View key={ri} className="flex-row flex-wrap gap-2">
+              {row.map((c) => {
+                const active = c === city;
+                return (
+                  <Pressable
+                    key={c}
+                    onPress={() => setCity(c)}
+                    className="items-center justify-center rounded-pill px-4"
+                    style={{
+                      height: 42,
+                      backgroundColor: active ? "#FFE500" : "transparent",
+                      borderWidth: 1,
+                      borderColor: active ? "#FFE500" : "rgba(26,26,26,0.18)",
+                    }}
+                  >
+                    <Text
+                      className="font-hk-extrabold text-[19px] text-ink"
+                      style={{
+                        // exakte vertikale Zentrierung – auch auf Android
+                        lineHeight: 22,
+                        textAlign: "center",
+                        textAlignVertical: "center",
+                        includeFontPadding: false,
+                      }}
+                    >
+                      {c}
+                    </Text>
+                  </Pressable>
+                );
+              })}
+            </View>
+          ))}
         </View>
 
         <Pressable

@@ -6,13 +6,13 @@ import type { Neighborhood } from "./types";
  * die übrigen Städte zeigen vorerst einen "kommt bald"-Leerzustand.
  */
 export const CITIES = [
-  "Wien",
   "München",
+  "Wien",
+  "Zürich",
   "Berlin",
+  "Hamburg",
   "Frankfurt",
   "Düsseldorf",
-  "Hamburg",
-  "Zürich",
 ] as const;
 export type City = (typeof CITIES)[number];
 

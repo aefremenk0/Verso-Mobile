@@ -301,7 +301,14 @@ npx tsc --noEmit       # Typecheck
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-25 · Zürich als Mock-up-Stadt ergänzt
+### (dieser Commit) · 2026-06-25 · Städte-Reihenfolge: Dropdown + Welcome
+- **Dropdown/Hotbar** (`CITIES`): München, Wien, Zürich, Berlin, Hamburg,
+  Frankfurt, Düsseldorf.
+- **Welcome** (`index.tsx`, `WELCOME_ROWS`): feste 3 Zeilen — Z1 München/Zürich/
+  Wien, Z2 Berlin/Frankfurt/Hamburg, Z3 Düsseldorf (eigene Anordnung, unabhängig
+  von `CITIES`).
+
+### 701d312 · 2026-06-25 · Zürich als Mock-up-Stadt ergänzt
 - **Zürich** in `CITIES` aufgenommen (jetzt 7 Städte) — mit **8 Vierteln**
   (Niederdorf, Langstrasse, Kreis 5, Seefeld, Wiedikon, Enge, Oberstrass,
   Hottingen) und **2 Events** (Seebad-Sunset, Viaduktnacht).
