@@ -27,6 +27,9 @@ function SavedRow({ spot }: { spot: Spot }) {
   const router = useRouter();
   const { toggle } = useSaved();
   const ref = useRef<Swipeable>(null);
+  // Merkt, ob die Zeile offen ist (z. B. nach dem Teilen). Dann schließt ein
+  // Tipp nur die Zeile, statt zur Detailseite zu navigieren.
+  const openRef = useRef(false);
 
   const onShare = () => {
     Share.share({
@@ -60,6 +63,12 @@ function SavedRow({ spot }: { spot: Spot }) {
       rightThreshold={80}
       renderLeftActions={renderLeft}
       renderRightActions={renderRight}
+      onSwipeableWillOpen={() => {
+        openRef.current = true;
+      }}
+      onSwipeableClose={() => {
+        openRef.current = false;
+      }}
       onSwipeableOpen={(direction) => {
         // direction "right" = nach links gewischt -> Löschen-Aktion (rechts).
         // direction "left"  = nach rechts gewischt -> Teilen-Aktion (links).
@@ -67,13 +76,20 @@ function SavedRow({ spot }: { spot: Spot }) {
           toggle(spot.id); // entfernt aus den gemerkten Orten
         } else {
           onShare();
-          ref.current?.close();
+          // Zeile bleibt offen -> der nächste Tipp schließt sie nur (kein Sprung
+          // zur Detailseite). Erst danach navigiert ein Tipp wieder normal.
         }
       }}
       containerStyle={{ marginBottom: 8 }}
     >
       <Pressable
-        onPress={() => router.push(`/spot/${spot.id}`)}
+        onPress={() => {
+          if (openRef.current) {
+            ref.current?.close();
+            return;
+          }
+          router.push(`/spot/${spot.id}`);
+        }}
         className="flex-row items-center bg-screen py-2"
       >
         <ImagePlaceholder tone={spot.tone} height={64} radius={16} style={{ width: 64 }} />
