@@ -18,5 +18,5 @@ export const PIN_COLORS: Record<Category, PinColor> = {
   cafe: { oval: "#6F4A2E", inner: "#F7F4EF", dot: "#6F4A2E" }, // Espresso
   bar: { oval: "#7A3E6B", inner: "#F7F4EF", dot: "#7A3E6B" }, // Pflaume
   club: { oval: "#3A3A8C", inner: "#FFE500", dot: "#3A3A8C" }, // Indigo
-  event: { oval: "#FFE500", inner: "#1A1A1A", dot: "#FFE500" }, // Signalgelb
+  event: { oval: "#1A1A1A", inner: "#FFE500", dot: "#FFE500" }, // schwarzes Oval, gelber Text
 };
