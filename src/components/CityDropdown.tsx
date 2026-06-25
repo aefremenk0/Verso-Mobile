@@ -124,15 +124,27 @@ export function CityDropdown({
               className="flex-row items-center"
               style={{ maxWidth: cityMaxWidth, transform: [{ translateY: nudge }] }}
             >
-              <Text
-                className="font-hk-extrabold text-title-md text-ink"
-                numberOfLines={1}
-                adjustsFontSizeToFit
-                minimumFontScale={0.4}
-                style={{ flexShrink: 1 }}
-              >
-                {city}
-              </Text>
+              {center ? (
+                // Mit zentriertem Toggle: bei langen Namen schrumpfen, damit
+                // nichts überlappt.
+                <Text
+                  className="font-hk-extrabold text-title-md text-ink"
+                  numberOfLines={1}
+                  adjustsFontSizeToFit
+                  minimumFontScale={0.4}
+                  style={{ flexShrink: 1 }}
+                >
+                  {city}
+                </Text>
+              ) : (
+                // Ohne zentrierten Toggle (z. B. Gespeichert/Viertel): volle Größe.
+                <Text
+                  className="font-hk-extrabold text-title-md text-ink"
+                  numberOfLines={1}
+                >
+                  {city}
+                </Text>
+              )}
               <Animated.Text
                 style={[
                   { marginLeft: 4, fontSize: 18, color: "#8A857C", fontWeight: "700" },

@@ -302,7 +302,20 @@ npx tsc --noEmit       # Typecheck
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-25 · Gespeichert: Stadt-Dropdown statt „Deine Orte"
+### (dieser Commit) · 2026-06-25 · CityDropdown: Stadtname ohne Toggle in voller Größe
+- In **„Deine Orte"** war der Stadtname kaum lesbar: `CityDropdown` nutzte das
+  `adjustsFontSizeToFit`/`minimumFontScale={0.4}`-Schrumpfen **immer**, obwohl es
+  nur für den Fall mit zentriertem Liste/Karte-Toggle (Feed/Karte) gedacht war.
+  → Schrumpf-Logik jetzt **an `center` gekoppelt**: ohne zentrierten Toggle
+  (Gespeichert/Viertel) wird der Stadtname in **voller `text-title-md`-Größe**
+  gerendert (kein `adjustsFontSizeToFit`).
+
+### a2be9eb · 2026-06-25 · Pin-Farben: bar → Lime, club → Blau-Violett
+- **bar** auf **Lime** (`#8BC53F`, dunkler Text) und **club** auf **Blau-Violett**
+  (`#5B34C4`, weißer Text) gesetzt — „lila vs. blau vs. hellblau" war zu schwer
+  zu unterscheiden; jetzt klar getrennt (Lime · Cyan · Blau-Violett · Magenta).
+
+### 84daa12 · 2026-06-25 · Gespeichert: Stadt-Dropdown statt „Deine Orte"
 - „Deine Orte"-Überschrift durch **`CityDropdown`** ersetzt (Anzahl-Badge als
   `right`); die Liste filtert jetzt zusätzlich nach der gewählten **Stadt**
   (Stadt → Szene → Kategorie). Topbar behält Zurück + Szenen-Toggle.
