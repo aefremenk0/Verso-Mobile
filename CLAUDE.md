@@ -264,7 +264,13 @@ npx tsc --noEmit       # Typecheck
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-25 · SpotCard-Badge in Kategorie-Farbe; Wien-Ausrichtung
+### (dieser Commit) · 2026-06-25 · CityDropdown: lange Städtenamen überlappen Toggle nicht
+- Stadt-Name wird bei vorhandenem `center` auf die linke Zone (bis vor den Toggle)
+  begrenzt (`maxWidth` aus Fensterbreite) + `adjustsFontSizeToFit`/`numberOfLines=1`
+  → lange Namen (z. B. Düsseldorf) verkleinern sich statt unter den Liste/Karte-
+  Toggle zu laufen; kurze (Wien) bleiben groß.
+
+### 8c14b97 · 2026-06-25 · SpotCard-Badge in Kategorie-Farbe; Wien-Ausrichtung
 - **SpotCard:** Kategorie-Badge oben links jetzt in der **Kategorie-Farbe**
   (`PIN_COLORS`, oval+inner) statt fest Gelb — gilt in Feed & Bezirk-Karten.
 - **CityDropdown:** zentriertes Element (Liste/Karte) jetzt auch **vertikal mittig**

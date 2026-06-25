@@ -1,5 +1,11 @@
 import { useState, type ReactNode } from "react";
-import { Pressable, ScrollView, Text, View } from "react-native";
+import {
+  Pressable,
+  ScrollView,
+  Text,
+  useWindowDimensions,
+  View,
+} from "react-native";
 import { useCity } from "../store/city";
 import { Pill } from "./Pill";
 
@@ -18,6 +24,15 @@ export function CityDropdown({
 }) {
   const { city, setCity, cities } = useCity();
   const [open, setOpen] = useState(false);
+  const { width } = useWindowDimensions();
+
+  // Wenn ein zentriertes Element (Liste/Karte) da ist, die Stadt-Breite auf die
+  // linke Zone bis vor den Toggle begrenzen -> lange Namen (Düsseldorf) laufen
+  // nicht mehr unter den Toggle, sondern verkleinern sich (adjustsFontSizeToFit).
+  // px-6 = 48 Gesamt-Padding, ~150 geschätzte Toggle-Breite, 8 Abstand.
+  const cityMaxWidth = center
+    ? Math.max(70, (width - 48 - 150) / 2 - 8)
+    : undefined;
 
   return (
     <View>
@@ -49,8 +64,17 @@ export function CityDropdown({
             <Pressable
               onPress={() => setOpen((v) => !v)}
               className="flex-row items-center"
+              style={cityMaxWidth ? { maxWidth: cityMaxWidth } : undefined}
             >
-              <Text className="font-hk-extrabold text-title-md text-ink">{city}</Text>
+              <Text
+                className="font-hk-extrabold text-title-md text-ink"
+                numberOfLines={1}
+                adjustsFontSizeToFit
+                minimumFontScale={0.4}
+                style={{ flexShrink: 1 }}
+              >
+                {city}
+              </Text>
               <Text className="ml-1 font-hk-bold text-[18px] text-ink-3">▾</Text>
             </Pressable>
             {right ?? null}
