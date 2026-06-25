@@ -177,9 +177,14 @@ Stack-Screens darüber. `geheimtipp` ist ein modaler Screen. **Abmelden**
 ## Geheimtipp-Mechanik (Kern-Feature)
 
 Einmal pro Woche darf der Nutzer einen kuratierten Spot „abholen".
-- Status in `src/store/geheimtipp.tsx` (`abgeholt`, in-memory).
-- Solange nicht abgeholt: gelbes **„?"-Badge** am „Du"-Avatar im Feed
-  (`DuAvatar.tsx`, Auftritt via `withSpring`). Tippen → `geheimtipp`.
+- **Pro Stadt ein eigener Wochentipp:** der gezeigte Spot richtet sich nach der
+  aktuell gewählten Stadt (`GEHEIMTIPP_BY_CITY` in `src/data/user.ts`). Ein
+  Münchner sieht den Münchner Tipp, nicht das Wiener Café.
+- Status in `src/store/geheimtipp.tsx` (`abgeholt` **pro Stadt**, in-memory) —
+  der Store liest die aktuelle Stadt via `useCity()` und hält `abgeholtByCity`.
+- Solange nicht abgeholt: gelbe **„?"-Zelle** in der Bottom-Nav
+  (`GeheimtippButton`). Wechselt man die Stadt, spiegelt die Zelle den
+  Abhol-Status der neuen Stadt. Tippen → `geheimtipp`.
 - **Lade-Screen** (dunkel): drehender Ring ums „?" + durchlaufender Balken,
   Auto-Reveal nach ~2,6 s, ruft `markAbgeholt()`.
 - **Reveal** (gelb): Bild „pocht" (Throb) und ist antippbar → Spot-Detail.
@@ -351,7 +356,19 @@ npx tsc --noEmit       # Typecheck
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-25 · Stadt-Toggle: Stadtname rollt + fadet beim Wechsel
+### (dieser Commit) · 2026-06-25 · Geheimtipp der Woche jetzt pro Stadt
+- Der Wochentipp war fix das Wiener „Café Schwarzraum" — auch wenn der Nutzer
+  München gewählt hatte. Jetzt **pro Stadt** ein kuratierter Tipp
+  (`GEHEIMTIPP_BY_CITY` in `user.ts`, je ein „versteckter" Spot der Stadt).
+- **Store city-aware** (`store/geheimtipp.tsx`): liest `useCity()`, liefert
+  `spotId`/`weekLabel` der aktuellen Stadt; `abgeholt` wird **pro Stadt** geführt
+  (`abgeholtByCity`) → Nav-„?"-Zelle spiegelt den Status der gewählten Stadt,
+  `reset()` (Abmelden) leert alle Städte.
+- **Screens** (`profil.tsx`, `geheimtipp.tsx`) nutzen jetzt den Store-`spotId`
+  statt des statischen Imports. Alle Tipp-`spotId`s sind echte Spots derselben
+  Stadt.
+
+### cc0c3f3 · 2026-06-25 · Stadt-Toggle: Stadtname rollt + fadet beim Wechsel
 - Beim Stadtwechsel sprang der Name im `CityDropdown` hart um. Jetzt **Roll +
   Fade** (neue Sub-Komponente `CityName`): alter Name rollt nach oben weg und
   fadet aus, neuer rollt von unten herein und fadet ein (`withTiming` 340 ms,

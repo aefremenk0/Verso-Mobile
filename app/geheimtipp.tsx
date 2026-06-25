@@ -13,7 +13,6 @@ import Svg, { Path } from "react-native-svg";
 import { ImagePlaceholder } from "../src/components/ImagePlaceholder";
 import { CATEGORY_LABEL, priceLabel } from "../src/data/categories";
 import { getSpotById } from "../src/data/spots";
-import { GEHEIMTIPP } from "../src/data/user";
 import { useGeheimtipp } from "../src/store/geheimtipp";
 
 // Screen 08 — Geheimtipp der Woche.
@@ -27,9 +26,10 @@ const LOAD_MS = 2600; // wie lange der Lade-Screen läuft
 
 export default function Geheimtipp() {
   const router = useRouter();
-  const { markAbgeholt } = useGeheimtipp();
+  const { markAbgeholt, spotId } = useGeheimtipp();
   const [phase, setPhase] = useState<"loading" | "reveal">("loading");
-  const spot = getSpotById(GEHEIMTIPP.spotId);
+  // Tipp der aktuell gewählten Stadt (kommt aus dem city-abhängigen Store).
+  const spot = getSpotById(spotId);
 
   // ── Shared Values (laufen auf dem UI-Thread) ──
   const spin = useSharedValue(0); // Ring-Rotation 0..360

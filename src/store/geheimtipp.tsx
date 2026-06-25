@@ -6,41 +6,53 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { GEHEIMTIPP } from "../data/user";
+import { GEHEIMTIPP_BY_CITY } from "../data/user";
+import { useCity } from "./city";
 
-// Zustand des "Geheimtipp der Woche".
+// Zustand des "Geheimtipp der Woche" — jetzt **pro Stadt**.
 //
-// `abgeholt` = wurde der Tipp dieser Woche schon aufgedeckt? Solange `false`,
-// zeigt der Feed ein gelbes "?"-Badge am Avatar. Nach dem Reveal -> `true`
-// (bis zur nächsten Woche). Alles in-memory, kein Backend.
+// Der gezeigte Tipp (`spotId`/`weekLabel`) richtet sich nach der aktuell
+// gewählten Stadt (`useCity`). `abgeholt` = wurde der Tipp DIESER Stadt schon
+// aufgedeckt? Solange `false`, zeigt die Nav die gelbe "?"-Zelle. Jede Stadt hat
+// ihren eigenen Wochentipp, also auch ihren eigenen Abhol-Status. In-memory.
 
 interface GeheimtippContextValue {
   abgeholt: boolean;
   weekLabel: string;
   spotId: string;
-  /** Nach dem Reveal aufrufen: Badge verschwindet bis nächste Woche. */
+  /** Nach dem Reveal aufrufen: markiert den Tipp der aktuellen Stadt als abgeholt. */
   markAbgeholt: () => void;
-  /** Beim Abmelden: alles zurücksetzen (Tipp wieder "frisch"). */
+  /** Beim Abmelden: alle Städte zurücksetzen (Tipps wieder "frisch"). */
   reset: () => void;
 }
 
 const GeheimtippContext = createContext<GeheimtippContextValue | null>(null);
 
 export function GeheimtippProvider({ children }: { children: ReactNode }) {
-  const [abgeholt, setAbgeholt] = useState(false);
+  const { city } = useCity();
+  // Pro Stadt merken, ob der Wochentipp schon aufgedeckt wurde.
+  const [abgeholtByCity, setAbgeholtByCity] = useState<Record<string, boolean>>(
+    {},
+  );
 
-  const markAbgeholt = useCallback(() => setAbgeholt(true), []);
-  const reset = useCallback(() => setAbgeholt(false), []);
+  const markAbgeholt = useCallback(
+    () => setAbgeholtByCity((m) => ({ ...m, [city]: true })),
+    [city],
+  );
+  const reset = useCallback(() => setAbgeholtByCity({}), []);
+
+  const tipp = GEHEIMTIPP_BY_CITY[city];
+  const abgeholt = !!abgeholtByCity[city];
 
   const value = useMemo<GeheimtippContextValue>(
     () => ({
       abgeholt,
-      weekLabel: GEHEIMTIPP.weekLabel,
-      spotId: GEHEIMTIPP.spotId,
+      weekLabel: tipp.weekLabel,
+      spotId: tipp.spotId,
       markAbgeholt,
       reset,
     }),
-    [abgeholt, markAbgeholt, reset],
+    [abgeholt, tipp.weekLabel, tipp.spotId, markAbgeholt, reset],
   );
 
   return (

@@ -4,9 +4,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Arrow } from "../../src/components/Arrow";
 import { Brand } from "../../src/components/Brand";
 import { MysticBadge } from "../../src/components/MysticBadge";
-import { GEHEIMTIPP, MOCK_USER } from "../../src/data/user";
+import { MOCK_USER } from "../../src/data/user";
 import { getSpotById } from "../../src/data/spots";
 import { NEIGHBORHOODS } from "../../src/data/cities";
+import { useGeheimtipp } from "../../src/store/geheimtipp";
 import { useSaved } from "../../src/store/saved";
 import { openExternal } from "../../src/lib/maps";
 
@@ -53,7 +54,9 @@ export default function Profil() {
   const router = useRouter();
   const { savedIds } = useSaved();
 
-  const tippSpot = getSpotById(GEHEIMTIPP.spotId);
+  // Geheimtipp der aktuell gewählten Stadt (city-abhängiger Store).
+  const { spotId } = useGeheimtipp();
+  const tippSpot = getSpotById(spotId);
   const cityCount = new Set(NEIGHBORHOODS.map((n) => n.city)).size;
 
   // Verso lebt von Mundpropaganda -> systemeigenes Teilen-Sheet öffnen.
