@@ -34,6 +34,15 @@ export function CityDropdown({
     ? Math.max(70, (width - 48 - 150) / 2 - 8)
     : undefined;
 
+  // Feinjustierung pro Stadt: durch adjustsFontSizeToFit sitzen unterschiedlich
+  // lange Namen minimal anders -> per Stadt vertikal nachschieben (+ = runter).
+  const CITY_NUDGE: Record<string, number> = {
+    Wien: 3,
+    Berlin: 3,
+    Düsseldorf: -2,
+  };
+  const nudge = CITY_NUDGE[city] ?? 0;
+
   return (
     <View>
       {/* Feste Zeilenhöhe -> "Wien" sitzt auf jeder Seite gleich, egal ob
@@ -64,7 +73,7 @@ export function CityDropdown({
             <Pressable
               onPress={() => setOpen((v) => !v)}
               className="flex-row items-center"
-              style={cityMaxWidth ? { maxWidth: cityMaxWidth } : undefined}
+              style={{ maxWidth: cityMaxWidth, transform: [{ translateY: nudge }] }}
             >
               <Text
                 className="font-hk-extrabold text-title-md text-ink"
