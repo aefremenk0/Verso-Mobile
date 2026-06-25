@@ -56,10 +56,12 @@ function Pin({
   spot,
   active,
   popAll,
+  onPress,
 }: {
   spot: Spot;
   active: boolean;
   popAll: boolean;
+  onPress: () => void;
 }) {
   // Startwert passend zum Zustand, damit der erste Pin nicht ungewollt animiert.
   const pop = useSharedValue(active ? 1 : 0);
@@ -92,47 +94,59 @@ function Pin({
   // Label ist eine schwarze Box mit gelbem Namen + gelbem Datum.
   const isEvent = spot.category === "event";
 
+  // Label ist nur antippbar, wenn es sichtbar ist (ausgewählt oder per
+  // Doppeltipp). `box-none` -> nur die Label-Box selbst fängt Tipps, die breite
+  // transparente Fläche lässt Tipps durch (Hintergrund/andere Pins).
+  const labelTouchable = active || popAll;
+
   return (
     <View className="items-center justify-center">
       <Animated.View
-        pointerEvents="none"
+        pointerEvents={labelTouchable ? "box-none" : "none"}
         style={[
           { position: "absolute", bottom: 22, left: -130, right: -130, alignItems: "center" },
           labelStyle,
         ]}
       >
-        {isEvent ? (
-          // Event: schwarzes abgerundetes RECHTECK (kein Oval) — Name + Datum
-          // passen so deutlich besser rein. Moderater Radius (rounded-button
-          // = 16px) statt rounded-card (24px), das auf der kleinen Box oval wirkte.
-          <View className="items-center rounded-button bg-night px-3.5 py-2" style={shadows.card}>
-            <Text className="font-hk-extrabold text-[15px] text-accent" numberOfLines={1}>
-              {spot.name}
-            </Text>
-            {spot.dateLabel ? (
-              <Text className="mt-0.5 font-hk-semibold text-[11px] text-accent" numberOfLines={1}>
-                {spot.dateLabel}
+        {/* Tippen auf den Namen schließt den Ort wieder (Toggle wie der Punkt). */}
+        <Pressable onPress={onPress}>
+          {isEvent ? (
+            // Event: schwarzes abgerundetes RECHTECK (kein Oval) — Name + Datum
+            // passen so deutlich besser rein. Moderater Radius (rounded-button
+            // = 16px) statt rounded-card (24px), das auf der kleinen Box oval wirkte.
+            <View className="items-center rounded-button bg-night px-3.5 py-2" style={shadows.card}>
+              <Text className="font-hk-extrabold text-[15px] text-accent" numberOfLines={1}>
+                {spot.name}
               </Text>
-            ) : null}
-          </View>
-        ) : (
-          // Ort: gelbe Box, schwarzer Name.
-          <View className="rounded-pill bg-accent px-3 py-1.5" style={shadows.card}>
-            <Text className="font-hk-extrabold text-[15px] text-accent-ink" numberOfLines={1}>
-              {spot.name}
-            </Text>
-          </View>
-        )}
+              {spot.dateLabel ? (
+                <Text className="mt-0.5 font-hk-semibold text-[11px] text-accent" numberOfLines={1}>
+                  {spot.dateLabel}
+                </Text>
+              ) : null}
+            </View>
+          ) : (
+            // Ort: gelbe Box, schwarzer Name.
+            <View className="rounded-pill bg-accent px-3 py-1.5" style={shadows.card}>
+              <Text className="font-hk-extrabold text-[15px] text-accent-ink" numberOfLines={1}>
+                {spot.name}
+              </Text>
+            </View>
+          )}
+        </Pressable>
       </Animated.View>
-      <View
-        className={`rounded-pill ${isEvent ? "bg-accent" : "bg-night"}`}
-        style={{
-          width: 14,
-          height: 14,
-          borderWidth: 2.5,
-          borderColor: isEvent ? "#1A1A1A" : "#F7F4EF",
-        }}
-      />
+
+      {/* Punkt — antippen wählt aus / hebt die Auswahl wieder auf. */}
+      <Pressable onPress={onPress} hitSlop={10}>
+        <View
+          className={`rounded-pill ${isEvent ? "bg-accent" : "bg-night"}`}
+          style={{
+            width: 14,
+            height: 14,
+            borderWidth: 2.5,
+            borderColor: isEvent ? "#1A1A1A" : "#F7F4EF",
+          }}
+        />
+      </Pressable>
     </View>
   );
 }
@@ -192,13 +206,12 @@ export function CityMap({ spots, selectedId, onSelect }: CityMapProps) {
             coordinate={[spot.lng, spot.lat]}
             anchor={{ x: 0.5, y: 1 }}
           >
-            <Pressable onPress={() => onSelect(spot)}>
-              <Pin
-                spot={spot}
-                active={spot.id === selectedId}
-                popAll={popAll}
-              />
-            </Pressable>
+            <Pin
+              spot={spot}
+              active={spot.id === selectedId}
+              popAll={popAll}
+              onPress={() => onSelect(spot)}
+            />
           </Mapbox.MarkerView>
         ))}
       </Mapbox.MapView>
@@ -240,17 +253,21 @@ export function CityMap({ spots, selectedId, onSelect }: CityMapProps) {
       />
 
       {spots.slice(0, 5).map((spot, i) => (
-        <Pressable
+        <View
           key={spot.id}
-          onPress={() => onSelect(spot)}
           className="absolute items-center"
           style={{
             top: FALLBACK_POS[i].top as `${number}%`,
             left: FALLBACK_POS[i].left as `${number}%`,
           }}
         >
-          <Pin spot={spot} active={spot.id === selectedId} popAll={popAll} />
-        </Pressable>
+          <Pin
+            spot={spot}
+            active={spot.id === selectedId}
+            popAll={popAll}
+            onPress={() => onSelect(spot)}
+          />
+        </View>
       ))}
     </View>
   );

@@ -263,7 +263,13 @@ npx tsc --noEmit       # Typecheck
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-24 · Szenen-Toggle (Feiern/Essen), zentrierter Liste/Karte-Toggle
+### (dieser Commit) · 2026-06-25 · Karte: Name antippbar -> Ort wieder verbergen
+- `Pin` bekommt `onPress`; **Punkt UND Name** lösen jetzt die Auswahl aus (Toggle
+  via `onSelect` in `karte.tsx`). Label ist nur antippbar, wenn sichtbar
+  (`pointerEvents` „box-none"/„none"). Umschließende `Pressable` in `CityMap`
+  entfernt — `Pin` behandelt Tipps selbst.
+
+### 6f24eef · 2026-06-24 · Szenen-Toggle (Feiern/Essen), zentrierter Liste/Karte-Toggle
 - **Szene** (neu): app-weiter Store (`store/scene.tsx`) + `lib/scene.ts` —
   Umschalten zwischen **Feiern** (Bar/Club/Event) und **Essen**
   (Restaurant/Snack/Café). `SceneToggle` (🎉/🍴) oben rechts auf Feed, Karte und
