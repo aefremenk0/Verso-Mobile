@@ -264,7 +264,13 @@ npx tsc --noEmit       # Typecheck
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-25 · Kategorie-Farben überall (Hotbar + Art-Filter)
+### (dieser Commit) · 2026-06-25 · Gespeichert: Kategorie-Hotbar + Export-Button höher
+- **Gespeichert** bekommt eine **Kategorie-Hotbar** (alle Kategorien, Farben pro
+  Kategorie) zum Filtern der gemerkten Orte; Leerzustand pro Kategorie ergänzt.
+- **„Nach Google Maps exportieren"**-Button 10px höher (bottom 16 → 26) und mit
+  `zIndex` in den Vordergrund (überlappt Orte sauber).
+
+### 04d8bb3 · 2026-06-25 · Kategorie-Farben überall (Hotbar + Art-Filter)
 - `Pill` nimmt jetzt `activeColor`/`activeTextColor` → aktive Kategorie-Pills in
   **Feed- und Bezirk-Hotbar** erscheinen in ihrer `PIN_COLORS`-Farbe (Alle = Gelb).
 - **„Art"-Filter** im `MapFilterSheet`: ausgewählte Arten in Kategorie-Farbe.

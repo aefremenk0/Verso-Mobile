@@ -6,9 +6,11 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { GoogleExportSheet } from "../src/components/GoogleExportSheet";
 import { ImagePlaceholder } from "../src/components/ImagePlaceholder";
 import { GoogleLogo } from "../src/components/Logos";
-import { CATEGORY_LABEL } from "../src/data/categories";
+import { Pill } from "../src/components/Pill";
+import { CATEGORY_FILTERS, CATEGORY_LABEL } from "../src/data/categories";
 import { SPOTS } from "../src/data/spots";
-import type { Spot } from "../src/data/types";
+import type { Category, Spot } from "../src/data/types";
+import { PIN_COLORS } from "../src/lib/pinColors";
 import { useSaved } from "../src/store/saved";
 import { shadows } from "../src/theme";
 
@@ -91,11 +93,17 @@ export default function Gespeichert() {
   const router = useRouter();
   const { savedIds } = useSaved();
   const [exportOpen, setExportOpen] = useState(false);
+  const [activeCategory, setActiveCategory] = useState<Category | null>(null);
 
   // Reihenfolge der gemerkten Spots beibehalten.
   const saved = savedIds
     .map((id) => SPOTS.find((s) => s.id === id))
     .filter((s): s is (typeof SPOTS)[number] => Boolean(s));
+
+  // Hotbar-Filter nach Kategorie.
+  const shown = saved.filter((s) =>
+    activeCategory ? s.category === activeCategory : true,
+  );
 
   return (
     <SafeAreaView className="flex-1 bg-screen" edges={["top", "bottom"]}>
@@ -139,14 +147,42 @@ export default function Gespeichert() {
           </Text>
         ) : (
           <>
+            {/* Kategorie-Hotbar (Auswahl der Spots), Farben pro Kategorie */}
+            <View className="-mx-6 mt-4">
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={{ paddingHorizontal: 24, gap: 8 }}
+              >
+                {CATEGORY_FILTERS.map((f) => {
+                  const col = f.key ? PIN_COLORS[f.key] : null;
+                  return (
+                    <Pill
+                      key={f.label}
+                      label={f.label}
+                      active={activeCategory === f.key}
+                      onPress={() => setActiveCategory(f.key)}
+                      activeColor={col?.oval}
+                      activeTextColor={col?.inner}
+                    />
+                  );
+                })}
+              </ScrollView>
+            </View>
+
             {/* Wisch-Hinweis */}
             <Text className="mt-3 font-hk-medium text-[12px] text-ink-3">
               Wische eine Karte: → teilen, ← löschen.
             </Text>
             <View className="mt-4">
-              {saved.map((spot) => (
+              {shown.map((spot) => (
                 <SavedRow key={spot.id} spot={spot} />
               ))}
+              {shown.length === 0 ? (
+                <Text className="mt-6 font-hk-medium-italic text-[15px] text-ink-3">
+                  In dieser Kategorie hast du noch nichts gemerkt.
+                </Text>
+              ) : null}
             </View>
           </>
         )}
@@ -157,7 +193,7 @@ export default function Gespeichert() {
         <Pressable
           onPress={() => setExportOpen(true)}
           className="absolute flex-row items-center gap-2 rounded-pill bg-night px-4 py-3"
-          style={[{ bottom: 16, right: 20 }, shadows.card]}
+          style={[{ bottom: 26, right: 20, zIndex: 10 }, shadows.card]}
         >
           <GoogleLogo size={18} />
           <Text className="font-hk-bold text-[13px] text-screen">
