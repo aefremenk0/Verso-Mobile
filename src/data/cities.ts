@@ -12,6 +12,7 @@ export const CITIES = [
   "Frankfurt",
   "Düsseldorf",
   "Hamburg",
+  "Zürich",
 ] as const;
 export type City = (typeof CITIES)[number];
 
@@ -276,5 +277,47 @@ export const NEIGHBORHOODS: Neighborhood[] = [
     city: "Hamburg",
     name: "HafenCity",
     blurb: "Beton am Wasser, langsam belebt.",
+  },
+
+  // ── Zürich (8) ──
+  {
+    city: "Zürich",
+    name: "Niederdorf",
+    blurb: "Mittelalter-Gassen, Bars ohne Schild.",
+  },
+  {
+    city: "Zürich",
+    name: "Langstrasse",
+    blurb: "Bei Tag Markt, bei Nacht eine andere Stadt.",
+  },
+  {
+    city: "Zürich",
+    name: "Kreis 5",
+    blurb: "Industrie von gestern, Apéro von heute.",
+  },
+  {
+    city: "Zürich",
+    name: "Seefeld",
+    blurb: "See vor der Tür, Espresso im Hinterhof.",
+  },
+  {
+    city: "Zürich",
+    name: "Wiedikon",
+    blurb: "Quartierbeiz trifft Natural Wine.",
+  },
+  {
+    city: "Zürich",
+    name: "Enge",
+    blurb: "Seebad-Ruhe, leise Eleganz.",
+  },
+  {
+    city: "Zürich",
+    name: "Oberstrass",
+    blurb: "Studentisch über den Dächern.",
+  },
+  {
+    city: "Zürich",
+    name: "Hottingen",
+    blurb: "Villen, Tramklingeln, gut gehütete Cafés.",
   },
 ];

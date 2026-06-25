@@ -301,7 +301,13 @@ npx tsc --noEmit       # Typecheck
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-25 · Stadt-Dropdown: animiertes Aufklappen
+### (dieser Commit) · 2026-06-25 · Zürich als Mock-up-Stadt ergänzt
+- **Zürich** in `CITIES` aufgenommen (jetzt 7 Städte) — mit **8 Vierteln**
+  (Niederdorf, Langstrasse, Kreis 5, Seefeld, Wiedikon, Enge, Oberstrass,
+  Hottingen) und **2 Events** (Seebad-Sunset, Viaduktnacht).
+- `CITY_NUDGE` in `CityDropdown`: Zürich = +3 (gleiche Wortlänge wie Berlin).
+
+### cdc9659 · 2026-06-25 · Stadt-Dropdown: animiertes Aufklappen
 - `CityDropdown`: Pfeil dreht beim Öffnen von ▾ zu ▴ (Reanimated), und die
   Stadt-Pills **ploppen gestaffelt** per Spring herein (Fade + Scale + leichtes
   Hochsteigen, `DropdownCity`). Konsistent zum Spring-Muster der App.

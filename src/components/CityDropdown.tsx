@@ -78,6 +78,7 @@ export function CityDropdown({
   const CITY_NUDGE: Record<string, number> = {
     Wien: 3,
     Berlin: 3,
+    Zürich: 3, // gleiche Wortlänge wie Berlin
     Düsseldorf: -2,
   };
   const nudge = CITY_NUDGE[city] ?? 0;

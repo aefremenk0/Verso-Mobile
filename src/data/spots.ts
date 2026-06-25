@@ -753,6 +753,52 @@ export const SPOTS: Spot[] = [
     meetingPoint: "Bunker Feldstraße, Seiteneingang",
     ticketUrl: "https://www.hamburg-ticket.de/",
   },
+
+  // ── Events: Zürich ──
+  {
+    id: "zrh-seebad-sunset",
+    name: "Seebad-Sunset",
+    category: "event",
+    city: "Zürich",
+    neighborhood: "Enge",
+    hook: "Holzsteg, kaltes Wasser, ein Set bis die Lichter angehen.",
+    imageNote: "// steg, badehose optional",
+    description:
+      "Ein altes Seebad öffnet abends nur für Eingeweihte: Sprung in den Zürichsee, Apéro auf dem Holzsteg, leise Musik bis zur blauen Stunde. Kein Plakat, nur Mundpropaganda.",
+    tags: ["Open Air", "See", "Sundowner"],
+    priceLevel: 2,
+    address: "Mythenquai 9, 8002 Zürich",
+    ambience: ["draußen", "lebhaft"],
+    rating: 4.7,
+    lat: 47.3577,
+    lng: 8.5363,
+    tone: "green",
+    dateLabel: "Sa · 12. Juli · 17:00–23:00",
+    meetingPoint: "Seebad Enge, Holzsteg",
+    ticketUrl: "https://www.ticketcorner.ch/",
+  },
+  {
+    id: "zrh-viaduktnacht",
+    name: "Viaduktnacht",
+    category: "event",
+    city: "Zürich",
+    neighborhood: "Kreis 5",
+    hook: "Unter den Bögen, wo der Bass das Mauerwerk hält.",
+    imageNote: "// bogen 14, kein lineup",
+    description:
+      "In einem Viaduktbogen im Kreis 5 läuft eine Nacht lang eine Anlage, die zu groß ist für den Raum. Backstein, Nebel, eine Crew, die spät anfängt und später aufhört.",
+    tags: ["Techno", "Spät", "Underground"],
+    priceLevel: 3,
+    address: "Viadukt Bogen 14, 8005 Zürich",
+    ambience: ["underground", "lebhaft"],
+    rating: 4.6,
+    lat: 47.3849,
+    lng: 8.5275,
+    tone: "charcoal",
+    dateLabel: "Fr · 18. Juli · 21:00–04:00",
+    meetingPoint: "Im Viadukt, Bogen 14",
+    ticketUrl: "https://www.ticketcorner.ch/",
+  },
 ];
 
 /** Schnell-Zugriff auf einen Spot per id (für die Detail-Screens). */
