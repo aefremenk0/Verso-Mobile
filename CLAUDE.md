@@ -114,7 +114,8 @@ app/                      Screens (Expo Router – Dateiname = Route)
   passwort-aendern.tsx    07d Passwort ändern (UI)
 
 src/
-  components/             Brand, ImagePlaceholder, StripeTexture, HookHighlight,
+  components/             Brand, Arrow (breiter SVG-Pfeil), ImagePlaceholder,
+                          StripeTexture, HookHighlight,
                           Pill, Button, SpotCard, BottomNav, InitialsAvatar
                           (Initialen-Kreis), ListMapToggle (Liste/Karte oben),
                           CityDropdown (Stadt-Kopf; center+right-Props für
@@ -293,7 +294,15 @@ npx tsc --noEmit       # Typecheck
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-25 · Doku: Verso-Insider Premium-Features
+### (dieser Commit) · 2026-06-25 · UI-Feinschliff: Farben, Pfeile, Footer
+- **Breitere Pfeile** (neue SVG-Komponente `Arrow`, Breite:Höhe ~2:1) in den
+  Viertel-Zeilen und Profil-Listenzeilen statt des schmalen „→"-Glyphs.
+- **Kategorie-Farben** (`pinColors.ts`) angepasst: restaurant = Bordeaux
+  `#6E1423`; snack = Dunkelgrün `#2E5D3C` + weißer Text; events **umgedreht**
+  (schwarzes Oval `#1A1A1A` + gelber Text `#FFE500`).
+- Profil-Footer: „MADE IN WIEN" → „MADE IN MUNICH".
+
+### 800eaba · 2026-06-25 · Doku: Verso-Insider Premium-Features
 - Neue Sektion „Verso Insider — Premium-Features (geplant)": drei Säulen
   (Geheimtipps · Türöffner · Reise & Reichweite) als Produkt-Richtung festgehalten.
 
