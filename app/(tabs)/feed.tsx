@@ -1,8 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
-import { ScrollView, Text, View } from "react-native";
+import { Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Svg, { Path } from "react-native-svg";
 import { CityDropdown } from "../../src/components/CityDropdown";
 import { ListMapToggle } from "../../src/components/ListMapToggle";
+import { MapFilterSheet } from "../../src/components/MapFilterSheet";
 import { Pill } from "../../src/components/Pill";
 import { SceneToggle } from "../../src/components/SceneToggle";
 import { SearchField } from "../../src/components/SearchField";
@@ -10,10 +12,26 @@ import { SpotCard } from "../../src/components/SpotCard";
 import { sortByCategory } from "../../src/data/categories";
 import { SPOTS } from "../../src/data/spots";
 import type { Category } from "../../src/data/types";
+import { DEFAULT_FILTER, matchesFilter, type MapFilter } from "../../src/lib/mapFilter";
 import { PIN_COLORS } from "../../src/lib/pinColors";
 import { SCENE_CATEGORIES, SCENE_FILTERS } from "../../src/lib/scene";
 import { useCity } from "../../src/store/city";
 import { useScene } from "../../src/store/scene";
+
+// Trichter-Icon (Filter) — SVG, passt zum redaktionellen Ton (kein Emoji).
+function FilterGlyph({ color = "#1A1A1A" }: { color?: string }) {
+  return (
+    <Svg width={18} height={18} viewBox="0 0 24 24">
+      <Path
+        d="M3 5 H21 L14 13 V20 L10 18 V13 Z"
+        stroke={color}
+        strokeWidth={1.8}
+        strokeLinejoin="round"
+        fill="none"
+      />
+    </Svg>
+  );
+}
 
 // Screen 02 — Discovery-Feed.
 // Oben unter dem Notch: Liste/Karte-Umschalter (zentriert) + Szenen-Toggle
@@ -24,14 +42,25 @@ export default function Feed() {
   const { scene } = useScene();
   const [activeCategory, setActiveCategory] = useState<Category | null>(null);
   const [query, setQuery] = useState("");
+  // Budget/Bewertung/Ambiente-Filter (wie auf der Karte). „Art" macht hier die
+  // Kategorie-Hotbar -> im Sheet ausgeblendet (showArt={false}).
+  const [filter, setFilter] = useState<MapFilter>(DEFAULT_FILTER);
+  const [filterOpen, setFilterOpen] = useState(false);
 
   // Beim Szenenwechsel die Kategorie-Auswahl zurücksetzen (sonst zeigt sie ggf.
   // eine Kategorie der anderen Szene -> leer).
   useEffect(() => setActiveCategory(null), [scene]);
 
+  // Sind Budget/Bewertung/Ambiente vom Default abweichend gesetzt? (art = Hotbar)
+  const filterActive =
+    filter.minPrice > 0 ||
+    filter.maxPrice < 100 ||
+    filter.minRating > 0 ||
+    filter.ambiente.length > 0;
+
   // Filter: Stadt -> Szene (Kategoriengruppe) -> optional gewählte Kategorie ->
-  // optional Suchtext (Name/Viertel/Tag). Danach nach Art gruppieren
-  // (sortByCategory), damit die Liste nicht chaotisch gemischt ist.
+  // optional Suchtext (Name/Viertel/Tag) -> Budget/Bewertung/Ambiente. Danach
+  // nach Art gruppieren (sortByCategory), damit die Liste nicht chaotisch ist.
   const q = query.trim().toLowerCase();
   const visibleSpots = useMemo(
     () =>
@@ -45,9 +74,10 @@ export default function Feed() {
                 s.neighborhood.toLowerCase().includes(q) ||
                 s.tags.some((t) => t.toLowerCase().includes(q))
               : true,
-          ),
+          )
+          .filter((s) => matchesFilter(s, filter)),
       ),
-    [city, scene, activeCategory, q],
+    [city, scene, activeCategory, q, filter],
   );
 
   return (
@@ -58,13 +88,27 @@ export default function Feed() {
         right={<SceneToggle />}
       />
 
-      {/* Suchfeld (Name/Viertel/Tag) — filtert die Liste zusätzlich. */}
-      <View className="mt-3 px-6">
-        <SearchField
-          value={query}
-          onChangeText={setQuery}
-          placeholder="Ort, Viertel oder Tag suchen …"
-        />
+      {/* Suchfeld (Name/Viertel/Tag) + Filter-Button (Budget/Bewertung/Ambiente) */}
+      <View className="mt-3 flex-row items-center gap-2 px-6">
+        <View className="flex-1">
+          <SearchField
+            value={query}
+            onChangeText={setQuery}
+            placeholder="Ort, Viertel oder Tag suchen …"
+          />
+        </View>
+        <Pressable
+          onPress={() => setFilterOpen(true)}
+          accessibilityLabel="Filter öffnen"
+          className={`h-11 w-11 items-center justify-center rounded-pill ${
+            filterActive ? "bg-accent" : "bg-chip"
+          }`}
+        >
+          <FilterGlyph color={filterActive ? "#1A1A1A" : "#6E6A63"} />
+          {filterActive ? (
+            <View className="absolute right-2 top-2 h-2 w-2 rounded-pill bg-night" />
+          ) : null}
+        </Pressable>
       </View>
 
       {/* Kategorie-Bar — szenenabhängig (Feiern: Bar/Club/Event, Essen: …). */}
@@ -110,12 +154,23 @@ export default function Feed() {
 
         {visibleSpots.length === 0 ? (
           <Text className="mt-10 text-center font-hk-medium-italic text-[15px] text-ink-3">
-            {q
-              ? `Nichts gefunden für „${query.trim()}". Versuch einen anderen Begriff.`
+            {q || filterActive
+              ? "Nichts passt zu Suche/Filter. Lockere die Kriterien."
               : "Hier kramen wir noch. Schau bald wieder rein."}
           </Text>
         ) : null}
       </ScrollView>
+
+      {/* Filter-Sheet (oben angedockt). „Art" macht die Hotbar -> hier aus. */}
+      {filterOpen ? (
+        <MapFilterSheet
+          filter={filter}
+          setFilter={setFilter}
+          count={visibleSpots.length}
+          onClose={() => setFilterOpen(false)}
+          showArt={false}
+        />
+      ) : null}
     </SafeAreaView>
   );
 }

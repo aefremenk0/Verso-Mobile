@@ -127,7 +127,9 @@ src/
                           SpotActionMenu (Long-Press-Kreis-Menü: Merken/Teilen),
                           SceneToggle (Feiern/Essen oben rechts),
                           CityMap (Mapbox + Expo-Go-Fallback),
-                          MapFilterSheet (Karte-Filter-Panel),
+                          MapFilterSheet (Filter-Panel; `showArt`-Prop —
+                          im Feed aus, da Hotbar die Art macht),
+                          SearchField (Such-Pille mit SVG-Lupe + Clear),
                           RangeSlider (Budget, PanResponder)
   lib/mapFilter.ts        Filter-Typ + matchesFilter (Art/Budget/Bewertung/Ambiente)
   lib/pinColors.ts        Karten-Pin-Farben pro Kategorie (oval/inner/dot)
@@ -359,8 +361,8 @@ Gespeichert, Profil, Einstellungen, Geheimtipp). Karte-Tab = Platzhalter.
 ### 🟡 Mittel (klare Produktverbesserung)
 - (erledigt) ~~**Suche** (Ort/Viertel/Tag) im Feed~~ — `SearchField` über der
   Kategorie-Bar, filtert zusätzlich (Stadt→Szene→Kategorie→Suchtext).
-- **Feed-Filter = nur Kategorie-Hotbar**: Budget/Bewertung/Ambiente gibt's nur
-  auf der Karte (`MapFilterSheet`) — auch im Feed anbieten.
+- (erledigt) ~~**Feed-Filter** Budget/Bewertung/Ambiente~~ — `MapFilterSheet`
+  (mit `showArt={false}`) jetzt auch im Feed, Trichter-Button neben der Suche.
 - **„Überrasch mich" / Shuffle** als sichtbarer Button (passt zum Geheimtipp-Kern;
   steht auch in der Easter-Egg-Roadmap als Shake).
 - **Onboarding-Personalisierung**: bei Registrierung 2–3 Interessen wählen →
@@ -420,7 +422,16 @@ npx tsc --noEmit       # Typecheck
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-25 · Feed-Suche (Ort/Viertel/Tag)
+### (dieser Commit) · 2026-06-25 · Feed-Filter: Budget/Bewertung/Ambiente
+- **`MapFilterSheet`** bekommt ein **`showArt`**-Prop (Default true). Im Feed
+  `showArt={false}`, weil dort die Kategorie-Hotbar die „Art" macht — kein
+  doppelter Kategorie-Filter.
+- **Feed**: Trichter-Button (SVG) rechts neben der Suche öffnet das Sheet;
+  aktiv-Indikator (gelb + Punkt), wenn Budget/Bewertung/Ambiente gesetzt sind.
+  `matchesFilter` hängt additiv an der Filterkette (Stadt→Szene→Kategorie→Suche→
+  Filter).
+
+### 9e60670 · 2026-06-25 · Feed-Suche (Ort/Viertel/Tag)
 - Neue wiederverwendbare **`SearchField`**-Komponente (Pille, SVG-Lupe,
   Clear-Button, Verso-Stil) — über der Kategorie-Bar im Feed.
 - Feed filtert jetzt zusätzlich nach **Suchtext**: matcht `name`, `neighborhood`

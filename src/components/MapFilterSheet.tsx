@@ -37,11 +37,15 @@ export function MapFilterSheet({
   setFilter,
   count,
   onClose,
+  showArt = true,
 }: {
   filter: MapFilter;
   setFilter: (f: MapFilter) => void;
   count: number;
   onClose: () => void;
+  // Im Feed übernimmt die Kategorie-Hotbar die „Art"-Auswahl -> dort ausblenden,
+  // damit es nicht zwei konkurrierende Kategorie-Filter gibt.
+  showArt?: boolean;
 }) {
   const { height: screenH } = useWindowDimensions();
   const { scene } = useScene();
@@ -135,6 +139,8 @@ export function MapFilterSheet({
             showsVerticalScrollIndicator={false}
           >
             {/* ART — nur die Kategorien der aktuellen Szene (max. 4) */}
+            {showArt ? (
+            <>
             <Text className="mb-2.5 mt-3 font-hk-semibold text-[10px] tracking-[1.5px] text-ink-3">
               ART
             </Text>
@@ -169,6 +175,8 @@ export function MapFilterSheet({
                 );
               })}
             </View>
+            </>
+            ) : null}
 
             {/* BUDGET */}
             <View className="mb-1.5 mt-5 flex-row items-baseline justify-between">
