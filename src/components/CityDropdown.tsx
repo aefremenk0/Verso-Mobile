@@ -8,7 +8,9 @@ import Animated, {
   withSpring,
   withTiming,
 } from "react-native-reanimated";
+import { isComingSoon } from "../data/cities";
 import { useCity } from "../store/city";
+import { DiagonalStrike } from "./DiagonalStrike";
 import { Pill } from "./Pill";
 
 // Stadtname mit „Roll + Fade"-Wechsel: beim Stadtwechsel rollt der alte Name
@@ -72,15 +74,19 @@ function CityName({ city }: { city: string }) {
 }
 
 // Eine Stadt-Pille im Dropdown, die gestaffelt per Spring hereinploppt.
+// „kommt bald"-Städte (alle außer der Pilotstadt) werden gedimmt + diagonal
+// durchgestrichen dargestellt und sind nicht antippbar.
 function DropdownCity({
   index,
   label,
   active,
+  comingSoon,
   onPress,
 }: {
   index: number;
   label: string;
   active: boolean;
+  comingSoon: boolean;
   onPress: () => void;
 }) {
   const p = useSharedValue(0);
@@ -98,7 +104,14 @@ function DropdownCity({
   }));
   return (
     <Animated.View style={style}>
-      <Pill label={label} active={active} onPress={onPress} />
+      <View
+        pointerEvents={comingSoon ? "none" : "auto"}
+        accessibilityLabel={comingSoon ? `${label} — kommt bald` : label}
+        style={comingSoon ? { opacity: 0.45 } : undefined}
+      >
+        <Pill label={label} active={active} onPress={comingSoon ? () => {} : onPress} />
+      </View>
+      {comingSoon ? <DiagonalStrike /> : null}
     </Animated.View>
   );
 }
@@ -161,6 +174,7 @@ export function CityDropdown({ right }: { right?: ReactNode }) {
               index={i}
               label={c}
               active={c === city}
+              comingSoon={isComingSoon(c)}
               onPress={() => {
                 setCity(c);
                 setOpen(false);

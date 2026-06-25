@@ -132,6 +132,8 @@ src/
                           SearchField (Such-Pille mit SVG-Lupe + Clear),
                           SurpriseButton („Überrasch mich"; Sparkle + Press-Bounce),
                           MiniMap (stilisierte Detail-Mini-Karte, SVG, tippbar),
+                          DiagonalStrike (diagonaler Durchstrich für „kommt
+                          bald"-Städte),
                           RangeSlider (Budget, PanResponder)
   lib/mapFilter.ts        Filter-Typ + matchesFilter (Art/Budget/Bewertung/Ambiente)
   lib/pinColors.ts        Karten-Pin-Farben pro Kategorie (oval/inner/dot)
@@ -141,10 +143,11 @@ src/
   store/scene.tsx         aktuelle Szene (Feiern vs. Essen), app-weit
 
 app.config.js             Expo-Config (ersetzt app.json; Mapbox-Token via Env)
-  data/                   types.ts, spots.ts (Mock-Orte + Events, ≥2/Stadt),
-                          cities.ts (Viertel pro Stadt, Anzahl variabel),
+  data/                   types.ts, spots.ts (Mock-Orte — Pilot: nur München),
+                          cities.ts (CITIES = alle; LIVE_CITIES/isComingSoon —
+                          Pilot: nur München; NEIGHBORHOODS nur München),
                           categories.ts,
-                          user.ts  (kein Backend)
+                          user.ts  (kein Backend; GEHEIMTIPP_BY_CITY nur München)
   store/                  city.tsx, saved.tsx, geheimtipp.tsx,
                           interests.tsx (Onboarding-Vibes, max 3)  (React-Context,
                           alles in-memory)
@@ -333,6 +336,12 @@ dass Kuration nie käuflich wirkt.
 
 ## Aktueller Stand
 
+**Pilot-Phase: nur München ist freigeschaltet** (`LIVE_CITIES` in `cities.ts`).
+Alle anderen Städte erscheinen in Stadt-Hotbar **und** Welcome als „kommt bald":
+gedimmt + **diagonal durchgestrichen** (`DiagonalStrike`), nicht auswählbar
+(`pointerEvents="none"`). Mock-Daten der anderen Städte wurden **gelöscht**
+(Spots, Viertel, Geheimtipps) — nur München bleibt. Default-Stadt = München.
+
 **Phase 1 (MVP) — fertig**, läuft komplett in Expo Go. Alle Screens 01–08
 (Welcome, Registrierung, Feed, Spot-/Event-Detail, Stadt-Übersicht,
 Gespeichert, Profil, Einstellungen, Geheimtipp). Karte-Tab = Platzhalter.
@@ -440,7 +449,20 @@ npm test               # Unit-Tests der reinen Logik (vitest, src/**)
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-25 · Selektions-Haptik auf Kategorie-/Filter-Chips
+### (dieser Commit) · 2026-06-25 · Pilotstadt München — andere Städte „kommt bald"
+- **Pilot-Phase**: `LIVE_CITIES = ["München"]` + `isComingSoon()` in `cities.ts`.
+  `CITIES` bleibt vollständig (alle erscheinen in der Hotbar), aber nur München
+  ist auswählbar/befüllt. Default-Stadt = München (war Wien).
+- **„kommt bald"-Markierung**: neue **`DiagonalStrike`**-Komponente (diagonaler
+  Durchstrich, am Pillen-Radius geclippt). In **Stadt-Dropdown** (`CityDropdown`)
+  und **Welcome** (`index.tsx`): gedimmt (Opacity), durchgestrichen,
+  `pointerEvents="none"` → nicht antippbar; a11y-Label „… — kommt bald".
+- **Mock-Data gelöscht**: `spots.ts` nur noch München (10 Spots); `NEIGHBORHOODS`
+  nur München (8); `GEHEIMTIPP_BY_CITY` → `Partial`, nur München (Store fällt auf
+  München zurück); `MOCK_USER.savedSpotIds` auf München-Spots umgestellt.
+- Integritäts-Test bleibt grün (alle Spots ↔ München-Viertel).
+
+### af5226f · 2026-06-25 · Selektions-Haptik auf Kategorie-/Filter-Chips
 - **`Pill`** (interaktiv): `selectionAsync` (subtiles „tick") bei jeder Auswahl —
   deckt die Kategorie-Hotbar (Feed/Bezirk/Gespeichert) und die Stadt-Dropdown-
   Auswahl ab.

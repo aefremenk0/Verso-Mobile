@@ -4,11 +4,12 @@ import { Pressable, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { StripeTexture } from "../src/components/StripeTexture";
 import { AnimatedChip } from "../src/components/AnimatedChip";
+import { DiagonalStrike } from "../src/components/DiagonalStrike";
 import {
   QuestionBubbles,
   type QuestionBubblesHandle,
 } from "../src/components/QuestionBubbles";
-import { type City } from "../src/data/cities";
+import { isComingSoon, type City } from "../src/data/cities";
 import { useCity } from "../src/store/city";
 
 // Feste Anordnung der Städte auf dem Welcome-Screen (3 Zeilen, wie gewünscht).
@@ -87,37 +88,46 @@ export default function Welcome() {
             <View key={ri} className="flex-row flex-wrap gap-2">
               {row.map((c) => {
                 const active = c === city;
+                const soon = isComingSoon(c);
                 return (
-                  <AnimatedChip
+                  // „kommt bald"-Städte: gedimmt, durchgestrichen, nicht wählbar.
+                  <View
                     key={c}
-                    active={active}
-                    onPress={() => setCity(c)}
-                    activeBg="#FFE500"
-                    inactiveBg="rgba(255,229,0,0)"
-                    activeBorder="#FFE500"
-                    inactiveBorder="rgba(26,26,26,0.18)"
-                    style={{
-                      height: 42,
-                      paddingHorizontal: 16,
-                      borderRadius: 999,
-                      borderWidth: 1,
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
+                    pointerEvents={soon ? "none" : "auto"}
+                    accessibilityLabel={soon ? `${c} — kommt bald` : c}
+                    style={soon ? { opacity: 0.5 } : undefined}
                   >
-                    <Text
-                      className="font-hk-extrabold text-[19px] text-ink"
+                    <AnimatedChip
+                      active={active}
+                      onPress={soon ? () => {} : () => setCity(c)}
+                      activeBg="#FFE500"
+                      inactiveBg="rgba(255,229,0,0)"
+                      activeBorder="#FFE500"
+                      inactiveBorder="rgba(26,26,26,0.18)"
                       style={{
-                        // exakte vertikale Zentrierung – auch auf Android
-                        lineHeight: 22,
-                        textAlign: "center",
-                        textAlignVertical: "center",
-                        includeFontPadding: false,
+                        height: 42,
+                        paddingHorizontal: 16,
+                        borderRadius: 999,
+                        borderWidth: 1,
+                        alignItems: "center",
+                        justifyContent: "center",
                       }}
                     >
-                      {c}
-                    </Text>
-                  </AnimatedChip>
+                      <Text
+                        className="font-hk-extrabold text-[19px] text-ink"
+                        style={{
+                          // exakte vertikale Zentrierung – auch auf Android
+                          lineHeight: 22,
+                          textAlign: "center",
+                          textAlignVertical: "center",
+                          includeFontPadding: false,
+                        }}
+                      >
+                        {c}
+                      </Text>
+                    </AnimatedChip>
+                    {soon ? <DiagonalStrike /> : null}
+                  </View>
                 );
               })}
             </View>

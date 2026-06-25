@@ -19,7 +19,9 @@ interface CityContextValue {
 const CityContext = createContext<CityContextValue | null>(null);
 
 export function CityProvider({ children }: { children: ReactNode }) {
-  const [city, setCity] = useState<City>("Wien");
+  // Pilotstadt München ist Standard (und in der Pilot-Phase die einzige
+  // auswählbare Stadt).
+  const [city, setCity] = useState<City>("München");
 
   const value = useMemo<CityContextValue>(
     () => ({ city, setCity, cities: CITIES }),

@@ -41,7 +41,9 @@ export function GeheimtippProvider({ children }: { children: ReactNode }) {
   );
   const reset = useCallback(() => setAbgeholtByCity({}), []);
 
-  const tipp = GEHEIMTIPP_BY_CITY[city];
+  // Pilot-Phase: nur München hat einen Tipp -> Fallback auf München, falls je
+  // eine Stadt ohne Eintrag aktiv würde.
+  const tipp = GEHEIMTIPP_BY_CITY[city] ?? GEHEIMTIPP_BY_CITY.München!;
   const abgeholt = !!abgeholtByCity[city];
 
   const value = useMemo<GeheimtippContextValue>(
