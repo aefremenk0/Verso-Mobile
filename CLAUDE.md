@@ -128,6 +128,7 @@ src/
                           MapFilterSheet (Karte-Filter-Panel),
                           RangeSlider (Budget, PanResponder)
   lib/mapFilter.ts        Filter-Typ + matchesFilter (Art/Budget/Bewertung/Ambiente)
+  lib/pinColors.ts        Karten-Pin-Farben pro Kategorie (oval/inner/dot)
   lib/scene.ts            Szene (feiern/essen): Kategoriengruppen + Pills
   store/scene.tsx         aktuelle Szene (Feiern vs. Essen), app-weit
 
@@ -263,7 +264,13 @@ npx tsc --noEmit       # Typecheck
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-25 · Header: Wien auf Toggle-Höhe (eine Zeile)
+### (dieser Commit) · 2026-06-25 · Karten-Pins: zentrale Farben pro Kategorie
+- Neue **`src/lib/pinColors.ts`**: pro Kategorie `oval` (Box-Hintergrund),
+  `inner` (Text) und `dot` (Punkt). `Pin` in `CityMap` nutzt diese Farben statt
+  fester bg-accent/bg-night. Default-Palette: restaurant=Rot, snack=Amber,
+  kaffee=Espresso, bar=Pflaume, clubs=Indigo, events=Gelb. (Hex zentral änderbar.)
+
+### fe20f9d · 2026-06-25 · Header: Wien auf Toggle-Höhe (eine Zeile)
 - Feed & Karte: **eine kombinierte Kopfzeile** statt zwei. `CityDropdown` nimmt
   jetzt `center` (Liste/Karte-Toggle, exakt zentriert) + `right` (Szene) — „Wien"
   links auf **derselben Höhe** wie die Toggles. Separate Toggle-Zeile (`TopToggles`)

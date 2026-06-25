@@ -8,6 +8,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import type { Spot } from "../data/types";
+import { PIN_COLORS } from "../lib/pinColors";
 import { shadows } from "../theme";
 
 // Hintergrund-Karte für den Karte-Screen.
@@ -90,9 +91,12 @@ function Pin({
     };
   });
 
-  // Events heben sich farblich ab: gelber Punkt + schwarze Kontur, und das
-  // Label ist eine schwarze Box mit gelbem Namen + gelbem Datum.
+  // Farben kommen zentral aus PIN_COLORS (je Kategorie: Oval/Inner/Dot).
+  // Events behalten ihre Sonderform (Rechteck mit Datum), Orte sind Pillen.
   const isEvent = spot.category === "event";
+  const c = PIN_COLORS[spot.category];
+  // Heller Punkt (Gelb) braucht eine dunkle Kontur, sonst eine cremefarbene.
+  const dotBorder = spot.category === "event" ? "#1A1A1A" : "#F7F4EF";
 
   // Label ist nur antippbar, wenn es sichtbar ist (ausgewählt oder per
   // Doppeltipp). `box-none` -> nur die Label-Box selbst fängt Tipps, die breite
@@ -108,26 +112,43 @@ function Pin({
           labelStyle,
         ]}
       >
-        {/* Tippen auf den Namen schließt den Ort wieder (Toggle wie der Punkt). */}
+        {/* Tippen auf den Namen schließt den Ort wieder (Toggle wie der Punkt).
+            Farben (Oval-Hintergrund + Innenfarbe) kommen aus PIN_COLORS. */}
         <Pressable onPress={onPress}>
           {isEvent ? (
-            // Event: schwarzes abgerundetes RECHTECK (kein Oval) — Name + Datum
-            // passen so deutlich besser rein. Moderater Radius (rounded-button
-            // = 16px) statt rounded-card (24px), das auf der kleinen Box oval wirkte.
-            <View className="items-center rounded-button bg-night px-3.5 py-2" style={shadows.card}>
-              <Text className="font-hk-extrabold text-[15px] text-accent" numberOfLines={1}>
+            // Event: abgerundetes RECHTECK (Name + Datum passen besser rein).
+            <View
+              className="items-center rounded-button px-3.5 py-2"
+              style={[{ backgroundColor: c.oval }, shadows.card]}
+            >
+              <Text
+                className="font-hk-extrabold text-[15px]"
+                style={{ color: c.inner }}
+                numberOfLines={1}
+              >
                 {spot.name}
               </Text>
               {spot.dateLabel ? (
-                <Text className="mt-0.5 font-hk-semibold text-[11px] text-accent" numberOfLines={1}>
+                <Text
+                  className="mt-0.5 font-hk-semibold text-[11px]"
+                  style={{ color: c.inner }}
+                  numberOfLines={1}
+                >
                   {spot.dateLabel}
                 </Text>
               ) : null}
             </View>
           ) : (
-            // Ort: gelbe Box, schwarzer Name.
-            <View className="rounded-pill bg-accent px-3 py-1.5" style={shadows.card}>
-              <Text className="font-hk-extrabold text-[15px] text-accent-ink" numberOfLines={1}>
+            // Ort: Pille ("Oval").
+            <View
+              className="rounded-pill px-3 py-1.5"
+              style={[{ backgroundColor: c.oval }, shadows.card]}
+            >
+              <Text
+                className="font-hk-extrabold text-[15px]"
+                style={{ color: c.inner }}
+                numberOfLines={1}
+              >
                 {spot.name}
               </Text>
             </View>
@@ -135,15 +156,16 @@ function Pin({
         </Pressable>
       </Animated.View>
 
-      {/* Punkt — antippen wählt aus / hebt die Auswahl wieder auf. */}
+      {/* Punkt — Farbe aus PIN_COLORS; antippen wählt aus / hebt auf. */}
       <Pressable onPress={onPress} hitSlop={10}>
         <View
-          className={`rounded-pill ${isEvent ? "bg-accent" : "bg-night"}`}
+          className="rounded-pill"
           style={{
             width: 14,
             height: 14,
+            backgroundColor: c.dot,
             borderWidth: 2.5,
-            borderColor: isEvent ? "#1A1A1A" : "#F7F4EF",
+            borderColor: dotBorder,
           }}
         />
       </Pressable>
