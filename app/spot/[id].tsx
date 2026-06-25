@@ -1,9 +1,15 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
+import { useRef } from "react";
 import { Pressable, ScrollView, Share, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { AnimatedChip } from "../../src/components/AnimatedChip";
 import { Button } from "../../src/components/Button";
 import { ImagePlaceholder } from "../../src/components/ImagePlaceholder";
 import { Pill } from "../../src/components/Pill";
+import {
+  QuestionBubbles,
+  type QuestionBubblesHandle,
+} from "../../src/components/QuestionBubbles";
 import { CATEGORY_LABEL, priceLabel } from "../../src/data/categories";
 import { getSpotById } from "../../src/data/spots";
 import { openAppleMaps, openExternal, openGoogleMaps } from "../../src/lib/maps";
@@ -45,6 +51,19 @@ export default function SpotDetail() {
     }).catch(() => {});
   };
 
+  // Merken: toggelt; beim Hinzufügen Herzen NACH UNTEN (Button sitzt oben).
+  const burstRef = useRef<QuestionBubblesHandle>(null);
+  const merkenRef = useRef<View>(null);
+  const onMerken = () => {
+    const wasSaved = saved;
+    toggle(spot.id);
+    if (!wasSaved) {
+      merkenRef.current?.measureInWindow((x, y, w, h) => {
+        burstRef.current?.burst(x + w / 2, y + h, "down");
+      });
+    }
+  };
+
   return (
     <View className="flex-1 bg-screen">
       <ScrollView
@@ -72,14 +91,26 @@ export default function SpotDetail() {
               >
                 <Text className="font-hk-bold text-[16px] text-ink">↗</Text>
               </Pressable>
-              <Pressable
-                onPress={() => toggle(spot.id)}
-                className="rounded-pill bg-accent px-4 py-2.5"
-              >
-                <Text className="font-hk-bold text-[13px] text-accent-ink">
-                  {saved ? "Gemerkt ✓" : "Merken +"}
-                </Text>
-              </Pressable>
+              <View ref={merkenRef} collapsable={false}>
+                <AnimatedChip
+                  active={saved}
+                  onPress={onMerken}
+                  activeBg="#FFE500"
+                  inactiveBg="#FFFFFF"
+                  activeBorder="#FFE500"
+                  inactiveBorder="rgba(26,26,26,0.18)"
+                  style={{
+                    borderRadius: 999,
+                    borderWidth: 1,
+                    paddingHorizontal: 16,
+                    paddingVertical: 10,
+                  }}
+                >
+                  <Text className="font-hk-bold text-[13px] text-ink">
+                    {saved ? "Gemerkt ✓" : "Merken +"}
+                  </Text>
+                </AnimatedChip>
+              </View>
             </View>
           </View>
         </ImagePlaceholder>
@@ -200,6 +231,9 @@ export default function SpotDetail() {
           </View>
         </View>
       </ScrollView>
+
+      {/* Herz-Burst beim Merken (über allem, lässt Tipps durch) */}
+      <QuestionBubbles ref={burstRef} glyph="♥" textColor="#1A1A1A" />
     </View>
   );
 }

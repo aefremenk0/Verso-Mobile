@@ -302,7 +302,15 @@ npx tsc --noEmit       # Typecheck
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-25 · Auswahl-Animation auch auf den Toggles
+### (dieser Commit) · 2026-06-25 · Detail-Merken (Anim + Herzen) · Herz-Richtung
+- **Spot-Detail „Merken"**: nutzt jetzt `AnimatedChip` (Crossfade/Pop/Press,
+  ungemerkt = weiß/Outline, gemerkt = gelb) + **Herz-Burst** beim Hinzufügen.
+- **`QuestionBubbles.burst(x,y,direction)`**: neue Richtung „up"/„down". Herzen
+  fallen **nach unten**, wenn die Stelle nah am oberen Rand ist (oberste Feed-
+  Karte / Detail-Button) — sonst unsichtbar nach oben. SpotCard wählt die
+  Richtung anhand der Bildschirm-Y-Position; Detail misst den Button (`measureInWindow`).
+
+### 7a6aa26 · 2026-06-25 · Auswahl-Animation auch auf den Toggles
 - **`ListMapToggle`** (Liste/Karte) und **`SceneToggle`** (🎉/🍴) nutzen jetzt
   ebenfalls `AnimatedChip` pro Hälfte → Crossfade + Pop + Press, konsistent.
 

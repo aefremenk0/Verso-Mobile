@@ -22,13 +22,16 @@ import Animated, {
 // ausgelöst. Mehrfaches Tippen häuft Bubbles an („ganz viele").
 
 export interface QuestionBubblesHandle {
-  burst: (x: number, y: number) => void;
+  // direction: "up" (Standard) lässt die Bubbles aufsteigen, "down" fallen —
+  // nützlich, wenn die Tipp-Stelle nah am oberen Rand ist.
+  burst: (x: number, y: number, direction?: "up" | "down") => void;
 }
 
 interface BubbleData {
   id: number;
   x: number;
   y: number;
+  dir: number; // -1 = nach oben, 1 = nach unten
 }
 
 let nextId = 0;
@@ -37,6 +40,7 @@ function Bubble({
   id,
   x,
   y,
+  dir,
   onDone,
   glyph,
   color,
@@ -78,7 +82,7 @@ function Bubble({
   const style = useAnimatedStyle(() => ({
     transform: [
       { translateX: cfg.drift * p.value },
-      { translateY: -cfg.rise * p.value },
+      { translateY: dir * cfg.rise * p.value }, // dir: -1 hoch, 1 runter
       { scale: 0.5 + p.value * 0.7 },
       { rotate: `${cfg.rot * p.value}deg` },
     ],
@@ -139,10 +143,11 @@ export const QuestionBubbles = forwardRef<
   const [bubbles, setBubbles] = useState<BubbleData[]>([]);
 
     useImperativeHandle(ref, () => ({
-      burst: (x, y) => {
+      burst: (x, y, direction = "up") => {
+        const dir = direction === "down" ? 1 : -1;
         const count = 10 + Math.floor(Math.random() * 6); // 10–15 pro Tipp
         const batch: BubbleData[] = [];
-        for (let i = 0; i < count; i++) batch.push({ id: nextId++, x, y });
+        for (let i = 0; i < count; i++) batch.push({ id: nextId++, x, y, dir });
         setBubbles((prev) => [...prev, ...batch]);
       },
     }));

@@ -5,6 +5,7 @@ import {
   Pressable,
   Share,
   Text,
+  useWindowDimensions,
   View,
 } from "react-native";
 import Animated, {
@@ -46,8 +47,10 @@ export function SpotCard({
   const { isSaved, toggle } = useSaved();
   const burstRef = useRef<QuestionBubblesHandle>(null);
   const [menuOpen, setMenuOpen] = useState(false);
-  // Druckstelle merken, damit der Herz-Burst von dort startet.
+  const { height } = useWindowDimensions();
+  // Druckstelle merken (relativ zur Karte) + Bildschirm-Y (für die Richtung).
   const pressPos = useRef({ x: 0, y: 0 });
+  const pressPageY = useRef(0);
 
   // Hinweis-Chip (B) + Auto-Demo (A) für die Long-Press-Geste.
   const [hint, setHint] = useState(false);
@@ -86,6 +89,7 @@ export function SpotCard({
       x: e.nativeEvent.locationX,
       y: e.nativeEvent.locationY,
     };
+    pressPageY.current = e.nativeEvent.pageY;
     setMenuOpen(true);
   };
 
@@ -95,7 +99,11 @@ export function SpotCard({
     const wasSaved = isSaved(spot.id);
     toggle(spot.id);
     setMenuOpen(false);
-    if (!wasSaved) burstRef.current?.burst(pressPos.current.x, pressPos.current.y);
+    if (!wasSaved) {
+      // Nah am oberen Rand -> Herzen fallen nach UNTEN (sonst unsichtbar).
+      const dir = pressPageY.current < height * 0.4 ? "down" : "up";
+      burstRef.current?.burst(pressPos.current.x, pressPos.current.y, dir);
+    }
   };
 
   // Teilen über das systemeigene Share-Sheet (iMessage, WhatsApp, …).
