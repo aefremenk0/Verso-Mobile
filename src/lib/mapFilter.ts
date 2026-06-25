@@ -41,6 +41,10 @@ export const ART_OPTIONS: { label: string; cat: Category }[] = [
   { label: "Café", cat: "cafe" },
   { label: "Snack", cat: "snack" },
   { label: "Event", cat: "event" },
+  { label: "Weintasting", cat: "weintasting" },
+  { label: "Cooking", cat: "cooking" },
+  { label: "Techno", cat: "techno" },
+  { label: "Sport", cat: "sport" },
 ];
 
 export const RATING_OPTIONS: { label: string; value: number }[] = [

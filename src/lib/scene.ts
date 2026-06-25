@@ -7,7 +7,7 @@ import type { Category } from "../data/types";
 export type Scene = "feiern" | "essen";
 
 export const SCENE_CATEGORIES: Record<Scene, Category[]> = {
-  feiern: ["bar", "club", "event"],
+  feiern: ["bar", "club", "event", "weintasting", "cooking", "techno", "sport"],
   essen: ["restaurant", "snack", "cafe"],
 };
 

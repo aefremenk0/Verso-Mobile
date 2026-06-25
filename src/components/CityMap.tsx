@@ -2,13 +2,16 @@ import Constants, { ExecutionEnvironment } from "expo-constants";
 import { useEffect, useRef, useState } from "react";
 import { Pressable, Text, View } from "react-native";
 import Animated, {
+  Easing,
   useAnimatedStyle,
   useSharedValue,
   withDelay,
+  withRepeat,
   withSequence,
   withSpring,
   withTiming,
 } from "react-native-reanimated";
+import { isEventCategory } from "../data/categories";
 import type { Spot } from "../data/types";
 import { PIN_COLORS } from "../lib/pinColors";
 import { shadows } from "../theme";
@@ -94,11 +97,25 @@ function Pin({
   });
 
   // Farben kommen zentral aus PIN_COLORS (je Kategorie: Oval/Inner/Dot).
-  // Events behalten ihre Sonderform (Rechteck mit Datum), Orte sind Pillen.
-  const isEvent = spot.category === "event";
+  // Event-artige Kategorien behalten die Sonderform (Rechteck mit Datum).
+  const isEvent = isEventCategory(spot.category);
   const c = PIN_COLORS[spot.category];
   // Heller Punkt (Gelb) braucht eine dunkle Kontur, sonst eine cremefarbene.
   const dotBorder = spot.category === "event" ? "#1A1A1A" : "#F7F4EF";
+
+  // Pulsierende Kontur um den Punkt (wie das Geheimtipp-„?") — in Pin-Farbe.
+  const pulse = useSharedValue(0);
+  useEffect(() => {
+    pulse.value = withRepeat(
+      withTiming(1, { duration: 1900, easing: Easing.out(Easing.ease) }),
+      -1, // endlos
+      false, // immer von vorne (Ring wächst & fadet, springt zurück)
+    );
+  }, [pulse]);
+  const pulseStyle = useAnimatedStyle(() => ({
+    opacity: (1 - pulse.value) * 0.5,
+    transform: [{ scale: 1 + pulse.value * 1.8 }],
+  }));
 
   // Label ist nur antippbar, wenn es sichtbar ist (ausgewählt oder per
   // Doppeltipp). `box-none` -> nur die Label-Box selbst fängt Tipps, die breite
@@ -158,18 +175,35 @@ function Pin({
         </Pressable>
       </Animated.View>
 
-      {/* Punkt — Farbe aus PIN_COLORS; antippen wählt aus / hebt auf. */}
+      {/* Punkt + pulsierende Kontur (in Pin-Farbe); antippen wählt aus / hebt auf. */}
       <Pressable onPress={onPress} hitSlop={10}>
-        <View
-          className="rounded-pill"
-          style={{
-            width: 14,
-            height: 14,
-            backgroundColor: c.dot,
-            borderWidth: 2.5,
-            borderColor: dotBorder,
-          }}
-        />
+        <View style={{ width: 14, height: 14, alignItems: "center", justifyContent: "center" }}>
+          {/* pulsierender Ring hinter dem Punkt */}
+          <Animated.View
+            pointerEvents="none"
+            style={[
+              {
+                position: "absolute",
+                width: 14,
+                height: 14,
+                borderRadius: 999,
+                borderWidth: 2,
+                borderColor: c.dot,
+              },
+              pulseStyle,
+            ]}
+          />
+          <View
+            className="rounded-pill"
+            style={{
+              width: 14,
+              height: 14,
+              backgroundColor: c.dot,
+              borderWidth: 2.5,
+              borderColor: dotBorder,
+            }}
+          />
+        </View>
       </Pressable>
     </View>
   );

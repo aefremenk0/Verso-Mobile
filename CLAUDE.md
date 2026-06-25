@@ -302,7 +302,17 @@ npx tsc --noEmit       # Typecheck
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-25 · Filter: Art szenenabhängig; Swipe-Griff unten
+### (dieser Commit) · 2026-06-25 · Neue Party-Kategorien + pulsierende Pin-Kontur
+- **4 neue Kategorien** (Party): Weintasting, Cooking, Techno, Sport — als
+  Category-Typ, in `CATEGORY_FILTERS`/`CATEGORY_LABEL`/`CATEGORY_ORDER`,
+  `PIN_COLORS` (eigene Farben), `SCENE_CATEGORIES.feiern`, `ART_OPTIONS`. Neue
+  Helper `EVENT_CATEGORIES`/`isEventCategory` (event-artige Kategorien zeigen
+  Datum/Ticket); `CityMap` + Spot-Detail nutzen das statt `=== "event"`.
+  4 Beispiel-Spots (Wien) für die neuen Kategorien ergänzt.
+- **Pulsierende Kontur** um JEDEN Karten-Punkt (Ring wächst & fadet endlos,
+  `withRepeat`) — in der Farbe des jeweiligen Punkts (`CityMap` `Pin`).
+
+### b390699 · 2026-06-25 · Filter: Art szenenabhängig; Swipe-Griff unten
 - **Art** zeigt jetzt nur die Kategorien der **aktuellen Szene** (`useScene` →
   `SCENE_CATEGORIES[scene]`); `karte.tsx` leert den `art`-Filter beim Szenenwechsel
   (sonst filtern szenenfremde Arten alles weg).

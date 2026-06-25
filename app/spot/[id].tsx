@@ -10,7 +10,11 @@ import {
   QuestionBubbles,
   type QuestionBubblesHandle,
 } from "../../src/components/QuestionBubbles";
-import { CATEGORY_LABEL, priceLabel } from "../../src/data/categories";
+import {
+  CATEGORY_LABEL,
+  isEventCategory,
+  priceLabel,
+} from "../../src/data/categories";
 import { getSpotById } from "../../src/data/spots";
 import { openAppleMaps, openExternal, openGoogleMaps } from "../../src/lib/maps";
 import { useSaved } from "../../src/store/saved";
@@ -40,7 +44,7 @@ export default function SpotDetail() {
     );
   }
 
-  const isEvent = spot.category === "event";
+  const isEvent = isEventCategory(spot.category);
   const saved = isSaved(spot.id);
   const metaLine = `${CATEGORY_LABEL[spot.category]} · ${spot.neighborhood.toUpperCase()}`;
 
