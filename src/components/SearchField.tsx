@@ -1,5 +1,6 @@
 import { Pressable, Text, TextInput, View } from "react-native";
 import Svg, { Circle, Line } from "react-native-svg";
+import { KEYBOARD_DONE_ID } from "./KeyboardDoneBar";
 
 // Schlankes Suchfeld im Verso-Stil (Pille, weiche Form). Wiederverwendbar —
 // aktuell im Feed, später auch in Gespeichert/Viertel nutzbar.
@@ -47,6 +48,7 @@ export function SearchField({
         autoCorrect={false}
         autoCapitalize="none"
         accessibilityLabel="Orte durchsuchen"
+        inputAccessoryViewID={KEYBOARD_DONE_ID}
       />
       {value.length > 0 ? (
         <Pressable

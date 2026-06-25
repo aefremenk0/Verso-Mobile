@@ -11,6 +11,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { AnimatedChip } from "../src/components/AnimatedChip";
 import { Brand } from "../src/components/Brand";
 import { Button } from "../src/components/Button";
+import {
+  KeyboardDoneBar,
+  KEYBOARD_DONE_ID,
+} from "../src/components/KeyboardDoneBar";
 import { AppleLogo, GoogleLogo } from "../src/components/Logos";
 import { AMBIENTE_OPTIONS } from "../src/lib/mapFilter";
 import { useInterests } from "../src/store/interests";
@@ -167,6 +171,7 @@ export default function Register() {
           autoCapitalize="none"
           className="rounded-button bg-surface px-5 py-4 font-hk-medium text-[15px] text-ink"
           style={{ borderWidth: 1, borderColor: "rgba(0,0,0,0.08)" }}
+          inputAccessoryViewID={KEYBOARD_DONE_ID}
         />
 
         <View className="mt-5">
@@ -185,6 +190,9 @@ export default function Register() {
           <Text className="font-hk-semibold text-ink-2 underline">Datenschutz</Text>.
         </Text>
       </ScrollView>
+
+      {/* „Fertig"-Leiste über der Tastatur (iOS) für das E-Mail-Feld */}
+      <KeyboardDoneBar />
     </SafeAreaView>
   );
 }

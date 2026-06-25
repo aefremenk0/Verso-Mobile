@@ -2,6 +2,10 @@ import { useRouter } from "expo-router";
 import { useState } from "react";
 import { Pressable, ScrollView, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import {
+  KeyboardDoneBar,
+  KEYBOARD_DONE_ID,
+} from "../src/components/KeyboardDoneBar";
 import { StripeTexture } from "../src/components/StripeTexture";
 import { MOCK_USER } from "../src/data/user";
 
@@ -35,6 +39,7 @@ function Field({
         value={value}
         onChangeText={onChangeText}
         multiline={multiline}
+        inputAccessoryViewID={KEYBOARD_DONE_ID}
         className="rounded-[14px] bg-surface px-4 py-3.5 font-hk-medium text-[15px] text-ink"
         style={{
           borderWidth: 1,
@@ -108,6 +113,9 @@ export default function ProfilBearbeiten() {
           <Text className="font-hk-extrabold text-[17px] text-accent-ink">Speichern</Text>
         </Pressable>
       </ScrollView>
+
+      {/* „Fertig"-Leiste über der Tastatur (iOS) für die Eingabefelder */}
+      <KeyboardDoneBar />
     </SafeAreaView>
   );
 }

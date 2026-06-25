@@ -4,6 +4,7 @@ import { FlatList, Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Svg, { Path } from "react-native-svg";
 import { CityDropdown } from "../../src/components/CityDropdown";
+import { KeyboardDoneBar } from "../../src/components/KeyboardDoneBar";
 import { MapFilterSheet } from "../../src/components/MapFilterSheet";
 import { Pill } from "../../src/components/Pill";
 import { SceneToggle } from "../../src/components/SceneToggle";
@@ -220,6 +221,9 @@ export default function Feed() {
           showArt={false}
         />
       ) : null}
+
+      {/* „Fertig"-Leiste über der Tastatur (iOS) für das Suchfeld */}
+      <KeyboardDoneBar />
     </SafeAreaView>
   );
 }

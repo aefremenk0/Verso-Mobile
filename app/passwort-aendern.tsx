@@ -2,6 +2,10 @@ import { useRouter } from "expo-router";
 import { useState } from "react";
 import { Pressable, ScrollView, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import {
+  KeyboardDoneBar,
+  KEYBOARD_DONE_ID,
+} from "../src/components/KeyboardDoneBar";
 
 // Screen 07d — Passwort ändern (reine UI, keine echte Logik im MVP).
 
@@ -33,6 +37,7 @@ function PwField({
           secureTextEntry={!visible}
           placeholder="••••••••"
           placeholderTextColor="#8A857C"
+          inputAccessoryViewID={KEYBOARD_DONE_ID}
           className="flex-1 py-3.5 font-hk-medium text-[16px] text-ink"
         />
         {showToggle ? (
@@ -104,6 +109,9 @@ export default function PasswortAendern() {
           </Text>
         </Pressable>
       </ScrollView>
+
+      {/* „Fertig"-Leiste über der Tastatur (iOS) für die Passwortfelder */}
+      <KeyboardDoneBar />
     </SafeAreaView>
   );
 }

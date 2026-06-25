@@ -135,6 +135,7 @@ src/
                           MapFilterSheet (Filter-Panel; `showArt`-Prop —
                           im Feed aus, da Hotbar die Art macht),
                           SearchField (Such-Pille mit SVG-Lupe + Clear),
+                          KeyboardDoneBar („Fertig"-Leiste über iOS-Tastatur),
                           SurpriseButton („Überrasch mich"; Sparkle + Press-Bounce),
                           MiniMap (stilisierte Detail-Mini-Karte, SVG, tippbar),
                           DiagonalStrike (diagonaler Durchstrich für „kommt
@@ -454,7 +455,16 @@ npm test               # Unit-Tests der reinen Logik (vitest, src/**)
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-25 · Design: App-Icon-Entwurf ins Repo
+### (dieser Commit) · 2026-06-25 · „Fertig"-Leiste über der Tastatur
+- Neue **`KeyboardDoneBar`** (iOS `InputAccessoryView`): ein **„Fertig"-Button**
+  über der Tastatur, der sie via `Keyboard.dismiss()` wieder einzieht. Gemeinsame
+  `KEYBOARD_DONE_ID`; pro Screen einmal gerendert.
+- Angebunden an alle Textfelder: **Feed-Suche** (`SearchField`), **Registrierung**
+  (E-Mail), **Profil bearbeiten** (Name/Benutzername/Bio), **Passwort ändern**
+  (3 Felder) — je `inputAccessoryViewID={KEYBOARD_DONE_ID}`.
+- iOS-only (Android rendert nichts; dort schließt die System-Zurück-Taste).
+
+### e8e19b0 · 2026-06-25 · Design: App-Icon-Entwurf ins Repo
 - **`design/Verso_App_Icon.dc.html`** ergänzt: App-Icon „v." (italic, DM Serif
   Display) in drei Farbvarianten (Gelb/Schwarz, Schwarz/Gelb, Weiß/Schwarz) +
   Homescreen-Vorschau. Gelb/Schwarz (`#FFE500`/`#1A1A1A`) ist der Favorit.
