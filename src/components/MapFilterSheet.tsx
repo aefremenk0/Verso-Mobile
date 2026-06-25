@@ -7,6 +7,7 @@ import {
   RATING_OPTIONS,
   type MapFilter,
 } from "../lib/mapFilter";
+import { PIN_COLORS } from "../lib/pinColors";
 import { shadows } from "../theme";
 import { RangeSlider } from "./RangeSlider";
 
@@ -77,18 +78,19 @@ export function MapFilterSheet({
           <View className="flex-row flex-wrap gap-2">
             {ART_OPTIONS.map((a) => {
               const on = filter.art.includes(a.cat);
+              const col = PIN_COLORS[a.cat];
               return (
                 <Pressable
                   key={a.cat}
                   onPress={() => toggleArt(a.cat)}
                   className={`rounded-pill px-3.5 py-2 ${
-                    on ? "bg-accent" : "border border-black/20 bg-surface"
+                    on ? "" : "border border-black/20 bg-surface"
                   }`}
+                  style={on ? { backgroundColor: col.oval } : undefined}
                 >
                   <Text
-                    className={`font-hk-semibold text-[12px] ${
-                      on ? "text-accent-ink" : "text-ink-2"
-                    }`}
+                    className={`font-hk-semibold text-[12px] ${on ? "" : "text-ink-2"}`}
+                    style={on ? { color: col.inner } : undefined}
                   >
                     {a.label}
                   </Text>

@@ -8,6 +8,7 @@ import { SpotCard } from "../../src/components/SpotCard";
 import { NEIGHBORHOODS } from "../../src/data/cities";
 import { SPOTS } from "../../src/data/spots";
 import type { Category } from "../../src/data/types";
+import { PIN_COLORS } from "../../src/lib/pinColors";
 import { SCENE_CATEGORIES, SCENE_FILTERS } from "../../src/lib/scene";
 import { useCity } from "../../src/store/city";
 import { useScene } from "../../src/store/scene";
@@ -74,14 +75,19 @@ export default function Bezirk() {
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={{ paddingHorizontal: 24, gap: 8, paddingBottom: 6 }}
         >
-          {SCENE_FILTERS[scene].map((f) => (
-            <Pill
-              key={f.label}
-              label={f.label}
-              active={activeCategory === f.key}
-              onPress={() => setActiveCategory(f.key)}
-            />
-          ))}
+          {SCENE_FILTERS[scene].map((f) => {
+            const col = f.key ? PIN_COLORS[f.key] : null;
+            return (
+              <Pill
+                key={f.label}
+                label={f.label}
+                active={activeCategory === f.key}
+                onPress={() => setActiveCategory(f.key)}
+                activeColor={col?.oval}
+                activeTextColor={col?.inner}
+              />
+            );
+          })}
         </ScrollView>
       </View>
 

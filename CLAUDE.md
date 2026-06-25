@@ -264,7 +264,13 @@ npx tsc --noEmit       # Typecheck
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-25 · Gespeichert: „Nach Google Maps exportieren"
+### (dieser Commit) · 2026-06-25 · Kategorie-Farben überall (Hotbar + Art-Filter)
+- `Pill` nimmt jetzt `activeColor`/`activeTextColor` → aktive Kategorie-Pills in
+  **Feed- und Bezirk-Hotbar** erscheinen in ihrer `PIN_COLORS`-Farbe (Alle = Gelb).
+- **„Art"-Filter** im `MapFilterSheet`: ausgewählte Arten in Kategorie-Farbe.
+- Karten-Pins nutzten die Farben bereits → Farbsystem jetzt durchgängig.
+
+### c1f232e · 2026-06-25 · Gespeichert: „Nach Google Maps exportieren"
 - Button **unten rechts** (Google-Logo) im Gespeichert-Screen öffnet
   **`GoogleExportSheet`**: verknüpft (MOCK) ein Google-Konto und „exportiert" die
   gemerkten Orte in eine Google-Maps-Liste **„?"**. Hinweis: echter Export bräuchte
