@@ -1,6 +1,7 @@
 import { useRouter } from "expo-router";
 import { Pressable, ScrollView, Share, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { Arrow } from "../../src/components/Arrow";
 import { Brand } from "../../src/components/Brand";
 import { MysticBadge } from "../../src/components/MysticBadge";
 import { GEHEIMTIPP, MOCK_USER } from "../../src/data/user";
@@ -42,7 +43,7 @@ function Row({
             </Text>
           </View>
         ) : null}
-        <Text className="font-hk-bold text-[16px] text-ink-3">→</Text>
+        <Arrow width={18} color="#8A857C" />
       </View>
     </Pressable>
   );

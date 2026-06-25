@@ -1,6 +1,7 @@
 import { useRouter } from "expo-router";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { Arrow } from "../../src/components/Arrow";
 import { CityDropdown } from "../../src/components/CityDropdown";
 import { NEIGHBORHOODS } from "../../src/data/cities";
 import { useCity } from "../../src/store/city";
@@ -48,7 +49,7 @@ export default function Viertel() {
                 </Text>
               </View>
               <View className="h-9 w-9 items-center justify-center rounded-pill bg-accent">
-                <Text className="font-hk-bold text-[16px] text-accent-ink">→</Text>
+                <Arrow width={18} color="#1A1A1A" />
               </View>
             </Pressable>
           ))}
