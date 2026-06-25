@@ -1,10 +1,5 @@
 import { useEffect, useState, type ReactNode } from "react";
-import {
-  Pressable,
-  ScrollView,
-  useWindowDimensions,
-  View,
-} from "react-native";
+import { Pressable, ScrollView, View } from "react-native";
 import Animated, {
   runOnJS,
   useAnimatedStyle,
@@ -22,7 +17,7 @@ import { Pill } from "./Pill";
 // abgehende absolut darüber, damit die Layout-Breite dem NEUEN Namen folgt).
 const ROLL = 20; // Roll-Distanz in px (Schrift ist 30px) — dezent, nicht hart.
 
-function CityName({ city, shrink }: { city: string; shrink: boolean }) {
+function CityName({ city }: { city: string }) {
   // `display` = aktuell sichtbarer (hereinkommender) Name, `outgoing` = der
   // gerade hinausrollende alte Name (null, wenn nichts animiert).
   const [display, setDisplay] = useState(city);
@@ -52,18 +47,13 @@ function CityName({ city, shrink }: { city: string; shrink: boolean }) {
     transform: [{ translateY: progress.value * -ROLL }],
   }));
 
-  // Schrumpf-Logik nur mit zentriertem Toggle (Feed/Karte) — siehe unten.
-  const shrinkProps = shrink
-    ? { adjustsFontSizeToFit: true, minimumFontScale: 0.4 }
-    : {};
-
+  // Stadtname immer in voller Größe (text-title-md), nie verkleinert.
   return (
     <View>
       <Animated.Text
         className="font-hk-extrabold text-title-md text-ink"
         numberOfLines={1}
-        style={[incomingStyle, shrink ? { flexShrink: 1 } : null]}
-        {...shrinkProps}
+        style={incomingStyle}
       >
         {display}
       </Animated.Text>
@@ -73,7 +63,6 @@ function CityName({ city, shrink }: { city: string; shrink: boolean }) {
           numberOfLines={1}
           pointerEvents="none"
           style={[{ position: "absolute", left: 0, top: 0 }, outgoingStyle]}
-          {...shrinkProps}
         >
           {outgoing}
         </Animated.Text>
@@ -115,39 +104,12 @@ function DropdownCity({
 }
 
 // Einheitlicher Stadt-Kopf mit Dropdown — identisch auf Feed, Viertel und Karte.
-// Zeigt "Wien ▾" links und klappt eine horizontale Reihe wählbarer Städte aus.
-//  - `center` sitzt ABSOLUT zentriert in der Zeile (z. B. Liste/Karte-Toggle).
-//  - `right`  sitzt rechts (z. B. Szenen-Toggle).
-// So liegen Stadt, zentrierter Toggle und rechtes Element auf EINER Höhe.
+// Zeigt "Wien ▾" links (immer in voller Größe) und klappt eine horizontale Reihe
+// wählbarer Städte aus. `right` sitzt rechts (z. B. Szenen-Toggle).
 
-export function CityDropdown({
-  center,
-  right,
-}: {
-  center?: ReactNode;
-  right?: ReactNode;
-}) {
+export function CityDropdown({ right }: { right?: ReactNode }) {
   const { city, setCity, cities } = useCity();
   const [open, setOpen] = useState(false);
-  const { width } = useWindowDimensions();
-
-  // Wenn ein zentriertes Element (Liste/Karte) da ist, die Stadt-Breite auf die
-  // linke Zone bis vor den Toggle begrenzen -> lange Namen (Düsseldorf) laufen
-  // nicht mehr unter den Toggle, sondern verkleinern sich (adjustsFontSizeToFit).
-  // px-6 = 48 Gesamt-Padding, ~150 geschätzte Toggle-Breite, 8 Abstand.
-  const cityMaxWidth = center
-    ? Math.max(70, (width - 48 - 150) / 2 - 8)
-    : undefined;
-
-  // Feinjustierung pro Stadt: durch adjustsFontSizeToFit sitzen unterschiedlich
-  // lange Namen minimal anders -> per Stadt vertikal nachschieben (+ = runter).
-  const CITY_NUDGE: Record<string, number> = {
-    Wien: 3,
-    Berlin: 3,
-    Zürich: 3, // gleiche Wortlänge wie Berlin
-    Düsseldorf: -2,
-  };
-  const nudge = CITY_NUDGE[city] ?? 0;
 
   // Pfeil dreht beim Öffnen von ▾ zu ▴ (180°).
   const caret = useSharedValue(0);
@@ -160,39 +122,17 @@ export function CityDropdown({
 
   return (
     <View>
-      {/* Feste Zeilenhöhe -> "Wien" sitzt auf jeder Seite gleich, egal ob
-          rechts/zentriert ein Element steht oder nicht. */}
+      {/* Feste Zeilenhöhe -> "Wien" sitzt auf jeder Seite gleich. */}
       <View className="px-6 pt-2">
         <View className="justify-center" style={{ height: 42 }}>
-          {/* Zentriertes Element (z. B. Liste/Karte) — horizontal UND vertikal
-              mittig, damit es auf einer Linie mit „Wien"/dem rechten Element sitzt. */}
-          {center ? (
-            <View
-              pointerEvents="box-none"
-              style={{
-                position: "absolute",
-                left: 0,
-                right: 0,
-                top: 0,
-                bottom: 0,
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              {center}
-            </View>
-          ) : null}
-
-          {/* Stadt links + rechtes Element */}
+          {/* Stadt links (volle Größe) + rechtes Element */}
           <View className="flex-row items-center justify-between">
             <Pressable
               onPress={() => setOpen((v) => !v)}
               className="flex-row items-center"
-              style={{ maxWidth: cityMaxWidth, transform: [{ translateY: nudge }] }}
             >
-              {/* Stadtname mit Roll+Fade-Wechsel. `shrink` (nur mit zentriertem
-                  Toggle) verkleinert lange Namen, damit nichts überlappt. */}
-              <CityName city={city} shrink={!!center} />
+              {/* Stadtname mit Roll+Fade-Wechsel, immer in voller Größe. */}
+              <CityName city={city} />
               <Animated.Text
                 style={[
                   { marginLeft: 4, fontSize: 18, color: "#8A857C", fontWeight: "700" },

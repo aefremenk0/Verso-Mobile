@@ -120,7 +120,7 @@ src/
                           AnimatedChip (Auswahl: Crossfade+Pop+Press),
                           (Initialen-Kreis),
                           CityDropdown (Stadt-Kopf; right-Prop für rechtes
-                          Element, optionales center), Logos,
+                          Element; Stadtname immer volle Größe), Logos,
                           GeheimtippButton (pulsierende Squiggle-"?"),
                           MysticBadge ("???"-Badge, pulsierende Kontur),
                           QuestionBubbles (aufsteigende Bubbles, konfig. Glyph),
@@ -440,7 +440,14 @@ npm test               # Unit-Tests der reinen Logik (vitest, src/**)
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-25 · Liste/Karte-Toggle entfernt
+### (dieser Commit) · 2026-06-25 · Stadtname immer volle Größe (Schrumpf-Logik raus)
+- Nach dem Entfernen des Liste/Karte-Toggles war die Schrumpf-Maschinerie im
+  `CityDropdown` toter, potenziell begrenzender Code. **Komplett entfernt**:
+  `center`-Prop, `cityMaxWidth`/`maxWidth`, `adjustsFontSizeToFit`/
+  `minimumFontScale`, `CITY_NUDGE`. Der Stadtname rendert jetzt **überall** in
+  voller `text-title-md`-Größe (auch lange Namen wie Düsseldorf), nie verkleinert.
+
+### 243a134 · 2026-06-25 · Liste/Karte-Toggle entfernt
 - **`ListMapToggle` überall gelöscht** (Feed & Karte) + Komponente entfernt. Die
   Karte bleibt über den **„Karte"-Reiter der Bottom-Nav** erreichbar — der Toggle
   war redundant. `CityDropdown` wird in Feed/Karte jetzt ohne `center` genutzt →
