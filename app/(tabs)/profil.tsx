@@ -182,7 +182,7 @@ export default function Profil() {
         <View className="items-center" style={{ marginTop: 21 }}>
           <Brand size={26} color="#8A857C" />
           <Text className="mt-2 font-hk-semibold text-[10px] tracking-[2px] text-ink-3">
-            VERSION 0.1 · MADE IN WIEN
+            VERSION 0.1 · MADE IN MUNICH
           </Text>
           {/* Zitat in EINER Zeile: shrink-to-fit statt Umbruch. */}
           <Text
