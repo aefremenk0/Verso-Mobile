@@ -4,6 +4,7 @@ import { Pressable, ScrollView, Share, Text, View } from "react-native";
 import { Swipeable } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { GoogleExportSheet } from "../src/components/GoogleExportSheet";
+import { CityDropdown } from "../src/components/CityDropdown";
 import { ImagePlaceholder } from "../src/components/ImagePlaceholder";
 import { GoogleLogo } from "../src/components/Logos";
 import { Pill } from "../src/components/Pill";
@@ -13,6 +14,7 @@ import { SPOTS } from "../src/data/spots";
 import type { Category, Spot } from "../src/data/types";
 import { PIN_COLORS } from "../src/lib/pinColors";
 import { SCENE_CATEGORIES, SCENE_FILTERS } from "../src/lib/scene";
+import { useCity } from "../src/store/city";
 import { useSaved } from "../src/store/saved";
 import { useScene } from "../src/store/scene";
 import { shadows } from "../src/theme";
@@ -112,6 +114,7 @@ export default function Gespeichert() {
   const router = useRouter();
   const { savedIds } = useSaved();
   const { scene } = useScene();
+  const { city } = useCity();
   const [exportOpen, setExportOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState<Category | null>(null);
 
@@ -123,9 +126,10 @@ export default function Gespeichert() {
     .map((id) => SPOTS.find((s) => s.id === id))
     .filter((s): s is (typeof SPOTS)[number] => Boolean(s));
 
-  // Nach Szene (Kategoriengruppe) + Hotbar-Kategorie filtern, nach Art gruppieren.
+  // Nach Stadt (Dropdown) -> Szene -> Hotbar-Kategorie filtern, nach Art gruppieren.
   const shown = sortByCategory(
     saved
+      .filter((s) => s.city === city)
       .filter((s) => SCENE_CATEGORIES[scene].includes(s.category))
       .filter((s) => (activeCategory ? s.category === activeCategory : true)),
   );
@@ -143,6 +147,17 @@ export default function Gespeichert() {
         <SceneToggle />
       </View>
 
+      {/* Stadt-Dropdown statt „Deine Orte"; Anzahl-Badge rechts */}
+      <CityDropdown
+        right={
+          <View className="rounded-pill bg-accent px-3 py-1.5">
+            <Text className="font-hk-bold text-[11px] tracking-[1px] text-accent-ink">
+              {shown.length} ORTE
+            </Text>
+          </View>
+        }
+      />
+
       <ScrollView
         contentContainerStyle={{
           paddingHorizontal: 24,
@@ -151,23 +166,6 @@ export default function Gespeichert() {
         }}
         showsVerticalScrollIndicator={false}
       >
-        <Text className="font-hk-bold text-[11px] tracking-[1.5px] text-ink-3">
-          GESPEICHERT
-        </Text>
-        {/* „Deine Orte" + Anzahl-Badge auf gleicher Höhe (Grundlinie) */}
-        <View className="mt-2 flex-row items-end justify-between">
-          <Text
-            className="font-hk-extrabold text-ink"
-            style={{ fontSize: 38, lineHeight: 40 }}
-          >
-            Deine Orte
-          </Text>
-          <View className="mb-1.5 rounded-pill bg-accent px-3 py-1.5">
-            <Text className="font-hk-bold text-[11px] tracking-[1px] text-accent-ink">
-              {shown.length} ORTE
-            </Text>
-          </View>
-        </View>
 
         {saved.length === 0 ? (
           <Text className="mt-10 font-hk-medium-italic text-[15px] leading-[22px] text-ink-3">
@@ -209,7 +207,7 @@ export default function Gespeichert() {
               ))}
               {shown.length === 0 ? (
                 <Text className="mt-6 font-hk-medium-italic text-[15px] text-ink-3">
-                  Hier ist gerade nichts gemerkt — wechsle die Szene oder Kategorie.
+                  Hier ist gerade nichts gemerkt — wechsle Stadt, Szene oder Kategorie.
                 </Text>
               ) : null}
             </View>

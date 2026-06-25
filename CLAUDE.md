@@ -302,7 +302,12 @@ npx tsc --noEmit       # Typecheck
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-25 · Neue Pin-Palette + Gespeichert: Szene & Badge
+### (dieser Commit) · 2026-06-25 · Gespeichert: Stadt-Dropdown statt „Deine Orte"
+- „Deine Orte"-Überschrift durch **`CityDropdown`** ersetzt (Anzahl-Badge als
+  `right`); die Liste filtert jetzt zusätzlich nach der gewählten **Stadt**
+  (Stadt → Szene → Kategorie). Topbar behält Zurück + Szenen-Toggle.
+
+### 3427ebe · 2026-06-25 · Neue Pin-Palette + Gespeichert: Szene & Badge
 - **`PIN_COLORS` komplett neu**: kräftige, klar getrennte Hues über den Farbkreis
   (Rot · Orange · Grün · Cyan · Indigo · Violett · Magenta) — Essen shiny, Feiern
   kühl; auf der Karte deutlich besser unterscheidbar.
