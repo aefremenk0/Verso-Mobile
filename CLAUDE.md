@@ -26,6 +26,11 @@ weiche Formen.
 **Maßgebliches Design:** `design/Verso_Mobile_v2.dc.html` — exakte Werte
 (Größen, Abstände, Farben, Wording) immer von dort übernehmen, nicht raten.
 (`design/support.js` ist nur das Runtime des Mockups, irrelevant für die App.)
+Weitere Design-Referenzen im `design/`-Ordner: `Verso_Mobile.dc.html` (frühere
+v1-Variante) und **`Verso_App_Icon.dc.html`** — das **App-Icon** (kursives „v."
+in drei Farbvarianten: Gelb/Schwarz, Schwarz/Gelb, Weiß/Schwarz; **Gelb/Schwarz
+`#FFE500` auf `#1A1A1A`** = Homescreen-Favorit, Schrift DM Serif Display italic,
+Radius ~22 % der Kantenlänge). Vorlage fürs spätere 1024er-App-Icon (iOS).
 
 Der Nutzer hat **wenig App-Erfahrung** → Code aufgeräumt und **auf Deutsch
 kommentiert** halten, Entscheidungen kurz erklären.
@@ -449,7 +454,15 @@ npm test               # Unit-Tests der reinen Logik (vitest, src/**)
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-25 · Pilotstadt München — andere Städte „kommt bald"
+### (dieser Commit) · 2026-06-25 · Design: App-Icon-Entwurf ins Repo
+- **`design/Verso_App_Icon.dc.html`** ergänzt: App-Icon „v." (italic, DM Serif
+  Display) in drei Farbvarianten (Gelb/Schwarz, Schwarz/Gelb, Weiß/Schwarz) +
+  Homescreen-Vorschau. Gelb/Schwarz (`#FFE500`/`#1A1A1A`) ist der Favorit.
+  Direkt relevant für die iOS-Release-Vorbereitung (1024er-Icon fehlt noch).
+- **`design/Verso_Mobile.dc.html`** (frühere v1-Mockup-Variante) als Referenz
+  mit abgelegt. v2 bleibt das maßgebliche Design.
+
+### 6db2eef · 2026-06-25 · Pilotstadt München — andere Städte „kommt bald"
 - **Pilot-Phase**: `LIVE_CITIES = ["München"]` + `isComingSoon()` in `cities.ts`.
   `CITIES` bleibt vollständig (alle erscheinen in der Hotbar), aber nur München
   ist auswählbar/befüllt. Default-Stadt = München (war Wien).
