@@ -270,6 +270,54 @@ dokumentieren** (Trigger · Ort · Datei) — und unten bei „Ideen" abhaken/er
 
 ---
 
+## Monetarisierung (Produkt-Richtung)
+
+> Übergeordnete Geld-Strategie, getrennt nach **B2C** (Nutzer) und **B2B**
+> (Partner). **Leitplanke:** Geld von Orten darf die **Kuration nie
+> verfälschen** — das Vertrauen („Geheimtipp eines Freundes, kein
+> Branchenverzeichnis") ist das eigentliche Produkt. Werbung/gesponserte Pins
+> im redaktionellen Feed sind bewusst **tabu**.
+
+### B2C — Einnahmen vom Nutzer
+- **Verso Insider als Kern** (Abo, ~5–8 €/Monat oder ~49 €/Jahr): bündelt die
+  Premium-Features oben. **Türöffner > reine Feature-Paywall.**
+- **Jahres-Abo mit echtem Gegenwert** (z. B. 1 Verso-Abend inklusive) → wirkt
+  wie Club, nicht wie Schranke.
+- **Geschenk-Mitgliedschaft** („Verschenk den Geheimtipp") — passt zum
+  Easter-Egg-/Insider-Ton, gute virale Mechanik.
+- **Stadt-Packs / Reise-Modus** als Einmalkauf für Nicht-Abonnenten (z. B.
+  „Wien-Guide offline, 4,99 €") — günstiger Einstieg unter dem Abo.
+- **Affiliate/Provision auf Buchungen** (OpenTable, Tickets) — nur leise und nur
+  bei ohnehin empfohlenen Orten, sonst kippt der Ton.
+- **Tabu:** Werbung im Feed, Pay-to-be-listed im normalen Feed.
+
+### B2B — Einnahmen von Partnern
+**Orte / Gastro**
+- **Verifiziertes Orts-Profil** (Bezahl-Tool **ohne** Ranking-Einfluss):
+  Öffnungszeiten/Events pflegen, direkt buchbar — Werkzeug, keine Werbung.
+- **Event-Listing & Ticketing-Provision**: Orte stellen kleine Events ein, Verso
+  nimmt Gebühr pro Ticket (passt zu „30 Klappstühle, Insider zuerst").
+- **Reservierungs-Provision** an teilnehmende Häuser.
+- **„Verso-Abende" als Veranstaltungsgeschäft**: Verso kuratiert, der Ort zahlt
+  für Reichweite + volles Haus am schwachen Abend (Auslastungssteuerung).
+
+**Marken / Partner**
+- **Co-kuratierte Stadt-Guides / Kollaborationen** mit passenden Premium-Marken —
+  als **eigener, klar gekennzeichneter** Inhalt, nie versteckt im Feed.
+- **City-/Tourismus-Marketing**: Verbände zahlen für einen kuratierten
+  „Hidden Gems"-Layer ihrer Stadt.
+
+**Daten / Lizenz (später)**
+- **Anonyme, aggregierte Trend-Insights** (datenschutzkonform) für
+  Gastro/Tourismus.
+- **White-Label / API**: Hotels & Concierge lizenzieren den Verso-Guide.
+
+**Kurzfassung:** B2C primär über das **Insider-Abo mit Türöffner-Gegenwert**,
+B2B über **Ticketing-Provision + kuratierte Verso-Abende** — beides so gebaut,
+dass Kuration nie käuflich wirkt.
+
+---
+
 ## Aktueller Stand
 
 **Phase 1 (MVP) — fertig**, läuft komplett in Expo Go. Alle Screens 01–08
@@ -303,7 +351,14 @@ npx tsc --noEmit       # Typecheck
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-25 · Viertel an Nutzer-Liste angepasst + Spots für alle Städte
+### (dieser Commit) · 2026-06-25 · Doku: Monetarisierung (B2C/B2B)
+- Neue Sektion **„Monetarisierung (Produkt-Richtung)"**: B2C (Insider-Abo,
+  Geschenk-Mitgliedschaft, Stadt-Packs, Affiliate) klar getrennt von B2B
+  (verifizierte Orts-Profile, Ticketing-Provision, Verso-Abende, City-Marketing,
+  White-Label/Daten). Leitplanke festgehalten: Kuration nie käuflich, keine
+  Feed-Werbung.
+
+### c8ca5eb · 2026-06-25 · Viertel an Nutzer-Liste angepasst + Spots für alle Städte
 - **`NEIGHBORHOODS` neu** nach der vom Nutzer vorgegebenen Liste (echte, bekannte
   Viertel). Anzahl variiert jetzt pro Stadt (München 8 · Wien 7 · Zürich 5 ·
   Berlin 7 · Hamburg 7 · Frankfurt 6 · Düsseldorf 6) — **NICHT mehr fix 8**.
