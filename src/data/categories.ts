@@ -34,3 +34,22 @@ export const CATEGORY_LABEL: Record<Category, string> = {
 export function priceLabel(level: 1 | 2 | 3): string {
   return "€".repeat(level);
 }
+
+// Feste Sortier-Reihenfolge der Kategorien (für alle Auflistungen, damit die
+// Karten nicht chaotisch gemischt, sondern nach Art gruppiert erscheinen).
+export const CATEGORY_ORDER: Record<Category, number> = {
+  restaurant: 0,
+  snack: 1,
+  cafe: 2,
+  bar: 3,
+  club: 4,
+  event: 5,
+};
+
+// Sortiert Spots nach Kategorie (stabil -> Reihenfolge innerhalb gleicher
+// Kategorie bleibt erhalten).
+export function sortByCategory<T extends { category: Category }>(items: T[]): T[] {
+  return [...items].sort(
+    (a, b) => CATEGORY_ORDER[a.category] - CATEGORY_ORDER[b.category],
+  );
+}

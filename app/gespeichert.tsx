@@ -7,7 +7,11 @@ import { GoogleExportSheet } from "../src/components/GoogleExportSheet";
 import { ImagePlaceholder } from "../src/components/ImagePlaceholder";
 import { GoogleLogo } from "../src/components/Logos";
 import { Pill } from "../src/components/Pill";
-import { CATEGORY_FILTERS, CATEGORY_LABEL } from "../src/data/categories";
+import {
+  CATEGORY_FILTERS,
+  CATEGORY_LABEL,
+  sortByCategory,
+} from "../src/data/categories";
 import { SPOTS } from "../src/data/spots";
 import type { Category, Spot } from "../src/data/types";
 import { PIN_COLORS } from "../src/lib/pinColors";
@@ -100,9 +104,9 @@ export default function Gespeichert() {
     .map((id) => SPOTS.find((s) => s.id === id))
     .filter((s): s is (typeof SPOTS)[number] => Boolean(s));
 
-  // Hotbar-Filter nach Kategorie.
-  const shown = saved.filter((s) =>
-    activeCategory ? s.category === activeCategory : true,
+  // Hotbar-Filter nach Kategorie, dann nach Art gruppieren (nicht chaotisch).
+  const shown = sortByCategory(
+    saved.filter((s) => (activeCategory ? s.category === activeCategory : true)),
   );
 
   return (

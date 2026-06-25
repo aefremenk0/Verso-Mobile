@@ -264,7 +264,12 @@ npx tsc --noEmit       # Typecheck
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-25 · CityDropdown: lange Städtenamen überlappen Toggle nicht
+### (dieser Commit) · 2026-06-25 · Listen nach Kategorie sortiert (nicht mehr chaotisch)
+- Neuer Helper `sortByCategory` + `CATEGORY_ORDER` in `categories.ts` (Reihenfolge
+  Restaurant→Snack→Café→Bar→Club→Event, stabil). Angewandt in **Feed**, **Bezirk**
+  und **Gespeichert** → Karten erscheinen nach Art gruppiert.
+
+### 4d218d3 · 2026-06-25 · CityDropdown: lange Städtenamen überlappen Toggle nicht
 - Stadt-Name wird bei vorhandenem `center` auf die linke Zone (bis vor den Toggle)
   begrenzt (`maxWidth` aus Fensterbreite) + `adjustsFontSizeToFit`/`numberOfLines=1`
   → lange Namen (z. B. Düsseldorf) verkleinern sich statt unter den Liste/Karte-

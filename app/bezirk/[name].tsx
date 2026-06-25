@@ -5,6 +5,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Pill } from "../../src/components/Pill";
 import { SceneToggle } from "../../src/components/SceneToggle";
 import { SpotCard } from "../../src/components/SpotCard";
+import { sortByCategory } from "../../src/data/categories";
 import { NEIGHBORHOODS } from "../../src/data/cities";
 import { SPOTS } from "../../src/data/spots";
 import type { Category } from "../../src/data/types";
@@ -33,11 +34,11 @@ export default function Bezirk() {
 
   // Spot-Bezirk steht z. B. als "Wieden, 4. Bezirk" -> Anfang vergleichen.
   // Dann nach Szene (Kategoriengruppe) und gewählter Kategorie filtern.
-  const spots = SPOTS.filter(
-    (s) => s.city === city && s.neighborhood.startsWith(name ?? ""),
-  )
-    .filter((s) => SCENE_CATEGORIES[scene].includes(s.category))
-    .filter((s) => (activeCategory ? s.category === activeCategory : true));
+  const spots = sortByCategory(
+    SPOTS.filter((s) => s.city === city && s.neighborhood.startsWith(name ?? ""))
+      .filter((s) => SCENE_CATEGORIES[scene].includes(s.category))
+      .filter((s) => (activeCategory ? s.category === activeCategory : true)),
+  );
 
   return (
     <SafeAreaView className="flex-1 bg-screen" edges={["top", "bottom"]}>

@@ -6,6 +6,7 @@ import { ListMapToggle } from "../../src/components/ListMapToggle";
 import { Pill } from "../../src/components/Pill";
 import { SceneToggle } from "../../src/components/SceneToggle";
 import { SpotCard } from "../../src/components/SpotCard";
+import { sortByCategory } from "../../src/data/categories";
 import { SPOTS } from "../../src/data/spots";
 import type { Category } from "../../src/data/types";
 import { PIN_COLORS } from "../../src/lib/pinColors";
@@ -27,11 +28,15 @@ export default function Feed() {
   useEffect(() => setActiveCategory(null), [scene]);
 
   // Filter: Stadt -> Szene (Kategoriengruppe) -> optional gewählte Kategorie.
+  // Danach nach Art gruppieren (sortByCategory), damit die Liste nicht
+  // chaotisch gemischt ist.
   const visibleSpots = useMemo(
     () =>
-      SPOTS.filter((s) => s.city === city)
-        .filter((s) => SCENE_CATEGORIES[scene].includes(s.category))
-        .filter((s) => (activeCategory ? s.category === activeCategory : true)),
+      sortByCategory(
+        SPOTS.filter((s) => s.city === city)
+          .filter((s) => SCENE_CATEGORIES[scene].includes(s.category))
+          .filter((s) => (activeCategory ? s.category === activeCategory : true)),
+      ),
     [city, scene, activeCategory],
   );
 
