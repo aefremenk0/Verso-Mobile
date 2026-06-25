@@ -4,6 +4,8 @@ import { Pressable, Text, View } from "react-native";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
+  withDelay,
+  withSequence,
   withSpring,
   withTiming,
 } from "react-native-reanimated";
@@ -190,6 +192,10 @@ interface CityMapProps {
   onSelect: (spot: Spot) => void;
 }
 
+// Einmal pro Session: beim ersten Öffnen der Karte die Doppeltipp-Geste zeigen
+// (alle Pins ploppen kurz auf + Hinweis-Chip). In-memory, kein Speicher nötig.
+let demoShown = false;
+
 export function CityMap({ spots, selectedId, onSelect }: CityMapProps) {
   // Easter Egg: Doppeltipp auf leere Kartenfläche -> TOGGLE: alle Pins ploppen
   // auf; nochmaliger Doppeltipp blendet sie wieder aus.
@@ -204,6 +210,34 @@ export function CityMap({ spots, selectedId, onSelect }: CityMapProps) {
       lastTap.current = now;
     }
   };
+
+  // Erstbesuch-Demo (A) + Hinweis-Chip (B) — nur auf der Fallback-Karte (dort
+  // greift der Doppeltipp), einmal pro Session.
+  const [hint, setHint] = useState(false);
+  const hintOpacity = useSharedValue(0);
+  const hintStyle = useAnimatedStyle(() => ({ opacity: hintOpacity.value }));
+
+  useEffect(() => {
+    if (Mapbox || demoShown) return;
+    if (spots.length === 0) return; // nichts zu zeigen
+    demoShown = true;
+
+    setPopAll(true); // A: alle Labels kurz aufploppen lassen
+    setHint(true); // B: Hinweis-Chip einblenden
+    hintOpacity.value = withSequence(
+      withTiming(1, { duration: 300 }),
+      withDelay(3000, withTiming(0, { duration: 500 })),
+    );
+
+    const t1 = setTimeout(() => setPopAll(false), 1600); // Demo wieder ausblenden
+    const t2 = setTimeout(() => setHint(false), 3900); // Chip entfernen
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+    };
+    // nur beim ersten Mount auswerten
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // ── Echte Mapbox-Karte (Dev Build mit Token) ──
   if (Mapbox) {
@@ -291,6 +325,20 @@ export function CityMap({ spots, selectedId, onSelect }: CityMapProps) {
           />
         </View>
       ))}
+
+      {/* Hinweis-Chip oben rechts (B): erklärt die Doppeltipp-Geste, fadet aus. */}
+      {hint ? (
+        <Animated.View
+          pointerEvents="none"
+          style={[{ position: "absolute", top: 12, right: 12 }, hintStyle]}
+        >
+          <View className="rounded-pill bg-night px-3 py-2" style={shadows.card}>
+            <Text className="font-hk-semibold text-[11px] text-screen">
+              Doppeltippen zeigt alle Orte
+            </Text>
+          </View>
+        </Animated.View>
+      ) : null}
     </View>
   );
 }

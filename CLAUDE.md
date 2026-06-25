@@ -215,6 +215,9 @@ dokumentieren** (Trigger · Ort · Datei) — und unten bei „Ideen" abhaken/er
   BLEIBEN; ein weiterer Doppeltipp blendet sie wieder aus (`popAll`-Boolean →
   `flash` je Pin). → `CityMap.tsx` (Expo-Go-Fallback; auf der echten Mapbox-Karte
   bleibt der native Doppeltipp-Zoom).
+  - **Signalisierung (einmal pro Session):** beim ersten Öffnen kurze
+    Auto-Demo (alle Labels ploppen ~1,6 s auf) + Hinweis-Chip oben rechts
+    „Doppeltippen zeigt alle Orte" (fadet aus). Flag `demoShown` (in-memory).
 
 ### Ideen / Roadmap (offen)
 - **Logo-Tap-Combo (Bottom-Nav):** „?"-Squiggle mehrfach schnell tippen →
@@ -294,7 +297,13 @@ npx tsc --noEmit       # Typecheck
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-25 · UI-Feinschliff: Farben, Pfeile, Footer
+### (dieser Commit) · 2026-06-25 · Karte: Doppeltipp-Geste signalisieren (Demo + Chip)
+- Beim **ersten** Kartenbesuch (einmal pro Session, `demoShown` in-memory):
+  **(A)** alle Pin-Labels ploppen ~1,6 s automatisch auf und wieder zu;
+  **(B)** Hinweis-Chip **oben rechts in der Karte** „Doppeltippen zeigt alle Orte"
+  (fadet nach ein paar Sekunden aus). Beides nur auf der Fallback-Karte. → `CityMap.tsx`.
+
+### 3946e82 · 2026-06-25 · UI-Feinschliff: Farben, Pfeile, Footer
 - **Breitere Pfeile** (neue SVG-Komponente `Arrow`, Breite:Höhe ~2:1) in den
   Viertel-Zeilen und Profil-Listenzeilen statt des schmalen „→"-Glyphs.
 - **Kategorie-Farben** (`pinColors.ts`) angepasst: restaurant = Bordeaux
