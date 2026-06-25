@@ -302,7 +302,17 @@ npx tsc --noEmit       # Typecheck
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-25 · Detail-Merken (Anim + Herzen) · Herz-Richtung
+### (dieser Commit) · 2026-06-25 · Filter-Sheet: Art-Zeilen, Slider-Tap, Swipe-Dismiss
+- **ART**: zwei feste Zeilen nach Szene — Z1 Essen (Restaurant/Snack/Café),
+  Z2 Feiern (Bar/Club/Event); max. 4 pro Zeile.
+- **Budget-`RangeSlider`**: Tippen auf die Schiene zieht den nächstgelegenen
+  Regler **animiert** dorthin (Reanimated; Drag bleibt instant). Regler-/Bereich
+  via Shared Values + translateX.
+- **Sheet**: öffnet animiert (Slide+Fade); **Swipe nach oben** auf der Kopfzeile
+  schließt (Gesture.Pan → withTiming raus + Backdrop-Fade). „Orte zeigen"/Backdrop
+  nutzen dieselbe Austritts-Animation.
+
+### b66c5e1 · 2026-06-25 · Detail-Merken (Anim + Herzen) · Herz-Richtung
 - **Spot-Detail „Merken"**: nutzt jetzt `AnimatedChip` (Crossfade/Pop/Press,
   ungemerkt = weiß/Outline, gemerkt = gelb) + **Herz-Burst** beim Hinzufügen.
 - **`QuestionBubbles.burst(x,y,direction)`**: neue Richtung „up"/„down". Herzen

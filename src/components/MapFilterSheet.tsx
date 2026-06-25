@@ -1,4 +1,19 @@
-import { Pressable, ScrollView, Text, View } from "react-native";
+import { useEffect } from "react";
+import {
+  Pressable,
+  ScrollView,
+  Text,
+  useWindowDimensions,
+  View,
+} from "react-native";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import Animated, {
+  runOnJS,
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+  withTiming,
+} from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
   AMBIENTE_OPTIONS,
@@ -8,12 +23,13 @@ import {
   type MapFilter,
 } from "../lib/mapFilter";
 import { PIN_COLORS } from "../lib/pinColors";
+import { SCENE_CATEGORIES } from "../lib/scene";
 import { shadows } from "../theme";
 import { AnimatedChip } from "./AnimatedChip";
 import { RangeSlider } from "./RangeSlider";
 
-// Filter-Sheet für die Karte (nach Mockup 04b). Kontrolliert: der Filter kommt
-// von außen (karte.tsx), Änderungen wirken sofort auf Pins + Anzahl.
+// Filter-Sheet für die Karte (oben angedockt). Öffnet animiert (Slide + Fade);
+// per Swipe nach OBEN (auf der Kopfzeile) wischbar zum Schließen.
 
 export function MapFilterSheet({
   filter,
@@ -26,7 +42,44 @@ export function MapFilterSheet({
   count: number;
   onClose: () => void;
 }) {
-  // Hilfsfunktionen zum Umschalten der Mehrfachauswahl.
+  const { height: screenH } = useWindowDimensions();
+
+  // Eintritt: leicht von oben + einfaden. Austritt: nach oben raus + ausfaden.
+  const ty = useSharedValue(-40);
+  const op = useSharedValue(0);
+  useEffect(() => {
+    ty.value = withSpring(0, { damping: 18, stiffness: 170, mass: 0.7 });
+    op.value = withTiming(1, { duration: 200 });
+  }, [ty, op]);
+
+  const close = () => {
+    ty.value = withTiming(-screenH, { duration: 260 });
+    op.value = withTiming(0, { duration: 260 }, (f) => {
+      if (f) runOnJS(onClose)();
+    });
+  };
+
+  // Swipe nach oben auf der Kopfzeile -> schließen.
+  const pan = Gesture.Pan()
+    .onUpdate((e) => {
+      if (e.translationY < 0) ty.value = e.translationY;
+    })
+    .onEnd((e) => {
+      if (e.translationY < -80 || e.velocityY < -800) {
+        ty.value = withTiming(-screenH, { duration: 240 });
+        op.value = withTiming(0, { duration: 240 }, (f) => {
+          if (f) runOnJS(onClose)();
+        });
+      } else {
+        ty.value = withSpring(0, { damping: 18, stiffness: 200 });
+      }
+    });
+
+  const sheetStyle = useAnimatedStyle(() => ({
+    transform: [{ translateY: ty.value }],
+  }));
+  const backdropStyle = useAnimatedStyle(() => ({ opacity: op.value }));
+
   const toggleArt = (cat: MapFilter["art"][number]) =>
     setFilter({
       ...filter,
@@ -46,174 +99,192 @@ export function MapFilterSheet({
     filter.maxPrice >= 100 ? "100+" : filter.maxPrice
   } €`;
 
+  // Art-Zeilen nach Szene: Zeile 1 = Essen, Zeile 2 = Feiern (je ≤ 4).
+  const ART_ROWS = [SCENE_CATEGORIES.essen, SCENE_CATEGORIES.feiern];
+
   return (
     <View className="absolute inset-0" style={{ zIndex: 100 }}>
-      <Pressable
-        className="absolute inset-0"
-        style={{ backgroundColor: "rgba(20,17,14,0.42)" }}
-        onPress={onClose}
-      />
-
-      <SafeAreaView
-        edges={["top"]}
-        className="absolute left-0 right-0 top-0 overflow-hidden rounded-b-[32px] bg-screen"
-        style={shadows.nav}
+      {/* Abgedunkelter Hintergrund (fadet mit) */}
+      <Animated.View
+        style={[
+          { position: "absolute", left: 0, right: 0, top: 0, bottom: 0, backgroundColor: "rgba(20,17,14,0.42)" },
+          backdropStyle,
+        ]}
       >
-        <View className="flex-row items-center justify-between px-7 pb-1 pt-3">
-          <Text className="font-hk-extrabold text-title-md text-ink">Filter</Text>
-          <Pressable onPress={() => setFilter(DEFAULT_FILTER)}>
-            <Text className="font-hk-semibold text-[11px] tracking-[1px] text-ink-3">
-              ZURÜCKSETZEN
-            </Text>
-          </Pressable>
-        </View>
+        <Pressable style={{ flex: 1 }} onPress={close} />
+      </Animated.View>
 
-        <ScrollView
-          contentContainerStyle={{ paddingHorizontal: 26, paddingBottom: 8 }}
-          showsVerticalScrollIndicator={false}
+      {/* Sheet */}
+      <Animated.View style={[{ position: "absolute", left: 0, right: 0, top: 0 }, sheetStyle]}>
+        <SafeAreaView
+          edges={["top"]}
+          className="overflow-hidden rounded-b-[32px] bg-screen"
+          style={shadows.nav}
         >
-          {/* ART */}
-          <Text className="mb-2.5 mt-3 font-hk-semibold text-[10px] tracking-[1.5px] text-ink-3">
-            ART
-          </Text>
-          <View className="flex-row flex-wrap gap-2">
-            {ART_OPTIONS.map((a) => {
-              const on = filter.art.includes(a.cat);
-              const col = PIN_COLORS[a.cat];
-              return (
-                <AnimatedChip
-                  key={a.cat}
-                  active={on}
-                  onPress={() => toggleArt(a.cat)}
-                  activeBg={col.oval}
-                  inactiveBg="#FFFFFF"
-                  activeBorder={col.oval}
-                  inactiveBorder="rgba(0,0,0,0.2)"
-                  style={{
-                    borderRadius: 999,
-                    borderWidth: 1,
-                    paddingHorizontal: 14,
-                    paddingVertical: 8,
-                  }}
-                >
-                  <Text
-                    className="font-hk-semibold text-[12px]"
-                    style={{ color: on ? col.inner : "#6E6A63" }}
-                  >
-                    {a.label}
-                  </Text>
-                </AnimatedChip>
-              );
-            })}
-          </View>
+          {/* Kopfzeile = Wisch-Griff (nach oben wischen schließt) */}
+          <GestureDetector gesture={pan}>
+            <View className="flex-row items-center justify-between px-7 pb-1 pt-3">
+              <Text className="font-hk-extrabold text-title-md text-ink">Filter</Text>
+              <Pressable onPress={() => setFilter(DEFAULT_FILTER)}>
+                <Text className="font-hk-semibold text-[11px] tracking-[1px] text-ink-3">
+                  ZURÜCKSETZEN
+                </Text>
+              </Pressable>
+            </View>
+          </GestureDetector>
 
-          {/* BUDGET */}
-          <View className="mb-1.5 mt-5 flex-row items-baseline justify-between">
-            <Text className="font-hk-semibold text-[10px] tracking-[1.5px] text-ink-3">
-              BUDGET
-            </Text>
-            <Text className="font-hk-extrabold text-[13px] text-ink">{budgetLabel}</Text>
-          </View>
-          <RangeSlider
-            lo={filter.minPrice}
-            hi={filter.maxPrice}
-            onChange={(lo, hi) =>
-              setFilter({ ...filter, minPrice: lo, maxPrice: hi })
-            }
-          />
-          <View className="mt-2 flex-row justify-between">
-            <Text className="font-hk-semibold text-[11px] text-ink-3">0 €</Text>
-            <Text className="font-hk-semibold text-[11px] text-ink-3">100+ €</Text>
-          </View>
-
-          {/* BEWERTUNG */}
-          <Text className="mb-2.5 mt-5 font-hk-semibold text-[10px] tracking-[1.5px] text-ink-3">
-            BEWERTUNG
-          </Text>
-          <View className="flex-row gap-2">
-            {RATING_OPTIONS.map((b) => {
-              const on = b.value === filter.minRating;
-              return (
-                <AnimatedChip
-                  key={b.label}
-                  active={on}
-                  onPress={() => setFilter({ ...filter, minRating: b.value })}
-                  activeBg="#FFE500"
-                  inactiveBg="#FFFFFF"
-                  activeBorder="#FFE500"
-                  inactiveBorder="rgba(0,0,0,0.2)"
-                  style={{
-                    borderRadius: 999,
-                    borderWidth: 1,
-                    paddingHorizontal: 16,
-                    paddingVertical: 8,
-                  }}
-                >
-                  <Text
-                    className="font-hk-semibold text-[13px]"
-                    style={{ color: on ? "#1A1A1A" : "#6E6A63" }}
-                  >
-                    {b.label}
-                  </Text>
-                </AnimatedChip>
-              );
-            })}
-          </View>
-
-          {/* AMBIENTE */}
-          <Text className="mb-2.5 mt-5 font-hk-semibold text-[10px] tracking-[1.5px] text-ink-3">
-            AMBIENTE
-          </Text>
-          <View className="gap-2">
-            {AMBIENTE_OPTIONS.map((a) => {
-              const on = filter.ambiente.includes(a.name);
-              return (
-                <AnimatedChip
-                  key={a.name}
-                  active={on}
-                  onPress={() => toggleAmb(a.name)}
-                  activeBg="#FFE500"
-                  inactiveBg="#FFFFFF"
-                  activeBorder="#FFE500"
-                  inactiveBorder="rgba(0,0,0,0.1)"
-                  style={{
-                    borderRadius: 14,
-                    borderWidth: 1,
-                    paddingHorizontal: 16,
-                    paddingVertical: 10,
-                  }}
-                >
-                  <Text className="font-hk-extrabold text-[15px] text-ink">
-                    {a.label}
-                    <Text
-                      className={`font-hk-medium text-[12.5px] ${
-                        on ? "text-accent-ink/70" : "text-ink-2"
-                      }`}
-                    >
-                      {"  — "}
-                      {a.desc}
-                    </Text>
-                  </Text>
-                </AnimatedChip>
-              );
-            })}
-          </View>
-        </ScrollView>
-
-        {/* Orte zeigen */}
-        <View className="px-6 pb-3 pt-3">
-          <Pressable
-            onPress={onClose}
-            className="flex-row items-center justify-center gap-2 rounded-[18px] bg-night py-4"
+          <ScrollView
+            contentContainerStyle={{ paddingHorizontal: 26, paddingBottom: 8 }}
+            showsVerticalScrollIndicator={false}
           >
-            <Text className="font-hk-extrabold text-[17px] text-screen">
-              {count} {count === 1 ? "Ort" : "Orte"} zeigen
+            {/* ART — zwei Zeilen: Essen / Feiern (max. 4 pro Zeile) */}
+            <Text className="mb-2.5 mt-3 font-hk-semibold text-[10px] tracking-[1.5px] text-ink-3">
+              ART
             </Text>
-            <Text className="text-[16px] text-screen">→</Text>
-          </Pressable>
-        </View>
-        <View className="mb-2.5 h-[5px] w-[46px] self-center rounded-pill bg-black/15" />
-      </SafeAreaView>
+            <View className="gap-2">
+              {ART_ROWS.map((row, ri) => (
+                <View key={ri} className="flex-row gap-2">
+                  {row.map((cat) => {
+                    const a = ART_OPTIONS.find((o) => o.cat === cat)!;
+                    const on = filter.art.includes(cat);
+                    const col = PIN_COLORS[cat];
+                    return (
+                      <AnimatedChip
+                        key={cat}
+                        active={on}
+                        onPress={() => toggleArt(cat)}
+                        activeBg={col.oval}
+                        inactiveBg="#FFFFFF"
+                        activeBorder={col.oval}
+                        inactiveBorder="rgba(0,0,0,0.2)"
+                        style={{
+                          borderRadius: 999,
+                          borderWidth: 1,
+                          paddingHorizontal: 14,
+                          paddingVertical: 8,
+                        }}
+                      >
+                        <Text
+                          className="font-hk-semibold text-[12px]"
+                          style={{ color: on ? col.inner : "#6E6A63" }}
+                        >
+                          {a.label}
+                        </Text>
+                      </AnimatedChip>
+                    );
+                  })}
+                </View>
+              ))}
+            </View>
+
+            {/* BUDGET */}
+            <View className="mb-1.5 mt-5 flex-row items-baseline justify-between">
+              <Text className="font-hk-semibold text-[10px] tracking-[1.5px] text-ink-3">
+                BUDGET
+              </Text>
+              <Text className="font-hk-extrabold text-[13px] text-ink">{budgetLabel}</Text>
+            </View>
+            <RangeSlider
+              lo={filter.minPrice}
+              hi={filter.maxPrice}
+              onChange={(lo, hi) =>
+                setFilter({ ...filter, minPrice: lo, maxPrice: hi })
+              }
+            />
+            <View className="mt-2 flex-row justify-between">
+              <Text className="font-hk-semibold text-[11px] text-ink-3">0 €</Text>
+              <Text className="font-hk-semibold text-[11px] text-ink-3">100+ €</Text>
+            </View>
+
+            {/* BEWERTUNG */}
+            <Text className="mb-2.5 mt-5 font-hk-semibold text-[10px] tracking-[1.5px] text-ink-3">
+              BEWERTUNG
+            </Text>
+            <View className="flex-row gap-2">
+              {RATING_OPTIONS.map((b) => {
+                const on = b.value === filter.minRating;
+                return (
+                  <AnimatedChip
+                    key={b.label}
+                    active={on}
+                    onPress={() => setFilter({ ...filter, minRating: b.value })}
+                    activeBg="#FFE500"
+                    inactiveBg="#FFFFFF"
+                    activeBorder="#FFE500"
+                    inactiveBorder="rgba(0,0,0,0.2)"
+                    style={{
+                      borderRadius: 999,
+                      borderWidth: 1,
+                      paddingHorizontal: 16,
+                      paddingVertical: 8,
+                    }}
+                  >
+                    <Text
+                      className="font-hk-semibold text-[13px]"
+                      style={{ color: on ? "#1A1A1A" : "#6E6A63" }}
+                    >
+                      {b.label}
+                    </Text>
+                  </AnimatedChip>
+                );
+              })}
+            </View>
+
+            {/* AMBIENTE */}
+            <Text className="mb-2.5 mt-5 font-hk-semibold text-[10px] tracking-[1.5px] text-ink-3">
+              AMBIENTE
+            </Text>
+            <View className="gap-2">
+              {AMBIENTE_OPTIONS.map((a) => {
+                const on = filter.ambiente.includes(a.name);
+                return (
+                  <AnimatedChip
+                    key={a.name}
+                    active={on}
+                    onPress={() => toggleAmb(a.name)}
+                    activeBg="#FFE500"
+                    inactiveBg="#FFFFFF"
+                    activeBorder="#FFE500"
+                    inactiveBorder="rgba(0,0,0,0.1)"
+                    style={{
+                      borderRadius: 14,
+                      borderWidth: 1,
+                      paddingHorizontal: 16,
+                      paddingVertical: 10,
+                    }}
+                  >
+                    <Text className="font-hk-extrabold text-[15px] text-ink">
+                      {a.label}
+                      <Text
+                        className={`font-hk-medium text-[12.5px] ${
+                          on ? "text-accent-ink/70" : "text-ink-2"
+                        }`}
+                      >
+                        {"  — "}
+                        {a.desc}
+                      </Text>
+                    </Text>
+                  </AnimatedChip>
+                );
+              })}
+            </View>
+          </ScrollView>
+
+          {/* Orte zeigen */}
+          <View className="px-6 pb-3 pt-3">
+            <Pressable
+              onPress={close}
+              className="flex-row items-center justify-center gap-2 rounded-[18px] bg-night py-4"
+            >
+              <Text className="font-hk-extrabold text-[17px] text-screen">
+                {count} {count === 1 ? "Ort" : "Orte"} zeigen
+              </Text>
+              <Text className="text-[16px] text-screen">→</Text>
+            </Pressable>
+          </View>
+          <View className="mb-2.5 h-[5px] w-[46px] self-center rounded-pill bg-black/15" />
+        </SafeAreaView>
+      </Animated.View>
     </View>
   );
 }
