@@ -4,30 +4,48 @@ import { useCity } from "../store/city";
 import { Pill } from "./Pill";
 
 // Einheitlicher Stadt-Kopf mit Dropdown — identisch auf Feed, Viertel und Karte.
-// Zeigt "Wien ▾" und klappt eine horizontale Reihe wählbarer Städte aus.
-// Über `right` kann rechts ein Element gesetzt werden (z. B. Avatar, Toggle).
+// Zeigt "Wien ▾" links und klappt eine horizontale Reihe wählbarer Städte aus.
+//  - `center` sitzt ABSOLUT zentriert in der Zeile (z. B. Liste/Karte-Toggle).
+//  - `right`  sitzt rechts (z. B. Szenen-Toggle).
+// So liegen Stadt, zentrierter Toggle und rechtes Element auf EINER Höhe.
 
-export function CityDropdown({ right }: { right?: ReactNode }) {
+export function CityDropdown({
+  center,
+  right,
+}: {
+  center?: ReactNode;
+  right?: ReactNode;
+}) {
   const { city, setCity, cities } = useCity();
   const [open, setOpen] = useState(false);
 
   return (
     <View>
       {/* Feste Zeilenhöhe -> "Wien" sitzt auf jeder Seite gleich, egal ob
-          rechts ein Element (Avatar/Toggle) steht oder nicht. */}
+          rechts/zentriert ein Element steht oder nicht. */}
       <View className="px-6 pt-2">
-        <View
-          className="flex-row items-center justify-between"
-          style={{ height: 42 }}
-        >
-          <Pressable
-            onPress={() => setOpen((v) => !v)}
-            className="flex-row items-center"
-          >
-            <Text className="font-hk-extrabold text-title-md text-ink">{city}</Text>
-            <Text className="ml-1 font-hk-bold text-[18px] text-ink-3">▾</Text>
-          </Pressable>
-          {right ?? null}
+        <View className="justify-center" style={{ height: 42 }}>
+          {/* Zentriertes Element (z. B. Liste/Karte) — exakt in der Mitte. */}
+          {center ? (
+            <View
+              pointerEvents="box-none"
+              style={{ position: "absolute", left: 0, right: 0, alignItems: "center" }}
+            >
+              {center}
+            </View>
+          ) : null}
+
+          {/* Stadt links + rechtes Element */}
+          <View className="flex-row items-center justify-between">
+            <Pressable
+              onPress={() => setOpen((v) => !v)}
+              className="flex-row items-center"
+            >
+              <Text className="font-hk-extrabold text-title-md text-ink">{city}</Text>
+              <Text className="ml-1 font-hk-bold text-[18px] text-ink-3">▾</Text>
+            </Pressable>
+            {right ?? null}
+          </View>
         </View>
       </View>
 

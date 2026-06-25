@@ -117,13 +117,13 @@ src/
   components/             Brand, ImagePlaceholder, StripeTexture, HookHighlight,
                           Pill, Button, SpotCard, BottomNav, InitialsAvatar
                           (Initialen-Kreis), ListMapToggle (Liste/Karte oben),
-                          CityDropdown (einheitlicher Stadt-Kopf), Logos,
+                          CityDropdown (Stadt-Kopf; center+right-Props für
+                          zentrierten Toggle & rechtes Element), Logos,
                           GeheimtippButton (pulsierende Squiggle-"?"),
                           MysticBadge ("???"-Badge, pulsierende Kontur),
                           QuestionBubbles (aufsteigende Bubbles, konfig. Glyph),
                           SpotActionMenu (Long-Press-Kreis-Menü: Merken/Teilen),
                           SceneToggle (Feiern/Essen oben rechts),
-                          TopToggles (Liste/Karte zentriert + SceneToggle),
                           CityMap (Mapbox + Expo-Go-Fallback),
                           MapFilterSheet (Karte-Filter-Panel),
                           RangeSlider (Budget, PanResponder)
@@ -263,7 +263,13 @@ npx tsc --noEmit       # Typecheck
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-25 · Karte: Name antippbar -> Ort wieder verbergen
+### (dieser Commit) · 2026-06-25 · Header: Wien auf Toggle-Höhe (eine Zeile)
+- Feed & Karte: **eine kombinierte Kopfzeile** statt zwei. `CityDropdown` nimmt
+  jetzt `center` (Liste/Karte-Toggle, exakt zentriert) + `right` (Szene) — „Wien"
+  links auf **derselben Höhe** wie die Toggles. Separate Toggle-Zeile (`TopToggles`)
+  entfernt → keine Lücke mehr, Inhalt darunter rückt nach.
+
+### 9fc12b8 · 2026-06-25 · Karte: Name antippbar -> Ort wieder verbergen
 - `Pin` bekommt `onPress`; **Punkt UND Name** lösen jetzt die Auswahl aus (Toggle
   via `onSelect` in `karte.tsx`). Label ist nur antippbar, wenn sichtbar
   (`pointerEvents` „box-none"/„none"). Umschließende `Pressable` in `CityMap`

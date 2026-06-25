@@ -5,8 +5,9 @@ import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context"
 import { CityDropdown } from "../../src/components/CityDropdown";
 import { CityMap } from "../../src/components/CityMap";
 import { ImagePlaceholder } from "../../src/components/ImagePlaceholder";
+import { ListMapToggle } from "../../src/components/ListMapToggle";
 import { MapFilterSheet } from "../../src/components/MapFilterSheet";
-import { TopToggles } from "../../src/components/TopToggles";
+import { SceneToggle } from "../../src/components/SceneToggle";
 import { CATEGORY_LABEL, priceLabel } from "../../src/data/categories";
 import { SPOTS } from "../../src/data/spots";
 import type { Spot } from "../../src/data/types";
@@ -53,9 +54,11 @@ export default function Karte() {
 
   return (
     <SafeAreaView className="flex-1 bg-screen" edges={["top"]}>
-      {/* Toggles unter dem Notch: Liste/Karte zentriert, Szene rechts */}
-      <TopToggles active="karte" />
-      <CityDropdown />
+      {/* Eine Kopfzeile: Wien links, Liste/Karte zentriert, Szene rechts */}
+      <CityDropdown
+        center={<ListMapToggle active="karte" />}
+        right={<SceneToggle />}
+      />
 
       {/* Filter-Schnellwahl + FILTER-Button */}
       <View className="mt-3 gap-2.5 px-6">

@@ -2,9 +2,10 @@ import { useEffect, useMemo, useState } from "react";
 import { ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { CityDropdown } from "../../src/components/CityDropdown";
+import { ListMapToggle } from "../../src/components/ListMapToggle";
 import { Pill } from "../../src/components/Pill";
+import { SceneToggle } from "../../src/components/SceneToggle";
 import { SpotCard } from "../../src/components/SpotCard";
-import { TopToggles } from "../../src/components/TopToggles";
 import { SPOTS } from "../../src/data/spots";
 import type { Category } from "../../src/data/types";
 import { SCENE_CATEGORIES, SCENE_FILTERS } from "../../src/lib/scene";
@@ -35,10 +36,11 @@ export default function Feed() {
 
   return (
     <SafeAreaView className="flex-1 bg-screen" edges={["top"]}>
-      {/* Toggles unter dem Notch: Liste/Karte zentriert, Szene rechts */}
-      <TopToggles active="liste" />
-      {/* Stadt-Kopf darunter */}
-      <CityDropdown />
+      {/* Eine Kopfzeile: Wien links, Liste/Karte zentriert, Szene rechts */}
+      <CityDropdown
+        center={<ListMapToggle active="liste" />}
+        right={<SceneToggle />}
+      />
 
       {/* Kategorie-Bar — szenenabhängig (Feiern: Bar/Club/Event, Essen: …). */}
       <View className="mt-4">
