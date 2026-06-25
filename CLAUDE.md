@@ -176,7 +176,8 @@ Stack-Screens darüber. `geheimtipp` ist ein modaler Screen. **Abmelden**
   (`verso-spin` 9s, `verso-load` 1.3s, `verso-throb` 1.5s, `verso-pulse`).
 - **Daten:** alles Mock in `src/data/`. Kein Login/Backend/DB im MVP.
 - **Kommentare auf Deutsch**, knapp, erklären *warum*.
-- **Vor jedem Commit:** `npx tsc --noEmit` (Typecheck) und idealerweise
+- **Vor jedem Commit:** `npx tsc --noEmit` (Typecheck), `npm test` (vitest,
+  reine Logik) und idealerweise
   `npx expo export --platform ios --output-dir /tmp/x` (Bundle baut?).
 
 ---
@@ -407,9 +408,11 @@ Gespeichert, Profil, Einstellungen, Geheimtipp). Karte-Tab = Platzhalter.
 4. **Easter Eggs vs. Auffindbarkeit**: versteckte Gesten sind charmant, aber
    Kernaktionen (Merken/Teilen) müssen **auch** ohne Geste erreichbar bleiben
    (sind sie im Detail — so halten).
-5. **Keine Tests** (anders als Schwester-Projekt „Lügen"): reine Helfer
-   (`mapFilter`, `sortByCategory`, `scene`, künftige Persistenz) sind leicht
-   testbar → vor dem nächsten Daten-Umbau einziehen.
+5. (erledigt) ~~**Keine Tests**~~ — **vitest** eingezogen
+   (`vitest.config.ts`, nur `src/**`-Logik, RN-frei). 17 Tests in
+   `src/lib/__tests__/logic.test.ts` (matchesFilter, sortByCategory,
+   isEventCategory, SCENE_CATEGORIES, getOpenState, distanceLabel,
+   SPOTS-Integrität). `npm test`. Bei neuer Logik weiter abdecken.
 
 ### Empfohlene Reihenfolge
 1. **Persistenz** (AsyncStorage hinter die Stores).
@@ -426,6 +429,7 @@ npx expo start         # Dev-Server, QR mit Expo Go scannen
 npx expo start -c      # mit geleertem Cache (bei komischen Fehlern)
 npx expo start --tunnel  # falls WLAN zickt
 npx tsc --noEmit       # Typecheck
+npm test               # Unit-Tests der reinen Logik (vitest, src/**)
 ```
 
 ---
@@ -435,7 +439,16 @@ npx tsc --noEmit       # Typecheck
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-25 · reduce-motion respektieren
+### (dieser Commit) · 2026-06-25 · Tests: vitest für die reine Logik
+- **vitest** als devDependency (^2.1.9) + `vitest.config.ts` (node-Env, nur
+  `src/**`-Logik, RN-frei) + `npm test`-Script.
+- **17 Tests** (`src/lib/__tests__/logic.test.ts`): `matchesFilter` (Art/Budget/
+  Bewertung/Ambiente), `sortByCategory`, `isEventCategory`, `SCENE_CATEGORIES`
+  (überschneidungsfrei), `getOpenState` (inkl. Fenster über Mitternacht +
+  `hours`-Override), `distanceLabel`, SPOTS-Integrität (eindeutige ids, Events
+  mit dateLabel).
+
+### 943bd9a · 2026-06-25 · reduce-motion respektieren
 - Neuer Hook **`lib/useReduceMotion.ts`** (liest `AccessibilityInfo`, live).
 - `GeheimtippButton`, `MysticBadge` und der **CityMap-Pin-Puls** zeigen bei
   aktivierter Einstellung „Bewegung reduzieren" eine **ruhige, fixe** Variante
