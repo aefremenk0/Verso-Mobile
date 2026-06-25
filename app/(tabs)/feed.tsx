@@ -5,6 +5,7 @@ import { CityDropdown } from "../../src/components/CityDropdown";
 import { ListMapToggle } from "../../src/components/ListMapToggle";
 import { Pill } from "../../src/components/Pill";
 import { SceneToggle } from "../../src/components/SceneToggle";
+import { SearchField } from "../../src/components/SearchField";
 import { SpotCard } from "../../src/components/SpotCard";
 import { sortByCategory } from "../../src/data/categories";
 import { SPOTS } from "../../src/data/spots";
@@ -22,22 +23,31 @@ export default function Feed() {
   const { city } = useCity();
   const { scene } = useScene();
   const [activeCategory, setActiveCategory] = useState<Category | null>(null);
+  const [query, setQuery] = useState("");
 
   // Beim Szenenwechsel die Kategorie-Auswahl zurücksetzen (sonst zeigt sie ggf.
   // eine Kategorie der anderen Szene -> leer).
   useEffect(() => setActiveCategory(null), [scene]);
 
-  // Filter: Stadt -> Szene (Kategoriengruppe) -> optional gewählte Kategorie.
-  // Danach nach Art gruppieren (sortByCategory), damit die Liste nicht
-  // chaotisch gemischt ist.
+  // Filter: Stadt -> Szene (Kategoriengruppe) -> optional gewählte Kategorie ->
+  // optional Suchtext (Name/Viertel/Tag). Danach nach Art gruppieren
+  // (sortByCategory), damit die Liste nicht chaotisch gemischt ist.
+  const q = query.trim().toLowerCase();
   const visibleSpots = useMemo(
     () =>
       sortByCategory(
         SPOTS.filter((s) => s.city === city)
           .filter((s) => SCENE_CATEGORIES[scene].includes(s.category))
-          .filter((s) => (activeCategory ? s.category === activeCategory : true)),
+          .filter((s) => (activeCategory ? s.category === activeCategory : true))
+          .filter((s) =>
+            q
+              ? s.name.toLowerCase().includes(q) ||
+                s.neighborhood.toLowerCase().includes(q) ||
+                s.tags.some((t) => t.toLowerCase().includes(q))
+              : true,
+          ),
       ),
-    [city, scene, activeCategory],
+    [city, scene, activeCategory, q],
   );
 
   return (
@@ -48,8 +58,17 @@ export default function Feed() {
         right={<SceneToggle />}
       />
 
+      {/* Suchfeld (Name/Viertel/Tag) — filtert die Liste zusätzlich. */}
+      <View className="mt-3 px-6">
+        <SearchField
+          value={query}
+          onChangeText={setQuery}
+          placeholder="Ort, Viertel oder Tag suchen …"
+        />
+      </View>
+
       {/* Kategorie-Bar — szenenabhängig (Feiern: Bar/Club/Event, Essen: …). */}
-      <View className="mt-4">
+      <View className="mt-3">
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
@@ -91,7 +110,9 @@ export default function Feed() {
 
         {visibleSpots.length === 0 ? (
           <Text className="mt-10 text-center font-hk-medium-italic text-[15px] text-ink-3">
-            Hier kramen wir noch. Schau bald wieder rein.
+            {q
+              ? `Nichts gefunden für „${query.trim()}". Versuch einen anderen Begriff.`
+              : "Hier kramen wir noch. Schau bald wieder rein."}
           </Text>
         ) : null}
       </ScrollView>

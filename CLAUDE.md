@@ -357,7 +357,8 @@ Gespeichert, Profil, Einstellungen, Geheimtipp). Karte-Tab = Platzhalter.
   ruhigere Varianten für Puls/Roll/Bubbles bei aktivierter iOS-Einstellung.
 
 ### 🟡 Mittel (klare Produktverbesserung)
-- **Suche** fehlt komplett (Ort/Viertel/Tag) — für Discovery zentral.
+- (erledigt) ~~**Suche** (Ort/Viertel/Tag) im Feed~~ — `SearchField` über der
+  Kategorie-Bar, filtert zusätzlich (Stadt→Szene→Kategorie→Suchtext).
 - **Feed-Filter = nur Kategorie-Hotbar**: Budget/Bewertung/Ambiente gibt's nur
   auf der Karte (`MapFilterSheet`) — auch im Feed anbieten.
 - **„Überrasch mich" / Shuffle** als sichtbarer Button (passt zum Geheimtipp-Kern;
@@ -419,7 +420,14 @@ npx tsc --noEmit       # Typecheck
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-25 · Doku: Verbesserungs-Backlog (Review)
+### (dieser Commit) · 2026-06-25 · Feed-Suche (Ort/Viertel/Tag)
+- Neue wiederverwendbare **`SearchField`**-Komponente (Pille, SVG-Lupe,
+  Clear-Button, Verso-Stil) — über der Kategorie-Bar im Feed.
+- Feed filtert jetzt zusätzlich nach **Suchtext**: matcht `name`, `neighborhood`
+  und `tags` (case-insensitive, Teilstring) — additiv auf
+  Stadt→Szene→Kategorie. Leerzustand zeigt den Suchbegriff.
+
+### cdb4225 · 2026-06-25 · Doku: Verbesserungs-Backlog (Review)
 - Neue Sektion **„Verbesserungs-Backlog (Review)"** (nach Phase 2): strukturierte
   Review-Ergebnisse — Quick Wins (Haptik, dynamische Profil-Stat, a11y-Labels,
   reduce-motion), mittlere Features (Suche, Feed-Filter, Shuffle, Onboarding),
