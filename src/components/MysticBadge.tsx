@@ -9,6 +9,7 @@ import Animated, {
   withRepeat,
   withTiming,
 } from "react-native-reanimated";
+import { useReduceMotion } from "../lib/useReduceMotion";
 
 // Mystisches „???"-Badge im Profil-Kopf — im Stil des früheren Insider-Sterns:
 // schwarze Pille, gelbe „???", deren Kontur sanft gelb pulsiert (Reanimated).
@@ -16,15 +17,20 @@ import Animated, {
 export function MysticBadge() {
   const router = useRouter();
   const pulse = useSharedValue(0);
+  const reduceMotion = useReduceMotion();
 
   useEffect(() => {
+    if (reduceMotion) {
+      pulse.value = 0.6; // ruhige, fixe Kontur statt endlosem Puls
+      return;
+    }
     // Langsames Auf-/Abschwellen der Kontur -> wirkt geheimnisvoll, „lebt".
     pulse.value = withRepeat(
       withTiming(1, { duration: 1600, easing: Easing.inOut(Easing.ease) }),
       -1, // endlos
       true, // hin und zurück
     );
-  }, [pulse]);
+  }, [pulse, reduceMotion]);
 
   // Nur die Rahmenfarbe pulsiert (leicht gelb), Box bleibt schwarz.
   const borderStyle = useAnimatedStyle(() => ({

@@ -360,8 +360,9 @@ Gespeichert, Profil, Einstellungen, Geheimtipp). Karte-Tab = Platzhalter.
   `NEIGHBORHOODS` für die aktuelle Stadt (`viertelCount`).
 - (erledigt) ~~**Icon-Buttons ohne `accessibilityLabel`**~~ — Zurück/Schließen/
   Teilen/Filter/Szene nachgerüstet (`AnimatedChip` nimmt jetzt `accessibilityLabel`).
-- **`reduce motion` respektieren** (`AccessibilityInfo.isReduceMotionEnabled`):
-  ruhigere Varianten für Puls/Roll/Bubbles bei aktivierter iOS-Einstellung.
+- (erledigt) ~~**`reduce motion` respektieren**~~ — `lib/useReduceMotion.ts`;
+  GeheimtippButton-, MysticBadge- und CityMap-Pin-Puls zeigen bei aktivierter
+  Einstellung eine ruhige, fixe Variante statt endlosem Puls.
 
 ### 🟡 Mittel (klare Produktverbesserung)
 - (erledigt) ~~**Suche** (Ort/Viertel/Tag) im Feed~~ — `SearchField` über der
@@ -434,7 +435,13 @@ npx tsc --noEmit       # Typecheck
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-25 · Politur: Haptik, dynamische Profil-Stat, a11y-Labels
+### (dieser Commit) · 2026-06-25 · reduce-motion respektieren
+- Neuer Hook **`lib/useReduceMotion.ts`** (liest `AccessibilityInfo`, live).
+- `GeheimtippButton`, `MysticBadge` und der **CityMap-Pin-Puls** zeigen bei
+  aktivierter Einstellung „Bewegung reduzieren" eine **ruhige, fixe** Variante
+  statt des endlosen `withRepeat`-Pulses.
+
+### 4bc29bb · 2026-06-25 · Politur: Haptik, dynamische Profil-Stat, a11y-Labels
 - **Haptik** (`expo-haptics` 15.0.8, neu): `src/lib/haptics.ts` (tapLight/
   tapMedium/tapSelection/notifySuccess, Fehler geschluckt). Eingesetzt bei
   Merken (Detail), Szenen-Toggle, Geheimtipp-Reveal, „Überrasch mich".

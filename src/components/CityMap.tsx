@@ -14,6 +14,7 @@ import Animated, {
 import { isEventCategory } from "../data/categories";
 import type { Spot } from "../data/types";
 import { PIN_COLORS } from "../lib/pinColors";
+import { useReduceMotion } from "../lib/useReduceMotion";
 import { shadows } from "../theme";
 
 // Hintergrund-Karte für den Karte-Screen.
@@ -105,13 +106,18 @@ function Pin({
 
   // Pulsierende Kontur um den Punkt (wie das Geheimtipp-„?") — in Pin-Farbe.
   const pulse = useSharedValue(0);
+  const reduceMotion = useReduceMotion();
   useEffect(() => {
+    if (reduceMotion) {
+      pulse.value = 0; // ruhig: kein wachsender Ring, nur ein dezenter Hof
+      return;
+    }
     pulse.value = withRepeat(
       withTiming(1, { duration: 1900, easing: Easing.out(Easing.ease) }),
       -1, // endlos
       false, // immer von vorne (Ring wächst & fadet, springt zurück)
     );
-  }, [pulse]);
+  }, [pulse, reduceMotion]);
   const pulseStyle = useAnimatedStyle(() => ({
     opacity: (1 - pulse.value) * 0.5,
     transform: [{ scale: 1 + pulse.value * 1.8 }],

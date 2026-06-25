@@ -8,6 +8,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import Svg, { Path } from "react-native-svg";
+import { useReduceMotion } from "../lib/useReduceMotion";
 
 // Geheimtipp-Button für die Bottom-Nav: dunkler "?"-Kreis mit einer
 // handgezeichneten gelben Umrandung (Squiggle), die pulsiert.
@@ -17,15 +18,21 @@ const RING = 46; // Größe der Umrandung
 
 export function GeheimtippButton({ onPress }: { onPress: () => void }) {
   const pulse = useSharedValue(0);
+  const reduceMotion = useReduceMotion();
 
   useEffect(() => {
+    if (reduceMotion) {
+      // Ruhige Variante: kein endloser Puls, fixer mittlerer Zustand.
+      pulse.value = 0.6;
+      return;
+    }
     // verso-pulse: Opazität (und ein Hauch Scale) sanft hin und her, endlos.
     pulse.value = withRepeat(
       withTiming(1, { duration: 1400, easing: Easing.inOut(Easing.ease) }),
       -1,
       true,
     );
-  }, [pulse]);
+  }, [pulse, reduceMotion]);
 
   const ringStyle = useAnimatedStyle(() => ({
     opacity: 0.4 + pulse.value * 0.6,
