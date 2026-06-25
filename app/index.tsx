@@ -3,6 +3,7 @@ import { useRef } from "react";
 import { Pressable, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { StripeTexture } from "../src/components/StripeTexture";
+import { AnimatedChip } from "../src/components/AnimatedChip";
 import {
   QuestionBubbles,
   type QuestionBubblesHandle,
@@ -87,15 +88,21 @@ export default function Welcome() {
               {row.map((c) => {
                 const active = c === city;
                 return (
-                  <Pressable
+                  <AnimatedChip
                     key={c}
+                    active={active}
                     onPress={() => setCity(c)}
-                    className="items-center justify-center rounded-pill px-4"
+                    activeBg="#FFE500"
+                    inactiveBg="rgba(255,229,0,0)"
+                    activeBorder="#FFE500"
+                    inactiveBorder="rgba(26,26,26,0.18)"
                     style={{
                       height: 42,
-                      backgroundColor: active ? "#FFE500" : "transparent",
+                      paddingHorizontal: 16,
+                      borderRadius: 999,
                       borderWidth: 1,
-                      borderColor: active ? "#FFE500" : "rgba(26,26,26,0.18)",
+                      alignItems: "center",
+                      justifyContent: "center",
                     }}
                   >
                     <Text
@@ -110,7 +117,7 @@ export default function Welcome() {
                     >
                       {c}
                     </Text>
-                  </Pressable>
+                  </AnimatedChip>
                 );
               })}
             </View>

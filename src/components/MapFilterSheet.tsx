@@ -9,6 +9,7 @@ import {
 } from "../lib/mapFilter";
 import { PIN_COLORS } from "../lib/pinColors";
 import { shadows } from "../theme";
+import { AnimatedChip } from "./AnimatedChip";
 import { RangeSlider } from "./RangeSlider";
 
 // Filter-Sheet für die Karte (nach Mockup 04b). Kontrolliert: der Filter kommt
@@ -80,21 +81,28 @@ export function MapFilterSheet({
               const on = filter.art.includes(a.cat);
               const col = PIN_COLORS[a.cat];
               return (
-                <Pressable
+                <AnimatedChip
                   key={a.cat}
+                  active={on}
                   onPress={() => toggleArt(a.cat)}
-                  className={`rounded-pill px-3.5 py-2 ${
-                    on ? "" : "border border-black/20 bg-surface"
-                  }`}
-                  style={on ? { backgroundColor: col.oval } : undefined}
+                  activeBg={col.oval}
+                  inactiveBg="#FFFFFF"
+                  activeBorder={col.oval}
+                  inactiveBorder="rgba(0,0,0,0.2)"
+                  style={{
+                    borderRadius: 999,
+                    borderWidth: 1,
+                    paddingHorizontal: 14,
+                    paddingVertical: 8,
+                  }}
                 >
                   <Text
-                    className={`font-hk-semibold text-[12px] ${on ? "" : "text-ink-2"}`}
-                    style={on ? { color: col.inner } : undefined}
+                    className="font-hk-semibold text-[12px]"
+                    style={{ color: on ? col.inner : "#6E6A63" }}
                   >
                     {a.label}
                   </Text>
-                </Pressable>
+                </AnimatedChip>
               );
             })}
           </View>
@@ -126,21 +134,28 @@ export function MapFilterSheet({
             {RATING_OPTIONS.map((b) => {
               const on = b.value === filter.minRating;
               return (
-                <Pressable
+                <AnimatedChip
                   key={b.label}
+                  active={on}
                   onPress={() => setFilter({ ...filter, minRating: b.value })}
-                  className={`rounded-pill px-4 py-2 ${
-                    on ? "bg-accent" : "border border-black/20 bg-surface"
-                  }`}
+                  activeBg="#FFE500"
+                  inactiveBg="#FFFFFF"
+                  activeBorder="#FFE500"
+                  inactiveBorder="rgba(0,0,0,0.2)"
+                  style={{
+                    borderRadius: 999,
+                    borderWidth: 1,
+                    paddingHorizontal: 16,
+                    paddingVertical: 8,
+                  }}
                 >
                   <Text
-                    className={`font-hk-semibold text-[13px] ${
-                      on ? "text-accent-ink" : "text-ink-2"
-                    }`}
+                    className="font-hk-semibold text-[13px]"
+                    style={{ color: on ? "#1A1A1A" : "#6E6A63" }}
                   >
                     {b.label}
                   </Text>
-                </Pressable>
+                </AnimatedChip>
               );
             })}
           </View>
@@ -153,12 +168,20 @@ export function MapFilterSheet({
             {AMBIENTE_OPTIONS.map((a) => {
               const on = filter.ambiente.includes(a.name);
               return (
-                <Pressable
+                <AnimatedChip
                   key={a.name}
+                  active={on}
                   onPress={() => toggleAmb(a.name)}
-                  className={`rounded-[14px] px-4 py-2.5 ${
-                    on ? "bg-accent" : "border border-black/10 bg-surface"
-                  }`}
+                  activeBg="#FFE500"
+                  inactiveBg="#FFFFFF"
+                  activeBorder="#FFE500"
+                  inactiveBorder="rgba(0,0,0,0.1)"
+                  style={{
+                    borderRadius: 14,
+                    borderWidth: 1,
+                    paddingHorizontal: 16,
+                    paddingVertical: 10,
+                  }}
                 >
                   <Text className="font-hk-extrabold text-[15px] text-ink">
                     {a.label}
@@ -171,7 +194,7 @@ export function MapFilterSheet({
                       {a.desc}
                     </Text>
                   </Text>
-                </Pressable>
+                </AnimatedChip>
               );
             })}
           </View>

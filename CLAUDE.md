@@ -116,7 +116,8 @@ app/                      Screens (Expo Router – Dateiname = Route)
 src/
   components/             Brand, Arrow (breiter SVG-Pfeil), ImagePlaceholder,
                           StripeTexture, HookHighlight,
-                          Pill, Button, SpotCard, BottomNav, InitialsAvatar
+                          Pill, Button, SpotCard, BottomNav, InitialsAvatar,
+                          AnimatedChip (Auswahl: Crossfade+Pop+Press),
                           (Initialen-Kreis), ListMapToggle (Liste/Karte oben),
                           CityDropdown (Stadt-Kopf; center+right-Props für
                           zentrierten Toggle & rechtes Element), Logos,
@@ -301,7 +302,14 @@ npx tsc --noEmit       # Typecheck
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-25 · Städte-Reihenfolge: Dropdown + Welcome
+### (dieser Commit) · 2026-06-25 · Auswahl-Animation: Crossfade + Pop + Press
+- Neue **`AnimatedChip`**: animierte Auswahl (Hintergrund/Border-**Crossfade** via
+  `interpolateColor`, **Pop** beim Aktivieren, **Press-Down** beim Drücken).
+- Eingesetzt in **`Pill`** (Hotbar Feed/Bezirk/Gespeichert + Stadt-Dropdown),
+  **Welcome-Stadt-Chips** (`index.tsx`) und **`MapFilterSheet`** (Art/Bewertung/
+  Ambiente) → konsistentes Auswahl-Gefühl überall. Kein neues Paket.
+
+### bdffaa2 · 2026-06-25 · Städte-Reihenfolge: Dropdown + Welcome
 - **Dropdown/Hotbar** (`CITIES`): München, Wien, Zürich, Berlin, Hamburg,
   Frankfurt, Düsseldorf.
 - **Welcome** (`index.tsx`, `WELCOME_ROWS`): feste 3 Zeilen — Z1 München/Zürich/
