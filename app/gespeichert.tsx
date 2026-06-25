@@ -1,6 +1,6 @@
 import { useRouter } from "expo-router";
 import { useEffect, useRef, useState } from "react";
-import { Pressable, ScrollView, Share, Text, View } from "react-native";
+import { FlatList, Pressable, ScrollView, Share, Text, View } from "react-native";
 import { Swipeable } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { GoogleExportSheet } from "../src/components/GoogleExportSheet";
@@ -158,62 +158,63 @@ export default function Gespeichert() {
         }
       />
 
-      <ScrollView
-        contentContainerStyle={{
-          paddingHorizontal: 24,
-          paddingTop: 12,
-          paddingBottom: 96, // Platz für den Export-Button unten rechts
-        }}
-        showsVerticalScrollIndicator={false}
-      >
-
-        {saved.length === 0 ? (
+      {saved.length === 0 ? (
+        <View style={{ paddingHorizontal: 24, paddingTop: 12 }}>
           <Text className="mt-10 font-hk-medium-italic text-[15px] leading-[22px] text-ink-3">
             Noch nichts gemerkt. Tipp im Detail eines Ortes auf „Merken +" — dann
             landet er hier.
           </Text>
-        ) : (
-          <>
-            {/* Kategorie-Hotbar (Auswahl der Spots), Farben pro Kategorie */}
-            <View className="-mx-6 mt-4">
-              <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                contentContainerStyle={{ paddingHorizontal: 24, gap: 8 }}
-              >
-                {SCENE_FILTERS[scene].map((f) => {
-                  const col = f.key ? PIN_COLORS[f.key] : null;
-                  return (
-                    <Pill
-                      key={f.label}
-                      label={f.label}
-                      active={activeCategory === f.key}
-                      onPress={() => setActiveCategory(f.key)}
-                      activeColor={col?.oval}
-                      activeTextColor={col?.inner}
-                    />
-                  );
-                })}
-              </ScrollView>
-            </View>
+        </View>
+      ) : (
+        <FlatList
+          data={shown}
+          keyExtractor={(s) => s.id}
+          renderItem={({ item }) => <SavedRow spot={item} />}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{
+            paddingHorizontal: 24,
+            paddingTop: 12,
+            paddingBottom: 96, // Platz für den Export-Button unten rechts
+          }}
+          ListHeaderComponent={
+            <View>
+              {/* Kategorie-Hotbar (Auswahl der Spots), Farben pro Kategorie */}
+              <View className="-mx-6 mt-4">
+                <ScrollView
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  contentContainerStyle={{ paddingHorizontal: 24, gap: 8 }}
+                >
+                  {SCENE_FILTERS[scene].map((f) => {
+                    const col = f.key ? PIN_COLORS[f.key] : null;
+                    return (
+                      <Pill
+                        key={f.label}
+                        label={f.label}
+                        active={activeCategory === f.key}
+                        onPress={() => setActiveCategory(f.key)}
+                        activeColor={col?.oval}
+                        activeTextColor={col?.inner}
+                      />
+                    );
+                  })}
+                </ScrollView>
+              </View>
 
-            {/* Wisch-Hinweis */}
-            <Text className="mt-3 font-hk-medium text-[12px] text-ink-3">
-              Wische eine Karte: → teilen, ← löschen.
-            </Text>
-            <View className="mt-4">
-              {shown.map((spot) => (
-                <SavedRow key={spot.id} spot={spot} />
-              ))}
-              {shown.length === 0 ? (
-                <Text className="mt-6 font-hk-medium-italic text-[15px] text-ink-3">
-                  Hier ist gerade nichts gemerkt — wechsle Stadt, Szene oder Kategorie.
-                </Text>
-              ) : null}
+              {/* Wisch-Hinweis */}
+              <Text className="mt-3 font-hk-medium text-[12px] text-ink-3">
+                Wische eine Karte: → teilen, ← löschen.
+              </Text>
+              <View style={{ height: 16 }} />
             </View>
-          </>
-        )}
-      </ScrollView>
+          }
+          ListEmptyComponent={
+            <Text className="mt-2 font-hk-medium-italic text-[15px] text-ink-3">
+              Hier ist gerade nichts gemerkt — wechsle Stadt, Szene oder Kategorie.
+            </Text>
+          }
+        />
+      )}
 
       {/* Export nach Google Maps — unten rechts (nur wenn es Orte gibt) */}
       {saved.length > 0 ? (

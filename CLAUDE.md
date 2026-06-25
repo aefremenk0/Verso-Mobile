@@ -391,8 +391,10 @@ Gespeichert, Profil, Einstellungen, Geheimtipp). Karte-Tab = Platzhalter.
   echtes Auth nötig.
 
 ### ⚠️ Aktiv geflaggte Risiken / latente Fallen
-1. **Listen ohne Virtualisierung**: Feed/Gespeichert nutzen `ScrollView` + `.map`.
-   Bei wachsenden Daten speicher-/scroll-lastig → auf **`FlatList`** umstellen.
+1. (erledigt) ~~**Listen ohne Virtualisierung**~~: Feed & Gespeichert nutzen jetzt
+   **`FlatList`** (virtualisiert). Im Feed scrollt das Such-/Filter-/Kategorie-/
+   Überrasch-Chrome als `ListHeaderComponent` mit weg — nur der Stadt-Kopf bleibt
+   fix (weniger Dauer-Chrome über der ersten Karte).
 2. **Bezirks-Zuordnung per `startsWith(name)`** (`bezirk/[name].tsx`): fragil,
    wenn je zwei Viertel **derselben Stadt** existieren, bei denen ein Name Präfix
    des anderen ist (matcht beide). Aktuell konfliktfrei → besser exakter Match
@@ -432,7 +434,15 @@ npx tsc --noEmit       # Typecheck
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-25 · Spot-Detail-Tiefe (offen? · Entfernung · Mini-Karte)
+### (dieser Commit) · 2026-06-25 · Feed/Gespeichert auf FlatList + Feed-Kopf verschlankt
+- **Feed**: von `ScrollView`+`.map` auf **`FlatList`** (virtualisiert). Suche,
+  Filter, Kategorie-Bar, „Überrasch mich" und Vibe-Hinweis sitzen jetzt im
+  **`ListHeaderComponent`** und scrollen mit weg — nur der Stadt-Kopf bleibt fix,
+  also weniger Dauer-Chrome über der ersten Karte.
+- **Gespeichert**: ebenfalls **`FlatList`** (Hotbar + Wisch-Hinweis im Header,
+  Leerzustand als `ListEmptyComponent`).
+
+### 21f708f · 2026-06-25 · Spot-Detail-Tiefe (offen? · Entfernung · Mini-Karte)
 - **`lib/spotMeta.ts`** neu: `getOpenState` (Öffnungsstatus „jetzt geöffnet · bis
   23:00" aus typischen Kategorie-Zeiten; null bei Events) + `distanceLabel`
   (Haversine zum Stadtzentrum, „ca. 1,2 km vom Zentrum") — deterministisch, kein
