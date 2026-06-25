@@ -264,7 +264,13 @@ npx tsc --noEmit       # Typecheck
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-25 · Karten-Pins: zentrale Farben pro Kategorie
+### (dieser Commit) · 2026-06-25 · Gespeichert: „Nach Google Maps exportieren"
+- Button **unten rechts** (Google-Logo) im Gespeichert-Screen öffnet
+  **`GoogleExportSheet`**: verknüpft (MOCK) ein Google-Konto und „exportiert" die
+  gemerkten Orte in eine Google-Maps-Liste **„?"**. Hinweis: echter Export bräuchte
+  Backend + OAuth (keine öffentliche Maps-Listen-API) — im MVP bewusst Mock.
+
+### 7330715 · 2026-06-25 · Karten-Pins: zentrale Farben pro Kategorie
 - Neue **`src/lib/pinColors.ts`**: pro Kategorie `oval` (Box-Hintergrund),
   `inner` (Text) und `dot` (Punkt). `Pin` in `CityMap` nutzt diese Farben statt
   fester bg-accent/bg-night. Default-Palette: restaurant=Rot, snack=Amber,

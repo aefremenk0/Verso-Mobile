@@ -1,13 +1,16 @@
 import { useRouter } from "expo-router";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { Pressable, ScrollView, Share, Text, View } from "react-native";
 import { Swipeable } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { GoogleExportSheet } from "../src/components/GoogleExportSheet";
 import { ImagePlaceholder } from "../src/components/ImagePlaceholder";
+import { GoogleLogo } from "../src/components/Logos";
 import { CATEGORY_LABEL } from "../src/data/categories";
 import { SPOTS } from "../src/data/spots";
 import type { Spot } from "../src/data/types";
 import { useSaved } from "../src/store/saved";
+import { shadows } from "../src/theme";
 
 // Screen 06 — Gespeichert.
 // Liste der gemerkten Orte (gefüllt über den "Merken"-Toggle im Detail).
@@ -87,6 +90,7 @@ function SavedRow({ spot }: { spot: Spot }) {
 export default function Gespeichert() {
   const router = useRouter();
   const { savedIds } = useSaved();
+  const [exportOpen, setExportOpen] = useState(false);
 
   // Reihenfolge der gemerkten Spots beibehalten.
   const saved = savedIds
@@ -111,7 +115,11 @@ export default function Gespeichert() {
       </View>
 
       <ScrollView
-        contentContainerStyle={{ paddingHorizontal: 24, paddingTop: 12, paddingBottom: 32 }}
+        contentContainerStyle={{
+          paddingHorizontal: 24,
+          paddingTop: 12,
+          paddingBottom: 96, // Platz für den Export-Button unten rechts
+        }}
         showsVerticalScrollIndicator={false}
       >
         <Text className="font-hk-bold text-[11px] tracking-[1.5px] text-ink-3">
@@ -143,6 +151,27 @@ export default function Gespeichert() {
           </>
         )}
       </ScrollView>
+
+      {/* Export nach Google Maps — unten rechts (nur wenn es Orte gibt) */}
+      {saved.length > 0 ? (
+        <Pressable
+          onPress={() => setExportOpen(true)}
+          className="absolute flex-row items-center gap-2 rounded-pill bg-night px-4 py-3"
+          style={[{ bottom: 16, right: 20 }, shadows.card]}
+        >
+          <GoogleLogo size={18} />
+          <Text className="font-hk-bold text-[13px] text-screen">
+            Nach Google Maps exportieren
+          </Text>
+        </Pressable>
+      ) : null}
+
+      {exportOpen ? (
+        <GoogleExportSheet
+          count={saved.length}
+          onClose={() => setExportOpen(false)}
+        />
+      ) : null}
     </SafeAreaView>
   );
 }
