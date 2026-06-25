@@ -131,9 +131,12 @@ src/
                           im Feed aus, da Hotbar die Art macht),
                           SearchField (Such-Pille mit SVG-Lupe + Clear),
                           SurpriseButton („Überrasch mich"; Sparkle + Press-Bounce),
+                          MiniMap (stilisierte Detail-Mini-Karte, SVG, tippbar),
                           RangeSlider (Budget, PanResponder)
   lib/mapFilter.ts        Filter-Typ + matchesFilter (Art/Budget/Bewertung/Ambiente)
   lib/pinColors.ts        Karten-Pin-Farben pro Kategorie (oval/inner/dot)
+  lib/spotMeta.ts         Detail-Tiefe: getOpenState (Öffnungsstatus) +
+                          distanceLabel (Entfernung zum Stadtzentrum)
   lib/scene.ts            Szene (feiern/essen): Kategoriengruppen + Pills
   store/scene.tsx         aktuelle Szene (Feiern vs. Essen), app-weit
 
@@ -372,7 +375,9 @@ Gespeichert, Profil, Einstellungen, Geheimtipp). Karte-Tab = Platzhalter.
   **Vibes** (Ambiente) wählen (`store/interests.tsx`); Feed sortiert passende
   Spots sanft nach oben (nichts ausgeblendet) + Hinweis „auf deinen Vibe
   abgestimmt". (Geheimtipp bleibt bewusst kuratiert pro Stadt.)
-- **Spot-Detail-Tiefe**: „Jetzt geöffnet?"-Badge, Entfernung, Mini-Karte.
+- (erledigt) ~~**Spot-Detail-Tiefe**~~ — „Jetzt geöffnet?"-Badge (aus
+  Kategorie-Öffnungszeiten), Entfernung zum Zentrum, stilisierte Mini-Karte
+  (`lib/spotMeta.ts` + `MiniMap`). Alles Expo-Go-fest, ohne GPS-Prompt.
 
 ### 🔴 Größer (strategisch / Architektur)
 - **⚠️⚠️ Persistenz fehlt** — *wichtigster Punkt.* Alle Stores (`saved`, `scene`,
@@ -427,7 +432,17 @@ npx tsc --noEmit       # Typecheck
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-25 · Onboarding-Personalisierung (Vibes)
+### (dieser Commit) · 2026-06-25 · Spot-Detail-Tiefe (offen? · Entfernung · Mini-Karte)
+- **`lib/spotMeta.ts`** neu: `getOpenState` (Öffnungsstatus „jetzt geöffnet · bis
+  23:00" aus typischen Kategorie-Zeiten; null bei Events) + `distanceLabel`
+  (Haversine zum Stadtzentrum, „ca. 1,2 km vom Zentrum") — deterministisch, kein
+  GPS-Prompt. Optionales `hours`-Feld am `Spot` (Override) ergänzt.
+- **`MiniMap`** neu: stilisierte Detail-Mini-Karte (SVG-Hintergrund + Pin in
+  Kategoriefarbe, Expo-Go-fest) — tippen öffnet Google Maps.
+- **Spot-Detail**: Status-Zeile (Öffnen-Badge grün/rot + Entfernung) unter dem
+  Hook; Mini-Karte unter der Adresse.
+
+### 6a82925 · 2026-06-25 · Onboarding-Personalisierung (Vibes)
 - Neuer **`store/interests.tsx`** (In-Memory, max 3 Ambiente-„Vibes").
   `InterestsProvider` in `_layout.tsx` ergänzt; Abmelden in `settings.tsx`
   leert die Vibes mit.

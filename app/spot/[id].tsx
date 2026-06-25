@@ -5,6 +5,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { AnimatedChip } from "../../src/components/AnimatedChip";
 import { Button } from "../../src/components/Button";
 import { ImagePlaceholder } from "../../src/components/ImagePlaceholder";
+import { MiniMap } from "../../src/components/MiniMap";
 import { Pill } from "../../src/components/Pill";
 import {
   QuestionBubbles,
@@ -17,6 +18,7 @@ import {
 } from "../../src/data/categories";
 import { getSpotById } from "../../src/data/spots";
 import { openAppleMaps, openExternal, openGoogleMaps } from "../../src/lib/maps";
+import { distanceLabel, getOpenState } from "../../src/lib/spotMeta";
 import { useSaved } from "../../src/store/saved";
 
 // Screen 03 — Spot-Detail (und Event-Detail).
@@ -47,6 +49,9 @@ export default function SpotDetail() {
   const isEvent = isEventCategory(spot.category);
   const saved = isSaved(spot.id);
   const metaLine = `${CATEGORY_LABEL[spot.category]} · ${spot.neighborhood.toUpperCase()}`;
+  // Detail-Tiefe: Öffnungsstatus (null bei Events) + Entfernung zum Zentrum.
+  const openState = getOpenState(spot);
+  const distanz = distanceLabel(spot);
 
   // Ort/Event teilen über das systemeigene Share-Sheet (iMessage, WhatsApp, …).
   const onShare = () => {
@@ -144,6 +149,34 @@ export default function SpotDetail() {
             {spot.hook}
           </Text>
 
+          {/* Status-Zeile: „Jetzt geöffnet?" (nicht bei Events) + Entfernung */}
+          {openState || distanz ? (
+            <View className="mt-4 flex-row flex-wrap items-center gap-2">
+              {openState ? (
+                <View className="flex-row items-center rounded-pill bg-surface px-3 py-1.5">
+                  <View
+                    className="mr-2 h-2 w-2 rounded-pill"
+                    style={{ backgroundColor: openState.openNow ? "#1E9E54" : "#C0392B" }}
+                  />
+                  <Text className="font-hk-bold text-[12px] text-ink">
+                    {openState.openNow ? "Jetzt geöffnet" : "Geschlossen"}
+                  </Text>
+                  <Text className="ml-1.5 font-hk-medium text-[12px] text-ink-3">
+                    · {openState.label}
+                  </Text>
+                </View>
+              ) : null}
+              {distanz ? (
+                <View className="flex-row items-center rounded-pill bg-surface px-3 py-1.5">
+                  <View className="mr-2 h-2 w-2 rounded-pill bg-ink-3" />
+                  <Text className="font-hk-medium text-[12px] text-ink-2">
+                    {distanz}
+                  </Text>
+                </View>
+              ) : null}
+            </View>
+          ) : null}
+
           {/* Event-Block: Wann / Treffpunkt */}
           {isEvent ? (
             <View className="mt-5 rounded-card bg-surface p-4">
@@ -186,6 +219,14 @@ export default function SpotDetail() {
             <Text className="flex-1 font-hk-medium text-[14px] text-ink-2">
               {spot.address}
             </Text>
+          </View>
+
+          {/* Mini-Karte (stilisiert, Expo-Go-fest) — tippen öffnet Google Maps */}
+          <View className="mt-3">
+            <MiniMap
+              spot={spot}
+              onPress={() => openGoogleMaps(`${spot.name} ${spot.address}`)}
+            />
           </View>
 
           {/* Spacer: schiebt die CTAs ans untere Ende des Screens */}

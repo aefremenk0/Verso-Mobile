@@ -48,6 +48,9 @@ export interface Spot {
   lng: number;
   tone: PlaceholderTone;
   reserveUrl?: string; // z. B. OpenTable-Link (nur extern verlinkt)
+  /** Optionale Öffnungszeiten (24h; close > 24 = nach Mitternacht). Fehlt das
+   *  Feld, leitet `getOpenState` die Zeit aus der Kategorie ab. */
+  hours?: { open: number; close: number };
 
   // Nur für Events gesetzt:
   dateLabel?: string; // "Sa · 12. Juli · 22:00–06:00"
