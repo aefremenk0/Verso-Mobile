@@ -34,6 +34,7 @@ export default function Register() {
       <View className="flex-row items-center px-6 pt-2">
         <Pressable
           onPress={() => router.back()}
+          accessibilityLabel="Zurück"
           className="h-10 w-10 items-center justify-center rounded-pill bg-chip"
         >
           <Text className="font-hk-bold text-[18px] text-ink">←</Text>

@@ -7,6 +7,7 @@ import { MysticBadge } from "../../src/components/MysticBadge";
 import { MOCK_USER } from "../../src/data/user";
 import { getSpotById } from "../../src/data/spots";
 import { NEIGHBORHOODS } from "../../src/data/cities";
+import { useCity } from "../../src/store/city";
 import { useGeheimtipp } from "../../src/store/geheimtipp";
 import { useSaved } from "../../src/store/saved";
 import { openExternal } from "../../src/lib/maps";
@@ -56,8 +57,12 @@ export default function Profil() {
 
   // Geheimtipp der aktuell gewählten Stadt (city-abhängiger Store).
   const { spotId } = useGeheimtipp();
+  const { city } = useCity();
   const tippSpot = getSpotById(spotId);
   const cityCount = new Set(NEIGHBORHOODS.map((n) => n.city)).size;
+  // Viertelzahl variiert pro Stadt (München 8, Wien 7, Zürich 5 …) -> dynamisch
+  // aus NEIGHBORHOODS für die aktuelle Stadt ableiten (war hart 8).
+  const viertelCount = NEIGHBORHOODS.filter((n) => n.city === city).length;
 
   // Verso lebt von Mundpropaganda -> systemeigenes Teilen-Sheet öffnen.
   const onInvite = () => {
@@ -127,7 +132,7 @@ export default function Profil() {
         <View className="mt-6 flex-row rounded-card bg-surface py-4">
           {[
             { n: savedIds.length, l: "GESPEICHERT" },
-            { n: 8, l: "VIERTEL" },
+            { n: viertelCount, l: "VIERTEL" },
             { n: cityCount, l: "STÄDTE" },
           ].map((s, i) => (
             <View

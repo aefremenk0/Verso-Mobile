@@ -17,6 +17,7 @@ import {
   priceLabel,
 } from "../../src/data/categories";
 import { getSpotById } from "../../src/data/spots";
+import { notifySuccess, tapLight } from "../../src/lib/haptics";
 import { openAppleMaps, openExternal, openGoogleMaps } from "../../src/lib/maps";
 import { distanceLabel, getOpenState } from "../../src/lib/spotMeta";
 import { useSaved } from "../../src/store/saved";
@@ -66,10 +67,14 @@ export default function SpotDetail() {
   const onMerken = () => {
     const wasSaved = saved;
     toggle(spot.id);
+    // Haptik: Erfolg beim Hinzufügen, leichter Tap beim Entfernen.
     if (!wasSaved) {
+      notifySuccess();
       merkenRef.current?.measureInWindow((x, y, w, h) => {
         burstRef.current?.burst(x + w / 2, y + h, "down");
       });
+    } else {
+      tapLight();
     }
   };
 
@@ -88,6 +93,7 @@ export default function SpotDetail() {
           >
             <Pressable
               onPress={() => router.back()}
+              accessibilityLabel="Zurück"
               className="h-10 w-10 items-center justify-center rounded-pill bg-surface"
             >
               <Text className="font-hk-bold text-[18px] text-ink">←</Text>
@@ -96,6 +102,7 @@ export default function SpotDetail() {
               {/* Teilen (Share-Sheet) */}
               <Pressable
                 onPress={onShare}
+                accessibilityLabel="Ort teilen"
                 className="h-10 w-10 items-center justify-center rounded-pill bg-surface"
               >
                 <Text className="font-hk-bold text-[16px] text-ink">↗</Text>

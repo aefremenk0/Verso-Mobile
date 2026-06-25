@@ -83,6 +83,7 @@ export default function Settings() {
       <View className="flex-row items-center gap-3.5 px-6 pb-4 pt-3">
         <Pressable
           onPress={() => router.back()}
+          accessibilityLabel="Zurück"
           className="h-[42px] w-[42px] items-center justify-center rounded-pill"
           style={{ borderWidth: 1, borderColor: "rgba(26,26,26,0.18)" }}
         >

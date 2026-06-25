@@ -14,6 +14,7 @@ import { SurpriseButton } from "../../src/components/SurpriseButton";
 import { sortByCategory } from "../../src/data/categories";
 import { SPOTS } from "../../src/data/spots";
 import type { Category } from "../../src/data/types";
+import { tapMedium } from "../../src/lib/haptics";
 import { DEFAULT_FILTER, matchesFilter, type MapFilter } from "../../src/lib/mapFilter";
 import { PIN_COLORS } from "../../src/lib/pinColors";
 import { SCENE_CATEGORIES, SCENE_FILTERS } from "../../src/lib/scene";
@@ -107,6 +108,7 @@ export default function Feed() {
   );
   const onSurprise = () => {
     if (surprisePool.length === 0) return;
+    tapMedium(); // kleiner „Würfel"-Impuls
     const pick = surprisePool[Math.floor(Math.random() * surprisePool.length)];
     router.push(`/spot/${pick.id}`);
   };

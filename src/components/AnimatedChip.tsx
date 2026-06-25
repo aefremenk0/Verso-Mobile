@@ -23,6 +23,7 @@ interface AnimatedChipProps {
   inactiveBorder?: string;
   style?: ViewStyle;
   hitSlop?: number;
+  accessibilityLabel?: string;
 }
 
 export function AnimatedChip({
@@ -35,6 +36,7 @@ export function AnimatedChip({
   inactiveBorder,
   style,
   hitSlop = 4,
+  accessibilityLabel,
 }: AnimatedChipProps) {
   const sel = useSharedValue(active ? 1 : 0); // 0 inaktiv -> 1 aktiv (Crossfade)
   const press = useSharedValue(0); // Press-Down
@@ -71,6 +73,7 @@ export function AnimatedChip({
     <Pressable
       onPress={onPress}
       hitSlop={hitSlop}
+      accessibilityLabel={accessibilityLabel}
       onPressIn={() => {
         press.value = withTiming(1, { duration: 80 });
       }}

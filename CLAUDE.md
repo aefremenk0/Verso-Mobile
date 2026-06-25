@@ -353,13 +353,13 @@ Gespeichert, Profil, Einstellungen, Geheimtipp). Karte-Tab = Platzhalter.
 > Punkte hier abhaken und in den Changelog verschieben.
 
 ### 🟢 Quick Wins (billig, hohe Wirkung)
-- **Haptik** (`expo-haptics`, Expo-Go-fest) bei Merken, Szenen-Toggle,
-  Geheimtipp-Reveal — lässt die App sofort „teuer" wirken.
-- **⚠️ Profil-Stat „8 VIERTEL" ist hart codiert** (`profil.tsx`, `n: 8`), obwohl
-  die Viertelzahl jetzt pro Stadt variiert (München 8, Wien 7, Zürich 5 …).
-  → dynamisch aus `NEIGHBORHOODS` für die aktuelle Stadt ableiten.
-- **⚠️ Icon-Buttons ohne `accessibilityLabel`** (✕ / → / ♥ / ←) — für Screenreader
-  unbeschriftet. Schnell nachrüstbar.
+- (erledigt) ~~**Haptik**~~ (`expo-haptics` 15.0.8, Expo-Go-fest) — `lib/haptics.ts`;
+  bei Merken (Erfolg/Tap), Szenen-Toggle (Selection), Geheimtipp-Reveal (Erfolg),
+  „Überrasch mich" (Medium).
+- (erledigt) ~~**Profil-Stat „8 VIERTEL" hart codiert**~~ → jetzt dynamisch aus
+  `NEIGHBORHOODS` für die aktuelle Stadt (`viertelCount`).
+- (erledigt) ~~**Icon-Buttons ohne `accessibilityLabel`**~~ — Zurück/Schließen/
+  Teilen/Filter/Szene nachgerüstet (`AnimatedChip` nimmt jetzt `accessibilityLabel`).
 - **`reduce motion` respektieren** (`AccessibilityInfo.isReduceMotionEnabled`):
   ruhigere Varianten für Puls/Roll/Bubbles bei aktivierter iOS-Einstellung.
 
@@ -434,7 +434,17 @@ npx tsc --noEmit       # Typecheck
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-25 · Feed/Gespeichert auf FlatList + Feed-Kopf verschlankt
+### (dieser Commit) · 2026-06-25 · Politur: Haptik, dynamische Profil-Stat, a11y-Labels
+- **Haptik** (`expo-haptics` 15.0.8, neu): `src/lib/haptics.ts` (tapLight/
+  tapMedium/tapSelection/notifySuccess, Fehler geschluckt). Eingesetzt bei
+  Merken (Detail), Szenen-Toggle, Geheimtipp-Reveal, „Überrasch mich".
+- **Profil-Stat** „VIERTEL" nicht mehr hart `8`, sondern `viertelCount` aus
+  `NEIGHBORHOODS` für die aktuelle Stadt.
+- **a11y**: `accessibilityLabel` an Zurück/Schließen/Teilen/Filter-Buttons
+  (Detail, Gespeichert, Settings, Bezirk, Register, Geheimtipp) + `SceneToggle`;
+  `AnimatedChip` nimmt jetzt `accessibilityLabel` entgegen.
+
+### ebd1771 · 2026-06-25 · Feed/Gespeichert auf FlatList + Feed-Kopf verschlankt
 - **Feed**: von `ScrollView`+`.map` auf **`FlatList`** (virtualisiert). Suche,
   Filter, Kategorie-Bar, „Überrasch mich" und Vibe-Hinweis sitzen jetzt im
   **`ListHeaderComponent`** und scrollen mit weg — nur der Stadt-Kopf bleibt fix,

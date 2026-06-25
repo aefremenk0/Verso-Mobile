@@ -46,6 +46,7 @@ export default function Bezirk() {
       <View className="flex-row items-center justify-between px-6 pb-2 pt-3">
         <Pressable
           onPress={() => router.back()}
+          accessibilityLabel="Zurück"
           className="h-[42px] w-[42px] items-center justify-center rounded-pill"
           style={{ borderWidth: 1, borderColor: "rgba(26,26,26,0.18)" }}
         >

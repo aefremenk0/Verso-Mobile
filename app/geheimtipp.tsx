@@ -13,6 +13,7 @@ import Svg, { Path } from "react-native-svg";
 import { ImagePlaceholder } from "../src/components/ImagePlaceholder";
 import { CATEGORY_LABEL, priceLabel } from "../src/data/categories";
 import { getSpotById } from "../src/data/spots";
+import { notifySuccess } from "../src/lib/haptics";
 import { useGeheimtipp } from "../src/store/geheimtipp";
 
 // Screen 08 — Geheimtipp der Woche.
@@ -57,6 +58,7 @@ export default function Geheimtipp() {
     const t = setTimeout(() => {
       setPhase("reveal");
       markAbgeholt();
+      notifySuccess(); // haptischer „Reveal"-Moment
     }, LOAD_MS);
     return () => clearTimeout(t);
   }, [spin, sweep, throb, markAbgeholt]);
@@ -90,6 +92,7 @@ export default function Geheimtipp() {
         <View className="flex-row justify-end px-6 pt-3">
           <Pressable
             onPress={() => router.back()}
+            accessibilityLabel="Schließen"
             className="h-[42px] w-[42px] items-center justify-center rounded-pill"
             style={{ borderWidth: 1, borderColor: "rgba(247,244,239,0.25)" }}
           >
@@ -153,6 +156,7 @@ export default function Geheimtipp() {
         </View>
         <Pressable
           onPress={() => router.back()}
+          accessibilityLabel="Schließen"
           className="h-[42px] w-[42px] items-center justify-center rounded-pill"
           style={{ borderWidth: 1, borderColor: "rgba(26,26,26,0.25)" }}
         >
