@@ -302,7 +302,12 @@ npx tsc --noEmit       # Typecheck
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-25 · Filter-Sheet: Art-Zeilen, Slider-Tap, Swipe-Dismiss
+### (dieser Commit) · 2026-06-25 · Fix: Karte-Doppeltipp setzt Auswahl mit zurück
+- Edge-Case: Doppeltipp (alle an) → Pin wählen → Doppeltipp ließ den gewählten
+  Ort/die Karte hängen. Jetzt setzt der Doppeltipp **auch die Einzel-Auswahl**
+  zurück (`onClearSelection` von `CityMap` → `setSelected(null)` in `karte.tsx`).
+
+### 35838c5 · 2026-06-25 · Filter-Sheet: Art-Zeilen, Slider-Tap, Swipe-Dismiss
 - **ART**: zwei feste Zeilen nach Szene — Z1 Essen (Restaurant/Snack/Café),
   Z2 Feiern (Bar/Club/Event); max. 4 pro Zeile.
 - **Budget-`RangeSlider`**: Tippen auf die Schiene zieht den nächstgelegenen

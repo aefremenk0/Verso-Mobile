@@ -105,6 +105,7 @@ export default function Karte() {
           spots={spots}
           selectedId={card?.id}
           onSelect={onSelectSpot}
+          onClearSelection={() => setSelected(null)}
         />
       </View>
 

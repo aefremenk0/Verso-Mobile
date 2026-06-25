@@ -190,21 +190,30 @@ interface CityMapProps {
   selectedId?: string;
   /** Wird beim Antippen eines Pins aufgerufen -> Karte öffnet die Spot-Karte. */
   onSelect: (spot: Spot) => void;
+  /** Doppeltipp setzt die Ansicht zurück -> auch die Einzel-Auswahl löschen. */
+  onClearSelection?: () => void;
 }
 
 // Einmal pro Session: beim ersten Öffnen der Karte die Doppeltipp-Geste zeigen
 // (alle Pins ploppen kurz auf + Hinweis-Chip). In-memory, kein Speicher nötig.
 let demoShown = false;
 
-export function CityMap({ spots, selectedId, onSelect }: CityMapProps) {
+export function CityMap({
+  spots,
+  selectedId,
+  onSelect,
+  onClearSelection,
+}: CityMapProps) {
   // Easter Egg: Doppeltipp auf leere Kartenfläche -> TOGGLE: alle Pins ploppen
-  // auf; nochmaliger Doppeltipp blendet sie wieder aus.
+  // auf; nochmaliger Doppeltipp blendet sie wieder aus. Beides setzt zugleich die
+  // Einzel-Auswahl zurück, damit kein ausgewählter Pin/keine Karte „hängen" bleibt.
   const [popAll, setPopAll] = useState(false);
   const lastTap = useRef(0);
   const handleBackgroundTap = () => {
     const now = Date.now();
     if (now - lastTap.current < 300) {
-      setPopAll((v) => !v); // zweiter Tipp schnell genug -> Doppeltipp -> umschalten
+      setPopAll((v) => !v); // Doppeltipp -> umschalten
+      onClearSelection?.(); // Auswahl immer mit zurücksetzen
       lastTap.current = 0;
     } else {
       lastTap.current = now;
