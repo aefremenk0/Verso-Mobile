@@ -130,6 +130,7 @@ src/
                           MapFilterSheet (Filter-Panel; `showArt`-Prop —
                           im Feed aus, da Hotbar die Art macht),
                           SearchField (Such-Pille mit SVG-Lupe + Clear),
+                          SurpriseButton („Überrasch mich"; Sparkle + Press-Bounce),
                           RangeSlider (Budget, PanResponder)
   lib/mapFilter.ts        Filter-Typ + matchesFilter (Art/Budget/Bewertung/Ambiente)
   lib/pinColors.ts        Karten-Pin-Farben pro Kategorie (oval/inner/dot)
@@ -363,8 +364,9 @@ Gespeichert, Profil, Einstellungen, Geheimtipp). Karte-Tab = Platzhalter.
   Kategorie-Bar, filtert zusätzlich (Stadt→Szene→Kategorie→Suchtext).
 - (erledigt) ~~**Feed-Filter** Budget/Bewertung/Ambiente~~ — `MapFilterSheet`
   (mit `showArt={false}`) jetzt auch im Feed, Trichter-Button neben der Suche.
-- **„Überrasch mich" / Shuffle** als sichtbarer Button (passt zum Geheimtipp-Kern;
-  steht auch in der Easter-Egg-Roadmap als Shake).
+- (erledigt) ~~**„Überrasch mich" / Shuffle**~~ — sichtbarer `SurpriseButton`
+  oben im Feed; zufälliger Ort aus Stadt+Szene-Pool → Spot-Detail. (Shake-Geste
+  bleibt separat in der Easter-Egg-Roadmap.)
 - **Onboarding-Personalisierung**: bei Registrierung 2–3 Interessen wählen →
   Feed/Geheimtipp leicht tunen.
 - **Spot-Detail-Tiefe**: „Jetzt geöffnet?"-Badge, Entfernung, Mini-Karte.
@@ -422,7 +424,14 @@ npx tsc --noEmit       # Typecheck
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-25 · Feed-Filter: Budget/Bewertung/Ambiente
+### (dieser Commit) · 2026-06-25 · „Überrasch mich"-Button im Feed
+- Neue **`SurpriseButton`**-Komponente (dunkle Pille, gelbe Sparkle,
+  Press-Bounce via Reanimated) oben im Feed.
+- Zieht einen **zufälligen Ort** aus dem breiten **Stadt+Szene-Pool** (bewusst
+  nicht aus der gefilterten Liste) → direkt zum Spot-Detail. Passt zum
+  Geheimtipp-Kern; Shake-Geste bleibt separat in der Easter-Egg-Roadmap.
+
+### 5efc5c7 · 2026-06-25 · Feed-Filter: Budget/Bewertung/Ambiente
 - **`MapFilterSheet`** bekommt ein **`showArt`**-Prop (Default true). Im Feed
   `showArt={false}`, weil dort die Kategorie-Hotbar die „Art" macht — kein
   doppelter Kategorie-Filter.

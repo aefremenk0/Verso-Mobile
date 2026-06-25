@@ -1,3 +1,4 @@
+import { useRouter } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -9,6 +10,7 @@ import { Pill } from "../../src/components/Pill";
 import { SceneToggle } from "../../src/components/SceneToggle";
 import { SearchField } from "../../src/components/SearchField";
 import { SpotCard } from "../../src/components/SpotCard";
+import { SurpriseButton } from "../../src/components/SurpriseButton";
 import { sortByCategory } from "../../src/data/categories";
 import { SPOTS } from "../../src/data/spots";
 import type { Category } from "../../src/data/types";
@@ -38,6 +40,7 @@ function FilterGlyph({ color = "#1A1A1A" }: { color?: string }) {
 // (rechts). Darunter Stadt-Dropdown und die szenenabhängige Kategorie-Bar.
 
 export default function Feed() {
+  const router = useRouter();
   const { city } = useCity();
   const { scene } = useScene();
   const [activeCategory, setActiveCategory] = useState<Category | null>(null);
@@ -79,6 +82,21 @@ export default function Feed() {
       ),
     [city, scene, activeCategory, q, filter],
   );
+
+  // „Überrasch mich" zieht aus dem breiten Stadt+Szene-Pool (bewusst NICHT aus
+  // der gefilterten Liste — sonst wär's keine Überraschung).
+  const surprisePool = useMemo(
+    () =>
+      SPOTS.filter(
+        (s) => s.city === city && SCENE_CATEGORIES[scene].includes(s.category),
+      ),
+    [city, scene],
+  );
+  const onSurprise = () => {
+    if (surprisePool.length === 0) return;
+    const pick = surprisePool[Math.floor(Math.random() * surprisePool.length)];
+    router.push(`/spot/${pick.id}`);
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-screen" edges={["top"]}>
@@ -148,6 +166,13 @@ export default function Feed() {
         }}
         showsVerticalScrollIndicator={false}
       >
+        {/* „Überrasch mich" — zufälliger Ort (passt zum Geheimtipp-Kern) */}
+        {surprisePool.length > 0 ? (
+          <View className="mb-4">
+            <SurpriseButton onPress={onSurprise} />
+          </View>
+        ) : null}
+
         {visibleSpots.map((spot, i) => (
           <SpotCard key={spot.id} spot={spot} hintCandidate={i === 0} />
         ))}
