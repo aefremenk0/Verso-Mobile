@@ -1,0 +1,150 @@
+==============================================================================
+VERSO — APP STORE LISTING (Entwurf)
+==============================================================================
+Sprache primär: Deutsch (de-DE)   ·   Stand: Pilot München (v1.0)
+Zahlen in (…) = Apple-Zeichenlimit. Vor dem Upload Zeichen zählen lassen!
+Hinweis: Wörter aus App-Name/Untertitel NICHT in den Keywords wiederholen
+(Apple indexiert sie schon).
+------------------------------------------------------------------------------
+
+
+########## 1) APP-NAME  (max. 30 Zeichen) ##########
+
+Verso – Orte mit Geheimtipp
+
+Alternativen:
+  • Verso – Dein Stadt-Geheimtipp
+  • Verso
+
+
+########## 2) UNTERTITEL / SUBTITLE  (max. 30 Zeichen) ##########
+
+Kuratierte Orte deiner Stadt
+
+Alternativen:
+  • Geheimtipps statt Listen
+  • Die Stadt, wie sie keiner zeigt
+
+
+########## 3) PROMOTIONAL TEXT  (max. 170 · ohne Review änderbar) ##########
+
+Keine Listen für alle — nur Orte, die wir dir selbst zeigen würden. Jede Woche
+ein neuer Geheimtipp, kuratiert wie vom gut vernetzten Freund. Jetzt als Pilot
+in München.
+
+
+########## 4) KEYWORDS  (max. 100 · kommagetrennt, keine Leerzeichen) ##########
+
+münchen,geheimtipp,bars,restaurant,café,ausgehen,nightlife,stadtführer,kuratiert,clubs,essen,lokale
+
+
+########## 5) BESCHREIBUNG  (max. 4000 Zeichen) ##########
+
+Verso zeigt dir die Orte, die kaum jemand kennt — kuratiert wie der Tipp eines
+gut vernetzten Freundes, nicht wie ein Branchenverzeichnis.
+
+Keine endlosen Listen, keine Werbung, keine „Top 50". Stattdessen eine Handvoll
+besonderer Orte pro Stadt: die Bar hinter der Tür ohne Schild, das Café ohne
+WLAN, der Club, den du nur findest, wenn dir jemand sagt, wo.
+
+DEIN WOCHENTIPP
+Einmal pro Woche holst du dir einen Geheimtipp ab — einen kuratierten Ort, den
+wir dir persönlich zeigen würden. Mehr Neugier, weniger Scrollen.
+
+WAS DICH ERWARTET
+•  Kuratierter Feed: besondere Orte statt Masse — Restaurants, Bars, Cafés, Clubs.
+•  Szenen-Umschalter: „Essen" oder „Feiern", je nach Abend.
+•  Suche & Filter: nach Ort, Viertel, Budget, Bewertung und Ambiente.
+•  Merken & Teilen: deine Liste jederzeit griffbereit, Export nach Google Maps.
+•  Karte & Viertel: entdecke die Stadt Viertel für Viertel.
+•  Überrasch mich: ein Ort per Zufall, wenn du dich treiben lassen willst.
+
+START IN MÜNCHEN
+Wir starten als Pilot in München — sorgfältig von Hand kuratiert. Weitere Städte
+folgen Schritt für Schritt.
+
+Verso ist für alle, die das Echte suchen statt das Offensichtliche.
+Willkommen, Insider.
+
+
+########## 6) NEUE FUNKTIONEN / WHAT'S NEW  (max. 4000 · Release Notes v1.0) ##########
+
+Willkommen bei Verso! Erste Version mit kuratiertem Feed, deinem wöchentlichen
+Geheimtipp, Karte, Vierteln sowie Merken & Teilen — als Pilot in München.
+Wir freuen uns über dein Feedback.
+
+
+########## 7) KATEGORIEN ##########
+
+Primär:    Essen & Trinken   (Alternative: Reisen)
+Sekundär:  Reisen            (Alternative: Lifestyle)
+
+
+########## 8) ALTERSFREIGABE (Hinweis) ##########
+
+Voraussichtlich 12+ — die App nennt Bars, Clubs und Alkohol (Cocktails, Wein)
+im redaktionellen Ton. Im Apple-Fragebogen „Alkohol/Tabak/Drogen: selten/mild"
+angeben. Kein expliziter Inhalt, keine Käufe, kein nutzergenerierter Inhalt.
+
+
+########## 9) URLS  (bitte ausfüllen — Datenschutz ist PFLICHT) ##########
+
+Support-URL:        https://…            (Pflichtfeld)
+Marketing-URL:      https://…            (optional)
+Datenschutz-URL:    https://…            (PFLICHT für die Veröffentlichung)
+
+
+########## 10) APP-DATENSCHUTZ (App Privacy „Nutrition Label") ##########
+
+Aktueller Stand (MVP, kein Backend): „Es werden keine Daten erfasst."
+- Kein Login mit echten Daten, kein Tracking, kein Analytics, kein Standort-Zugriff.
+- Alles läuft lokal/in-memory.
+WICHTIG: Sobald Supabase/Auth/echtes Login dazukommt, muss diese Angabe
+aktualisiert werden (z. B. E-Mail, gespeicherte Orte = „mit dir verknüpfte Daten").
+
+
+########## 11) NOTIZEN FÜR DIE APPLE-REVIEW (App Review Information) ##########
+
+Verso ist eine kuratierte Discovery-App für besondere Orte. Zum Testen einfach
+öffnen und durch den München-Feed blättern — es ist KEIN Login nötig
+(„Weiter mit Apple/Google" und die Registrierung sind im Pilot reine UI und
+führen direkt in den Feed). Die angezeigten Orte sind kuratierte Beispieldaten.
+Externe Links (Reservierung/Karten) öffnen Safari/Google/Apple Maps.
+Demo-Account: nicht erforderlich.
+
+
+==============================================================================
+OPTIONAL — ENGLISCHE FASSUNG (en-US, falls als zweite Locale gewünscht)
+==============================================================================
+
+NAME (30):       Verso – Local Hidden Gems
+SUBTITLE (30):   Curated places, not lists
+PROMO (170):     No lists for everyone — only places we'd show you ourselves.
+                 A fresh hidden tip every week, curated like a well-connected
+                 friend. Now piloting in Munich.
+KEYWORDS (100):  munich,hidden gems,bars,restaurant,cafe,nightlife,city guide,
+                 curated,clubs,where to go,local
+
+DESCRIPTION:
+Verso shows you the places almost no one knows — curated like a tip from a
+well-connected friend, not a business directory.
+
+No endless lists, no ads, no „Top 50". Just a handful of special places per
+city: the bar behind the unmarked door, the café with no Wi-Fi, the club you
+only find if someone tells you where.
+
+YOUR WEEKLY TIP
+Once a week you unlock a hidden gem — one curated place we'd personally show you.
+
+WHAT'S INSIDE
+•  Curated feed: special places, not the masses.
+•  Scene toggle: „Eat" or „Go out", depending on the night.
+•  Search & filters: place, neighborhood, budget, rating, vibe.
+•  Save & share: your list, ready anytime; export to Google Maps.
+•  Map & neighborhoods: explore the city block by block.
+•  Surprise me: a random pick when you feel like wandering.
+
+STARTING IN MUNICH
+We launch as a pilot in Munich — carefully curated by hand. More cities to come.
+
+Welcome, insider.

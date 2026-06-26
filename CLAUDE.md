@@ -455,7 +455,17 @@ npm test               # Unit-Tests der reinen Logik (vitest, src/**)
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-26 · data-collection: CSV-Vorlagen (Sammeln)
+### (dieser Commit) · 2026-06-26 · App-Store-Texte + Design-Runtime aktualisiert
+- Neue **`store/app-store-listing.txt`**: App-Store-Listing-Entwurf (de-DE) im
+  Verso-Ton — App-Name, Untertitel, Promo-Text, Keywords, Beschreibung, Release
+  Notes, Kategorien, Altersfreigabe-Hinweis (voraussichtlich 12+ wg. Bars/Alkohol),
+  App-Privacy („keine Daten erfasst" im MVP) und Apple-Review-Notizen. Optionale
+  englische Fassung dabei. Jeweils mit Apple-Zeichenlimits annotiert.
+- **`design/support.js`** auf neuen dc-runtime-Build aktualisiert (die drei
+  Design-Dateien — App-Icon, Mobile v2, Mobile v1 — waren unverändert/bereits im
+  Repo, siehe `e8e19b0`).
+
+### eb548d2 · 2026-06-26 · data-collection: CSV-Vorlagen (Sammeln)
 - Neuer Ordner **`data-collection/`** mit CSV-Vorlagen zum Orte-Sammeln (Google
   Sheets → später Supabase-Import): `verso_spots_muenchen.csv` (10 Orte + 1
   Beispiel-Event, `published=FALSE`) und `verso_viertel_muenchen.csv` (8 Viertel).
