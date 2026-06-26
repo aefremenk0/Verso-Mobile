@@ -455,7 +455,14 @@ npm test               # Unit-Tests der reinen Logik (vitest, src/**)
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-25 · „Fertig"-Leiste über der Tastatur
+### (dieser Commit) · 2026-06-26 · data-collection: CSV-Vorlagen (Sammeln)
+- Neuer Ordner **`data-collection/`** mit CSV-Vorlagen zum Orte-Sammeln (Google
+  Sheets → später Supabase-Import): `verso_spots_muenchen.csv` (10 Orte + 1
+  Beispiel-Event, `published=FALSE`) und `verso_viertel_muenchen.csv` (8 Viertel).
+  Spaltenformat deckungsgleich mit dem `Spot`-Typ. Kurze `README.md` erklärt
+  Header, Event-Felder (`date_label`/`meeting_point`/`ticket_url`) und Wertelisten.
+
+### 9155f39 · 2026-06-25 · „Fertig"-Leiste über der Tastatur
 - Neue **`KeyboardDoneBar`** (iOS `InputAccessoryView`): ein **„Fertig"-Button**
   über der Tastatur, der sie via `Keyboard.dismiss()` wieder einzieht. Gemeinsame
   `KEYBOARD_DONE_ID`; pro Screen einmal gerendert.
