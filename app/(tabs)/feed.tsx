@@ -1,10 +1,10 @@
 import { useRouter } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
-import { FlatList, Pressable, Text, View } from "react-native";
+import { FlatList, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Svg, { Path } from "react-native-svg";
 import { CategoryBar } from "../../src/components/CategoryBar";
 import { CityDropdown } from "../../src/components/CityDropdown";
+import { FilterButton } from "../../src/components/FilterButton";
 import { KeyboardDoneBar } from "../../src/components/KeyboardDoneBar";
 import { MapFilterSheet } from "../../src/components/MapFilterSheet";
 import { SceneToggle } from "../../src/components/SceneToggle";
@@ -20,21 +20,6 @@ import { SCENE_CATEGORIES } from "../../src/lib/scene";
 import { useCity } from "../../src/store/city";
 import { useInterests } from "../../src/store/interests";
 import { useScene } from "../../src/store/scene";
-
-// Trichter-Icon (Filter) — SVG, passt zum redaktionellen Ton (kein Emoji).
-function FilterGlyph({ color = "#1A1A1A" }: { color?: string }) {
-  return (
-    <Svg width={18} height={18} viewBox="0 0 24 24">
-      <Path
-        d="M3 5 H21 L14 13 V20 L10 18 V13 Z"
-        stroke={color}
-        strokeWidth={1.8}
-        strokeLinejoin="round"
-        fill="none"
-      />
-    </Svg>
-  );
-}
 
 // Screen 02 — Discovery-Feed.
 // Oben unter dem Notch: Liste/Karte-Umschalter (zentriert) + Szenen-Toggle
@@ -128,18 +113,7 @@ export default function Feed() {
             placeholder="Ort, Viertel oder Tag suchen …"
           />
         </View>
-        <Pressable
-          onPress={() => setFilterOpen(true)}
-          accessibilityLabel="Filter öffnen"
-          className={`h-11 w-11 items-center justify-center rounded-pill ${
-            filterActive ? "bg-accent" : "bg-chip"
-          }`}
-        >
-          <FilterGlyph color={filterActive ? "#1A1A1A" : "#6E6A63"} />
-          {filterActive ? (
-            <View className="absolute right-2 top-2 h-2 w-2 rounded-pill bg-night" />
-          ) : null}
-        </Pressable>
+        <FilterButton active={filterActive} onPress={() => setFilterOpen(true)} />
       </View>
 
       {/* Liste + schwebende Kategorie-Leiste. Die Leiste liegt transparent ÜBER

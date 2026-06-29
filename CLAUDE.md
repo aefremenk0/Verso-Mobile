@@ -137,6 +137,8 @@ src/
                           SearchField (Such-Pille mit SVG-Lupe + Clear),
                           CategoryBar (transparente Kategorie-Pills; als
                           schwebende Overlay-Leiste in Feed + Karte),
+                          FilterButton (Trichter-Button; öffnet MapFilterSheet,
+                          gemeinsam von Feed + Karte),
                           KeyboardDoneBar („Fertig"-Leiste über iOS-Tastatur),
                           SurpriseButton („Überrasch mich"; Sparkle + Press-Bounce),
                           MiniMap (stilisierte Detail-Mini-Karte, SVG, tippbar),
@@ -457,7 +459,15 @@ npm test               # Unit-Tests der reinen Logik (vitest, src/**)
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-26 · Kategorie-Leiste schwebt transparent (Feed + Karte)
+### (dieser Commit) · 2026-06-26 · Karte: Such-/Filter-Zeile statt Filter-Schnellwahl
+- **Karte** nutzt jetzt **dieselbe Such-/Filter-Zeile wie der Feed**: `SearchField`
+  (filtert Pins nach Name/Viertel/Tag) + Trichter-`FilterButton` (öffnet das
+  Filter-Sheet). Die alte Filter-Schnellwahl (Budget/Bewertung/Ambiente-Chips)
+  und der „FILTER"-Button sind raus. `KeyboardDoneBar` für das Suchfeld ergänzt.
+- Neue **`FilterButton`**-Komponente (Trichter + Aktiv-Indikator), aus dem Feed
+  extrahiert und in Feed + Karte gemeinsam genutzt (DRY).
+
+### 7d2be61 · 2026-06-26 · Kategorie-Leiste schwebt transparent (Feed + Karte)
 - Neue **`CategoryBar`** (transparenter Hintergrund, Pills bleiben gefüllt) —
   als **schwebende Overlay-Leiste**: der Inhalt dahinter (Feed-Karten / Karte)
   bleibt sichtbar, man sieht „durch die Leiste".

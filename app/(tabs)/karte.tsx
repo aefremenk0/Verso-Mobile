@@ -5,9 +5,12 @@ import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context"
 import { CategoryBar } from "../../src/components/CategoryBar";
 import { CityDropdown } from "../../src/components/CityDropdown";
 import { CityMap } from "../../src/components/CityMap";
+import { FilterButton } from "../../src/components/FilterButton";
 import { ImagePlaceholder } from "../../src/components/ImagePlaceholder";
+import { KeyboardDoneBar } from "../../src/components/KeyboardDoneBar";
 import { MapFilterSheet } from "../../src/components/MapFilterSheet";
 import { SceneToggle } from "../../src/components/SceneToggle";
+import { SearchField } from "../../src/components/SearchField";
 import { CATEGORY_LABEL, priceLabel } from "../../src/data/categories";
 import { SPOTS } from "../../src/data/spots";
 import type { Category, Spot } from "../../src/data/types";
@@ -36,6 +39,14 @@ export default function Karte() {
   const [filterOpen, setFilterOpen] = useState(false);
   const [filter, setFilter] = useState<MapFilter>(DEFAULT_FILTER);
   const [activeCategory, setActiveCategory] = useState<Category | null>(null);
+  const [query, setQuery] = useState("");
+
+  // Budget/Bewertung/Ambiente gesetzt? (Art macht die Kategorie-Leiste)
+  const filterActive =
+    filter.minPrice > 0 ||
+    filter.maxPrice < 100 ||
+    filter.minRating > 0 ||
+    filter.ambiente.length > 0;
 
   // Beim Szenenwechsel den Art-Filter UND die Kategorie-Auswahl leeren — sonst
   // würden szenenfremde Arten alle Orte wegfiltern.
@@ -44,14 +55,22 @@ export default function Karte() {
     setActiveCategory(null);
   }, [scene]);
 
-  // Stadt -> Szene (Kategoriengruppe) -> Kategorie-Leiste -> Filter-Sheet.
+  // Stadt -> Szene (Kategoriengruppe) -> Kategorie-Leiste -> Suche -> Filter-Sheet.
+  const q = query.trim().toLowerCase();
   const spots = useMemo(
     () =>
       SPOTS.filter((s) => s.city === city)
         .filter((s) => SCENE_CATEGORIES[scene].includes(s.category))
         .filter((s) => (activeCategory ? s.category === activeCategory : true))
+        .filter((s) =>
+          q
+            ? s.name.toLowerCase().includes(q) ||
+              s.neighborhood.toLowerCase().includes(q) ||
+              s.tags.some((t) => t.toLowerCase().includes(q))
+            : true,
+        )
         .filter((s) => matchesFilter(s, filter)),
-    [city, scene, activeCategory, filter],
+    [city, scene, activeCategory, q, filter],
   );
 
   // Ausgewählter Spot nur zeigen, wenn er noch im gefilterten Ergebnis ist.
@@ -66,42 +85,16 @@ export default function Karte() {
       {/* Kopfzeile: Stadt links, Szene rechts */}
       <CityDropdown right={<SceneToggle />} />
 
-      {/* Filter-Schnellwahl + FILTER-Button */}
-      <View className="mt-3 gap-2.5 px-6">
-        <View className="flex-row justify-center gap-2">
-          {[
-            { label: "Budget", on: filter.minPrice > 0 || filter.maxPrice < 100 },
-            { label: "Bewertung", on: filter.minRating > 0 },
-            { label: "Ambiente", on: filter.ambiente.length > 0 },
-          ].map((f) => (
-            <Pressable
-              key={f.label}
-              onPress={() => setFilterOpen(true)}
-              className={`rounded-pill px-4 py-2.5 ${
-                f.on ? "bg-accent" : "border border-black/10 bg-surface"
-              }`}
-            >
-              <Text
-                className={`font-hk-semibold text-[13px] ${
-                  f.on ? "text-accent-ink" : "text-ink"
-                }`}
-              >
-                {f.label}
-              </Text>
-            </Pressable>
-          ))}
+      {/* Suchfeld + Filter-Button (wie im Feed) */}
+      <View className="mt-3 flex-row items-center gap-2 px-6">
+        <View className="flex-1">
+          <SearchField
+            value={query}
+            onChangeText={setQuery}
+            placeholder="Ort, Viertel oder Tag suchen …"
+          />
         </View>
-
-        <Pressable
-          onPress={() => setFilterOpen(true)}
-          className="flex-row items-center justify-center gap-2 rounded-[14px] border border-black/10 bg-surface py-3"
-          style={shadows.card}
-        >
-          <Text className="font-hk-semibold text-[12px] tracking-[1px] text-ink">
-            FILTER
-          </Text>
-          <Text className="text-[11px] text-ink">▾</Text>
-        </Pressable>
+        <FilterButton active={filterActive} onPress={() => setFilterOpen(true)} />
       </View>
 
       {/* Karte + schwebende, transparente Kategorie-Leiste darüber (man sieht
@@ -160,6 +153,9 @@ export default function Karte() {
           showArt={false}
         />
       ) : null}
+
+      {/* „Fertig"-Leiste über der Tastatur (iOS) für das Suchfeld */}
+      <KeyboardDoneBar />
     </SafeAreaView>
   );
 }
