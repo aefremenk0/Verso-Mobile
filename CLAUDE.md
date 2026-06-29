@@ -459,7 +459,12 @@ npm test               # Unit-Tests der reinen Logik (vitest, src/**)
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-26 · Karte: Such-/Filter-Zeile statt Filter-Schnellwahl
+### (dieser Commit) · 2026-06-26 · Fix: Doppeltipp-Hinweis kollidiert nicht mehr mit Kategorie-Leiste
+- Der Doppeltipp-Hinweis-Chip in `CityMap` lag bei `top: 12` — seit der
+  schwebenden Kategorie-Leiste (oben ~6–56) überlappte er die Kategorie-Ovale.
+  → Chip auf `top: 66` (unter die Leiste) verschoben.
+
+### 2c06594 · 2026-06-26 · Karte: Such-/Filter-Zeile statt Filter-Schnellwahl
 - **Karte** nutzt jetzt **dieselbe Such-/Filter-Zeile wie der Feed**: `SearchField`
   (filtert Pins nach Name/Viertel/Tag) + Trichter-`FilterButton` (öffnet das
   Filter-Sheet). Die alte Filter-Schnellwahl (Budget/Bewertung/Ambiente-Chips)

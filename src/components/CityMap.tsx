@@ -375,11 +375,13 @@ export function CityMap({
         </View>
       ))}
 
-      {/* Hinweis-Chip oben rechts (B): erklärt die Doppeltipp-Geste, fadet aus. */}
+      {/* Hinweis-Chip (B): erklärt die Doppeltipp-Geste, fadet aus. Sitzt
+          BEWUSST unter der schwebenden Kategorie-Leiste (~top 6–56), damit er
+          nicht mit den Kategorie-Ovalen überlappt. */}
       {hint ? (
         <Animated.View
           pointerEvents="none"
-          style={[{ position: "absolute", top: 12, right: 12 }, hintStyle]}
+          style={[{ position: "absolute", top: 66, right: 12 }, hintStyle]}
         >
           <View className="rounded-pill bg-night px-3 py-2" style={shadows.card}>
             <Text className="font-hk-semibold text-[11px] text-screen">
