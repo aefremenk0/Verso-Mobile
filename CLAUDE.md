@@ -135,6 +135,8 @@ src/
                           MapFilterSheet (Filter-Panel; `showArt`-Prop —
                           im Feed aus, da Hotbar die Art macht),
                           SearchField (Such-Pille mit SVG-Lupe + Clear),
+                          CategoryBar (transparente Kategorie-Pills; als
+                          schwebende Overlay-Leiste in Feed + Karte),
                           KeyboardDoneBar („Fertig"-Leiste über iOS-Tastatur),
                           SurpriseButton („Überrasch mich"; Sparkle + Press-Bounce),
                           MiniMap (stilisierte Detail-Mini-Karte, SVG, tippbar),
@@ -455,7 +457,18 @@ npm test               # Unit-Tests der reinen Logik (vitest, src/**)
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-26 · App-Store-Texte + Design-Runtime aktualisiert
+### (dieser Commit) · 2026-06-26 · Kategorie-Leiste schwebt transparent (Feed + Karte)
+- Neue **`CategoryBar`** (transparenter Hintergrund, Pills bleiben gefüllt) —
+  als **schwebende Overlay-Leiste**: der Inhalt dahinter (Feed-Karten / Karte)
+  bleibt sichtbar, man sieht „durch die Leiste".
+- **Feed**: Stadt-Kopf + Suche/Filter bleiben fix & deckend; die Kategorie-Leiste
+  liegt jetzt **absolut über** der `FlatList` (`paddingTop` aus gemessener
+  Leistenhöhe), Karten scrollen sichtbar dahinter.
+- **Karte**: dieselbe Leiste schwebt über `CityMap` und filtert die Pins nach
+  Kategorie (`activeCategory`). „Art" wandert damit aus dem Karten-Filter-Sheet
+  (`showArt={false}`), der redundante „Art"-Schnellchip ist raus.
+
+### f5505cc · 2026-06-26 · App-Store-Texte + Design-Runtime aktualisiert
 - Neue **`store/app-store-listing.txt`**: App-Store-Listing-Entwurf (de-DE) im
   Verso-Ton — App-Name, Untertitel, Promo-Text, Keywords, Beschreibung, Release
   Notes, Kategorien, Altersfreigabe-Hinweis (voraussichtlich 12+ wg. Bars/Alkohol),

@@ -2,6 +2,7 @@ import { useRouter } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
 import { Pressable, Text, View } from "react-native";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
+import { CategoryBar } from "../../src/components/CategoryBar";
 import { CityDropdown } from "../../src/components/CityDropdown";
 import { CityMap } from "../../src/components/CityMap";
 import { ImagePlaceholder } from "../../src/components/ImagePlaceholder";
@@ -9,7 +10,7 @@ import { MapFilterSheet } from "../../src/components/MapFilterSheet";
 import { SceneToggle } from "../../src/components/SceneToggle";
 import { CATEGORY_LABEL, priceLabel } from "../../src/data/categories";
 import { SPOTS } from "../../src/data/spots";
-import type { Spot } from "../../src/data/types";
+import type { Category, Spot } from "../../src/data/types";
 import {
   DEFAULT_FILTER,
   matchesFilter,
@@ -34,20 +35,23 @@ export default function Karte() {
   const [selected, setSelected] = useState<Spot | null>(null);
   const [filterOpen, setFilterOpen] = useState(false);
   const [filter, setFilter] = useState<MapFilter>(DEFAULT_FILTER);
+  const [activeCategory, setActiveCategory] = useState<Category | null>(null);
 
-  // Beim Szenenwechsel den Art-Filter leeren — sonst würden szenenfremde Arten
-  // (anderer Toggle) alle Orte wegfiltern.
+  // Beim Szenenwechsel den Art-Filter UND die Kategorie-Auswahl leeren — sonst
+  // würden szenenfremde Arten alle Orte wegfiltern.
   useEffect(() => {
     setFilter((f) => (f.art.length ? { ...f, art: [] } : f));
+    setActiveCategory(null);
   }, [scene]);
 
-  // Stadt -> Szene (Kategoriengruppe) -> dann Filter anwenden.
+  // Stadt -> Szene (Kategoriengruppe) -> Kategorie-Leiste -> Filter-Sheet.
   const spots = useMemo(
     () =>
       SPOTS.filter((s) => s.city === city)
         .filter((s) => SCENE_CATEGORIES[scene].includes(s.category))
+        .filter((s) => (activeCategory ? s.category === activeCategory : true))
         .filter((s) => matchesFilter(s, filter)),
-    [city, scene, filter],
+    [city, scene, activeCategory, filter],
   );
 
   // Ausgewählter Spot nur zeigen, wenn er noch im gefilterten Ergebnis ist.
@@ -66,7 +70,6 @@ export default function Karte() {
       <View className="mt-3 gap-2.5 px-6">
         <View className="flex-row justify-center gap-2">
           {[
-            { label: "Art", on: filter.art.length > 0 },
             { label: "Budget", on: filter.minPrice > 0 || filter.maxPrice < 100 },
             { label: "Bewertung", on: filter.minRating > 0 },
             { label: "Ambiente", on: filter.ambiente.length > 0 },
@@ -101,7 +104,8 @@ export default function Karte() {
         </Pressable>
       </View>
 
-      {/* Karte */}
+      {/* Karte + schwebende, transparente Kategorie-Leiste darüber (man sieht
+          die Karte durch die Leiste hindurch). */}
       <View className="mt-3 flex-1 overflow-hidden">
         <CityMap
           spots={spots}
@@ -109,6 +113,12 @@ export default function Karte() {
           onSelect={onSelectSpot}
           onClearSelection={() => setSelected(null)}
         />
+        <View
+          pointerEvents="box-none"
+          style={{ position: "absolute", left: 0, right: 0, top: 6 }}
+        >
+          <CategoryBar active={activeCategory} onSelect={setActiveCategory} />
+        </View>
       </View>
 
       {/* Spot-Karte: erscheint erst, wenn ein Pin angetippt wurde.
@@ -147,6 +157,7 @@ export default function Karte() {
           setFilter={setFilter}
           count={spots.length}
           onClose={() => setFilterOpen(false)}
+          showArt={false}
         />
       ) : null}
     </SafeAreaView>

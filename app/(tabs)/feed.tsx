@@ -1,12 +1,12 @@
 import { useRouter } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
-import { FlatList, Pressable, ScrollView, Text, View } from "react-native";
+import { FlatList, Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Svg, { Path } from "react-native-svg";
+import { CategoryBar } from "../../src/components/CategoryBar";
 import { CityDropdown } from "../../src/components/CityDropdown";
 import { KeyboardDoneBar } from "../../src/components/KeyboardDoneBar";
 import { MapFilterSheet } from "../../src/components/MapFilterSheet";
-import { Pill } from "../../src/components/Pill";
 import { SceneToggle } from "../../src/components/SceneToggle";
 import { SearchField } from "../../src/components/SearchField";
 import { SpotCard } from "../../src/components/SpotCard";
@@ -16,8 +16,7 @@ import { SPOTS } from "../../src/data/spots";
 import type { Category } from "../../src/data/types";
 import { tapMedium } from "../../src/lib/haptics";
 import { DEFAULT_FILTER, matchesFilter, type MapFilter } from "../../src/lib/mapFilter";
-import { PIN_COLORS } from "../../src/lib/pinColors";
-import { SCENE_CATEGORIES, SCENE_FILTERS } from "../../src/lib/scene";
+import { SCENE_CATEGORIES } from "../../src/lib/scene";
 import { useCity } from "../../src/store/city";
 import { useInterests } from "../../src/store/interests";
 import { useScene } from "../../src/store/scene";
@@ -113,103 +112,87 @@ export default function Feed() {
     router.push(`/spot/${pick.id}`);
   };
 
+  // Höhe der schwebenden Kategorie-Leiste -> als paddingTop der Liste, damit der
+  // erste Inhalt unter ihr beginnt (und beim Scrollen sichtbar dahinter wandert).
+  const [barH, setBarH] = useState(44);
+
   return (
     <SafeAreaView className="flex-1 bg-screen" edges={["top"]}>
-      {/* Fix: nur der Stadt-Kopf bleibt oben stehen. Suche/Filter/Kategorie/
-          Überrasch-mich wandern in den Listen-Header und scrollen mit weg —
-          so ist über der ersten Karte nicht dauerhaft so viel Chrome. */}
+      {/* Fix & deckend: Stadt-Kopf + Suche/Filter. */}
       <CityDropdown right={<SceneToggle />} />
+      <View className="mt-3 flex-row items-center gap-2 px-6">
+        <View className="flex-1">
+          <SearchField
+            value={query}
+            onChangeText={setQuery}
+            placeholder="Ort, Viertel oder Tag suchen …"
+          />
+        </View>
+        <Pressable
+          onPress={() => setFilterOpen(true)}
+          accessibilityLabel="Filter öffnen"
+          className={`h-11 w-11 items-center justify-center rounded-pill ${
+            filterActive ? "bg-accent" : "bg-chip"
+          }`}
+        >
+          <FilterGlyph color={filterActive ? "#1A1A1A" : "#6E6A63"} />
+          {filterActive ? (
+            <View className="absolute right-2 top-2 h-2 w-2 rounded-pill bg-night" />
+          ) : null}
+        </Pressable>
+      </View>
 
-      <FlatList
-        data={personalizedSpots}
-        keyExtractor={(s) => s.id}
-        renderItem={({ item, index }) => (
-          <SpotCard spot={item} hintCandidate={index === 0} />
-        )}
-        showsVerticalScrollIndicator={false}
-        keyboardShouldPersistTaps="handled"
-        contentContainerStyle={{
-          paddingHorizontal: 24,
-          paddingTop: 12,
-          paddingBottom: 110, // Platz für die schwebende Nav
-        }}
-        ListHeaderComponent={
-          <View>
-            {/* Suchfeld + Filter-Button (Budget/Bewertung/Ambiente) */}
-            <View className="flex-row items-center gap-2">
-              <View className="flex-1">
-                <SearchField
-                  value={query}
-                  onChangeText={setQuery}
-                  placeholder="Ort, Viertel oder Tag suchen …"
-                />
-              </View>
-              <Pressable
-                onPress={() => setFilterOpen(true)}
-                accessibilityLabel="Filter öffnen"
-                className={`h-11 w-11 items-center justify-center rounded-pill ${
-                  filterActive ? "bg-accent" : "bg-chip"
-                }`}
-              >
-                <FilterGlyph color={filterActive ? "#1A1A1A" : "#6E6A63"} />
-                {filterActive ? (
-                  <View className="absolute right-2 top-2 h-2 w-2 rounded-pill bg-night" />
-                ) : null}
-              </Pressable>
+      {/* Liste + schwebende Kategorie-Leiste. Die Leiste liegt transparent ÜBER
+          der Liste -> Karten scrollen sichtbar dahinter durch. */}
+      <View className="mt-2 flex-1">
+        <FlatList
+          data={personalizedSpots}
+          keyExtractor={(s) => s.id}
+          renderItem={({ item, index }) => (
+            <SpotCard spot={item} hintCandidate={index === 0} />
+          )}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+          contentContainerStyle={{
+            paddingHorizontal: 24,
+            paddingTop: barH + 6, // Platz für die schwebende Leiste
+            paddingBottom: 110, // Platz für die schwebende Nav
+          }}
+          ListHeaderComponent={
+            <View>
+              {/* „Überrasch mich" — zufälliger Ort (passt zum Geheimtipp-Kern) */}
+              {surprisePool.length > 0 ? (
+                <View className="mb-4">
+                  <SurpriseButton onPress={onSurprise} />
+                </View>
+              ) : null}
+
+              {/* Dezenter Hinweis, wenn der Feed auf den Vibe abgestimmt ist */}
+              {interests.length > 0 && !q ? (
+                <Text className="mb-3 font-hk-semibold text-[11px] tracking-[1px] text-ink-3">
+                  ✦ AUF DEINEN VIBE ABGESTIMMT
+                </Text>
+              ) : null}
             </View>
+          }
+          ListEmptyComponent={
+            <Text className="mt-10 text-center font-hk-medium-italic text-[15px] text-ink-3">
+              {q || filterActive
+                ? "Nichts passt zu Suche/Filter. Lockere die Kriterien."
+                : "Hier kramen wir noch. Schau bald wieder rein."}
+            </Text>
+          }
+        />
 
-            {/* Kategorie-Bar — szenenabhängig. -mx-6 hebt das Content-Padding
-                auf, damit sie wieder von Rand zu Rand scrollt. */}
-            <View className="-mx-6 mt-3">
-              <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                contentContainerStyle={{
-                  paddingHorizontal: 24,
-                  gap: 8,
-                  paddingTop: 6,
-                  paddingBottom: 8,
-                }}
-              >
-                {SCENE_FILTERS[scene].map((f) => {
-                  const col = f.key ? PIN_COLORS[f.key] : null;
-                  return (
-                    <Pill
-                      key={f.label}
-                      label={f.label}
-                      active={activeCategory === f.key}
-                      onPress={() => setActiveCategory(f.key)}
-                      activeColor={col?.oval}
-                      activeTextColor={col?.inner}
-                    />
-                  );
-                })}
-              </ScrollView>
-            </View>
-
-            {/* „Überrasch mich" — zufälliger Ort (passt zum Geheimtipp-Kern) */}
-            {surprisePool.length > 0 ? (
-              <View className="mb-4 mt-2">
-                <SurpriseButton onPress={onSurprise} />
-              </View>
-            ) : null}
-
-            {/* Dezenter Hinweis, wenn der Feed auf den Vibe abgestimmt ist */}
-            {interests.length > 0 && !q ? (
-              <Text className="mb-3 font-hk-semibold text-[11px] tracking-[1px] text-ink-3">
-                ✦ AUF DEINEN VIBE ABGESTIMMT
-              </Text>
-            ) : null}
-          </View>
-        }
-        ListEmptyComponent={
-          <Text className="mt-10 text-center font-hk-medium-italic text-[15px] text-ink-3">
-            {q || filterActive
-              ? "Nichts passt zu Suche/Filter. Lockere die Kriterien."
-              : "Hier kramen wir noch. Schau bald wieder rein."}
-          </Text>
-        }
-      />
+        {/* Schwebende, transparente Kategorie-Leiste (Karten scrollen dahinter) */}
+        <View
+          onLayout={(e) => setBarH(e.nativeEvent.layout.height)}
+          pointerEvents="box-none"
+          style={{ position: "absolute", left: 0, right: 0, top: 0 }}
+        >
+          <CategoryBar active={activeCategory} onSelect={setActiveCategory} />
+        </View>
+      </View>
 
       {/* Filter-Sheet (oben angedockt). „Art" macht die Hotbar -> hier aus. */}
       {filterOpen ? (
