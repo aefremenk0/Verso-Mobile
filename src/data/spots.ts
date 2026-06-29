@@ -1,22 +1,22 @@
 import type { Spot } from "./types";
 
-// Kuratierte Mock-Spots. **Pilot-Phase: nur München.** Alle anderen Städte sind
-// in der Hotbar als „kommt bald" markiert und haben (noch) keine Inhalte.
-// Die `neighborhood`-Felder entsprechen exakt den Namen aus NEIGHBORHOODS
-// (cities.ts), damit der Bezirks-Screen (`=== name`) sie dem Viertel zuordnet.
+// Curated mock spots. **Pilot phase: only Munich.** All other cities are
+// marked "coming soon" in the hotbar and (still) have no content.
+// The `neighborhood` fields match the names from NEIGHBORHOODS exactly
+// (cities.ts), so the district screen (`=== name`) maps them to the neighborhood.
 export const SPOTS: Spot[] = [
-  // ───────────────────────────── MÜNCHEN ─────────────────────────────
+  // ───────────────────────────── MUNICH ─────────────────────────────
   {
     id: "glasscherbe",
     name: "Glasscherbe",
     category: "cafe",
     city: "München",
     neighborhood: "Glockenbachviertel",
-    hook: "Cortado zwischen Antiquariat und Aschenbecher.",
-    imageNote: "// bücher, rauch, ruhe",
+    hook: "Cortado between antiquarian books and ashtray.",
+    imageNote: "// books, smoke, calm",
     description:
-      "Halb Antiquariat, halb Café, ganz aus der Zeit gefallen. Cortado, ein vergilbtes Buch, ein Platz am Fenster. Niemand stört, niemand drängt.",
-    tags: ["Cortado", "Bücher", "Ruhig"],
+      "Half antiquarian bookshop, half café, entirely out of time. A cortado, a yellowed book, a seat by the window. Nobody bothers you, nobody rushes you.",
+    tags: ["Cortado", "Books", "Quiet"],
     priceLevel: 2,
     address: "Klenzestraße 41, 80469 München",
     ambience: ["gemütlich", "intim"],
@@ -31,11 +31,11 @@ export const SPOTS: Spot[] = [
     category: "bar",
     city: "München",
     neighborhood: "Glockenbachviertel",
-    hook: "Treppe runter, Tür zu, Telefon weg.",
-    imageNote: "// kein netz, mit absicht",
+    hook: "Down the stairs, door shut, phone away.",
+    imageNote: "// no signal, on purpose",
     description:
-      "Eine Kellerbar, in der Handys an der Garderobe bleiben. Gedämpftes Licht, ehrliche Drinks, Gespräche, die länger werden, weil keiner aufs Display schaut.",
-    tags: ["Cocktails", "Intim", "Spät"],
+      "A cellar bar where phones stay at the coat check. Dimmed light, honest drinks, conversations that run longer because nobody is staring at a screen.",
+    tags: ["Cocktails", "Intimate", "Late"],
     priceLevel: 2,
     address: "Hans-Sachs-Straße 7, 80469 München",
     ambience: ["intim", "underground"],
@@ -50,11 +50,11 @@ export const SPOTS: Spot[] = [
     category: "cafe",
     city: "München",
     neighborhood: "Gärtnerplatzviertel",
-    hook: "Brunch am Rondell, bis der erste Spritz kommt.",
-    imageNote: "// langer tisch, später spritz",
+    hook: "Brunch on the roundabout, until the first spritz arrives.",
+    imageNote: "// long table, late spritz",
     description:
-      "Ein heller Eckladen am Gärtnerplatz, in dem der Brunch nahtlos in den Aperitivo übergeht. Sauerteig, pochierte Eier, und irgendwann steht statt Kaffee ein Spritz auf dem Tisch.",
-    tags: ["Brunch", "Sauerteig", "Spritz"],
+      "A bright corner spot on Gärtnerplatz where brunch flows seamlessly into the aperitivo. Sourdough, poached eggs, and at some point a spritz stands on the table instead of coffee.",
+    tags: ["Brunch", "Sourdough", "Spritz"],
     priceLevel: 2,
     address: "Reichenbachstraße 12, 80469 München",
     ambience: ["lebhaft", "gemütlich"],
@@ -69,10 +69,10 @@ export const SPOTS: Spot[] = [
     category: "bar",
     city: "München",
     neighborhood: "Maxvorstadt",
-    hook: "Negroni bei offenem Fenster, wenn der Wind passt.",
-    imageNote: "// fenster auf bei föhn",
+    hook: "Negroni by an open window, when the wind is right.",
+    imageNote: "// windows open during föhn",
     description:
-      "Eine kleine Bar, die bei Föhn die Fenster aufreißt und die Stadt reinlässt. Negroni, ein Plattenspieler, der Barchef sucht selbst die Seite aus.",
+      "A small bar that throws the windows open during föhn weather and lets the city in. A negroni, a record player, the bartender picks the side himself.",
     tags: ["Negroni", "Vinyl"],
     priceLevel: 2,
     address: "Augustenstraße 28, 80333 München",
@@ -88,11 +88,11 @@ export const SPOTS: Spot[] = [
     category: "cafe",
     city: "München",
     neighborhood: "Maxvorstadt",
-    hook: "Glasdach, Cappuccino, Studenten mit Romanen.",
-    imageNote: "// licht von oben",
+    hook: "Glass roof, cappuccino, students with novels.",
+    imageNote: "// light from above",
     description:
-      "Ein verglaster Innenhof zwischen zwei Altbauten, in dem das Licht von oben fällt. Cappuccino, dicke Romane, das leise Blättern von Seiten. Die Uni ist nah, die Ruhe näher.",
-    tags: ["Cappuccino", "Hell", "Ruhig"],
+      "A glazed courtyard between two old buildings, where the light falls from above. Cappuccino, thick novels, the quiet turning of pages. The university is near, the calm even nearer.",
+    tags: ["Cappuccino", "Bright", "Quiet"],
     priceLevel: 2,
     address: "Türkenstraße 58, 80799 München",
     ambience: ["gemütlich", "elegant"],
@@ -107,11 +107,11 @@ export const SPOTS: Spot[] = [
     category: "bar",
     city: "München",
     neighborhood: "Schwabing",
-    hook: "Negroni, einen Steinwurf vom Englischen Garten.",
-    imageNote: "// vor dem garten, nach der arbeit",
+    hook: "Negroni, a stone's throw from the Englischer Garten.",
+    imageNote: "// by the garden, after work",
     description:
-      "Eine schmale Bar in einer Schwabinger Seitenstraße, nah genug am Englischen Garten, um danach barfuß heimzugehen. Klassische Drinks, kein Schnickschnack, ein Wirt mit Gedächtnis.",
-    tags: ["Negroni", "Klassisch", "Spät"],
+      "A narrow bar in a Schwabing side street, close enough to the Englischer Garten to walk home barefoot afterwards. Classic drinks, no frills, a host with a memory.",
+    tags: ["Negroni", "Classic", "Late"],
     priceLevel: 2,
     address: "Feilitzschstraße 9, 80802 München",
     ambience: ["lebhaft", "intim"],
@@ -126,11 +126,11 @@ export const SPOTS: Spot[] = [
     category: "restaurant",
     city: "München",
     neighborhood: "Haidhausen",
-    hook: "Wirtshaus von außen, Feinkost von innen.",
-    imageNote: "// schweinsbraten, aber anders",
+    hook: "A tavern from the outside, fine dining from within.",
+    imageNote: "// roast pork, but different",
     description:
-      "Außen Stammtisch und Hirschgeweih, innen eine Küche, die jeden Klassiker zerlegt und neu baut. Der Schweinsbraten kommt, aber nicht so, wie du denkst.",
-    tags: ["Bayrisch", "Modern"],
+      "Regulars' table and deer antlers outside, inside a kitchen that takes every classic apart and rebuilds it. The roast pork arrives, but not the way you think.",
+    tags: ["Bavarian", "Modern"],
     priceLevel: 3,
     address: "Wörthstraße 6, 81667 München",
     ambience: ["gemütlich", "elegant"],
@@ -142,15 +142,15 @@ export const SPOTS: Spot[] = [
   },
   {
     id: "weisswurst-um-zehn",
-    name: "Weißwurst um Zehn",
+    name: "White Sausage at Ten",
     category: "snack",
     city: "München",
     neighborhood: "Isarvorstadt / Flaucher",
-    hook: "Vor zwölf, im Stehen, mit Brezn.",
-    imageNote: "// nie nach mittag",
+    hook: "Before noon, standing up, with a pretzel.",
+    imageNote: "// never after midday",
     description:
-      "Eine Metzgerei mit Stehtischen, an denen die Weißwurst nach altem Gesetz nie das Mittagsläuten hört. Süßer Senf, frische Brezn, ein Weißbier dazu — fertig.",
-    tags: ["Weißwurst", "Bayrisch", "Günstig"],
+      "A butcher's shop with standing tables, where by old custom the white sausage never hears the noon bells. Sweet mustard, fresh pretzels, a wheat beer on the side — done.",
+    tags: ["White Sausage", "Bavarian", "Cheap"],
     priceLevel: 1,
     address: "Ohlmüllerstraße 5, 81541 München",
     ambience: ["lebhaft"],
@@ -165,11 +165,11 @@ export const SPOTS: Spot[] = [
     category: "restaurant",
     city: "München",
     neighborhood: "Westend / Schwanthalerhöhe",
-    hook: "Multikulti-Block, ein Tisch, von dem keiner spricht.",
-    imageNote: "// karte? was frisch war",
+    hook: "Multicultural block, one table nobody talks about.",
+    imageNote: "// menu? whatever was fresh",
     description:
-      "Im weniger touristischen Westend kocht ein kleines Team quer durch den Mittelmeerraum, je nachdem, was der Markt hergab. Zehn Tische, lange Abende, faire Preise.",
-    tags: ["Mediterran", "Saisonal", "Multikulti"],
+      "In the less touristy Westend a small team cooks all across the Mediterranean, depending on what the market offered. Ten tables, long evenings, fair prices.",
+    tags: ["Mediterranean", "Seasonal", "Multicultural"],
     priceLevel: 2,
     address: "Gollierstraße 24, 80339 München",
     ambience: ["lebhaft", "gemütlich"],
@@ -185,11 +185,11 @@ export const SPOTS: Spot[] = [
     category: "club",
     city: "München",
     neighborhood: "Werksviertel",
-    hook: "Alte Remise, neue Anlage, kein Schild.",
-    imageNote: "// gleise, dann bass",
+    hook: "Old depot, new sound system, no sign.",
+    imageNote: "// tracks, then bass",
     description:
-      "Im Werksviertel hinterm Ostbahnhof läuft an Wochenenden eine Anlage, die zu gut ist für den Raum. Du findest es nur, wenn dir jemand sagt, wo — oder dem Bass folgst.",
-    tags: ["House", "Spät", "Underground"],
+      "In the Werksviertel behind Ostbahnhof, a sound system runs on weekends that is too good for the room. You only find it if someone tells you where — or if you follow the bass.",
+    tags: ["House", "Late", "Underground"],
     priceLevel: 2,
     address: "Atelierstraße 10, 81671 München",
     ambience: ["underground", "lebhaft"],
@@ -200,7 +200,7 @@ export const SPOTS: Spot[] = [
   },
 ];
 
-/** Schnell-Zugriff auf einen Spot per id (für die Detail-Screens). */
+/** Quick access to a spot by id (for the detail screens). */
 export function getSpotById(id: string): Spot | undefined {
   return SPOTS.find((s) => s.id === id);
 }

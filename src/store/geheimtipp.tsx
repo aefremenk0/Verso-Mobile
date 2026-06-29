@@ -9,20 +9,20 @@ import {
 import { GEHEIMTIPP_BY_CITY } from "../data/user";
 import { useCity } from "./city";
 
-// Zustand des "Geheimtipp der Woche" — jetzt **pro Stadt**.
+// State of the "hidden gem of the week" — now **per city**.
 //
-// Der gezeigte Tipp (`spotId`/`weekLabel`) richtet sich nach der aktuell
-// gewählten Stadt (`useCity`). `abgeholt` = wurde der Tipp DIESER Stadt schon
-// aufgedeckt? Solange `false`, zeigt die Nav die gelbe "?"-Zelle. Jede Stadt hat
-// ihren eigenen Wochentipp, also auch ihren eigenen Abhol-Status. In-memory.
+// The shown tip (`spotId`/`weekLabel`) depends on the currently selected city
+// (`useCity`). `abgeholt` = has THIS city's tip already been revealed? While
+// `false`, the nav shows the yellow "?" cell. Each city has its own weekly tip,
+// and therefore its own collected status. In-memory.
 
 interface GeheimtippContextValue {
   abgeholt: boolean;
   weekLabel: string;
   spotId: string;
-  /** Nach dem Reveal aufrufen: markiert den Tipp der aktuellen Stadt als abgeholt. */
+  /** Call after the reveal: marks the current city's tip as collected. */
   markAbgeholt: () => void;
-  /** Beim Abmelden: alle Städte zurücksetzen (Tipps wieder "frisch"). */
+  /** On logout: reset all cities (tips become "fresh" again). */
   reset: () => void;
 }
 
@@ -30,7 +30,7 @@ const GeheimtippContext = createContext<GeheimtippContextValue | null>(null);
 
 export function GeheimtippProvider({ children }: { children: ReactNode }) {
   const { city } = useCity();
-  // Pro Stadt merken, ob der Wochentipp schon aufgedeckt wurde.
+  // Track per city whether the weekly tip has already been revealed.
   const [abgeholtByCity, setAbgeholtByCity] = useState<Record<string, boolean>>(
     {},
   );
@@ -41,8 +41,8 @@ export function GeheimtippProvider({ children }: { children: ReactNode }) {
   );
   const reset = useCallback(() => setAbgeholtByCity({}), []);
 
-  // Pilot-Phase: nur München hat einen Tipp -> Fallback auf München, falls je
-  // eine Stadt ohne Eintrag aktiv würde.
+  // Pilot phase: only München has a tip -> fall back to München in case a city
+  // without an entry ever became active.
   const tipp = GEHEIMTIPP_BY_CITY[city] ?? GEHEIMTIPP_BY_CITY.München!;
   const abgeholt = !!abgeholtByCity[city];
 
@@ -67,7 +67,7 @@ export function GeheimtippProvider({ children }: { children: ReactNode }) {
 export function useGeheimtipp(): GeheimtippContextValue {
   const ctx = useContext(GeheimtippContext);
   if (!ctx) {
-    throw new Error("useGeheimtipp muss innerhalb von <GeheimtippProvider> genutzt werden.");
+    throw new Error("useGeheimtipp must be used within <GeheimtippProvider>.");
   }
   return ctx;
 }

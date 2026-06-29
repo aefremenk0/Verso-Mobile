@@ -12,11 +12,10 @@ import { useGeheimtipp } from "../../src/store/geheimtipp";
 import { useSaved } from "../../src/store/saved";
 import { openExternal } from "../../src/lib/maps";
 
-// Screen 07 — Profil.
-// Nutzerkopf, Geheimtipp-Karte, Stats und Einstiegspunkte (Gespeichert,
-// Einstellungen usw.).
+// Screen 07 — Profile.
+// User header, hidden-gem card, stats and entry points (Saved, Settings, etc.).
 
-// Eine Zeile in der Einstiegs-Liste.
+// A row in the entry-point list.
 function Row({
   label,
   value,
@@ -55,20 +54,20 @@ export default function Profil() {
   const router = useRouter();
   const { savedIds } = useSaved();
 
-  // Geheimtipp der aktuell gewählten Stadt (city-abhängiger Store).
+  // Hidden gem of the currently selected city (city-dependent store).
   const { spotId } = useGeheimtipp();
   const { city } = useCity();
   const tippSpot = getSpotById(spotId);
   const cityCount = new Set(NEIGHBORHOODS.map((n) => n.city)).size;
-  // Viertelzahl variiert pro Stadt (München 8, Wien 7, Zürich 5 …) -> dynamisch
-  // aus NEIGHBORHOODS für die aktuelle Stadt ableiten (war hart 8).
+  // The number of neighborhoods varies per city (München 8, Wien 7, Zürich 5 …)
+  // -> derive it dynamically from NEIGHBORHOODS for the current city (was hard 8).
   const viertelCount = NEIGHBORHOODS.filter((n) => n.city === city).length;
 
-  // Verso lebt von Mundpropaganda -> systemeigenes Teilen-Sheet öffnen.
+  // Verso thrives on word of mouth -> open the native share sheet.
   const onInvite = () => {
     Share.share({
       message:
-        "Verso — kuratierte Orte, die kaum jemand kennt. Schau mal: https://verso.app",
+        "Verso — curated places hardly anyone knows. Take a look: https://verso.app",
     }).catch(() => {});
   };
 
@@ -77,19 +76,19 @@ export default function Profil() {
       <ScrollView
         contentContainerStyle={{
           paddingHorizontal: 24,
-          // „PROFIL" soll denselben Abstand zum Notch haben wie „Wien" im Feed:
-          // dort Container pt-2 (8) + Zentrierung in der 42er-Zeile ((42-30)/2=6)
-          // = 14px unter dem Notch. Hier entsprechend 14.
+          // "PROFILE" should have the same distance to the notch as "Wien" in the
+          // feed: there container pt-2 (8) + centering in the 42px row ((42-30)/2=6)
+          // = 14px below the notch. So 14 here.
           paddingTop: 14,
           paddingBottom: 110,
         }}
         showsVerticalScrollIndicator={false}
       >
         <Text className="font-hk-bold text-[11px] tracking-[1.5px] text-ink-3">
-          PROFIL
+          PROFILE
         </Text>
 
-        {/* Kopf: Avatar + Name */}
+        {/* Header: avatar + name */}
         <View className="mt-3 flex-row items-center">
           <View className="h-14 w-14 items-center justify-center rounded-pill bg-night">
             <Text className="font-hk-extrabold text-[18px] text-white">LH</Text>
@@ -102,15 +101,15 @@ export default function Profil() {
           </View>
         </View>
 
-        {/* Geheimtipp-Karte (dunkel). Zeigt den Tipp stationär an; Tippen führt
-            direkt zum Spot-Detail — KEIN Lade-/Reveal-Pop-up mehr. */}
+        {/* Hidden-gem card (dark). Shows the tip statically; tapping goes
+            straight to the spot detail — NO loading/reveal popup anymore. */}
         <Pressable
           onPress={() => tippSpot && router.push(`/spot/${tippSpot.id}`)}
           className="mt-6 rounded-card bg-night p-5"
         >
           <View className="flex-row items-center justify-between">
             <Text className="font-hk-bold text-[10px] tracking-[1.5px] text-white/50">
-              GEHEIMTIPP DER WOCHE · FÜR ALLE
+              HIDDEN GEM OF THE WEEK · FOR EVERYONE
             </Text>
             <View className="h-7 w-7 items-center justify-center rounded-pill bg-accent">
               <Text className="font-hk-extrabold text-[14px] text-accent-ink">?</Text>
@@ -131,9 +130,9 @@ export default function Profil() {
         {/* Stats */}
         <View className="mt-6 flex-row rounded-card bg-surface py-4">
           {[
-            { n: savedIds.length, l: "GESPEICHERT" },
-            { n: viertelCount, l: "VIERTEL" },
-            { n: cityCount, l: "STÄDTE" },
+            { n: savedIds.length, l: "SAVED" },
+            { n: viertelCount, l: "AREAS" },
+            { n: cityCount, l: "CITIES" },
           ].map((s, i) => (
             <View
               key={s.l}
@@ -147,27 +146,27 @@ export default function Profil() {
           ))}
         </View>
 
-        {/* Einstiegspunkte */}
+        {/* Entry points */}
         <View className="mt-4">
           <Row
-            label="Gespeicherte Orte"
+            label="Saved places"
             value={String(savedIds.length)}
             onPress={() => router.push("/gespeichert")}
           />
-          <Row label="Einstellungen" onPress={() => router.push("/settings")} />
+          <Row label="Settings" onPress={() => router.push("/settings")} />
           <Row
-            label="Verso unterstützen"
-            badge="SPENDE"
+            label="Support Verso"
+            badge="DONATE"
             onPress={() => openExternal("https://verso.app")}
           />
           <Row
-            label="Vorschlag machen"
+            label="Make a suggestion"
             value="verso.app ↗"
             onPress={() => openExternal("https://verso.app")}
           />
         </View>
 
-        {/* Freund einladen — passt zur App-DNA (Tipps von Freund zu Freund). */}
+        {/* Invite a friend — fits the app DNA (tips from friend to friend). */}
         <Pressable
           onPress={onInvite}
           className="flex-row items-center justify-between rounded-card bg-night p-5"
@@ -175,10 +174,10 @@ export default function Profil() {
         >
           <View className="flex-1 pr-3">
             <Text className="font-hk-extrabold-italic text-[18px] text-screen">
-              Kennst du jemanden mit Gespür?
+              Know someone with good taste?
             </Text>
             <Text className="mt-1 font-hk-medium text-[13px] leading-[18px] text-screen/60">
-              Verso lebt von Mundpropaganda.{"\n"}Gib den Geheimtipp weiter.
+              Verso thrives on word of mouth.{"\n"}Pass the hidden gem on.
             </Text>
           </View>
           <View className="h-10 w-10 items-center justify-center rounded-pill bg-accent">
@@ -186,20 +185,20 @@ export default function Profil() {
           </View>
         </Pressable>
 
-        {/* Stille Signatur ganz unten. 21px = derselbe Abstand wie die
-            Einladen-Karte zur Liste (beide Abstände gleich). */}
+        {/* Quiet signature at the very bottom. 21px = same spacing as the invite
+            card to the list (both spacings equal). */}
         <View className="items-center" style={{ marginTop: 21 }}>
           <Brand size={26} color="#8A857C" />
           <Text className="mt-2 font-hk-semibold text-[10px] tracking-[2px] text-ink-3">
             VERSION 0.1 · MADE IN MUNICH
           </Text>
-          {/* Zitat in EINER Zeile: shrink-to-fit statt Umbruch. */}
+          {/* Quote on ONE line: shrink-to-fit instead of wrapping. */}
           <Text
             numberOfLines={1}
             adjustsFontSizeToFit
             className="mt-3 text-center font-hk-medium-italic text-[12px] leading-[18px] text-ink-3"
           >
-            Die Stadt gehört denen, die hinter die Türen schauen.
+            The city belongs to those who look behind the doors.
           </Text>
         </View>
       </ScrollView>

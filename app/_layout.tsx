@@ -5,9 +5,10 @@ import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { VersoLoader } from "../src/components/VersoLoader";
 import { CityProvider } from "../src/store/city";
 import { GeheimtippProvider } from "../src/store/geheimtipp";
 import { InterestsProvider } from "../src/store/interests";
@@ -15,11 +16,14 @@ import { SavedProvider } from "../src/store/saved";
 import { SceneProvider } from "../src/store/scene";
 import { colors, fontMap } from "../src/theme";
 
-// Splash erst ausblenden, wenn die Schriften geladen sind (verhindert Flackern).
+// Only hide the splash once the fonts have loaded (prevents flicker).
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const [fontsLoaded, fontError] = useFonts(fontMap);
+  // Branded launch loader on top of everything; unmounts once it has finished
+  // popping through its color/font changes and faded out to reveal Welcome.
+  const [loaderDone, setLoaderDone] = useState(false);
 
   useEffect(() => {
     if (fontsLoaded || fontError) {
@@ -27,7 +31,7 @@ export default function RootLayout() {
     }
   }, [fontsLoaded, fontError]);
 
-  // Solange die Fonts laden, nichts rendern (Splash bleibt sichtbar).
+  // While the fonts are loading, render nothing (the splash stays visible).
   if (!fontsLoaded && !fontError) return null;
 
   return (
@@ -43,10 +47,10 @@ export default function RootLayout() {
             screenOptions={{
               headerShown: false,
               contentStyle: { backgroundColor: colors.screen },
-              // Horizontaler Slide: neuer Screen kommt von rechts herein
-              // (Inhalt wandert nach links), Zurück gleitet nach rechts hinaus.
+              // Horizontal slide: a new screen comes in from the right
+              // (content moves left), Back slides out to the right.
               animation: "slide_from_right",
-              // Per Wischen vom linken Rand zurück (wie nativ üblich).
+              // Swipe from the left edge to go back (as is native-standard).
               gestureEnabled: true,
             }}
           >
@@ -55,13 +59,13 @@ export default function RootLayout() {
             <Stack.Screen name="(tabs)" />
             <Stack.Screen name="spot/[id]" />
             <Stack.Screen name="gespeichert" />
-            {/* Geheimtipp als modaler Overlay-Screen — bewusst als Pop-up von
-                unten (slide_from_bottom), nicht als seitlicher Slide. */}
+            {/* Hidden gem as a modal overlay screen — deliberately a pop-up from
+                the bottom (slide_from_bottom), not a sideways slide. */}
             <Stack.Screen
               name="geheimtipp"
               options={{ presentation: "modal", animation: "slide_from_bottom" }}
             />
-            {/* „Verso Insider"-Hinweis (Feature noch nicht verfügbar) — Pop-up */}
+            {/* "Verso Insider" notice (feature not available yet) — pop-up */}
             <Stack.Screen
               name="insider"
               options={{ presentation: "modal", animation: "slide_from_bottom" }}
@@ -77,6 +81,9 @@ export default function RootLayout() {
         </SceneProvider>
       </CityProvider>
     </SafeAreaProvider>
+    {/* On top of everything: the branded launch loader (white -> verso pops ->
+        fades out to the brown Welcome hero). */}
+    {!loaderDone ? <VersoLoader onDone={() => setLoaderDone(true)} /> : null}
     </GestureHandlerRootView>
   );
 }

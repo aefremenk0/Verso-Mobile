@@ -19,31 +19,31 @@ import { useSaved } from "../src/store/saved";
 import { useScene } from "../src/store/scene";
 import { shadows } from "../src/theme";
 
-// Screen 06 — Gespeichert.
-// Liste der gemerkten Orte (gefüllt über den "Merken"-Toggle im Detail).
-// Wie in der Mail-App: Karte nach LINKS wischen -> löschen, nach RECHTS -> teilen.
+// Screen 06 — Saved.
+// List of saved places (filled via the "Save" toggle in the detail view).
+// Like in the Mail app: swipe a card LEFT -> delete, RIGHT -> share.
 
-// Eine wischbare Zeile.
+// A swipeable row.
 function SavedRow({ spot }: { spot: Spot }) {
   const router = useRouter();
   const { toggle } = useSaved();
   const ref = useRef<Swipeable>(null);
-  // Merkt, ob die Zeile offen ist (z. B. nach dem Teilen). Dann schließt ein
-  // Tipp nur die Zeile, statt zur Detailseite zu navigieren.
+  // Tracks whether the row is open (e.g. after sharing). Then a tap only
+  // closes the row instead of navigating to the detail page.
   const openRef = useRef(false);
 
   const onShare = () => {
     Share.share({
-      message: `${spot.name} — ${spot.hook}\nGefunden auf Verso: https://verso.app`,
+      message: `${spot.name} — ${spot.hook}\nFound on Verso: https://verso.app`,
     }).catch(() => {});
   };
 
-  // Hinter der Zeile sichtbare Aktionen beim Wischen.
+  // Actions revealed behind the row when swiping.
   const renderLeft = () => (
     <View className="my-1 mr-2 w-28 items-center justify-center rounded-card bg-accent">
       <Text className="text-[20px] text-accent-ink">↗</Text>
       <Text className="mt-1 font-hk-bold text-[11px] tracking-[1px] text-accent-ink">
-        TEILEN
+        SHARE
       </Text>
     </View>
   );
@@ -51,7 +51,7 @@ function SavedRow({ spot }: { spot: Spot }) {
     <View className="my-1 ml-2 w-28 items-center justify-center rounded-card bg-[#E2402F]">
       <Text className="text-[18px] text-white">✕</Text>
       <Text className="mt-1 font-hk-bold text-[11px] tracking-[1px] text-white">
-        LÖSCHEN
+        DELETE
       </Text>
     </View>
   );
@@ -71,14 +71,14 @@ function SavedRow({ spot }: { spot: Spot }) {
         openRef.current = false;
       }}
       onSwipeableOpen={(direction) => {
-        // direction "right" = nach links gewischt -> Löschen-Aktion (rechts).
-        // direction "left"  = nach rechts gewischt -> Teilen-Aktion (links).
+        // direction "right" = swiped left -> delete action (right side).
+        // direction "left"  = swiped right -> share action (left side).
         if (direction === "right") {
-          toggle(spot.id); // entfernt aus den gemerkten Orten
+          toggle(spot.id); // removes from the saved places
         } else {
           onShare();
-          // Zeile bleibt offen -> der nächste Tipp schließt sie nur (kein Sprung
-          // zur Detailseite). Erst danach navigiert ein Tipp wieder normal.
+          // The row stays open -> the next tap only closes it (no jump to the
+          // detail page). Only afterwards does a tap navigate normally again.
         }
       }}
       containerStyle={{ marginBottom: 8 }}
@@ -118,15 +118,15 @@ export default function Gespeichert() {
   const [exportOpen, setExportOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState<Category | null>(null);
 
-  // Beim Szenenwechsel die Kategorie-Auswahl zurücksetzen.
+  // Reset the category selection when the scene changes.
   useEffect(() => setActiveCategory(null), [scene]);
 
-  // Reihenfolge der gemerkten Spots beibehalten.
+  // Keep the order of the saved spots.
   const saved = savedIds
     .map((id) => SPOTS.find((s) => s.id === id))
     .filter((s): s is (typeof SPOTS)[number] => Boolean(s));
 
-  // Nach Stadt (Dropdown) -> Szene -> Hotbar-Kategorie filtern, nach Art gruppieren.
+  // Filter by city (dropdown) -> scene -> hotbar category, group by type.
   const shown = sortByCategory(
     saved
       .filter((s) => s.city === city)
@@ -136,11 +136,11 @@ export default function Gespeichert() {
 
   return (
     <SafeAreaView className="flex-1 bg-screen" edges={["top", "bottom"]}>
-      {/* Topbar: zurück links, Szenen-Toggle rechts */}
+      {/* Topbar: back on the left, scene toggle on the right */}
       <View className="flex-row items-center justify-between px-6 pt-2">
         <Pressable
           onPress={() => router.back()}
-          accessibilityLabel="Zurück"
+          accessibilityLabel="Back"
           className="h-10 w-10 items-center justify-center rounded-pill bg-chip"
         >
           <Text className="font-hk-bold text-[18px] text-ink">←</Text>
@@ -148,12 +148,12 @@ export default function Gespeichert() {
         <SceneToggle />
       </View>
 
-      {/* Stadt-Dropdown statt „Deine Orte"; Anzahl-Badge rechts */}
+      {/* City dropdown instead of "Your places"; count badge on the right */}
       <CityDropdown
         right={
           <View className="rounded-pill bg-accent px-3 py-1.5">
             <Text className="font-hk-bold text-[11px] tracking-[1px] text-accent-ink">
-              {shown.length} ORTE
+              {shown.length} PLACES
             </Text>
           </View>
         }
@@ -162,8 +162,8 @@ export default function Gespeichert() {
       {saved.length === 0 ? (
         <View style={{ paddingHorizontal: 24, paddingTop: 12 }}>
           <Text className="mt-10 font-hk-medium-italic text-[15px] leading-[22px] text-ink-3">
-            Noch nichts gemerkt. Tipp im Detail eines Ortes auf „Merken +" — dann
-            landet er hier.
+            Nothing saved yet. Tap "Save +" on a place's detail view — then it
+            lands here.
           </Text>
         </View>
       ) : (
@@ -175,11 +175,11 @@ export default function Gespeichert() {
           contentContainerStyle={{
             paddingHorizontal: 24,
             paddingTop: 12,
-            paddingBottom: 96, // Platz für den Export-Button unten rechts
+            paddingBottom: 96, // room for the export button at the bottom right
           }}
           ListHeaderComponent={
             <View>
-              {/* Kategorie-Hotbar (Auswahl der Spots), Farben pro Kategorie */}
+              {/* Category hotbar (selecting the spots), colors per category */}
               <View className="-mx-6 mt-4">
                 <ScrollView
                   horizontal
@@ -202,22 +202,22 @@ export default function Gespeichert() {
                 </ScrollView>
               </View>
 
-              {/* Wisch-Hinweis */}
+              {/* Swipe hint */}
               <Text className="mt-3 font-hk-medium text-[12px] text-ink-3">
-                Wische eine Karte: → teilen, ← löschen.
+                Swipe a card: → share, ← delete.
               </Text>
               <View style={{ height: 16 }} />
             </View>
           }
           ListEmptyComponent={
             <Text className="mt-2 font-hk-medium-italic text-[15px] text-ink-3">
-              Hier ist gerade nichts gemerkt — wechsle Stadt, Szene oder Kategorie.
+              Nothing saved here right now — switch city, scene or category.
             </Text>
           }
         />
       )}
 
-      {/* Export nach Google Maps — unten rechts (nur wenn es Orte gibt) */}
+      {/* Export to Google Maps — bottom right (only if there are places) */}
       {saved.length > 0 ? (
         <Pressable
           onPress={() => setExportOpen(true)}
@@ -226,7 +226,7 @@ export default function Gespeichert() {
         >
           <GoogleLogo size={18} />
           <Text className="font-hk-bold text-[13px] text-screen">
-            Nach Google Maps exportieren
+            Export to Google Maps
           </Text>
         </Pressable>
       ) : null}

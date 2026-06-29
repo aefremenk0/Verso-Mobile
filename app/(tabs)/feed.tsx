@@ -21,9 +21,9 @@ import { useCity } from "../../src/store/city";
 import { useInterests } from "../../src/store/interests";
 import { useScene } from "../../src/store/scene";
 
-// Screen 02 — Discovery-Feed.
-// Oben unter dem Notch: Liste/Karte-Umschalter (zentriert) + Szenen-Toggle
-// (rechts). Darunter Stadt-Dropdown und die szenenabhängige Kategorie-Bar.
+// Screen 02 — Discovery feed.
+// Below the notch: list/map switch (centered) + scene toggle (right). Below that
+// the city dropdown and the scene-dependent category bar.
 
 export default function Feed() {
   const router = useRouter();
@@ -32,25 +32,25 @@ export default function Feed() {
   const { interests } = useInterests();
   const [activeCategory, setActiveCategory] = useState<Category | null>(null);
   const [query, setQuery] = useState("");
-  // Budget/Bewertung/Ambiente-Filter (wie auf der Karte). „Art" macht hier die
-  // Kategorie-Hotbar -> im Sheet ausgeblendet (showArt={false}).
+  // Budget/rating/ambience filter (same as on the map). Here the category hotbar
+  // handles "type" -> hidden in the sheet (showArt={false}).
   const [filter, setFilter] = useState<MapFilter>(DEFAULT_FILTER);
   const [filterOpen, setFilterOpen] = useState(false);
 
-  // Beim Szenenwechsel die Kategorie-Auswahl zurücksetzen (sonst zeigt sie ggf.
-  // eine Kategorie der anderen Szene -> leer).
+  // On scene change reset the category selection (otherwise it might show a
+  // category from the other scene -> empty).
   useEffect(() => setActiveCategory(null), [scene]);
 
-  // Sind Budget/Bewertung/Ambiente vom Default abweichend gesetzt? (art = Hotbar)
+  // Are budget/rating/ambience set differently from the default? (type = hotbar)
   const filterActive =
     filter.minPrice > 0 ||
     filter.maxPrice < 100 ||
     filter.minRating > 0 ||
     filter.ambiente.length > 0;
 
-  // Filter: Stadt -> Szene (Kategoriengruppe) -> optional gewählte Kategorie ->
-  // optional Suchtext (Name/Viertel/Tag) -> Budget/Bewertung/Ambiente. Danach
-  // nach Art gruppieren (sortByCategory), damit die Liste nicht chaotisch ist.
+  // Filter: city -> scene (category group) -> optional selected category ->
+  // optional search text (name/neighborhood/tag) -> budget/rating/ambience. Then
+  // group by type (sortByCategory) so the list isn't chaotic.
   const q = query.trim().toLowerCase();
   const visibleSpots = useMemo(
     () =>
@@ -70,10 +70,10 @@ export default function Feed() {
     [city, scene, activeCategory, q, filter],
   );
 
-  // Onboarding-Personalisierung: Spots, deren Ambiente einen der gewählten Vibes
-  // trifft, sanft nach oben (stabil — Array.sort ist in Hermes stabil, also
-  // bleibt die Kategorie-Reihenfolge innerhalb der Gruppen erhalten). Nichts
-  // wird ausgeblendet; ohne gewählte Vibes bleibt alles wie es ist.
+  // Onboarding personalization: spots whose ambience matches one of the chosen
+  // vibes drift gently to the top (stable — Array.sort is stable in Hermes, so
+  // the category order within the groups stays intact). Nothing is hidden;
+  // without chosen vibes everything stays as it is.
   const personalizedSpots = useMemo(() => {
     if (interests.length === 0) return visibleSpots;
     const fits = (s: (typeof visibleSpots)[number]) =>
@@ -81,8 +81,8 @@ export default function Feed() {
     return [...visibleSpots].sort((a, b) => Number(fits(b)) - Number(fits(a)));
   }, [visibleSpots, interests]);
 
-  // „Überrasch mich" zieht aus dem breiten Stadt+Szene-Pool (bewusst NICHT aus
-  // der gefilterten Liste — sonst wär's keine Überraschung).
+  // "Surprise me" draws from the broad city+scene pool (deliberately NOT from
+  // the filtered list — otherwise it wouldn't be a surprise).
   const surprisePool = useMemo(
     () =>
       SPOTS.filter(
@@ -92,32 +92,32 @@ export default function Feed() {
   );
   const onSurprise = () => {
     if (surprisePool.length === 0) return;
-    tapMedium(); // kleiner „Würfel"-Impuls
+    tapMedium(); // small "dice roll" impulse
     const pick = surprisePool[Math.floor(Math.random() * surprisePool.length)];
     router.push(`/spot/${pick.id}`);
   };
 
-  // Höhe der schwebenden Kategorie-Leiste -> als paddingTop der Liste, damit der
-  // erste Inhalt unter ihr beginnt (und beim Scrollen sichtbar dahinter wandert).
+  // Height of the floating category bar -> used as the list's paddingTop so the
+  // first content starts below it (and scrolls visibly behind it).
   const [barH, setBarH] = useState(44);
 
   return (
     <SafeAreaView className="flex-1 bg-screen" edges={["top"]}>
-      {/* Fix & deckend: Stadt-Kopf + Suche/Filter. */}
+      {/* Fixed & opaque: city header + search/filter. */}
       <CityDropdown right={<SceneToggle />} />
       <View className="mt-3 flex-row items-center gap-2 px-6">
         <View className="flex-1">
           <SearchField
             value={query}
             onChangeText={setQuery}
-            placeholder="Ort, Viertel oder Tag suchen …"
+            placeholder="Search place, area or tag …"
           />
         </View>
         <FilterButton active={filterActive} onPress={() => setFilterOpen(true)} />
       </View>
 
-      {/* Liste + schwebende Kategorie-Leiste. Die Leiste liegt transparent ÜBER
-          der Liste -> Karten scrollen sichtbar dahinter durch. */}
+      {/* List + floating category bar. The bar sits transparently ABOVE the
+          list -> cards scroll visibly behind it. */}
       <View className="mt-2 flex-1">
         <FlatList
           data={personalizedSpots}
@@ -129,22 +129,22 @@ export default function Feed() {
           keyboardShouldPersistTaps="handled"
           contentContainerStyle={{
             paddingHorizontal: 24,
-            paddingTop: barH + 6, // Platz für die schwebende Leiste
-            paddingBottom: 110, // Platz für die schwebende Nav
+            paddingTop: barH + 6, // room for the floating bar
+            paddingBottom: 110, // room for the floating nav
           }}
           ListHeaderComponent={
             <View>
-              {/* „Überrasch mich" — zufälliger Ort (passt zum Geheimtipp-Kern) */}
+              {/* "Surprise me" — random place (fits the hidden-gem core) */}
               {surprisePool.length > 0 ? (
                 <View className="mb-4">
                   <SurpriseButton onPress={onSurprise} />
                 </View>
               ) : null}
 
-              {/* Dezenter Hinweis, wenn der Feed auf den Vibe abgestimmt ist */}
+              {/* Subtle hint when the feed is tuned to the vibe */}
               {interests.length > 0 && !q ? (
                 <Text className="mb-3 font-hk-semibold text-[11px] tracking-[1px] text-ink-3">
-                  ✦ AUF DEINEN VIBE ABGESTIMMT
+                  ✦ TUNED TO YOUR VIBE
                 </Text>
               ) : null}
             </View>
@@ -152,13 +152,13 @@ export default function Feed() {
           ListEmptyComponent={
             <Text className="mt-10 text-center font-hk-medium-italic text-[15px] text-ink-3">
               {q || filterActive
-                ? "Nichts passt zu Suche/Filter. Lockere die Kriterien."
-                : "Hier kramen wir noch. Schau bald wieder rein."}
+                ? "Nothing matches your search/filter. Loosen the criteria."
+                : "Still digging here. Check back soon."}
             </Text>
           }
         />
 
-        {/* Schwebende, transparente Kategorie-Leiste (Karten scrollen dahinter) */}
+        {/* Floating, transparent category bar (cards scroll behind it) */}
         <View
           onLayout={(e) => setBarH(e.nativeEvent.layout.height)}
           pointerEvents="box-none"
@@ -168,7 +168,7 @@ export default function Feed() {
         </View>
       </View>
 
-      {/* Filter-Sheet (oben angedockt). „Art" macht die Hotbar -> hier aus. */}
+      {/* Filter sheet (docked at the top). The hotbar handles "type" -> off here. */}
       {filterOpen ? (
         <MapFilterSheet
           filter={filter}
@@ -179,7 +179,7 @@ export default function Feed() {
         />
       ) : null}
 
-      {/* „Fertig"-Leiste über der Tastatur (iOS) für das Suchfeld */}
+      {/* "Done" bar above the keyboard (iOS) for the search field */}
       <KeyboardDoneBar />
     </SafeAreaView>
   );

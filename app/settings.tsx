@@ -6,12 +6,11 @@ import { useGeheimtipp } from "../src/store/geheimtipp";
 import { useInterests } from "../src/store/interests";
 import { useSaved } from "../src/store/saved";
 
-// Screen 07 — Einstellungen.
-// Gruppierte Karten nach Mockup. Die Toggles sind funktionsfähig (lokaler
-// State, keine echte Wirkung im MVP). "Abmelden" setzt den Mock-Zustand
-// zurück und führt zum Welcome-Screen.
+// Screen 07 — Settings.
+// Grouped cards per the mockup. The toggles work (local state, no real effect
+// in the MVP). "Log out" resets the mock state and leads to the Welcome screen.
 
-// Ein/Aus-Schalter im Verso-Stil (gelb = an).
+// On/off switch in the Verso style (yellow = on).
 function Toggle({ value, onChange }: { value: boolean; onChange: () => void }) {
   return (
     <Pressable
@@ -69,8 +68,8 @@ export default function Settings() {
   const [eventsN, setEventsN] = useState(false);
 
   const abmelden = () => {
-    // Mock-Login zurücksetzen: Geheimtipp wieder frisch, Merkliste auf Start,
-    // gewählte Vibes/Interessen leeren.
+    // Reset the mock login: hidden gem fresh again, saved list back to start,
+    // clear the selected vibes/interests.
     geheimtipp.reset();
     saved.reset();
     interests.reset();
@@ -83,51 +82,51 @@ export default function Settings() {
       <View className="flex-row items-center gap-3.5 px-6 pb-4 pt-3">
         <Pressable
           onPress={() => router.back()}
-          accessibilityLabel="Zurück"
+          accessibilityLabel="Back"
           className="h-[42px] w-[42px] items-center justify-center rounded-pill"
           style={{ borderWidth: 1, borderColor: "rgba(26,26,26,0.18)" }}
         >
           <Text className="font-hk-extrabold text-[18px] text-ink">←</Text>
         </Pressable>
-        <Text className="font-hk-extrabold text-title-md text-ink">Einstellungen</Text>
+        <Text className="font-hk-extrabold text-title-md text-ink">Settings</Text>
       </View>
 
       <ScrollView
         contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 24 }}
         showsVerticalScrollIndicator={false}
       >
-        {/* KONTO */}
+        {/* ACCOUNT */}
         <Text className="mb-2.5 font-hk-semibold text-[10px] tracking-[1.5px] text-ink-3">
-          KONTO
+          ACCOUNT
         </Text>
         <View className="overflow-hidden rounded-[18px] border border-black/[0.08] bg-surface">
           <NavRow
-            label="Profil bearbeiten"
+            label="Edit profile"
             onPress={() => router.push("/profil-bearbeiten")}
           />
-          <NavRow label="E-Mail" value="lena@verso.app" />
+          <NavRow label="Email" value="lena@verso.app" />
           <NavRow
-            label="Passwort ändern"
+            label="Change password"
             last
             onPress={() => router.push("/passwort-aendern")}
           />
         </View>
 
-        {/* BENACHRICHTIGUNGEN */}
+        {/* NOTIFICATIONS */}
         <Text className="mb-2.5 mt-7 font-hk-semibold text-[10px] tracking-[1.5px] text-ink-3">
-          BENACHRICHTIGUNGEN
+          NOTIFICATIONS
         </Text>
         <View className="overflow-hidden rounded-[18px] border border-black/[0.08] bg-surface">
           <View className="flex-row items-center justify-between border-b border-black/5 px-4 py-3">
-            <Text className="font-hk-extrabold text-[15px] text-ink">Geheimtipp der Woche</Text>
+            <Text className="font-hk-extrabold text-[15px] text-ink">Hidden gem of the week</Text>
             <Toggle value={tippN} onChange={() => setTippN((v) => !v)} />
           </View>
           <View className="flex-row items-center justify-between border-b border-black/5 px-4 py-3">
-            <Text className="font-hk-extrabold text-[15px] text-ink">Neue Spots in der Nähe</Text>
+            <Text className="font-hk-extrabold text-[15px] text-ink">New spots nearby</Text>
             <Toggle value={spotsN} onChange={() => setSpotsN((v) => !v)} />
           </View>
           <View className="flex-row items-center justify-between px-4 py-3">
-            <Text className="font-hk-extrabold text-[15px] text-ink">Events & Termine</Text>
+            <Text className="font-hk-extrabold text-[15px] text-ink">Events & dates</Text>
             <Toggle value={eventsN} onChange={() => setEventsN((v) => !v)} />
           </View>
         </View>
@@ -137,22 +136,22 @@ export default function Settings() {
           APP
         </Text>
         <View className="overflow-hidden rounded-[18px] border border-black/[0.08] bg-surface">
-          <NavRow label="Sprache" value="Deutsch" />
-          <NavRow label="Erscheinungsbild" value="Hell" />
-          <NavRow label="Rechtliches & Hilfe" last />
+          <NavRow label="Language" value="English" />
+          <NavRow label="Appearance" value="Light" />
+          <NavRow label="Legal & help" last />
         </View>
 
-        {/* Abmelden */}
+        {/* Log out */}
         <View className="mt-8 items-center">
           <Pressable
             onPress={abmelden}
             className="w-full items-center rounded-[16px] border py-4"
             style={{ borderColor: "rgba(26,26,26,0.2)" }}
           >
-            <Text className="font-hk-extrabold text-[15px] text-ink">Abmelden</Text>
+            <Text className="font-hk-extrabold text-[15px] text-ink">Log out</Text>
           </Pressable>
           <Text className="mt-3 font-hk-semibold text-[11px] text-ink/40">
-            Konto löschen
+            Delete account
           </Text>
         </View>
       </ScrollView>

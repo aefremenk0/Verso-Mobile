@@ -1,10 +1,10 @@
-// Design-Tokens als JS-Werte.
+// Design tokens as JS values.
 //
-// Die meisten Styles kommen über Tailwind/NativeWind-Klassen (siehe
-// tailwind.config.js). Ein paar Dinge brauchen aber echte JS-Werte:
-//   - die Schrift-Dateien zum Laden (useFonts)
-//   - Schatten (in React Native am zuverlässigsten als Style-Objekt)
-//   - Farben für Dinge außerhalb von className (z. B. StatusBar)
+// Most styles come through Tailwind/NativeWind classes (see
+// tailwind.config.js). A few things need real JS values, though:
+//   - the font files to load (useFonts)
+//   - shadows (most reliable as a style object in React Native)
+//   - colors for things outside of className (e.g. StatusBar)
 import {
   HankenGrotesk_400Regular,
   HankenGrotesk_400Regular_Italic,
@@ -19,8 +19,8 @@ import {
   HankenGrotesk_900Black,
 } from "@expo-google-fonts/hanken-grotesk";
 
-// Diese Map geht 1:1 an `useFonts`. Die Schlüssel müssen mit den
-// fontFamily-Namen aus tailwind.config.js übereinstimmen.
+// This map goes 1:1 into `useFonts`. The keys must match the
+// fontFamily names from tailwind.config.js.
 export const fontMap = {
   HankenGrotesk_400Regular,
   HankenGrotesk_400Regular_Italic,
@@ -35,7 +35,7 @@ export const fontMap = {
   HankenGrotesk_900Black,
 };
 
-// Farben (Spiegel der Tailwind-Tokens) für Stellen ohne className.
+// Colors (mirror of the Tailwind tokens) for spots without className.
 export const colors = {
   screen: "#F7F4EF",
   surface: "#FFFFFF",
@@ -47,7 +47,7 @@ export const colors = {
   night: "#1A1A1A",
 } as const;
 
-// Weiche Schatten als wiederverwendbare Style-Objekte.
+// Soft shadows as reusable style objects.
 export const shadows = {
   card: {
     shadowColor: "#1A1A1A",

@@ -14,9 +14,9 @@ import { SCENE_CATEGORIES, SCENE_FILTERS } from "../../src/lib/scene";
 import { useCity } from "../../src/store/city";
 import { useScene } from "../../src/store/scene";
 
-// Bezirks-Detail: alle Spots eines Stadtteils der aktuellen Stadt.
-// Wird aus der Stadt-Übersicht (Viertel) geöffnet. Hat oben rechts den
-// Szenen-Toggle und darunter dieselbe Kategorie-Hotbar wie der Feed.
+// Neighborhood detail: all spots of a district in the current city.
+// Opened from the city overview (Areas). Has the scene toggle at the top right
+// and below it the same category hotbar as the feed.
 
 export default function Bezirk() {
   const { name } = useLocalSearchParams<{ name: string }>();
@@ -25,16 +25,16 @@ export default function Bezirk() {
   const { scene } = useScene();
   const [activeCategory, setActiveCategory] = useState<Category | null>(null);
 
-  // Beim Szenenwechsel die Kategorie-Auswahl zurücksetzen.
+  // Reset the category selection when the scene changes.
   useEffect(() => setActiveCategory(null), [scene]);
 
   const blurb = NEIGHBORHOODS.find(
     (n) => n.city === city && n.name === name,
   )?.blurb;
 
-  // Spot-`neighborhood` entspricht jetzt EXAKT dem Viertelnamen (Daten-Umbau)
-  // -> exakter Vergleich statt fragilem `startsWith` (kein Präfix-Fehlmatch mehr).
-  // Dann nach Szene (Kategoriengruppe) und gewählter Kategorie filtern.
+  // The spot `neighborhood` now matches the neighborhood name EXACTLY (data rework)
+  // -> exact comparison instead of fragile `startsWith` (no more prefix mismatch).
+  // Then filter by scene (category group) and the selected category.
   const spots = sortByCategory(
     SPOTS.filter((s) => s.city === city && s.neighborhood === name)
       .filter((s) => SCENE_CATEGORIES[scene].includes(s.category))
@@ -43,11 +43,11 @@ export default function Bezirk() {
 
   return (
     <SafeAreaView className="flex-1 bg-screen" edges={["top", "bottom"]}>
-      {/* Topbar: zurück links, Szenen-Toggle rechts */}
+      {/* Topbar: back on the left, scene toggle on the right */}
       <View className="flex-row items-center justify-between px-6 pb-2 pt-3">
         <Pressable
           onPress={() => router.back()}
-          accessibilityLabel="Zurück"
+          accessibilityLabel="Back"
           className="h-[42px] w-[42px] items-center justify-center rounded-pill"
           style={{ borderWidth: 1, borderColor: "rgba(26,26,26,0.18)" }}
         >
@@ -71,7 +71,7 @@ export default function Bezirk() {
         </Text>
       ) : null}
 
-      {/* Kategorie-Hotbar (szenenabhängig) — wie im Feed */}
+      {/* Category hotbar (scene-dependent) — like in the feed */}
       <View className="mt-4">
         <ScrollView
           horizontal
@@ -102,7 +102,7 @@ export default function Bezirk() {
           spots.map((spot) => <SpotCard key={spot.id} spot={spot} />)
         ) : (
           <Text className="mt-6 font-hk-medium-italic text-[15px] leading-[22px] text-ink-3">
-            Hier kramen wir noch. Bald gibt's auch in {name} etwas zu entdecken.
+            Still digging here. Soon there'll be something to discover in {name} too.
           </Text>
         )}
       </ScrollView>

@@ -7,8 +7,8 @@ import Animated, {
 } from "react-native-reanimated";
 import Svg, { Path } from "react-native-svg";
 
-// „Überrasch mich" — zieht einen zufälligen Ort. Passt zum Geheimtipp-Kern:
-// dunkle Pille, gelbe Sparkle, kurzer Press-Bounce (Reanimated).
+// "Surprise me" — draws a random place. Fits the hidden-gem core:
+// dark pill, yellow sparkle, brief press-bounce (Reanimated).
 
 function Sparkle({ size = 16, color = "#FFE500" }: { size?: number; color?: string }) {
   return (
@@ -35,12 +35,12 @@ export function SurpriseButton({ onPress }: { onPress: () => void }) {
         onPressOut={() => {
           scale.value = withSpring(1, { damping: 12, stiffness: 220 });
         }}
-        accessibilityLabel="Überrasch mich — zufälligen Ort zeigen"
+        accessibilityLabel="Surprise me — show a random place"
         className="flex-row items-center justify-center gap-2 rounded-pill bg-night py-3"
       >
         <Sparkle />
         <Text className="font-hk-extrabold text-[15px] text-screen">
-          Überrasch mich
+          Surprise me
         </Text>
       </Pressable>
     </Animated.View>

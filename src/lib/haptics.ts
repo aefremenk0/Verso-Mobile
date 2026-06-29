@@ -1,8 +1,8 @@
 import * as Haptics from "expo-haptics";
 
-// Zentrale Haptik-Helfer (Expo-Go-fest). Fehler werden geschluckt (z. B. im
-// Web/Simulator ohne Taptic Engine) — Haptik ist immer „nice to have", nie
-// kritisch. Bewusst sparsam einsetzen (Merken, Szenenwechsel, Reveal, Shuffle).
+// Central haptics helpers (Expo-Go-safe). Errors are swallowed (e.g. on
+// web/simulator without a Taptic Engine) — haptics are always "nice to have",
+// never critical. Use sparingly on purpose (saving, scene switch, reveal, shuffle).
 
 export function tapLight() {
   Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});

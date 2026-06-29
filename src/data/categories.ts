@@ -1,9 +1,9 @@
 import type { Category } from "./types";
 
 /**
- * Filter-Konfiguration für den Discovery-Feed.
- * `key === null` ist der "Alle"-Filter. Das `label` ist das Wording aus dem
- * Mockup ("Kaffee" statt "Café", "Bars" statt "Bar" usw.).
+ * Filter configuration for the discovery feed.
+ * `key === null` is the "All" filter. The `label` is the wording from the
+ * mockup ("Coffee" instead of "Café", "Bars" instead of "Bar", etc.).
  */
 export interface CategoryFilter {
   key: Category | null;
@@ -11,39 +11,39 @@ export interface CategoryFilter {
 }
 
 export const CATEGORY_FILTERS: CategoryFilter[] = [
-  { key: null, label: "Alle" },
+  { key: null, label: "All" },
   { key: "restaurant", label: "Restaurant" },
   { key: "snack", label: "Snack" },
-  { key: "cafe", label: "Kaffee" },
+  { key: "cafe", label: "Coffee" },
   { key: "bar", label: "Bars" },
   { key: "club", label: "Clubs" },
-  { key: "weintasting", label: "Wein / Cooking" },
-  { key: "sport", label: "Sport" },
+  { key: "weintasting", label: "Wine / Cooking" },
+  { key: "sport", label: "Sports" },
 ];
 
-/** Kurzes Caps-Label pro Kategorie (für die Bezirks-Zeile auf Karten). */
+/** Short caps label per category (for the district line on cards). */
 export const CATEGORY_LABEL: Record<Category, string> = {
   restaurant: "RESTAURANT",
   snack: "SNACK",
   cafe: "CAFÉ",
   bar: "BAR",
   club: "CLUB",
-  weintasting: "WEIN / COOKING",
-  sport: "SPORT",
+  weintasting: "WINE / COOKING",
+  sport: "SPORTS",
 };
 
-// „Event-artige" Kategorien: zeigen Datum/Treffpunkt/Ticket und auf der Karte
-// die Rechteck-Box mit Datum.
+// "Event-like" categories: they show date/meeting point/ticket and, on the map,
+// the rectangle box with a date.
 export const EVENT_CATEGORIES: Category[] = ["weintasting", "sport"];
 export const isEventCategory = (c: Category) => EVENT_CATEGORIES.includes(c);
 
-/** €-Anzeige aus dem priceLevel (1–3). */
+/** € display from the priceLevel (1–3). */
 export function priceLabel(level: 1 | 2 | 3): string {
   return "€".repeat(level);
 }
 
-// Feste Sortier-Reihenfolge der Kategorien (für alle Auflistungen, damit die
-// Karten nicht chaotisch gemischt, sondern nach Art gruppiert erscheinen).
+// Fixed sort order of the categories (for all listings, so the cards don't
+// appear chaotically mixed but grouped by type).
 export const CATEGORY_ORDER: Record<Category, number> = {
   restaurant: 0,
   snack: 1,
@@ -54,8 +54,8 @@ export const CATEGORY_ORDER: Record<Category, number> = {
   sport: 6,
 };
 
-// Sortiert Spots nach Kategorie (stabil -> Reihenfolge innerhalb gleicher
-// Kategorie bleibt erhalten).
+// Sorts spots by category (stable -> order within the same category is
+// preserved).
 export function sortByCategory<T extends { category: Category }>(items: T[]): T[] {
   return [...items].sort(
     (a, b) => CATEGORY_ORDER[a.category] - CATEGORY_ORDER[b.category],

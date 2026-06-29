@@ -22,9 +22,9 @@ import { openAppleMaps, openExternal, openGoogleMaps } from "../../src/lib/maps"
 import { distanceLabel, getOpenState } from "../../src/lib/spotMeta";
 import { useSaved } from "../../src/store/saved";
 
-// Screen 03 — Spot-Detail (und Event-Detail).
-// Events sind Spots mit category "event" und zeigen zusätzlich Wann/Treffpunkt
-// sowie "Ticket buchen". Beide teilen sich diese Route.
+// Screen 03 — Spot detail (and event detail).
+// Events are spots with category "event" and additionally show When/Meeting point
+// plus "Book ticket". Both share this route.
 
 export default function SpotDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -38,10 +38,10 @@ export default function SpotDetail() {
     return (
       <View className="flex-1 items-center justify-center bg-screen px-8">
         <Text className="font-hk-semibold text-[16px] text-ink-2">
-          Diesen Ort gibt es (noch) nicht.
+          This place doesn't exist (yet).
         </Text>
         <Pressable onPress={() => router.back()} className="mt-4">
-          <Text className="font-hk-bold text-[15px] text-ink underline">Zurück</Text>
+          <Text className="font-hk-bold text-[15px] text-ink underline">Back</Text>
         </Pressable>
       </View>
     );
@@ -50,24 +50,24 @@ export default function SpotDetail() {
   const isEvent = isEventCategory(spot.category);
   const saved = isSaved(spot.id);
   const metaLine = `${CATEGORY_LABEL[spot.category]} · ${spot.neighborhood.toUpperCase()}`;
-  // Detail-Tiefe: Öffnungsstatus (null bei Events) + Entfernung zum Zentrum.
+  // Detail depth: open status (null for events) + distance to the center.
   const openState = getOpenState(spot);
   const distanz = distanceLabel(spot);
 
-  // Ort/Event teilen über das systemeigene Share-Sheet (iMessage, WhatsApp, …).
+  // Share place/event via the native share sheet (iMessage, WhatsApp, …).
   const onShare = () => {
     Share.share({
-      message: `${spot.name} — ${spot.hook}\nGefunden auf Verso: https://verso.app`,
+      message: `${spot.name} — ${spot.hook}\nFound on Verso: https://verso.app`,
     }).catch(() => {});
   };
 
-  // Merken: toggelt; beim Hinzufügen Herzen NACH UNTEN (Button sitzt oben).
+  // Save: toggles; when adding, hearts fall DOWN (button sits at the top).
   const burstRef = useRef<QuestionBubblesHandle>(null);
   const merkenRef = useRef<View>(null);
   const onMerken = () => {
     const wasSaved = saved;
     toggle(spot.id);
-    // Haptik: Erfolg beim Hinzufügen, leichter Tap beim Entfernen.
+    // Haptics: success when adding, light tap when removing.
     if (!wasSaved) {
       notifySuccess();
       merkenRef.current?.measureInWindow((x, y, w, h) => {
@@ -84,25 +84,25 @@ export default function SpotDetail() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ flexGrow: 1 }}
       >
-        {/* Hero (größer, damit unten kein leeres Feld bleibt) */}
+        {/* Hero (larger, so no empty area is left at the bottom) */}
         <ImagePlaceholder tone={spot.tone} height={400} radius={0}>
-          {/* Zurück + Merken (mit Safe-Area-Abstand oben) */}
+          {/* Back + Save (with safe-area spacing at the top) */}
           <View
             className="absolute left-0 right-0 flex-row items-center justify-between px-5"
             style={{ top: insets.top + 8 }}
           >
             <Pressable
               onPress={() => router.back()}
-              accessibilityLabel="Zurück"
+              accessibilityLabel="Back"
               className="h-10 w-10 items-center justify-center rounded-pill bg-surface"
             >
               <Text className="font-hk-bold text-[18px] text-ink">←</Text>
             </Pressable>
             <View className="flex-row items-center gap-2">
-              {/* Teilen (Share-Sheet) */}
+              {/* Share (share sheet) */}
               <Pressable
                 onPress={onShare}
-                accessibilityLabel="Ort teilen"
+                accessibilityLabel="Share place"
                 className="h-10 w-10 items-center justify-center rounded-pill bg-surface"
               >
                 <Text className="font-hk-bold text-[16px] text-ink">↗</Text>
@@ -123,7 +123,7 @@ export default function SpotDetail() {
                   }}
                 >
                   <Text className="font-hk-bold text-[13px] text-ink">
-                    {saved ? "Gemerkt ✓" : "Merken +"}
+                    {saved ? "Saved ✓" : "Save +"}
                   </Text>
                 </AnimatedChip>
               </View>
@@ -131,9 +131,9 @@ export default function SpotDetail() {
           </View>
         </ImagePlaceholder>
 
-        {/* Inhalts-Sheet, leicht über das Hero gezogen.
-            flex-1 + Spacer schieben die CTAs ans untere Ende -> kein leeres
-            weißes Feld mehr. */}
+        {/* Content sheet, pulled slightly over the hero.
+            flex-1 + spacer push the CTAs to the bottom -> no more empty
+            white area. */}
         <View
           className="-mt-6 flex-1 rounded-t-sheet bg-screen px-6 pt-7"
           style={{ paddingBottom: insets.bottom + 16 }}
@@ -148,7 +148,7 @@ export default function SpotDetail() {
             {spot.name}
           </Text>
 
-          {/* Hook: kursiv + unterstrichen (kein gelber Block) */}
+          {/* Hook: italic + underlined (no yellow block) */}
           <Text
             className="mt-4 font-hk-extrabold-italic text-[20px] leading-[28px] text-ink"
             style={{ textDecorationLine: "underline" }}
@@ -156,7 +156,7 @@ export default function SpotDetail() {
             {spot.hook}
           </Text>
 
-          {/* Status-Zeile: „Jetzt geöffnet?" (nicht bei Events) + Entfernung */}
+          {/* Status line: "Open now?" (not for events) + distance */}
           {openState || distanz ? (
             <View className="mt-4 flex-row flex-wrap items-center gap-2">
               {openState ? (
@@ -166,7 +166,7 @@ export default function SpotDetail() {
                     style={{ backgroundColor: openState.openNow ? "#1E9E54" : "#C0392B" }}
                   />
                   <Text className="font-hk-bold text-[12px] text-ink">
-                    {openState.openNow ? "Jetzt geöffnet" : "Geschlossen"}
+                    {openState.openNow ? "Open now" : "Closed"}
                   </Text>
                   <Text className="ml-1.5 font-hk-medium text-[12px] text-ink-3">
                     · {openState.label}
@@ -184,12 +184,12 @@ export default function SpotDetail() {
             </View>
           ) : null}
 
-          {/* Event-Block: Wann / Treffpunkt */}
+          {/* Event block: When / Meeting point */}
           {isEvent ? (
             <View className="mt-5 rounded-card bg-surface p-4">
               <View className="flex-row">
                 <Text className="w-20 font-hk-bold text-[11px] tracking-[1px] text-ink-3">
-                  WANN
+                  WHEN
                 </Text>
                 <Text className="flex-1 font-hk-semibold text-[14px] text-ink">
                   {spot.dateLabel}
@@ -197,7 +197,7 @@ export default function SpotDetail() {
               </View>
               <View className="mt-3 flex-row">
                 <Text className="w-20 font-hk-bold text-[11px] tracking-[1px] text-ink-3">
-                  TREFF
+                  MEET
                 </Text>
                 <Text className="flex-1 font-hk-semibold text-[14px] text-ink">
                   {spot.meetingPoint}
@@ -210,7 +210,7 @@ export default function SpotDetail() {
             {spot.description}
           </Text>
 
-          {/* Tags + Preis */}
+          {/* Tags + price */}
           <View className="mt-5 flex-row flex-wrap items-center gap-2">
             {spot.tags.map((t) => (
               <Pill key={t} label={t} small />
@@ -218,17 +218,17 @@ export default function SpotDetail() {
             <Pill label={priceLabel(spot.priceLevel)} small />
           </View>
 
-          {/* Adresse — Label und Wert an der Grundlinie ausgerichtet */}
+          {/* Address — label and value aligned to the baseline */}
           <View className="mt-5 flex-row items-baseline">
             <Text className="mr-2 font-hk-bold text-[11px] tracking-[1px] text-ink-3">
-              ADRESSE
+              ADDRESS
             </Text>
             <Text className="flex-1 font-hk-medium text-[14px] text-ink-2">
               {spot.address}
             </Text>
           </View>
 
-          {/* Mini-Karte (stilisiert, Expo-Go-fest) — tippen öffnet Google Maps */}
+          {/* Mini map (stylized, Expo-Go-safe) — tapping opens Google Maps */}
           <View className="mt-3">
             <MiniMap
               spot={spot}
@@ -236,24 +236,24 @@ export default function SpotDetail() {
             />
           </View>
 
-          {/* Spacer: schiebt die CTAs ans untere Ende des Screens */}
+          {/* Spacer: pushes the CTAs to the bottom of the screen */}
           <View className="min-h-[24px] flex-1" />
 
-          {/* Haupt-CTA: Events -> Ticket, sonst immer OpenTable-Reservierung */}
+          {/* Main CTA: events -> ticket, otherwise always OpenTable reservation */}
           <View>
             {isEvent ? (
               <Button
-                label="Ticket buchen"
+                label="Book ticket"
                 variant="accent"
-                subtitle="über oeticket"
+                subtitle="via oeticket"
                 trailing="arrow"
                 onPress={() => spot.ticketUrl && openExternal(spot.ticketUrl)}
               />
             ) : (
               <Button
-                label="Tisch reservieren"
+                label="Reserve a table"
                 variant="accent"
-                subtitle="über opentable"
+                subtitle="via opentable"
                 trailing="arrow"
                 onPress={() =>
                   openExternal(spot.reserveUrl ?? "https://www.opentable.de/")
@@ -262,11 +262,11 @@ export default function SpotDetail() {
             )}
           </View>
 
-          {/* Karten-Deep-Links */}
+          {/* Map deep links */}
           <View className="mt-3 flex-row gap-3">
             <View className="flex-1">
               <Button
-                label="Apple Karten"
+                label="Apple Maps"
                 variant="light"
                 trailing="external"
                 onPress={() => openAppleMaps(`${spot.name} ${spot.address}`)}
@@ -284,7 +284,7 @@ export default function SpotDetail() {
         </View>
       </ScrollView>
 
-      {/* Herz-Burst beim Merken (über allem, lässt Tipps durch) */}
+      {/* Heart burst when saving (above everything, lets taps through) */}
       <QuestionBubbles ref={burstRef} glyph="♥" textColor="#1A1A1A" />
     </View>
   );

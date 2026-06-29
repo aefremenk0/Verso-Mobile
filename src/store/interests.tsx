@@ -8,18 +8,18 @@ import {
 } from "react";
 import type { Ambience } from "../data/types";
 
-// Interessen / „Vibe" des Nutzers (bei der Registrierung gewählt, max. 3).
-// Wir nutzen die Ambiente-Werte als Interessen, weil sie szenenübergreifend an
-// jedem Spot hängen (intim, lebhaft, draußen …). Der Feed sortiert passende
-// Spots leicht nach oben — nichts wird ausgeblendet. Alles in-memory.
+// The user's interests / "vibe" (chosen at registration, max. 3).
+// We use the ambience values as interests because they attach to every spot
+// across scenes (intimate, lively, outdoors …). The feed sorts matching spots
+// slightly to the top — nothing is hidden. Everything in-memory.
 
 const MAX_INTERESTS = 3;
 
 interface InterestsContextValue {
   interests: Ambience[];
-  /** Wählt/entfernt einen Vibe (max. 3 — darüber hinaus wird ignoriert). */
+  /** Selects/removes a vibe (max. 3 — beyond that it is ignored). */
   toggle: (a: Ambience) => void;
-  /** Beim Abmelden zurücksetzen. */
+  /** Reset on logout. */
   reset: () => void;
   max: number;
 }
@@ -32,7 +32,7 @@ export function InterestsProvider({ children }: { children: ReactNode }) {
   const toggle = useCallback((a: Ambience) => {
     setInterests((prev) => {
       if (prev.includes(a)) return prev.filter((x) => x !== a);
-      if (prev.length >= MAX_INTERESTS) return prev; // Obergrenze: nichts tun
+      if (prev.length >= MAX_INTERESTS) return prev; // upper limit: do nothing
       return [...prev, a];
     });
   }, []);
@@ -54,7 +54,7 @@ export function InterestsProvider({ children }: { children: ReactNode }) {
 export function useInterests(): InterestsContextValue {
   const ctx = useContext(InterestsContext);
   if (!ctx) {
-    throw new Error("useInterests muss innerhalb von <InterestsProvider> genutzt werden.");
+    throw new Error("useInterests must be used within <InterestsProvider>.");
   }
   return ctx;
 }

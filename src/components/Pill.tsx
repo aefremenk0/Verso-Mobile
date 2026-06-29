@@ -2,19 +2,19 @@ import { Pressable, Text, View } from "react-native";
 import { tapSelection } from "../lib/haptics";
 import { AnimatedChip } from "./AnimatedChip";
 
-// Pill / Chip. Zwei Einsätze:
-//  - interaktiv (Filter): `onPress` + `active` -> animierte Auswahl (AnimatedChip)
-//  - statisch (Tag): nur `label`
+// Pill / chip. Two uses:
+//  - interactive (filter): `onPress` + `active` -> animated selection (AnimatedChip)
+//  - static (tag): only `label`
 
 interface PillProps {
   label: string;
   active?: boolean;
   onPress?: () => void;
-  /** Kleinere Variante für Tags im Detail. */
+  /** Smaller variant for tags in the detail view. */
   small?: boolean;
-  /** Aktiv-Hintergrund (z. B. Kategorie-Farbe) statt Standard-Gelb. */
+  /** Active background (e.g. category color) instead of the default yellow. */
   activeColor?: string;
-  /** Aktiv-Textfarbe passend zu activeColor. */
+  /** Active text color matching activeColor. */
   activeTextColor?: string;
 }
 
@@ -30,7 +30,7 @@ export function Pill({
   const textSize = small ? "text-[13px]" : "text-[14px]";
   const customActive = active && !!activeColor;
 
-  // Statischer Tag (kein onPress) — ohne Animation.
+  // Static tag (no onPress) — without animation.
   if (!onPress) {
     return (
       <View
@@ -51,10 +51,10 @@ export function Pill({
     );
   }
 
-  // Interaktiv: Pop + Press + Farb-Crossfade (AnimatedChip) + Selektions-Haptik.
+  // Interactive: pop + press + color crossfade (AnimatedChip) + selection haptic.
   const activeBg = customActive ? (activeColor as string) : "#FFE500";
   const handlePress = () => {
-    tapSelection(); // subtiles „tick" bei jeder Chip-Auswahl
+    tapSelection(); // subtle "tick" on every chip selection
     onPress();
   };
   return (

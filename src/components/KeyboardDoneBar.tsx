@@ -7,13 +7,13 @@ import {
   View,
 } from "react-native";
 
-// Gemeinsame ID: TextInputs zeigen per `inputAccessoryViewID` auf diese Leiste.
+// Shared ID: TextInputs point to this bar via `inputAccessoryViewID`.
 export const KEYBOARD_DONE_ID = "verso-kb-done";
 
-// „Fertig"-Leiste über der iOS-Tastatur — ein Button, der die Tastatur wieder
-// einzieht (`Keyboard.dismiss`). iOS-only via `InputAccessoryView`; auf Android
-// rendert nichts (dort schließt die System-Zurück-Taste die Tastatur).
-// Pro Screen EINMAL rendern; alle Textfelder des Screens teilen sich die ID.
+// "Done" bar above the iOS keyboard — a button that retracts the keyboard
+// (`Keyboard.dismiss`). iOS-only via `InputAccessoryView`; on Android nothing
+// renders (there the system back button closes the keyboard).
+// Render ONCE per screen; all text fields on the screen share the ID.
 export function KeyboardDoneBar() {
   if (Platform.OS !== "ios") return null;
   return (
@@ -25,9 +25,9 @@ export function KeyboardDoneBar() {
         <Pressable
           onPress={() => Keyboard.dismiss()}
           hitSlop={8}
-          accessibilityLabel="Tastatur schließen"
+          accessibilityLabel="Close keyboard"
         >
-          <Text className="font-hk-bold text-[15px] text-ink">Fertig</Text>
+          <Text className="font-hk-bold text-[15px] text-ink">Done</Text>
         </Pressable>
       </View>
     </InputAccessoryView>

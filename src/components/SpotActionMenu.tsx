@@ -8,9 +8,9 @@ import Animated, {
 } from "react-native-reanimated";
 import { shadows } from "../theme";
 
-// Aufplopp-Aktionsmenü über einer Spot-Karte (Pinterest-artig): zwei Kreise,
-// die per Long-Press erscheinen — „Merken" (Herz) und „Teilen" (Weiterleiten).
-// Tippen wählt, Tippen auf den abgedunkelten Hintergrund schließt.
+// Pop-up action menu over a spot card (Pinterest-style): two circles that
+// appear on long-press — "Save" (heart) and "Share" (forward).
+// Tapping selects, tapping the dimmed background closes.
 
 interface SpotActionMenuProps {
   saved: boolean;
@@ -19,7 +19,7 @@ interface SpotActionMenuProps {
   onClose: () => void;
 }
 
-// Ein einzelner Kreis + Label, der gestaffelt aufploppt (Spring).
+// A single circle + label that pops in staggered (spring).
 function Circle({
   index,
   circleClass,
@@ -41,10 +41,10 @@ function Circle({
 
   useEffect(() => {
     p.value = withDelay(
-      index * 70, // leichter Versatz -> sie ploppen nacheinander
+      index * 70, // slight offset -> they pop in one after another
       withSpring(1, { damping: 12, stiffness: 200, mass: 0.6 }),
     );
-    // nur beim Mounten
+    // only on mount
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -82,10 +82,10 @@ export function SpotActionMenu({
       className="absolute inset-0 items-center justify-center"
       style={{ zIndex: 10 }}
     >
-      {/* Abgedunkelter Hintergrund (deckt die Karte) — Tippen schließt. */}
+      {/* Dimmed background (covers the card) — tap to close. */}
       <Pressable onPress={onClose} className="absolute inset-0 rounded-card bg-night/50" />
 
-      {/* Zwei Aktionskreise */}
+      {/* Two action circles */}
       <View className="flex-row gap-8">
         <Circle
           index={0}
@@ -93,7 +93,7 @@ export function SpotActionMenu({
           glyph={saved ? "♥" : "♡"}
           glyphColor="#1A1A1A"
           glyphSize={26}
-          label="MERKEN"
+          label="SAVE"
           onPress={onSave}
         />
         <Circle
@@ -102,7 +102,7 @@ export function SpotActionMenu({
           glyph="↗"
           glyphColor="#1A1A1A"
           glyphSize={24}
-          label="TEILEN"
+          label="SHARE"
           onPress={onShare}
         />
       </View>

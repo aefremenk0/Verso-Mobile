@@ -13,18 +13,18 @@ import { shadows } from "../theme";
 import { GeheimtippButton } from "./GeheimtippButton";
 import { InitialsAvatar } from "./InitialsAvatar";
 
-// Schwebende Bottom-Navigation (weiße, abgerundete Leiste).
+// Floating bottom navigation (white, rounded bar).
 //
-// Fünf gleich breite Zellen: Feed · Viertel · Karte · Profil-Icon · "?".
-// Der gelbe Aktiv-Pill (50% Zellenbreite) gleitet smooth unter den aktiven
-// Reiter (Reanimated). Die "?"-Zelle (Geheimtipp) bekommt nie den Pill.
-// Der "profil"-Reiter zeigt statt eines Text-Labels das Initialen-Icon.
+// Five equally wide cells: Feed · Areas · Map · profile icon · "?".
+// The yellow active pill (50% cell width) slides smoothly under the active
+// tab (Reanimated). The "?" cell (hidden gem) never gets the pill.
+// The "profil" tab shows the initials icon instead of a text label.
 
 const TABS = ["feed", "viertel", "karte", "profil"] as const;
 const LABELS: Record<string, string> = {
   feed: "Feed",
-  viertel: "Viertel",
-  karte: "Karte",
+  viertel: "Areas",
+  karte: "Map",
 };
 
 const PADDING = 7;
@@ -45,24 +45,24 @@ export function BottomNav({ state, navigation }: BottomNavProps) {
   const tx = useSharedValue(0);
   const firstPlace = useSharedValue(true);
 
-  // Nach dem Abholen verschwindet die "?"-Zelle -> nur noch 4 Reiter,
-  // die sich gleichmäßig neu über die Breite verteilen.
+  // After it has been collected the "?" cell disappears -> only 4 tabs left,
+  // which redistribute evenly across the width.
   const showTipp = !abgeholt;
   const cells = showTipp ? 5 : 4;
 
   const inner = Math.max(0, barWidth - PADDING * 2);
   const cellW = inner / cells;
-  const pillW = cellW * 0.75; // 75% der Zellenbreite
+  const pillW = cellW * 0.75; // 75% of the cell width
 
   const activeName = state.routes[state.index]?.name ?? "feed";
   const activeIndex = Math.max(0, TABS.indexOf(activeName as (typeof TABS)[number]));
 
   useEffect(() => {
     if (cellW <= 0) return;
-    // Zielposition: Mitte der aktiven Zelle, Pill zentriert.
+    // Target position: middle of the active cell, pill centered.
     const target = activeIndex * cellW + (cellW - pillW) / 2;
     if (firstPlace.value) {
-      // Beim ersten Messen ohne Animation platzieren (kein Aufpoppen).
+      // On the first measurement, place without animation (no pop-in).
       tx.value = target;
       firstPlace.value = false;
     } else {
@@ -96,7 +96,7 @@ export function BottomNav({ state, navigation }: BottomNavProps) {
           shadows.nav,
         ]}
       >
-        {/* Gleitender gelber Aktiv-Pill (hinter den Labels) */}
+        {/* Sliding yellow active pill (behind the labels) */}
         {cellW > 0 ? (
           <Animated.View
             pointerEvents="none"
@@ -115,7 +115,7 @@ export function BottomNav({ state, navigation }: BottomNavProps) {
           />
         ) : null}
 
-        {/* Vier Reiter — "profil" als Initialen-Icon, sonst Text-Label. */}
+        {/* Four tabs — "profil" as the initials icon, otherwise a text label. */}
         {TABS.map((name) => {
           const focused = activeName === name;
           return (
@@ -139,7 +139,7 @@ export function BottomNav({ state, navigation }: BottomNavProps) {
           );
         })}
 
-        {/* "?"-Zelle: nur solange der Tipp der Woche nicht abgeholt ist */}
+        {/* "?" cell: only while this week's tip has not been collected */}
         {showTipp ? (
           <View className="flex-1 items-center justify-center">
             <GeheimtippButton onPress={() => router.push("/geheimtipp")} />

@@ -5,10 +5,10 @@ import { SCENE_FILTERS } from "../lib/scene";
 import { useScene } from "../store/scene";
 import { Pill } from "./Pill";
 
-// Szenenabhängige Kategorie-Leiste (Pills: Alle · Bar · Club · …).
-// **Transparenter Hintergrund** — als schwebende Overlay-Leiste gedacht, durch
-// die der Inhalt dahinter (Feed-Karten / Karte) sichtbar bleibt. Nur die Pillen
-// (Ovale) sind sichtbar; der Streifen selbst ist durchsichtig.
+// Scene-dependent category bar (pills: All · Bar · Club · …).
+// **Transparent background** — meant as a floating overlay bar through which the
+// content behind it (feed cards / map) stays visible. Only the pills (ovals)
+// are visible; the bar itself is transparent.
 export function CategoryBar({
   active,
   onSelect,

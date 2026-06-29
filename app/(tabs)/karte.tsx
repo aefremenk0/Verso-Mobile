@@ -24,10 +24,10 @@ import { useCity } from "../../src/store/city";
 import { useScene } from "../../src/store/scene";
 import { shadows } from "../../src/theme";
 
-// Screen 04 — Kartenansicht.
-// Karte (Mapbox im Dev Build, sonst stilisiert). Pins sind antippbar -> erst
-// dann erscheint die kleine Spot-Karte. FILTER öffnet das Filter-Sheet, dessen
-// Auswahl Pins UND Anzahl sofort filtert.
+// Screen 04 — Map view.
+// Map (Mapbox in the dev build, otherwise stylized). Pins are tappable -> only
+// then does the small spot card appear. FILTER opens the filter sheet whose
+// selection filters pins AND the count immediately.
 
 export default function Karte() {
   const router = useRouter();
@@ -41,21 +41,21 @@ export default function Karte() {
   const [activeCategory, setActiveCategory] = useState<Category | null>(null);
   const [query, setQuery] = useState("");
 
-  // Budget/Bewertung/Ambiente gesetzt? (Art macht die Kategorie-Leiste)
+  // Budget/rating/ambience set? (the category bar handles "type")
   const filterActive =
     filter.minPrice > 0 ||
     filter.maxPrice < 100 ||
     filter.minRating > 0 ||
     filter.ambiente.length > 0;
 
-  // Beim Szenenwechsel den Art-Filter UND die Kategorie-Auswahl leeren — sonst
-  // würden szenenfremde Arten alle Orte wegfiltern.
+  // On scene change clear the type filter AND the category selection — otherwise
+  // types from the other scene would filter out every place.
   useEffect(() => {
     setFilter((f) => (f.art.length ? { ...f, art: [] } : f));
     setActiveCategory(null);
   }, [scene]);
 
-  // Stadt -> Szene (Kategoriengruppe) -> Kategorie-Leiste -> Suche -> Filter-Sheet.
+  // City -> scene (category group) -> category bar -> search -> filter sheet.
   const q = query.trim().toLowerCase();
   const spots = useMemo(
     () =>
@@ -73,32 +73,32 @@ export default function Karte() {
     [city, scene, activeCategory, q, filter],
   );
 
-  // Ausgewählter Spot nur zeigen, wenn er noch im gefilterten Ergebnis ist.
+  // Only show the selected spot if it's still in the filtered result.
   const card = selected && spots.some((s) => s.id === selected.id) ? selected : null;
 
-  // Pin antippen: auswählen — erneut denselben antippen: wieder verdecken.
+  // Tap a pin: select it — tap the same one again: hide it.
   const onSelectSpot = (s: Spot) =>
     setSelected((prev) => (prev?.id === s.id ? null : s));
 
   return (
     <SafeAreaView className="flex-1 bg-screen" edges={["top"]}>
-      {/* Kopfzeile: Stadt links, Szene rechts */}
+      {/* Header: city on the left, scene on the right */}
       <CityDropdown right={<SceneToggle />} />
 
-      {/* Suchfeld + Filter-Button (wie im Feed) */}
+      {/* Search field + filter button (same as in the feed) */}
       <View className="mt-3 flex-row items-center gap-2 px-6">
         <View className="flex-1">
           <SearchField
             value={query}
             onChangeText={setQuery}
-            placeholder="Ort, Viertel oder Tag suchen …"
+            placeholder="Search place, area or tag …"
           />
         </View>
         <FilterButton active={filterActive} onPress={() => setFilterOpen(true)} />
       </View>
 
-      {/* Karte + schwebende, transparente Kategorie-Leiste darüber (man sieht
-          die Karte durch die Leiste hindurch). */}
+      {/* Map + floating, transparent category bar on top (you can see the map
+          through the bar). */}
       <View className="mt-3 flex-1 overflow-hidden">
         <CityMap
           spots={spots}
@@ -114,8 +114,8 @@ export default function Karte() {
         </View>
       </View>
 
-      {/* Spot-Karte: erscheint erst, wenn ein Pin angetippt wurde.
-          Sitzt über der schwebenden Nav (Safe-Area + Nav-Höhe). */}
+      {/* Spot card: appears only once a pin has been tapped.
+          Sits above the floating nav (safe area + nav height). */}
       {card ? (
         <Pressable
           onPress={() => router.push(`/spot/${card.id}`)}
@@ -132,7 +132,7 @@ export default function Karte() {
               {card.hook}
             </Text>
           </View>
-          {/* Schließen (Auswahl aufheben) */}
+          {/* Close (clear selection) */}
           <Pressable
             onPress={() => setSelected(null)}
             hitSlop={10}
@@ -143,7 +143,7 @@ export default function Karte() {
         </Pressable>
       ) : null}
 
-      {/* Filter-Sheet */}
+      {/* Filter sheet */}
       {filterOpen ? (
         <MapFilterSheet
           filter={filter}
@@ -154,7 +154,7 @@ export default function Karte() {
         />
       ) : null}
 
-      {/* „Fertig"-Leiste über der Tastatur (iOS) für das Suchfeld */}
+      {/* "Done" bar above the keyboard (iOS) for the search field */}
       <KeyboardDoneBar />
     </SafeAreaView>
   );

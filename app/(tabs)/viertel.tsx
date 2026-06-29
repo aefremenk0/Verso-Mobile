@@ -6,8 +6,8 @@ import { CityDropdown } from "../../src/components/CityDropdown";
 import { NEIGHBORHOODS } from "../../src/data/cities";
 import { useCity } from "../../src/store/city";
 
-// Screen 05 — Stadt-Übersicht.
-// Einheitlicher Stadt-Kopf (wie Feed) + Stadtteile mit poetischen Einzeilern.
+// Screen 05 — City overview.
+// Unified city header (like the feed) + neighborhoods with poetic one-liners.
 
 export default function Viertel() {
   const router = useRouter();
@@ -16,7 +16,7 @@ export default function Viertel() {
 
   return (
     <SafeAreaView className="flex-1 bg-screen" edges={["top"]}>
-      {/* Identischer Stadt-Kopf wie im Feed */}
+      {/* Identical city header as in the feed */}
       <CityDropdown />
 
       <ScrollView
@@ -29,8 +29,8 @@ export default function Viertel() {
       >
         <Text className="font-hk-medium text-[15px] leading-[21px] text-ink-2">
           {hoods.length > 0
-            ? `Wo geht die Reise hin? ${hoods.length} Bezirke, ${hoods.length} Stimmungen.`
-            : "Diese Stadt kuratieren wir gerade. Bald geht's hier los."}
+            ? `Where to? ${hoods.length} neighborhoods, ${hoods.length} moods.`
+            : "We're curating this city right now. It'll kick off here soon."}
         </Text>
 
         <View className="mt-6">

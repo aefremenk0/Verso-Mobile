@@ -27,12 +27,12 @@ import {
 } from "./QuestionBubbles";
 import { SpotActionMenu } from "./SpotActionMenu";
 
-// Eine Spot-Karte im Discovery-Feed.
-// Tippen öffnet das passende Detail (Spot oder Event teilen sich /spot/[id]).
-// LANGE drücken öffnet ein Pinterest-artiges Kreis-Menü (Merken / Teilen).
+// A spot card in the discovery feed.
+// Tapping opens the matching detail (spot and event share /spot/[id]).
+// LONG-press opens a Pinterest-style circle menu (Save / Share).
 
-// Einmal pro Session: auf der ersten Feed-Karte die Long-Press-Geste zeigen
-// (Menü ploppt kurz auf + Hinweis-Chip). In-memory, kein Speicher nötig.
+// Once per session: show the long-press gesture on the first feed card
+// (menu pops open briefly + hint chip). In-memory, no storage needed.
 let feedHintShown = false;
 
 export function SpotCard({
@@ -40,7 +40,7 @@ export function SpotCard({
   hintCandidate = false,
 }: {
   spot: Spot;
-  /** true nur für die erste Karte im Feed -> zeigt einmalig die Geste. */
+  /** true only for the first card in the feed -> shows the gesture once. */
   hintCandidate?: boolean;
 }) {
   const router = useRouter();
@@ -48,11 +48,11 @@ export function SpotCard({
   const burstRef = useRef<QuestionBubblesHandle>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const { height } = useWindowDimensions();
-  // Druckstelle merken (relativ zur Karte) + Bildschirm-Y (für die Richtung).
+  // Remember the press point (relative to the card) + screen-Y (for direction).
   const pressPos = useRef({ x: 0, y: 0 });
   const pressPageY = useRef(0);
 
-  // Hinweis-Chip (B) + Auto-Demo (A) für die Long-Press-Geste.
+  // Hint chip (B) + auto-demo (A) for the long-press gesture.
   const [hint, setHint] = useState(false);
   const hintOpacity = useSharedValue(0);
   const hintStyle = useAnimatedStyle(() => ({ opacity: hintOpacity.value }));
@@ -60,28 +60,28 @@ export function SpotCard({
   useEffect(() => {
     if (!hintCandidate || feedHintShown) return;
     feedHintShown = true;
-    setMenuOpen(true); // A: Kreis-Menü kurz aufploppen lassen
-    setHint(true); // B: Hinweis-Chip oben rechts
+    setMenuOpen(true); // A: briefly pop open the circle menu
+    setHint(true); // B: hint chip in the top right
     hintOpacity.value = withSequence(
       withTiming(1, { duration: 300 }),
       withDelay(3800, withTiming(0, { duration: 500 })),
     );
-    const t1 = setTimeout(() => setMenuOpen(false), 2400); // Menü länger offen
-    const t2 = setTimeout(() => setHint(false), 4700); // Chip länger sichtbar
+    const t1 = setTimeout(() => setMenuOpen(false), 2400); // keep the menu open longer
+    const t2 = setTimeout(() => setHint(false), 4700); // keep the chip visible longer
     return () => {
       clearTimeout(t1);
       clearTimeout(t2);
     };
-    // nur beim ersten Mount
+    // only on the first mount
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Caps-Zeile: Bezirk + erste zwei Tags (z. B. "WIEDEN · NATURAL · SPÄT").
+  // Caps line: neighborhood + first two tags (e.g. "WIEDEN · NATURAL · LATE").
   const metaLine = [spot.neighborhood.split(",")[0], ...spot.tags.slice(0, 2)]
     .join("  ·  ")
     .toUpperCase();
 
-  // Kategorie-Farbe (oben links) — dieselbe Quelle wie Karten-Pins.
+  // Category color (top left) — same source as the map pins.
   const col = PIN_COLORS[spot.category];
 
   const onLongPress = (e: GestureResponderEvent) => {
@@ -93,24 +93,24 @@ export function SpotCard({
     setMenuOpen(true);
   };
 
-  // Herz toggelt: nicht gemerkt -> merken (+ Herz-Burst); schon gemerkt ->
-  // wieder aus „Deine Orte" entfernen (ohne Burst).
+  // Heart toggles: not saved -> save (+ heart burst); already saved ->
+  // remove from "Your places" again (without a burst).
   const onSave = () => {
     const wasSaved = isSaved(spot.id);
     toggle(spot.id);
     setMenuOpen(false);
     if (!wasSaved) {
-      // Nah am oberen Rand -> Herzen fallen nach UNTEN (sonst unsichtbar).
+      // Near the top edge -> hearts fall DOWN (otherwise invisible).
       const dir = pressPageY.current < height * 0.4 ? "down" : "up";
       burstRef.current?.burst(pressPos.current.x, pressPos.current.y, dir);
     }
   };
 
-  // Teilen über das systemeigene Share-Sheet (iMessage, WhatsApp, …).
+  // Share via the native share sheet (iMessage, WhatsApp, …).
   const onShare = () => {
     setMenuOpen(false);
     Share.share({
-      message: `${spot.name} — ${spot.hook}\nGefunden auf Verso: https://verso.app`,
+      message: `${spot.name} — ${spot.hook}\nFound on Verso: https://verso.app`,
     }).catch(() => {});
   };
 
@@ -124,7 +124,7 @@ export function SpotCard({
         style={shadows.card}
       >
         <ImagePlaceholder tone={spot.tone} height={150} radius={0} note={spot.imageNote}>
-          {/* Kategorie-Badge oben links — in der Kategorie-Farbe */}
+          {/* Category badge top left — in the category color */}
           <View
             className="absolute left-4 top-4 rounded-pill px-3 py-1"
             style={{ backgroundColor: col.oval }}
@@ -151,7 +151,7 @@ export function SpotCard({
 
           <View className="mt-2 flex-row">
             <Text className="font-hk-semibold text-[11px] tracking-[1px] text-ink-3">
-              ADRESSE{"  "}
+              ADDRESS{"  "}
             </Text>
             <Text className="flex-1 font-hk-medium text-[13px] text-ink-2">
               {spot.address}
@@ -160,7 +160,7 @@ export function SpotCard({
         </View>
       </Pressable>
 
-      {/* Pinterest-artiges Kreis-Menü (Merken / Teilen) bei Long-Press */}
+      {/* Pinterest-style circle menu (Save / Share) on long-press */}
       {menuOpen ? (
         <SpotActionMenu
           saved={isSaved(spot.id)}
@@ -170,7 +170,7 @@ export function SpotCard({
         />
       ) : null}
 
-      {/* Hinweis-Chip oben rechts (B) — nur einmalig auf der ersten Karte. */}
+      {/* Hint chip top right (B) — only once on the first card. */}
       {hint ? (
         <Animated.View
           pointerEvents="none"
@@ -178,13 +178,13 @@ export function SpotCard({
         >
           <View className="rounded-pill bg-night px-3 py-1.5" style={shadows.card}>
             <Text className="font-hk-semibold text-[11px] text-screen">
-              Lange drücken: Merken & Teilen
+              Long-press: Save & Share
             </Text>
           </View>
         </Animated.View>
       ) : null}
 
-      {/* Herz-Burst über der Karte (nicht vom rounded-card abgeschnitten) */}
+      {/* Heart burst over the card (not clipped by rounded-card) */}
       <QuestionBubbles ref={burstRef} glyph="♥" textColor="#1A1A1A" />
     </View>
   );

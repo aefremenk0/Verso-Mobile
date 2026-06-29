@@ -1,9 +1,9 @@
 import { Pressable, Text, View } from "react-native";
 
-// Wiederverwendbarer Button in den drei Mockup-Varianten.
-//  - "accent": gelb (Haupt-CTA, z. B. "Konto erstellen", "Tisch reservieren")
-//  - "dark":   dunkel (z. B. "Los geht's", "18 Orte zeigen")
-//  - "light":  weiß mit Rahmen (z. B. "Weiter mit Google")
+// Reusable button in the three mockup variants.
+//  - "accent": yellow (primary CTA, e.g. "Create account", "Reserve a table")
+//  - "dark":   dark (e.g. "Let's go", "Show 18 places")
+//  - "light":  white with a border (e.g. "Continue with Google")
 
 type Variant = "accent" | "dark" | "light";
 
@@ -11,11 +11,11 @@ interface ButtonProps {
   label: string;
   onPress?: () => void;
   variant?: Variant;
-  /** Kleines Caps-Subtitle rechts/unten, z. B. "ÜBER OPENTABLE". */
+  /** Small caps subtitle bottom/right, e.g. "VIA OPENTABLE". */
   subtitle?: string;
-  /** Pfeil-Icon rechts ("→") oder externes ("↗"). */
+  /** Trailing arrow icon ("→") or external ("↗"). */
   trailing?: "arrow" | "external" | null;
-  /** Optionales Lead-Symbol (z. B. Apple/Google) links. */
+  /** Optional leading symbol (e.g. Apple/Google) on the left. */
   leading?: string;
 }
 
@@ -64,7 +64,7 @@ export function Button({
               {trailingGlyph}
             </Text>
           ) : (
-            // Platzhalter, damit der Label-Block bei führendem Icon zentriert bleibt
+            // Placeholder so the label block stays centered when there is a leading icon
             leading && <View style={{ width: 22 }} />
           )}
         </View>

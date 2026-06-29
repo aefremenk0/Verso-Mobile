@@ -30,8 +30,8 @@ import { shadows } from "../theme";
 import { AnimatedChip } from "./AnimatedChip";
 import { RangeSlider } from "./RangeSlider";
 
-// Filter-Sheet für die Karte (oben angedockt). Öffnet animiert (Slide + Fade);
-// per Swipe nach OBEN (auf der Kopfzeile) wischbar zum Schließen.
+// Filter sheet for the map (docked at the top). Opens animated (slide + fade);
+// swipe UP (on the header) to close.
 
 export function MapFilterSheet({
   filter,
@@ -44,14 +44,14 @@ export function MapFilterSheet({
   setFilter: (f: MapFilter) => void;
   count: number;
   onClose: () => void;
-  // Im Feed übernimmt die Kategorie-Hotbar die „Art"-Auswahl -> dort ausblenden,
-  // damit es nicht zwei konkurrierende Kategorie-Filter gibt.
+  // In the feed the category hotbar handles the "type" selection -> hide it there,
+  // so there aren't two competing category filters.
   showArt?: boolean;
 }) {
   const { height: screenH } = useWindowDimensions();
   const { scene } = useScene();
 
-  // Eintritt: leicht von oben + einfaden. Austritt: nach oben raus + ausfaden.
+  // Enter: slightly from the top + fade in. Exit: out to the top + fade out.
   const ty = useSharedValue(-40);
   const op = useSharedValue(0);
   useEffect(() => {
@@ -66,7 +66,7 @@ export function MapFilterSheet({
     });
   };
 
-  // Swipe nach oben auf der Kopfzeile -> schließen.
+  // Swipe up on the header -> close.
   const pan = Gesture.Pan()
     .onUpdate((e) => {
       if (e.translationY < 0) ty.value = e.translationY;
@@ -112,7 +112,7 @@ export function MapFilterSheet({
 
   return (
     <View className="absolute inset-0" style={{ zIndex: 100 }}>
-      {/* Abgedunkelter Hintergrund (fadet mit) */}
+      {/* Dimmed background (fades along) */}
       <Animated.View
         style={[
           { position: "absolute", left: 0, right: 0, top: 0, bottom: 0, backgroundColor: "rgba(20,17,14,0.42)" },
@@ -129,12 +129,12 @@ export function MapFilterSheet({
           className="overflow-hidden rounded-b-[32px] bg-screen"
           style={shadows.nav}
         >
-          {/* Kopfzeile */}
+          {/* Header */}
           <View className="flex-row items-center justify-between px-7 pb-1 pt-3">
             <Text className="font-hk-extrabold text-title-md text-ink">Filter</Text>
             <Pressable onPress={() => setFilter(DEFAULT_FILTER)}>
               <Text className="font-hk-semibold text-[11px] tracking-[1px] text-ink-3">
-                ZURÜCKSETZEN
+                RESET
               </Text>
             </Pressable>
           </View>
@@ -143,11 +143,11 @@ export function MapFilterSheet({
             contentContainerStyle={{ paddingHorizontal: 26, paddingBottom: 8 }}
             showsVerticalScrollIndicator={false}
           >
-            {/* ART — nur die Kategorien der aktuellen Szene (max. 4) */}
+            {/* TYPE — only the categories of the current scene (max. 4) */}
             {showArt ? (
             <>
             <Text className="mb-2.5 mt-3 font-hk-semibold text-[10px] tracking-[1.5px] text-ink-3">
-              ART
+              TYPE
             </Text>
             <View className="flex-row flex-wrap gap-2">
               {SCENE_CATEGORIES[scene].map((cat) => {
@@ -202,9 +202,9 @@ export function MapFilterSheet({
               <Text className="font-hk-semibold text-[11px] text-ink-3">100+ €</Text>
             </View>
 
-            {/* BEWERTUNG */}
+            {/* RATING */}
             <Text className="mb-2.5 mt-5 font-hk-semibold text-[10px] tracking-[1.5px] text-ink-3">
-              BEWERTUNG
+              RATING
             </Text>
             <View className="flex-row gap-2">
               {RATING_OPTIONS.map((b) => {
@@ -239,9 +239,9 @@ export function MapFilterSheet({
               })}
             </View>
 
-            {/* AMBIENTE */}
+            {/* AMBIENCE */}
             <Text className="mb-2.5 mt-5 font-hk-semibold text-[10px] tracking-[1.5px] text-ink-3">
-              AMBIENTE
+              AMBIENCE
             </Text>
             <View className="gap-2">
               {AMBIENTE_OPTIONS.map((a) => {
@@ -279,19 +279,19 @@ export function MapFilterSheet({
             </View>
           </ScrollView>
 
-          {/* Orte zeigen */}
+          {/* Show places */}
           <View className="px-6 pb-3 pt-3">
             <Pressable
               onPress={close}
               className="flex-row items-center justify-center gap-2 rounded-[18px] bg-night py-4"
             >
               <Text className="font-hk-extrabold text-[17px] text-screen">
-                {count} {count === 1 ? "Ort" : "Orte"} zeigen
+                Show {count} {count === 1 ? "place" : "places"}
               </Text>
               <Text className="text-[16px] text-screen">→</Text>
             </Pressable>
           </View>
-          {/* Grauer Griff unten = Wisch-Zone: nach oben wischen schließt das Sheet */}
+          {/* Gray handle at the bottom = swipe zone: swiping up closes the sheet */}
           <GestureDetector gesture={pan}>
             <View className="items-center pb-3 pt-1">
               <View className="h-[5px] w-[46px] rounded-pill bg-black/15" />

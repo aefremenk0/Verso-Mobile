@@ -13,43 +13,43 @@ import { useCity } from "../store/city";
 import { DiagonalStrike } from "./DiagonalStrike";
 import { Pill } from "./Pill";
 
-// Stadtname mit „Roll + Fade"-Wechsel: beim Stadtwechsel rollt der alte Name
-// nach oben weg (fadet aus), der neue rollt von unten herein (fadet ein) —
-// wie eine ruhige Anzeigetafel. Beide Namen liegen kurz übereinander (der
-// abgehende absolut darüber, damit die Layout-Breite dem NEUEN Namen folgt).
-const ROLL = 20; // Roll-Distanz in px (Schrift ist 30px) — dezent, nicht hart.
+// City name with a "roll + fade" change: when the city changes, the old name
+// rolls up and away (fades out), the new one rolls in from below (fades in) —
+// like a calm departure board. Both names briefly overlap (the outgoing one
+// absolutely on top, so the layout width follows the NEW name).
+const ROLL = 20; // roll distance in px (font is 30px) — subtle, not harsh.
 
 function CityName({ city }: { city: string }) {
-  // `display` = aktuell sichtbarer (hereinkommender) Name, `outgoing` = der
-  // gerade hinausrollende alte Name (null, wenn nichts animiert).
+  // `display` = currently visible (incoming) name, `outgoing` = the old name
+  // currently rolling out (null when nothing is animating).
   const [display, setDisplay] = useState(city);
   const [outgoing, setOutgoing] = useState<string | null>(null);
-  const progress = useSharedValue(1); // 1 = Ruhezustand (kein Roll)
+  const progress = useSharedValue(1); // 1 = resting state (no roll)
 
   useEffect(() => {
     if (city === display) return;
-    setOutgoing(display); // alter Name rollt raus
-    setDisplay(city); // neuer Name rollt rein
+    setOutgoing(display); // old name rolls out
+    setDisplay(city); // new name rolls in
     progress.value = 0;
     progress.value = withTiming(1, { duration: 340 }, (finished) => {
-      if (finished) runOnJS(setOutgoing)(null); // nach dem Roll aufräumen
+      if (finished) runOnJS(setOutgoing)(null); // clean up after the roll
     });
-    // nur auf Stadtwechsel reagieren
+    // only react to city changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [city]);
 
-  // Hereinkommend: von +ROLL nach 0, Opacity 0 -> 1.
+  // Incoming: from +ROLL to 0, opacity 0 -> 1.
   const incomingStyle = useAnimatedStyle(() => ({
     opacity: progress.value,
     transform: [{ translateY: (1 - progress.value) * ROLL }],
   }));
-  // Abgehend: von 0 nach -ROLL, Opacity 1 -> 0.
+  // Outgoing: from 0 to -ROLL, opacity 1 -> 0.
   const outgoingStyle = useAnimatedStyle(() => ({
     opacity: 1 - progress.value,
     transform: [{ translateY: progress.value * -ROLL }],
   }));
 
-  // Stadtname immer in voller Größe (text-title-md), nie verkleinert.
+  // City name always at full size (text-title-md), never shrunk.
   return (
     <View>
       <Animated.Text
@@ -73,9 +73,9 @@ function CityName({ city }: { city: string }) {
   );
 }
 
-// Eine Stadt-Pille im Dropdown, die gestaffelt per Spring hereinploppt.
-// „kommt bald"-Städte (alle außer der Pilotstadt) werden gedimmt + diagonal
-// durchgestrichen dargestellt und sind nicht antippbar.
+// A city pill in the dropdown that pops in staggered via spring.
+// "coming soon" cities (all except the pilot city) are shown dimmed + struck
+// through diagonally and are not tappable.
 function DropdownCity({
   index,
   label,
@@ -92,10 +92,10 @@ function DropdownCity({
   const p = useSharedValue(0);
   useEffect(() => {
     p.value = withDelay(
-      index * 45, // Versatz -> Pills erscheinen nacheinander
+      index * 45, // offset -> pills appear one after another
       withSpring(1, { damping: 13, stiffness: 200, mass: 0.6 }),
     );
-    // nur beim Mounten (Dropdown öffnet)
+    // only on mount (dropdown opens)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const style = useAnimatedStyle(() => ({
@@ -106,7 +106,7 @@ function DropdownCity({
     <Animated.View style={style}>
       <View
         pointerEvents={comingSoon ? "none" : "auto"}
-        accessibilityLabel={comingSoon ? `${label} — kommt bald` : label}
+        accessibilityLabel={comingSoon ? `${label} — coming soon` : label}
         style={comingSoon ? { opacity: 0.45 } : undefined}
       >
         <Pill label={label} active={active} onPress={comingSoon ? () => {} : onPress} />
@@ -116,15 +116,15 @@ function DropdownCity({
   );
 }
 
-// Einheitlicher Stadt-Kopf mit Dropdown — identisch auf Feed, Viertel und Karte.
-// Zeigt "Wien ▾" links (immer in voller Größe) und klappt eine horizontale Reihe
-// wählbarer Städte aus. `right` sitzt rechts (z. B. Szenen-Toggle).
+// Unified city header with dropdown — identical on Feed, Areas and Map.
+// Shows "München ▾" on the left (always at full size) and expands a horizontal
+// row of selectable cities. `right` sits on the right (e.g. the scene toggle).
 
 export function CityDropdown({ right }: { right?: ReactNode }) {
   const { city, setCity, cities } = useCity();
   const [open, setOpen] = useState(false);
 
-  // Pfeil dreht beim Öffnen von ▾ zu ▴ (180°).
+  // Caret rotates from ▾ to ▴ (180°) when opening.
   const caret = useSharedValue(0);
   useEffect(() => {
     caret.value = withTiming(open ? 1 : 0, { duration: 220 });
@@ -135,16 +135,16 @@ export function CityDropdown({ right }: { right?: ReactNode }) {
 
   return (
     <View>
-      {/* Feste Zeilenhöhe -> "Wien" sitzt auf jeder Seite gleich. */}
+      {/* Fixed row height -> the city name sits at the same spot on every screen. */}
       <View className="px-6 pt-2">
         <View className="justify-center" style={{ height: 42 }}>
-          {/* Stadt links (volle Größe) + rechtes Element */}
+          {/* City on the left (full size) + right-hand element */}
           <View className="flex-row items-center justify-between">
             <Pressable
               onPress={() => setOpen((v) => !v)}
               className="flex-row items-center"
             >
-              {/* Stadtname mit Roll+Fade-Wechsel, immer in voller Größe. */}
+              {/* City name with roll+fade transition, always at full size. */}
               <CityName city={city} />
               <Animated.Text
                 style={[
@@ -160,7 +160,7 @@ export function CityDropdown({ right }: { right?: ReactNode }) {
         </View>
       </View>
 
-      {/* Aufklappbares Stadt-Menü — horizontal scrollbar */}
+      {/* Expandable city menu — horizontally scrollable */}
       {open ? (
         <ScrollView
           horizontal

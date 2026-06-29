@@ -1,7 +1,7 @@
 import Svg, { Path } from "react-native-svg";
 
-// Breiter Rechtspfeil (Breite:Höhe ~2:1) — bewusst flacher/breiter als der
-// schmale „→"-Glyph. Für Listen-Zeilen (Viertel) und Profil.
+// Wide right-arrow (width:height ~2:1) — deliberately flatter/wider than the
+// narrow "→" glyph. For list rows (neighborhoods) and profile.
 export function Arrow({
   width = 22,
   color = "#1A1A1A",
@@ -11,7 +11,7 @@ export function Arrow({
   color?: string;
   strokeWidth?: number;
 }) {
-  const height = width * 0.5; // 2:1
+  const height = width * 0.5; // 2:1 ratio
   return (
     <Svg width={width} height={height} viewBox="0 0 24 12" fill="none">
       <Path

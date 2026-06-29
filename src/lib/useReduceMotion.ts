@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { AccessibilityInfo } from "react-native";
 
-// Liest die iOS/Android-Einstellung „Bewegung reduzieren" und hält sie aktuell.
-// Komponenten mit endlosen Animationen (Puls, Roll, Bubbles) sollen damit eine
-// ruhigere Variante zeigen — barrierefrei und angenehmer für Empfindliche.
+// Reads the iOS/Android "Reduce Motion" setting and keeps it up to date.
+// Components with endless animations (pulse, roll, bubbles) should show a
+// calmer variant — accessible and more pleasant for sensitive users.
 export function useReduceMotion(): boolean {
   const [reduce, setReduce] = useState(false);
 

@@ -1,13 +1,13 @@
 import { Text, View } from "react-native";
 
-// Die Wortmarke "verso": kleingeschrieben, italic, weight 800.
-// Drei Varianten wie im Mockup: pur, gelbes Highlight, mit Punkt.
+// The "verso" wordmark: lowercase, italic, weight 800.
+// Three variants like in the mockup: plain, yellow highlight, with a dot.
 
 type Variant = "plain" | "highlight" | "dot";
 
 interface BrandProps {
   size?: number;
-  color?: string; // Textfarbe (nur bei plain/dot relevant)
+  color?: string; // text color (only relevant for plain/dot)
   variant?: Variant;
 }
 

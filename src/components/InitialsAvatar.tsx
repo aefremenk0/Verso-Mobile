@@ -1,7 +1,7 @@
 import { Text, View } from "react-native";
 import { MOCK_USER } from "../data/user";
 
-// Initialen aus dem Namen, z. B. "Lena Hofer" -> "LH".
+// Initials from the name, e.g. "Lena Hofer" -> "LH".
 export const INITIALS = MOCK_USER.name
   .split(" ")
   .map((w) => w[0])
@@ -10,13 +10,13 @@ export const INITIALS = MOCK_USER.name
   .toUpperCase();
 
 interface InitialsAvatarProps {
-  size?: number; // Durchmesser des Kreises
-  textSize?: number; // Schriftgröße der Initialen
-  focused?: boolean; // in der Nav: aktiver Reiter -> Text auf Gelb
+  size?: number; // diameter of the circle
+  textSize?: number; // font size of the initials
+  focused?: boolean; // in the nav: active tab -> text on yellow
 }
 
-// Runder Avatar mit den Initialen des Nutzers.
-// Eine Quelle für zwei Stellen: Feed-Kopf (groß) und Bottom-Nav (klein).
+// Round avatar with the user's initials.
+// One source for two spots: feed header (large) and bottom nav (small).
 export function InitialsAvatar({
   size = 38,
   textSize = 13,

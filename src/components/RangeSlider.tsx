@@ -12,14 +12,14 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 
-// Range-Slider mit zwei Reglern (0–100).
-//  - Ziehen: PanResponder (folgt dem Finger, instant).
-//  - Tippen auf die Schiene: nächstgelegener Regler zieht ANIMIERT dorthin.
-// Reanimated steuert die Regler-/Bereichs-Position; bei Drag instant, bei
-// Tap/Reset sanft per withTiming.
+// Range slider with two thumbs (0–100).
+//  - Drag: PanResponder (follows the finger, instant).
+//  - Tap on the track: the nearest thumb moves there ANIMATED.
+// Reanimated drives the thumb/range positions; instant on drag, smooth via
+// withTiming on tap/reset.
 
-const GAP = 5; // Mindestabstand der Regler (%)
-const HALF = 14; // halbe Wrap-Breite (28/2)
+const GAP = 5; // minimum distance between thumbs (%)
+const HALF = 14; // half the wrapper width (28/2)
 const clamp = (v: number, a: number, b: number) => Math.max(a, Math.min(b, v));
 
 const thumb = {
@@ -54,8 +54,8 @@ export function RangeSlider({
   const loStart = useRef(lo);
   const hiStart = useRef(hi);
 
-  // Props -> Shared Value angleichen: bei großer Abweichung (Tap/Reset) sanft
-  // animieren, sonst instant (Drag folgt dem Finger ohne Nachzieh-Lag).
+  // Align props -> shared value: on a large difference (tap/reset) animate
+  // smoothly, otherwise instant (drag follows the finger without lag).
   useEffect(() => {
     if (Math.abs(loSV.value - lo) > 1) loSV.value = withTiming(lo, { duration: 220 });
     else loSV.value = lo;
@@ -112,7 +112,7 @@ export function RangeSlider({
     wSV.value = e.nativeEvent.layout.width;
   };
 
-  // Tippen auf die Schiene -> nächstgelegener Regler dorthin (animiert via Effekt).
+  // Tap on the track -> nearest thumb moves there (animated via effect).
   const onTrackPress = (e: GestureResponderEvent) => {
     const w = wRef.current;
     if (!w) return;
@@ -137,17 +137,17 @@ export function RangeSlider({
 
   return (
     <View onLayout={onLayout} style={{ height: 28, justifyContent: "center" }}>
-      {/* Tap-Fläche (hinter den Reglern) */}
+      {/* Tap area (behind the thumbs) */}
       <Pressable
         onPress={onTrackPress}
         style={{ position: "absolute", left: 0, right: 0, top: 0, bottom: 0 }}
       />
-      {/* Schiene */}
+      {/* Track */}
       <View
         pointerEvents="none"
         style={{ height: 6, borderRadius: 999, backgroundColor: "rgba(26,26,26,0.12)" }}
       />
-      {/* aktiver Bereich */}
+      {/* active range */}
       <Animated.View
         pointerEvents="none"
         style={[
@@ -155,7 +155,7 @@ export function RangeSlider({
           activeStyle,
         ]}
       />
-      {/* unterer Regler */}
+      {/* lower thumb */}
       <Animated.View
         {...loPan.panHandlers}
         style={[
@@ -165,7 +165,7 @@ export function RangeSlider({
       >
         <View style={thumb} />
       </Animated.View>
-      {/* oberer Regler */}
+      {/* upper thumb */}
       <Animated.View
         {...hiPan.panHandlers}
         style={[

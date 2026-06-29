@@ -8,11 +8,11 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 
-// Einheitliche Auswahl-Mikrointeraktion für Chips/Pills:
-//  - Farb-Crossfade von Hintergrund (und optional Rahmen) statt hartem Umschalten
-//  - „Pop" beim Aktivieren (kurzer Scale-Überschwung)
-//  - „Press-Down" beim Drücken
-// Inhalt kommt als children (Text etc.); Layout (Padding/Radius/Border) via style.
+// Unified selection micro-interaction for chips/pills:
+//  - color crossfade of the background (and optionally the border) instead of a hard switch
+//  - "pop" when activating (a brief scale overshoot)
+//  - "press-down" when pressed
+// Content comes in as children (text etc.); layout (padding/radius/border) via style.
 interface AnimatedChipProps {
   active: boolean;
   onPress: () => void;
@@ -38,9 +38,9 @@ export function AnimatedChip({
   hitSlop = 4,
   accessibilityLabel,
 }: AnimatedChipProps) {
-  const sel = useSharedValue(active ? 1 : 0); // 0 inaktiv -> 1 aktiv (Crossfade)
-  const press = useSharedValue(0); // Press-Down
-  const pop = useSharedValue(0); // Pop beim Aktivieren
+  const sel = useSharedValue(active ? 1 : 0); // 0 inactive -> 1 active (crossfade)
+  const press = useSharedValue(0); // press-down
+  const pop = useSharedValue(0); // pop when activating
   const wasActive = useRef(active);
 
   useEffect(() => {

@@ -19,8 +19,8 @@ import { AppleLogo, GoogleLogo } from "../src/components/Logos";
 import { AMBIENTE_OPTIONS } from "../src/lib/mapFilter";
 import { useInterests } from "../src/store/interests";
 
-// Screen 01 — Registrierung / Anmelden.
-// Reine UI: Apple/Google/E-Mail sind Platzhalter. Jeder Weg führt in den Feed.
+// Screen 01 — Sign up / Sign in.
+// UI only: Apple/Google/Email are placeholders. Every path leads to the feed.
 
 export default function Register() {
   const router = useRouter();
@@ -28,17 +28,17 @@ export default function Register() {
   const [email, setEmail] = useState("");
   const { interests, toggle, max } = useInterests();
 
-  // Im MVP kein echtes Login – wir ersetzen den Screen durch den Feed,
-  // damit der Zurück-Button nicht wieder hierher führt.
+  // No real login in the MVP – we replace the screen with the feed,
+  // so the Back button doesn't lead back here.
   const enter = () => router.replace("/(tabs)/feed");
 
   return (
     <SafeAreaView className="flex-1 bg-screen" edges={["top", "bottom"]}>
-      {/* Topbar: zurück + Wortmarke */}
+      {/* Topbar: back + wordmark */}
       <View className="flex-row items-center px-6 pt-2">
         <Pressable
           onPress={() => router.back()}
-          accessibilityLabel="Zurück"
+          accessibilityLabel="Back"
           className="h-10 w-10 items-center justify-center rounded-pill bg-chip"
         >
           <Text className="font-hk-bold text-[18px] text-ink">←</Text>
@@ -54,25 +54,24 @@ export default function Register() {
         showsVerticalScrollIndicator={false}
       >
         <Text className="mt-8 font-hk-bold text-[11px] tracking-[1.5px] text-ink-3">
-          KONTO
+          ACCOUNT
         </Text>
         <Text className="mt-2 font-hk-extrabold text-title-lg text-ink">
-          Fast drin.
+          Almost in.
         </Text>
         <Text className="mt-3 font-hk-medium text-[15px] leading-[21px] text-ink-2">
-          Damit Verso sich merkt, was dir gefällt — und dir den Wochentipp
-          aufhebt.
+          So Verso remembers what you like — and saves your weekly gem for you.
         </Text>
 
-        {/* Onboarding-Personalisierung: Vibe wählen (nur beim Registrieren).
-            Stimmt den Feed sanft ab (passende Spots nach oben). */}
+        {/* Onboarding personalization: pick a vibe (only when signing up).
+            Gently tunes the feed (matching spots toward the top). */}
         {mode === "register" ? (
           <View className="mt-6">
             <Text className="font-hk-bold text-[11px] tracking-[1.5px] text-ink-3">
-              DEIN VIBE
+              YOUR VIBE
             </Text>
             <Text className="mt-1.5 font-hk-medium text-[13px] leading-[18px] text-ink-2">
-              Wähle bis zu {max} — wir stimmen deinen Feed darauf ab. (Optional)
+              Pick up to {max} — we'll tune your feed to it. (Optional)
             </Text>
             <View className="mt-3 flex-row flex-wrap gap-2">
               {AMBIENTE_OPTIONS.map((a) => {
@@ -123,21 +122,21 @@ export default function Register() {
                     active ? "text-ink" : "text-ink-3"
                   }`}
                 >
-                  {m === "register" ? "Registrieren" : "Anmelden"}
+                  {m === "register" ? "Sign up" : "Sign in"}
                 </Text>
               </Pressable>
             );
           })}
         </View>
 
-        {/* Social Login (nur UI). Eigene Buttons mit echten Logos. */}
+        {/* Social login (UI only). Custom buttons with real logos. */}
         <View className="mt-5 gap-2.5">
           <Pressable
             onPress={enter}
             className="flex-row items-center justify-center gap-2.5 rounded-[16px] bg-night py-4"
           >
             <Text className="font-hk-semibold text-[14px] text-screen">
-              Weiter mit Apple
+              Continue with Apple
             </Text>
             <AppleLogo size={17} color="#FFFFFF" />
           </Pressable>
@@ -147,7 +146,7 @@ export default function Register() {
             style={{ borderWidth: 1, borderColor: "rgba(26,26,26,0.16)" }}
           >
             <Text className="font-hk-semibold text-[14px] text-ink">
-              Weiter mit Google
+              Continue with Google
             </Text>
             <GoogleLogo size={18} />
           </Pressable>
@@ -157,7 +156,7 @@ export default function Register() {
         <View className="my-6 flex-row items-center">
           <View className="h-px flex-1 bg-black/10" />
           <Text className="mx-3 font-hk-semibold text-[11px] tracking-[1.5px] text-ink-3">
-            ODER MIT E-MAIL
+            OR WITH EMAIL
           </Text>
           <View className="h-px flex-1 bg-black/10" />
         </View>
@@ -165,7 +164,7 @@ export default function Register() {
         <TextInput
           value={email}
           onChangeText={setEmail}
-          placeholder="Deine E-Mail-Adresse"
+          placeholder="Your email address"
           placeholderTextColor="#8A857C"
           keyboardType="email-address"
           autoCapitalize="none"
@@ -176,7 +175,7 @@ export default function Register() {
 
         <View className="mt-5">
           <Button
-            label={mode === "register" ? "Konto erstellen" : "Anmelden"}
+            label={mode === "register" ? "Create account" : "Sign in"}
             variant="accent"
             trailing="arrow"
             onPress={enter}
@@ -184,14 +183,14 @@ export default function Register() {
         </View>
 
         <Text className="mt-6 text-center font-hk-medium text-[12px] leading-[18px] text-ink-3">
-          Mit der Registrierung akzeptierst du{" "}
-          <Text className="font-hk-semibold text-ink-2 underline">Bedingungen</Text>{" "}
+          By signing up you accept our{" "}
+          <Text className="font-hk-semibold text-ink-2 underline">Terms</Text>{" "}
           &{" "}
-          <Text className="font-hk-semibold text-ink-2 underline">Datenschutz</Text>.
+          <Text className="font-hk-semibold text-ink-2 underline">Privacy Policy</Text>.
         </Text>
       </ScrollView>
 
-      {/* „Fertig"-Leiste über der Tastatur (iOS) für das E-Mail-Feld */}
+      {/* "Done" bar above the keyboard (iOS) for the email field */}
       <KeyboardDoneBar />
     </SafeAreaView>
   );

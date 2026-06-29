@@ -2,9 +2,9 @@ import { Pressable, Text, TextInput, View } from "react-native";
 import Svg, { Circle, Line } from "react-native-svg";
 import { KEYBOARD_DONE_ID } from "./KeyboardDoneBar";
 
-// Schlankes Suchfeld im Verso-Stil (Pille, weiche Form). Wiederverwendbar —
-// aktuell im Feed, später auch in Gespeichert/Viertel nutzbar.
-// SVG-Lupe statt Emoji, damit es zum redaktionellen Ton passt.
+// Slim search field in the Verso style (pill, soft shape). Reusable —
+// currently in the feed, later usable in Saved/Areas too.
+// SVG magnifier instead of an emoji, to fit the editorial tone.
 
 function SearchGlyph({ size = 18, color = "#8A857C" }: { size?: number; color?: string }) {
   return (
@@ -26,7 +26,7 @@ function SearchGlyph({ size = 18, color = "#8A857C" }: { size?: number; color?: 
 export function SearchField({
   value,
   onChangeText,
-  placeholder = "Suchen …",
+  placeholder = "Search …",
 }: {
   value: string;
   onChangeText: (t: string) => void;
@@ -47,14 +47,14 @@ export function SearchField({
         returnKeyType="search"
         autoCorrect={false}
         autoCapitalize="none"
-        accessibilityLabel="Orte durchsuchen"
+        accessibilityLabel="Search places"
         inputAccessoryViewID={KEYBOARD_DONE_ID}
       />
       {value.length > 0 ? (
         <Pressable
           onPress={() => onChangeText("")}
           hitSlop={10}
-          accessibilityLabel="Suche löschen"
+          accessibilityLabel="Clear search"
           className="ml-2 h-6 w-6 items-center justify-center rounded-pill"
           style={{ backgroundColor: "rgba(26,26,26,0.12)" }}
         >

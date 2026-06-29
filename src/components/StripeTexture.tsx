@@ -1,8 +1,8 @@
 import { View } from "react-native";
 
-// Diagonale Streifen-Textur (das `repeating-linear-gradient` aus dem Mockup).
-// React Native kann keine wiederholenden Verläufe, also bauen wir die Textur
-// aus vielen dünnen, gedrehten Linien nach. Rein dekorativ.
+// Diagonal stripe texture (the `repeating-linear-gradient` from the mockup).
+// React Native cannot do repeating gradients, so we recreate the texture from
+// many thin, rotated lines. Purely decorative.
 
 const STRIPES = Array.from({ length: 16 });
 

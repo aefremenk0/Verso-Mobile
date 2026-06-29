@@ -10,11 +10,12 @@ import Animated, {
 import Svg, { Path } from "react-native-svg";
 import { useReduceMotion } from "../lib/useReduceMotion";
 
-// Geheimtipp-Button für die Bottom-Nav: dunkler "?"-Kreis mit einer
-// handgezeichneten gelben Umrandung (Squiggle), die pulsiert.
-// (Squiggle-Pfad exakt aus Verso_Mobile_v2.dc.html, Puls statt CSS-Keyframe.)
+// Hidden-gem button for the bottom nav: a dark "?" circle with a hand-drawn
+// yellow outline (squiggle) that pulses.
+// (Squiggle path taken exactly from Verso_Mobile_v2.dc.html, pulse instead of
+// a CSS keyframe.)
 
-const RING = 46; // Größe der Umrandung
+const RING = 46; // size of the outline
 
 export function GeheimtippButton({ onPress }: { onPress: () => void }) {
   const pulse = useSharedValue(0);
@@ -22,11 +23,11 @@ export function GeheimtippButton({ onPress }: { onPress: () => void }) {
 
   useEffect(() => {
     if (reduceMotion) {
-      // Ruhige Variante: kein endloser Puls, fixer mittlerer Zustand.
+      // Calm variant: no endless pulse, a fixed middle state.
       pulse.value = 0.6;
       return;
     }
-    // verso-pulse: Opazität (und ein Hauch Scale) sanft hin und her, endlos.
+    // verso-pulse: opacity (and a touch of scale) gently back and forth, endless.
     pulse.value = withRepeat(
       withTiming(1, { duration: 1400, easing: Easing.inOut(Easing.ease) }),
       -1,
@@ -45,7 +46,7 @@ export function GeheimtippButton({ onPress }: { onPress: () => void }) {
       className="items-center justify-center"
       style={{ width: RING, height: RING }}
     >
-      {/* Pulsierende Squiggle-Umrandung */}
+      {/* Pulsing squiggle outline */}
       <Animated.View
         pointerEvents="none"
         style={[{ position: "absolute", width: RING, height: RING }, ringStyle]}
@@ -61,7 +62,7 @@ export function GeheimtippButton({ onPress }: { onPress: () => void }) {
         </Svg>
       </Animated.View>
 
-      {/* "?"-Kreis */}
+      {/* "?" circle */}
       <View className="h-[26px] w-[26px] items-center justify-center rounded-pill bg-night">
         <Text className="font-hk-extrabold text-[14px] text-accent">?</Text>
       </View>

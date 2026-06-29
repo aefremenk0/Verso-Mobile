@@ -144,6 +144,9 @@ src/
                           MiniMap (stilisierte Detail-Mini-Karte, SVG, tippbar),
                           DiagonalStrike (diagonaler Durchstrich für „kommt
                           bald"-Städte),
+                          VersoLoader (Marken-Lade-Screen: weißer Hintergrund,
+                          kursives „verso" poppt durch Farb-/Schriftwechsel,
+                          fadet zur braunen Welcome aus — in app/_layout.tsx),
                           RangeSlider (Budget, PanResponder)
   lib/mapFilter.ts        Filter-Typ + matchesFilter (Art/Budget/Bewertung/Ambiente)
   lib/pinColors.ts        Karten-Pin-Farben pro Kategorie (oval/inner/dot)
@@ -188,7 +191,9 @@ Stack-Screens darüber. `geheimtipp` ist ein modaler Screen. **Abmelden**
   CSS-`@keyframes` aus dem Mockup übernehmen — nur als Referenz lesen
   (`verso-spin` 9s, `verso-load` 1.3s, `verso-throb` 1.5s, `verso-pulse`).
 - **Daten:** alles Mock in `src/data/`. Kein Login/Backend/DB im MVP.
-- **Kommentare auf Deutsch**, knapp, erklären *warum*.
+- **Kommentare auf Englisch**, knapp, erklären *warum*. (Die App-UI ist seit
+  2026-06-29 komplett englisch — Eigennamen wie „München" und die Viertelnamen
+  bleiben deutsch.)
 - **Vor jedem Commit:** `npx tsc --noEmit` (Typecheck), `npm test` (vitest,
   reine Logik) und idealerweise
   `npx expo export --platform ios --output-dir /tmp/x` (Bundle baut?).
@@ -459,7 +464,36 @@ npm test               # Unit-Tests der reinen Logik (vitest, src/**)
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-26 · Fix: Doppeltipp-Hinweis kollidiert nicht mehr mit Kategorie-Leiste
+### (dieser Commit) · 2026-06-29 · Marken-Lade-Screen „verso" (Pop-Animation)
+- Neue **`VersoLoader`**-Komponente (`src/components/VersoLoader.tsx`): beim
+  App-Start liegt ein **weißer Vollbild-Screen** über allem; das kursive
+  **„verso"** „poppt" per Reanimated-Spring durch **7 Schritte** mit jeweils
+  wechselnder **Farbe + Schriftart** (Marken-Hanken gemischt mit System-Fonts:
+  Serif/Mono/Condensed/Script — genuine Typeface-Wechsel ohne neue Pakete) und
+  **fadet danach aus → die braune Welcome-Bühne (`bg-night-2`) erscheint**.
+- In **`app/_layout.tsx`** als oberster Overlay eingehängt (`loaderDone`-State,
+  `pointerEvents="none"`); unmountet sich nach der Austritts-Animation selbst.
+  Expo-Go-fest, reine Reanimated-Animation.
+
+### 2026-06-29 · App komplett auf Englisch übersetzt
+- **Gesamte App von Deutsch auf Englisch** umgestellt: alle sichtbaren UI-Texte
+  (Feed, Karte, Viertel, Profil, Spot-Detail, Gespeichert, Geheimtipp, Settings,
+  Welcome, Registrierung, …) **und** alle Code-Kommentare. Mock-Daten (`spots`,
+  `cities`-Blurbs, `user`-Bio, Teaser) ebenfalls englisch.
+- **Bewusst deutsch belassen:** Eigennamen — Stadtname „München", Viertelnamen
+  (Glockenbachviertel, Isarvorstadt / Flaucher, …), Straßen-Adressen, sowie
+  Code-Identifier/Routen (`gespeichert`, `bezirk`, `viertel`, `geheimtipp`,
+  Funktionsnamen) und Store-/Daten-Keys.
+- **Glossar:** Geheimtipp → hidden gem („Hidden Gem of the Week"), Viertel →
+  Areas/neighborhood, Gespeichert → Saved, Merken → Save, Teilen → Share,
+  „Überrasch mich" → „Surprise me", Ambiente intim/lebhaft/gemütlich/underground/
+  elegant/draußen → Intimate/Lively/Cozy/Underground/Elegant/Outdoors,
+  „kommt bald" → „coming soon".
+- **Konvention geändert:** Code-Kommentare ab jetzt **englisch** (war deutsch).
+- Tests/Typen grün: `tsc --noEmit` sauber, 18/18 vitest (englische String-
+  Erwartungen in `logic.test.ts` mitgezogen, englische Zahlen-/Zeitformate).
+
+### a949f3f · 2026-06-26 · Fix: Doppeltipp-Hinweis kollidiert nicht mehr mit Kategorie-Leiste
 - Der Doppeltipp-Hinweis-Chip in `CityMap` lag bei `top: 12` — seit der
   schwebenden Kategorie-Leiste (oben ~6–56) überlappte er die Kategorie-Ovale.
   → Chip auf `top: 66` (unter die Leiste) verschoben.

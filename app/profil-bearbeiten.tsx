@@ -9,7 +9,7 @@ import {
 import { StripeTexture } from "../src/components/StripeTexture";
 import { MOCK_USER } from "../src/data/user";
 
-// Screen 07c — Profil bearbeiten (reine UI, kein echtes Speichern im MVP).
+// Screen 07c — Edit profile (UI only, no real saving in the MVP).
 
 const INITIALS = MOCK_USER.name
   .split(" ")
@@ -18,7 +18,7 @@ const INITIALS = MOCK_USER.name
   .slice(0, 2)
   .toUpperCase();
 
-// Beschriftetes Eingabefeld im Verso-Stil.
+// Labeled input field in the Verso style.
 function Field({
   label,
   value,
@@ -69,14 +69,14 @@ export default function ProfilBearbeiten() {
         >
           <Text className="font-hk-extrabold text-[18px] text-ink">←</Text>
         </Pressable>
-        <Text className="font-hk-extrabold text-[28px] text-ink">Profil bearbeiten</Text>
+        <Text className="font-hk-extrabold text-[28px] text-ink">Edit profile</Text>
       </View>
 
       <ScrollView
         contentContainerStyle={{ paddingHorizontal: 28, paddingBottom: 24, flexGrow: 1 }}
         showsVerticalScrollIndicator={false}
       >
-        {/* Avatar mit Foto-ändern */}
+        {/* Avatar with change-photo */}
         <View className="mb-5 items-center">
           <View className="h-[84px] w-[84px]">
             <View className="h-[84px] w-[84px] items-center justify-center overflow-hidden rounded-pill bg-night-2">
@@ -93,28 +93,28 @@ export default function ProfilBearbeiten() {
             </View>
           </View>
           <Text className="mt-2.5 font-hk-semibold text-[12px] text-ink underline">
-            Foto ändern
+            Change photo
           </Text>
         </View>
 
-        {/* Felder */}
+        {/* Fields */}
         <View className="gap-3.5">
           <Field label="NAME" value={name} onChangeText={setName} />
-          <Field label="BENUTZERNAME" value={username} onChangeText={setUsername} />
+          <Field label="USERNAME" value={username} onChangeText={setUsername} />
           <Field label="BIO" value={bio} onChangeText={setBio} multiline />
         </View>
 
-        {/* Speichern (unten) */}
+        {/* Save (at the bottom) */}
         <View className="flex-1" />
         <Pressable
           onPress={() => router.back()}
           className="mt-8 items-center rounded-[16px] bg-accent py-4"
         >
-          <Text className="font-hk-extrabold text-[17px] text-accent-ink">Speichern</Text>
+          <Text className="font-hk-extrabold text-[17px] text-accent-ink">Save</Text>
         </Pressable>
       </ScrollView>
 
-      {/* „Fertig"-Leiste über der Tastatur (iOS) für die Eingabefelder */}
+      {/* "Done" bar above the keyboard (iOS) for the input fields */}
       <KeyboardDoneBar />
     </SafeAreaView>
   );

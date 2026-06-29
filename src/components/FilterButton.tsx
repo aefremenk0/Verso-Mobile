@@ -1,7 +1,7 @@
 import { Pressable, View } from "react-native";
 import Svg, { Path } from "react-native-svg";
 
-// Trichter-Icon (Filter) — SVG, passt zum redaktionellen Ton (kein Emoji).
+// Funnel icon (filter) — SVG, fits the editorial tone (no emoji).
 function FilterGlyph({ color = "#1A1A1A" }: { color?: string }) {
   return (
     <Svg width={18} height={18} viewBox="0 0 24 24">
@@ -16,9 +16,9 @@ function FilterGlyph({ color = "#1A1A1A" }: { color?: string }) {
   );
 }
 
-// Runder Trichter-Button, der das Filter-Sheet öffnet. `active` = Budget/
-// Bewertung/Ambiente gesetzt → gelb hinterlegt + kleiner Punkt-Indikator.
-// Gemeinsam genutzt von Feed und Karte (neben dem Suchfeld).
+// Round funnel button that opens the filter sheet. `active` = budget/rating/
+// ambience set → yellow background + small dot indicator.
+// Shared by Feed and Map (next to the search field).
 export function FilterButton({
   active,
   onPress,
@@ -29,7 +29,7 @@ export function FilterButton({
   return (
     <Pressable
       onPress={onPress}
-      accessibilityLabel="Filter öffnen"
+      accessibilityLabel="Open filters"
       className={`h-11 w-11 items-center justify-center rounded-pill ${
         active ? "bg-accent" : "bg-chip"
       }`}

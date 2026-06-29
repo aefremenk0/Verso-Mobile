@@ -17,22 +17,22 @@ import { PIN_COLORS } from "../lib/pinColors";
 import { useReduceMotion } from "../lib/useReduceMotion";
 import { shadows } from "../theme";
 
-// Hintergrund-Karte für den Karte-Screen.
+// Background map for the Map screen.
 //
-// - Im **Dev Build** (mit Mapbox-Token) wird die echte **@rnmapbox/maps**-Karte
-//   gerendert, mit Markern an den echten Koordinaten der Spots.
-// - In **Expo Go** (wo native Module fehlen) wird automatisch eine stilisierte
-//   Karte als Fallback gezeigt, damit nichts abstürzt.
+// - In the **Dev Build** (with a Mapbox token) the real **@rnmapbox/maps** map
+//   is rendered, with markers at the spots' actual coordinates.
+// - In **Expo Go** (where native modules are missing) a stylized map is shown
+//   automatically as a fallback, so nothing crashes.
 //
-// Der echte Token kommt aus der Umgebungsvariable EXPO_PUBLIC_MAPBOX_TOKEN
-// (öffentlicher pk.*-Token). Fehlt er oder läuft die App in Expo Go, greift
-// der Fallback.
+// The real token comes from the environment variable EXPO_PUBLIC_MAPBOX_TOKEN
+// (public pk.* token). If it is missing or the app runs in Expo Go, the
+// fallback kicks in.
 
 const isExpoGo =
   Constants.executionEnvironment === ExecutionEnvironment.StoreClient;
 const MAPBOX_TOKEN = process.env.EXPO_PUBLIC_MAPBOX_TOKEN;
 
-// Mapbox nur außerhalb von Expo Go und nur mit Token laden (sonst Crash).
+// Only load Mapbox outside Expo Go and only with a token (otherwise it crashes).
 let Mapbox: any = null;
 if (!isExpoGo && MAPBOX_TOKEN) {
   try {
@@ -43,7 +43,7 @@ if (!isExpoGo && MAPBOX_TOKEN) {
   }
 }
 
-// Mittelpunkt aus den Spots der Stadt (Schwerpunkt); Fallback: Wien.
+// Center from the city's spots (centroid); fallback: Vienna.
 function cityCenter(spots: Spot[]): [number, number] {
   if (spots.length === 0) return [16.3738, 48.2082];
   const lng = spots.reduce((a, s) => a + s.lng, 0) / spots.length;
@@ -51,14 +51,14 @@ function cityCenter(spots: Spot[]): [number, number] {
   return [lng, lat];
 }
 
-// Pin-Inhalt: Punkt + (wenn aktiv) gelbes Label.
-// Das Label liegt ABSOLUT über dem Punkt, damit der Punkt beim Auswählen
-// nicht verrutscht (vorher schob das Label im Layout den Punkt nach unten).
+// Pin content: dot + (when active) yellow label.
+// The label sits ABSOLUTELY above the dot, so the dot does not shift when
+// selecting (previously the label pushed the dot down in the layout).
 //
-// Das Label „ploppt" beim Auswählen auf: ein Reanimated-Wert (pop) fährt per
-// Spring von 0 -> 1 (Scale + leichtes Hochsteigen + Fade). Es bleibt immer
-// gemountet (kein `active ?`), damit es auch beim Abwählen sauber zurückfedert;
-// inaktiv ist es per Opacity 0 + pointerEvents unsichtbar.
+// The label "pops" open on selection: a Reanimated value (pop) springs from
+// 0 -> 1 (scale + a slight rise + fade). It stays mounted at all times (no
+// `active ?`), so it also springs back cleanly on deselect; when inactive it
+// is invisible via opacity 0 + pointerEvents.
 function Pin({
   spot,
   active,
@@ -70,25 +70,25 @@ function Pin({
   popAll: boolean;
   onPress: () => void;
 }) {
-  // Startwert passend zum Zustand, damit der erste Pin nicht ungewollt animiert.
+  // Initial value matching the state, so the first pin does not animate by accident.
   const pop = useSharedValue(active ? 1 : 0);
-  // Easter Egg: Doppeltipp auf die Karte zeigt/versteckt ALLE Labels (Toggle).
+  // Easter egg: double-tapping the map shows/hides ALL labels (toggle).
   const flash = useSharedValue(0);
 
   useEffect(() => {
     pop.value = active
-      ? withSpring(1, { damping: 11, stiffness: 190, mass: 0.6 }) // federnder Pop
-      : withTiming(0, { duration: 120 }); // schnelles, ruhiges Ausblenden
+      ? withSpring(1, { damping: 11, stiffness: 190, mass: 0.6 }) // springy pop
+      : withTiming(0, { duration: 120 }); // quick, calm fade-out
   }, [active, pop]);
 
-  // popAll an -> alle Labels ploppen auf und BLEIBEN; popAll aus -> wieder weg.
+  // popAll on -> all labels pop open and STAY; popAll off -> gone again.
   useEffect(() => {
     flash.value = popAll
       ? withSpring(1, { damping: 12, stiffness: 190, mass: 0.6 })
       : withTiming(0, { duration: 200 });
   }, [popAll, flash]);
 
-  // Sichtbarkeit = stärkerer Wert aus Auswahl (pop) und Doppeltipp (flash).
+  // Visibility = the stronger of selection (pop) and double-tap (flash).
   const labelStyle = useAnimatedStyle(() => {
     const v = Math.max(pop.value, flash.value);
     return {
@@ -97,25 +97,25 @@ function Pin({
     };
   });
 
-  // Farben kommen zentral aus PIN_COLORS (je Kategorie: Oval/Inner/Dot).
-  // Event-artige Kategorien behalten die Sonderform (Rechteck mit Datum).
+  // Colors come centrally from PIN_COLORS (per category: oval/inner/dot).
+  // Event-like categories keep the special shape (rectangle with a date).
   const isEvent = isEventCategory(spot.category);
   const c = PIN_COLORS[spot.category];
-  // Cremefarbene Kontur für Sichtbarkeit auf der Karte.
+  // Cream-colored outline for visibility on the map.
   const dotBorder = "#F7F4EF";
 
-  // Pulsierende Kontur um den Punkt (wie das Geheimtipp-„?") — in Pin-Farbe.
+  // Pulsing outline around the dot (like the hidden-gem "?") — in the pin color.
   const pulse = useSharedValue(0);
   const reduceMotion = useReduceMotion();
   useEffect(() => {
     if (reduceMotion) {
-      pulse.value = 0; // ruhig: kein wachsender Ring, nur ein dezenter Hof
+      pulse.value = 0; // calm: no growing ring, just a subtle halo
       return;
     }
     pulse.value = withRepeat(
       withTiming(1, { duration: 1900, easing: Easing.out(Easing.ease) }),
-      -1, // endlos
-      false, // immer von vorne (Ring wächst & fadet, springt zurück)
+      -1, // infinite
+      false, // always from the start (ring grows & fades, jumps back)
     );
   }, [pulse, reduceMotion]);
   const pulseStyle = useAnimatedStyle(() => ({
@@ -123,9 +123,9 @@ function Pin({
     transform: [{ scale: 1 + pulse.value * 1.8 }],
   }));
 
-  // Label ist nur antippbar, wenn es sichtbar ist (ausgewählt oder per
-  // Doppeltipp). `box-none` -> nur die Label-Box selbst fängt Tipps, die breite
-  // transparente Fläche lässt Tipps durch (Hintergrund/andere Pins).
+  // The label is only tappable when visible (selected or via double-tap).
+  // `box-none` -> only the label box itself catches taps, the wide transparent
+  // area lets taps through (background/other pins).
   const labelTouchable = active || popAll;
 
   return (
@@ -137,11 +137,11 @@ function Pin({
           labelStyle,
         ]}
       >
-        {/* Tippen auf den Namen schließt den Ort wieder (Toggle wie der Punkt).
-            Farben (Oval-Hintergrund + Innenfarbe) kommen aus PIN_COLORS. */}
+        {/* Tapping the name closes the place again (toggle, like the dot).
+            Colors (oval background + inner color) come from PIN_COLORS. */}
         <Pressable onPress={onPress}>
           {isEvent ? (
-            // Event: abgerundetes RECHTECK (Name + Datum passen besser rein).
+            // Event: rounded RECTANGLE (name + date fit better).
             <View
               className="items-center rounded-button px-3.5 py-2"
               style={[{ backgroundColor: c.oval }, shadows.card]}
@@ -164,7 +164,7 @@ function Pin({
               ) : null}
             </View>
           ) : (
-            // Ort: Pille ("Oval").
+            // Place: pill ("oval").
             <View
               className="rounded-pill px-3 py-1.5"
               style={[{ backgroundColor: c.oval }, shadows.card]}
@@ -181,10 +181,10 @@ function Pin({
         </Pressable>
       </Animated.View>
 
-      {/* Punkt + pulsierende Kontur (in Pin-Farbe); antippen wählt aus / hebt auf. */}
+      {/* Dot + pulsing outline (in the pin color); tap selects / deselects. */}
       <Pressable onPress={onPress} hitSlop={10}>
         <View style={{ width: 14, height: 14, alignItems: "center", justifyContent: "center" }}>
-          {/* pulsierender Ring hinter dem Punkt */}
+          {/* pulsing ring behind the dot */}
           <Animated.View
             pointerEvents="none"
             style={[
@@ -215,7 +215,7 @@ function Pin({
   );
 }
 
-// Feste Pin-Positionen (Prozent) für die stilisierte Fallback-Karte.
+// Fixed pin positions (percent) for the stylized fallback map.
 const FALLBACK_POS = [
   { top: "40%", left: "40%" },
   { top: "20%", left: "62%" },
@@ -226,16 +226,16 @@ const FALLBACK_POS = [
 
 interface CityMapProps {
   spots: Spot[];
-  /** Aktuell ausgewählter Spot (zeigt das gelbe Label am Pin). */
+  /** Currently selected spot (shows the yellow label on the pin). */
   selectedId?: string;
-  /** Wird beim Antippen eines Pins aufgerufen -> Karte öffnet die Spot-Karte. */
+  /** Called when a pin is tapped -> the screen opens the spot card. */
   onSelect: (spot: Spot) => void;
-  /** Doppeltipp setzt die Ansicht zurück -> auch die Einzel-Auswahl löschen. */
+  /** Double-tap resets the view -> also clear the single selection. */
   onClearSelection?: () => void;
 }
 
-// Einmal pro Session: beim ersten Öffnen der Karte die Doppeltipp-Geste zeigen
-// (alle Pins ploppen kurz auf + Hinweis-Chip). In-memory, kein Speicher nötig.
+// Once per session: on the first open of the map, show the double-tap gesture
+// (all pins pop open briefly + hint chip). In-memory, no storage needed.
 let demoShown = false;
 
 export function CityMap({
@@ -244,51 +244,51 @@ export function CityMap({
   onSelect,
   onClearSelection,
 }: CityMapProps) {
-  // Easter Egg: Doppeltipp auf leere Kartenfläche -> TOGGLE: alle Pins ploppen
-  // auf; nochmaliger Doppeltipp blendet sie wieder aus. Beides setzt zugleich die
-  // Einzel-Auswahl zurück, damit kein ausgewählter Pin/keine Karte „hängen" bleibt.
+  // Easter egg: double-tap on the empty map area -> TOGGLE: all pins pop open;
+  // another double-tap hides them again. Both also reset the single selection,
+  // so no selected pin/card stays "stuck".
   const [popAll, setPopAll] = useState(false);
   const lastTap = useRef(0);
   const handleBackgroundTap = () => {
     const now = Date.now();
     if (now - lastTap.current < 300) {
-      setPopAll((v) => !v); // Doppeltipp -> umschalten
-      onClearSelection?.(); // Auswahl immer mit zurücksetzen
+      setPopAll((v) => !v); // double-tap -> toggle
+      onClearSelection?.(); // always reset the selection too
       lastTap.current = 0;
     } else {
       lastTap.current = now;
     }
   };
 
-  // Erstbesuch-Demo (A) + Hinweis-Chip (B) — nur auf der Fallback-Karte (dort
-  // greift der Doppeltipp), einmal pro Session.
+  // First-visit demo (A) + hint chip (B) — only on the fallback map (where the
+  // double-tap applies), once per session.
   const [hint, setHint] = useState(false);
   const hintOpacity = useSharedValue(0);
   const hintStyle = useAnimatedStyle(() => ({ opacity: hintOpacity.value }));
 
   useEffect(() => {
     if (Mapbox || demoShown) return;
-    if (spots.length === 0) return; // nichts zu zeigen
+    if (spots.length === 0) return; // nothing to show
     demoShown = true;
 
-    setPopAll(true); // A: alle Labels kurz aufploppen lassen
-    setHint(true); // B: Hinweis-Chip einblenden
+    setPopAll(true); // A: briefly pop open all labels
+    setHint(true); // B: show the hint chip
     hintOpacity.value = withSequence(
       withTiming(1, { duration: 300 }),
       withDelay(3000, withTiming(0, { duration: 500 })),
     );
 
-    const t1 = setTimeout(() => setPopAll(false), 1600); // Demo wieder ausblenden
-    const t2 = setTimeout(() => setHint(false), 3900); // Chip entfernen
+    const t1 = setTimeout(() => setPopAll(false), 1600); // hide the demo again
+    const t2 = setTimeout(() => setHint(false), 3900); // remove the chip
     return () => {
       clearTimeout(t1);
       clearTimeout(t2);
     };
-    // nur beim ersten Mount auswerten
+    // only evaluate on the first mount
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // ── Echte Mapbox-Karte (Dev Build mit Token) ──
+  // ── Real Mapbox map (Dev Build with token) ──
   if (Mapbox) {
     const center = cityCenter(spots);
     return (
@@ -323,7 +323,7 @@ export function CityMap({
     );
   }
 
-  // ── Stilisierte Fallback-Karte (Expo Go / kein Token) ──
+  // ── Stylized fallback map (Expo Go / no token) ──
   return (
     <View className="flex-1 overflow-hidden">
       <View className="absolute inset-0 bg-map-land" />
@@ -350,8 +350,8 @@ export function CityMap({
         Rechte Wienzeile
       </Text>
 
-      {/* Tap-Fläche für den Doppeltipp (liegt HINTER den Pins, die danach
-          gerendert werden -> Pin-Taps gehen weiterhin durch). */}
+      {/* Tap area for the double-tap (sits BEHIND the pins, which are rendered
+          afterward -> pin taps still go through). */}
       <Pressable
         onPress={handleBackgroundTap}
         className="absolute inset-0"
@@ -375,9 +375,9 @@ export function CityMap({
         </View>
       ))}
 
-      {/* Hinweis-Chip (B): erklärt die Doppeltipp-Geste, fadet aus. Sitzt
-          BEWUSST unter der schwebenden Kategorie-Leiste (~top 6–56), damit er
-          nicht mit den Kategorie-Ovalen überlappt. */}
+      {/* Hint chip (B): explains the double-tap gesture, fades out. Deliberately
+          sits below the floating category bar (~top 6–56), so it does not
+          overlap the category ovals. */}
       {hint ? (
         <Animated.View
           pointerEvents="none"
@@ -385,7 +385,7 @@ export function CityMap({
         >
           <View className="rounded-pill bg-night px-3 py-2" style={shadows.card}>
             <Text className="font-hk-semibold text-[11px] text-screen">
-              Doppeltippen zeigt alle Orte
+              Double-tap to show all places
             </Text>
           </View>
         </Animated.View>

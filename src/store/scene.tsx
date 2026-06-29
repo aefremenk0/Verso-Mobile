@@ -7,8 +7,8 @@ import {
 } from "react";
 import type { Scene } from "../lib/scene";
 
-// Aktuell gewählte „Szene" (Ausgehen vs. Essen). Wird vom Szenen-Toggle oben
-// rechts gesetzt und von Feed, Karte und Bezirk gelesen — eine Quelle für alle.
+// Currently selected "scene" (going out vs. dining). Set by the scene toggle in
+// the top right and read by Feed, Map and Neighborhood — one source for all.
 
 interface SceneContextValue {
   scene: Scene;
@@ -28,7 +28,7 @@ export function SceneProvider({ children }: { children: ReactNode }) {
 export function useScene(): SceneContextValue {
   const ctx = useContext(SceneContext);
   if (!ctx) {
-    throw new Error("useScene muss innerhalb von <SceneProvider> genutzt werden.");
+    throw new Error("useScene must be used within <SceneProvider>.");
   }
   return ctx;
 }

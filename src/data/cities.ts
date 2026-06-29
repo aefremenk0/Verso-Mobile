@@ -1,9 +1,9 @@
 import type { Neighborhood } from "./types";
 
 /**
- * Auswählbare Städte (Feed-Dropdown, Welcome-Auswahl). München ist Standard.
- * In der Pilot-Phase ist nur München freigeschaltet (siehe LIVE_CITIES); die
- * übrigen erscheinen als „kommt bald".
+ * Selectable cities (feed dropdown, welcome selection). Munich is the default.
+ * In the pilot phase only Munich is unlocked (see LIVE_CITIES); the others
+ * appear as "coming soon".
  */
 export const CITIES = [
   "München",
@@ -17,65 +17,65 @@ export const CITIES = [
 export type City = (typeof CITIES)[number];
 
 /**
- * Pilot-Phase: **nur München ist „live"** (hat Inhalte und ist auswählbar).
- * Alle anderen Städte erscheinen in der Hotbar/Welcome als „kommt bald"
- * (diagonal durchgestrichen, nicht auswählbar).
+ * Pilot phase: **only Munich is "live"** (has content and is selectable).
+ * All other cities appear in the hotbar/welcome as "coming soon"
+ * (struck through diagonally, not selectable).
  */
 export const LIVE_CITIES: City[] = ["München"];
 
-/** True, wenn die Stadt noch nicht freigeschaltet ist (alles außer München). */
+/** True if the city is not yet unlocked (everything except Munich). */
 export function isComingSoon(c: City): boolean {
   return !LIVE_CITIES.includes(c);
 }
 
-/** Städte mit kuratierten Inhalten — in der Pilot-Phase nur München. */
+/** Cities with curated content — in the pilot phase only Munich. */
 export const CITIES_WITH_CONTENT: City[] = [...LIVE_CITIES];
 
 /**
- * Stadtteile für die Stadt-Übersicht – je ein poetischer Einzeiler.
- * Pilot-Phase: nur München. Die Spot-`neighborhood`-Felder entsprechen exakt
- * diesen Namen (Bezirks-Screen matcht via `=== name`).
+ * Neighborhoods for the city overview – one poetic one-liner each.
+ * Pilot phase: only Munich. The spot `neighborhood` fields match these names
+ * exactly (the district screen matches via `=== name`).
  */
 export const NEIGHBORHOODS: Neighborhood[] = [
-  // ── München (Pilotstadt) ──
+  // ── Munich (pilot city) ──
   {
     city: "München",
     name: "Glockenbachviertel",
-    blurb: "Münchens wachste Nächte — queer, ohne Sperrstunde im Kopf.",
+    blurb: "Munich's most wide-awake nights — queer, with no curfew in mind.",
   },
   {
     city: "München",
     name: "Gärtnerplatzviertel",
-    blurb: "Brunch am Rondell, der in den nächsten Negroni übergeht.",
+    blurb: "Brunch at the roundabout that slides into the next negroni.",
   },
   {
     city: "München",
     name: "Maxvorstadt",
-    blurb: "Zwischen Pinakothek und Kneipe, studentisch entspannt.",
+    blurb: "Between the Pinakothek and the pub, student-relaxed.",
   },
   {
     city: "München",
     name: "Schwabing",
-    blurb: "Boheme im Ruhestand, immer noch wach.",
+    blurb: "Bohemia in retirement, still wide awake.",
   },
   {
     city: "München",
     name: "Isarvorstadt / Flaucher",
-    blurb: "Im Sommer das Wohnzimmer der Stadt — am Kiesufer.",
+    blurb: "In summer the city's living room — on the gravel riverbank.",
   },
   {
     city: "München",
     name: "Werksviertel",
-    blurb: "Wo der Beton tanzt: Clubs, Rooftops, ein Riesenrad.",
+    blurb: "Where the concrete dances: clubs, rooftops, a Ferris wheel.",
   },
   {
     city: "München",
     name: "Westend / Schwanthalerhöhe",
-    blurb: "Multikulti-Block mit den Tischen, von denen keiner spricht.",
+    blurb: "A multicultural block with the tables nobody talks about.",
   },
   {
     city: "München",
     name: "Haidhausen",
-    blurb: "Franzosenviertel, leiser Stolz.",
+    blurb: "The French Quarter, quiet pride.",
   },
 ];

@@ -1,8 +1,8 @@
 import { Linking, Platform } from "react-native";
 
-// Deep-Links in externe Karten-Apps. Reine Verlinkung – keine eigene Karte.
+// Deep links into external map apps. Pure linking – no map of our own.
 
-/** Öffnet die Adresse in Apple Karten (iOS) bzw. als Web-Fallback. */
+/** Opens the address in Apple Maps (iOS) or as a web fallback. */
 export function openAppleMaps(query: string) {
   const q = encodeURIComponent(query);
   const url =
@@ -12,13 +12,13 @@ export function openAppleMaps(query: string) {
   Linking.openURL(url);
 }
 
-/** Öffnet die Adresse in Google Maps (App falls vorhanden, sonst Web). */
+/** Opens the address in Google Maps (the app if present, otherwise the web). */
 export function openGoogleMaps(query: string) {
   const q = encodeURIComponent(query);
   Linking.openURL(`https://www.google.com/maps/search/?api=1&query=${q}`);
 }
 
-/** Öffnet einen beliebigen externen Link (Reservierung, Tickets). */
+/** Opens any external link (reservation, tickets). */
 export function openExternal(url: string) {
   Linking.openURL(url);
 }

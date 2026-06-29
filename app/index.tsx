@@ -12,7 +12,7 @@ import {
 import { isComingSoon, type City } from "../src/data/cities";
 import { useCity } from "../src/store/city";
 
-// Feste Anordnung der Städte auf dem Welcome-Screen (3 Zeilen, wie gewünscht).
+// Fixed arrangement of the cities on the Welcome screen (3 rows, as desired).
 const WELCOME_ROWS: City[][] = [
   ["München", "Zürich", "Wien"],
   ["Berlin", "Frankfurt", "Hamburg"],
@@ -20,8 +20,8 @@ const WELCOME_ROWS: City[][] = [
 ];
 
 // Screen 01 — Welcome.
-// Immersives dunkles Hero (läuft unter die Statusleiste), gelbes Insider-Band,
-// Stadt-Auswahl, dunkler "Los geht's"-Button. Werte aus Verso_Mobile_v2.dc.html.
+// Immersive dark hero (runs under the status bar), yellow insider band,
+// city selection, dark "Let's go" button. Values from Verso_Mobile_v2.dc.html.
 
 export default function Welcome() {
   const router = useRouter();
@@ -31,20 +31,20 @@ export default function Welcome() {
 
   return (
     <View className="flex-1 bg-screen">
-      {/* ── Dunkles Hero (full-bleed, unter die Statusleiste) ── */}
+      {/* ── Dark hero (full-bleed, under the status bar) ── */}
       <View
         className="overflow-hidden bg-night-2"
         style={{ flex: 1.4, paddingTop: insets.top }}
       >
-        {/* diagonale Streifen-Textur */}
+        {/* diagonal stripe texture */}
         <StripeTexture />
         <Text className="mt-12 px-[30px] font-hk-semibold text-[10px] tracking-[2.2px] text-screen/60">
-          // dein erster abend in einer fremden stadt
+          // your first night in a city you don't know
         </Text>
 
         <View className="mt-auto px-[30px] pb-8">
-          {/* Easter Egg: auf „verso" tippen -> gelbe „?"-Bubbles steigen von
-              der Tipp-Stelle auf (nur hier, vor der Registrierung). */}
+          {/* Easter egg: tap "verso" -> yellow "?" bubbles rise from the tap
+              spot (only here, before sign-up). */}
           <Pressable
             onPressIn={(e) =>
               bubblesRef.current?.burst(
@@ -59,29 +59,28 @@ export default function Welcome() {
             </Text>
           </Pressable>
           <Text className="mt-3.5 max-w-[280px] font-hk-medium text-[14px] leading-[21px] text-screen/90">
-            Echte Orte. Echte Menschen. Die Stadt, wie sie dir sonst niemand
-            zeigt.
+            Real places. Real people. The city like no one else shows you.
           </Text>
         </View>
       </View>
 
-      {/* ── Gelbes Insider-Band (flächig) ── */}
+      {/* ── Yellow insider band (full-width) ── */}
       <View className="bg-accent px-[30px] py-[18px]">
         <Text className="font-hk-extrabold text-[22px] leading-[22px] text-accent-ink">
           Hi Insider.
         </Text>
         <Text className="mt-1.5 font-hk-medium text-[12.5px] leading-[18px] text-accent-ink/85">
-          Keine Listen für alle — nur Orte, die wir dir selbst zeigen würden.
+          No lists for everyone — only places we'd show you ourselves.
         </Text>
       </View>
 
-      {/* ── Stadt-Auswahl + CTA ── */}
+      {/* ── City selection + CTA ── */}
       <View
         className="px-[30px] pt-6"
         style={{ flex: 1, paddingBottom: insets.bottom + 8 }}
       >
         <Text className="font-hk-semibold text-[10px] tracking-[2.2px] text-ink-3">
-          WO FANGEN WIR AN?
+          WHERE DO WE START?
         </Text>
         <View className="mt-4 gap-2">
           {WELCOME_ROWS.map((row, ri) => (
@@ -90,11 +89,11 @@ export default function Welcome() {
                 const active = c === city;
                 const soon = isComingSoon(c);
                 return (
-                  // „kommt bald"-Städte: gedimmt, durchgestrichen, nicht wählbar.
+                  // "coming soon" cities: dimmed, struck through, not selectable.
                   <View
                     key={c}
                     pointerEvents={soon ? "none" : "auto"}
-                    accessibilityLabel={soon ? `${c} — kommt bald` : c}
+                    accessibilityLabel={soon ? `${c} — coming soon` : c}
                     style={soon ? { opacity: 0.5 } : undefined}
                   >
                     <AnimatedChip
@@ -116,7 +115,7 @@ export default function Welcome() {
                       <Text
                         className="font-hk-extrabold text-[19px] text-ink"
                         style={{
-                          // exakte vertikale Zentrierung – auch auf Android
+                          // exact vertical centering – also on Android
                           lineHeight: 22,
                           textAlign: "center",
                           textAlignVertical: "center",
@@ -139,13 +138,13 @@ export default function Welcome() {
           className="mb-2 mt-auto flex-row items-center justify-between rounded-[18px] bg-night px-5 py-[18px]"
         >
           <Text className="font-hk-extrabold text-[18px] text-screen">
-            Los geht's
+            Let's go
           </Text>
           <Text className="text-[18px] text-screen">→</Text>
         </Pressable>
       </View>
 
-      {/* Bubble-Overlay (über allem, lässt Tipps durch) */}
+      {/* Bubble overlay (above everything, lets taps through) */}
       <QuestionBubbles ref={bubblesRef} />
     </View>
   );

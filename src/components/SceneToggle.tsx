@@ -3,12 +3,12 @@ import { tapSelection } from "../lib/haptics";
 import { useScene } from "../store/scene";
 import { AnimatedChip } from "./AnimatedChip";
 
-// Umschalter oben rechts: Ausgehen (🎉 Bar/Club/Event) vs. Essen (🍴 Restaurant/
-// Snack/Café). Beide Hälften nutzen AnimatedChip (Farb-Crossfade + Pop + Press).
+// Toggle in the top right: going out (🎉 Bar/Club/Event) vs. dining (🍴
+// Restaurant/Snack/Café). Both halves use AnimatedChip (color crossfade + pop + press).
 export function SceneToggle() {
   const { scene, setScene } = useScene();
 
-  // Nur bei echtem Wechsel haptisch quittieren (kein Feedback beim Re-Tap).
+  // Only give haptic feedback on an actual change (no feedback on re-tap).
   const switchTo = (next: "feiern" | "essen") => {
     if (next !== scene) tapSelection();
     setScene(next);
@@ -22,7 +22,7 @@ export function SceneToggle() {
         activeBg="#FFE500"
         inactiveBg="rgba(255,229,0,0)"
         style={{ borderRadius: 999, paddingHorizontal: 12, paddingVertical: 6 }}
-        accessibilityLabel="Ausgehen anzeigen"
+        accessibilityLabel="Show going out"
       >
         <Text className="text-[16px]">🎉</Text>
       </AnimatedChip>
@@ -33,7 +33,7 @@ export function SceneToggle() {
         activeBg="#FFE500"
         inactiveBg="rgba(255,229,0,0)"
         style={{ borderRadius: 999, paddingHorizontal: 12, paddingVertical: 6 }}
-        accessibilityLabel="Essen anzeigen"
+        accessibilityLabel="Show dining"
       >
         <Text className="text-[16px]">🍴</Text>
       </AnimatedChip>

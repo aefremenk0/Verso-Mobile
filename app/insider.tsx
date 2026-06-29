@@ -11,18 +11,18 @@ import Animated, {
 import { SafeAreaView } from "react-native-safe-area-context";
 import Svg, { Path } from "react-native-svg";
 
-// Modaler „Verso Insider"-Hinweis — gleicher Pop-up-Stil wie der Geheimtipp-
-// Lade-Screen (dunkel, drehende Squiggle ums Symbol). Sagt, dass das Feature
-// noch nicht verfügbar ist, und führt zurück zum Profil.
+// Modal "Verso Insider" notice — same pop-up style as the hidden gem
+// loading screen (dark, a spinning squiggle around the symbol). Says the feature
+// isn't available yet and leads back to the profile.
 //
-// Wird vom „???"-Badge im Profil-Kopf geöffnet (`MysticBadge`).
+// Opened by the "???" badge in the profile header (`MysticBadge`).
 
 export default function Insider() {
   const router = useRouter();
-  const spin = useSharedValue(0); // drehende Squiggle 0..360
+  const spin = useSharedValue(0); // spinning squiggle 0..360
 
   useEffect(() => {
-    // Endlose Rotation wie beim Geheimtipp-Lade-Ring (~9s, linear).
+    // Endless rotation like the hidden gem loading ring (~9s, linear).
     spin.value = withRepeat(
       withTiming(360, { duration: 9000, easing: Easing.linear }),
       -1,
@@ -35,7 +35,7 @@ export default function Insider() {
 
   return (
     <SafeAreaView className="flex-1 bg-night" edges={["top", "bottom"]}>
-      {/* Schließen (zurück zum Profil) */}
+      {/* Close (back to the profile) */}
       <View className="flex-row justify-end px-6 pt-3">
         <Pressable
           onPress={() => router.back()}
@@ -47,7 +47,7 @@ export default function Insider() {
       </View>
 
       <View className="flex-1 items-center justify-center px-8">
-        {/* „???" mit drehender, krummliniger Umrandung (Squiggle wie in der Nav) */}
+        {/* "???" with a spinning, wavy outline (squiggle like in the nav) */}
         <View className="h-[150px] w-[150px] items-center justify-center">
           <Animated.View
             style={[{ position: "absolute", width: 150, height: 150 }, ringStyle]}
@@ -69,22 +69,22 @@ export default function Insider() {
           VERSO INSIDER
         </Text>
         <Text className="mt-3 text-center font-hk-extrabold-italic text-[22px] leading-[29px] text-screen">
-          Noch im Verborgenen …
+          Still under wraps …
         </Text>
         <Text className="mt-4 max-w-[300px] text-center font-hk-medium text-[14px] leading-[20px] text-screen/60">
-          Dieses Feature ist noch nicht verfügbar. Es erwacht in einer kommenden
-          Version von Verso — bleib dran.
+          This feature isn't available yet. It awakens in an upcoming
+          version of Verso — stay tuned.
         </Text>
       </View>
 
-      {/* Zurück zum Profil */}
+      {/* Back to the profile */}
       <View className="px-6 pb-8">
         <Pressable
           onPress={() => router.back()}
           className="flex-row items-center justify-between rounded-[18px] bg-accent px-5 py-4"
         >
           <Text className="font-hk-extrabold text-[17px] text-accent-ink">
-            Zurück zum Profil
+            Back to profile
           </Text>
           <View className="h-[34px] w-[34px] items-center justify-center rounded-pill bg-night">
             <Text className="font-hk-bold text-[16px] text-accent">→</Text>

@@ -1,12 +1,12 @@
 import type { Category, Spot } from "../data/types";
 
-// Abgeleitete Detail-Infos für die Spot-Seite — bewusst ohne Backend/GPS:
-//  - Öffnungsstatus ("Jetzt geöffnet?") aus typischen Zeiten pro Kategorie
-//  - Entfernung zum Stadtzentrum (deterministisch, kein Standort-Prompt)
+// Derived detail info for the spot page — deliberately without backend/GPS:
+//  - opening status ("Open now?") from typical hours per category
+//  - distance to the city center (deterministic, no location prompt)
 
-// Typische Öffnungsfenster je Kategorie (24h; close > 24 = nach Mitternacht,
-// z. B. Bar bis 2:00 = 26). event-artige Kategorien haben einen Termin statt
-// Öffnungszeiten -> null (Badge entfällt, der WANN-Block übernimmt).
+// Typical opening windows per category (24h; close > 24 = after midnight,
+// e.g. bar until 2:00 = 26). Event-like categories have a date instead of
+// opening hours -> null (no badge, the WHEN block takes over).
 const CATEGORY_HOURS: Record<Category, { open: number; close: number } | null> = {
   cafe: { open: 8, close: 18 },
   restaurant: { open: 12, close: 23 },
@@ -24,11 +24,11 @@ function fmtHour(h: number): string {
 
 export interface OpenState {
   openNow: boolean;
-  /** z. B. "bis 23:00" (offen) oder "ab 18:00" (geschlossen). */
+  /** e.g. "until 23:00" (open) or "from 18:00" (closed). */
   label: string;
 }
 
-/** Öffnungsstatus jetzt — null bei Events (die zeigen Datum statt Öffnungszeit). */
+/** Opening status now — null for events (which show a date instead of hours). */
 export function getOpenState(spot: Spot, now: Date = new Date()): OpenState | null {
   const base = spot.hours ?? CATEGORY_HOURS[spot.category];
   if (!base) return null;
@@ -36,14 +36,14 @@ export function getOpenState(spot: Spot, now: Date = new Date()): OpenState | nu
   const openNow =
     base.close <= 24
       ? h >= base.open && h < base.close
-      : h >= base.open || h < base.close - 24; // Fenster über Mitternacht
+      : h >= base.open || h < base.close - 24; // window across midnight
   return {
     openNow,
-    label: openNow ? `bis ${fmtHour(base.close)}` : `ab ${fmtHour(base.open)}`,
+    label: openNow ? `until ${fmtHour(base.close)}` : `from ${fmtHour(base.open)}`,
   };
 }
 
-// Ungefähre Stadtzentren (für die Entfernungs-Angabe). Bewusst grob.
+// Approximate city centers (for the distance label). Deliberately rough.
 const CITY_CENTER: Record<string, { lat: number; lng: number }> = {
   München: { lat: 48.1372, lng: 11.5755 },
   Wien: { lat: 48.2082, lng: 16.3738 },
@@ -58,7 +58,7 @@ function haversineKm(
   a: { lat: number; lng: number },
   b: { lat: number; lng: number },
 ): number {
-  const R = 6371; // Erdradius km
+  const R = 6371; // Earth radius in km
   const dLat = ((b.lat - a.lat) * Math.PI) / 180;
   const dLng = ((b.lng - a.lng) * Math.PI) / 180;
   const la1 = (a.lat * Math.PI) / 180;
@@ -69,11 +69,11 @@ function haversineKm(
   return 2 * R * Math.asin(Math.sqrt(x));
 }
 
-/** Entfernung Spot → Stadtzentrum als deutsches Label ("ca. 1,2 km vom Zentrum"). */
+/** Distance spot → city center as an English label ("approx. 1.2 km from center"). */
 export function distanceLabel(spot: Spot): string | null {
   const center = CITY_CENTER[spot.city];
   if (!center) return null;
   const km = haversineKm(center, { lat: spot.lat, lng: spot.lng });
-  const txt = km < 1 ? `${Math.round(km * 1000)} m` : `${km.toFixed(1).replace(".", ",")} km`;
-  return `ca. ${txt} vom Zentrum`;
+  const txt = km < 1 ? `${Math.round(km * 1000)} m` : `${km.toFixed(1)} km`;
+  return `approx. ${txt} from center`;
 }

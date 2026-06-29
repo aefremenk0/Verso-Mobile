@@ -3,9 +3,9 @@ import Svg, { Line, Rect } from "react-native-svg";
 import type { Spot } from "../data/types";
 import { PIN_COLORS } from "../lib/pinColors";
 
-// Leichte, stilisierte Mini-Karte für die Spot-Detailseite (Expo-Go-fest, kein
-// Mapbox). Rein dekorativ: gedämpfter Hintergrund + angedeutete „Straßen" + ein
-// Pin in der Kategoriefarbe. Tippen öffnet die echte Karte (Deep-Link).
+// Lightweight, stylized mini-map for the spot detail page (Expo-Go-safe, no
+// Mapbox). Purely decorative: muted background + hinted "streets" + a pin in
+// the category color. Tapping opens the real map (deep link).
 
 export function MiniMap({ spot, onPress }: { spot: Spot; onPress: () => void }) {
   const col = PIN_COLORS[spot.category];
@@ -13,11 +13,11 @@ export function MiniMap({ spot, onPress }: { spot: Spot; onPress: () => void }) 
   return (
     <Pressable
       onPress={onPress}
-      accessibilityLabel="In Karten-App öffnen"
+      accessibilityLabel="Open in maps app"
       className="overflow-hidden rounded-card"
       style={{ height: 150 }}
     >
-      {/* Hintergrund + angedeutete Straßen (verzerrt, rein dekorativ) */}
+      {/* Background + hinted streets (skewed, purely decorative) */}
       <Svg
         width="100%"
         height="100%"
@@ -33,7 +33,7 @@ export function MiniMap({ spot, onPress }: { spot: Spot; onPress: () => void }) 
         <Line x1={0} y1={31} x2={100} y2={33} stroke="#DEDACB" strokeWidth={1.5} />
       </Svg>
 
-      {/* Pin in Kategoriefarbe, zentriert */}
+      {/* Pin in the category color, centered */}
       <View className="absolute inset-0 items-center justify-center">
         <View
           className="h-5 w-5 rounded-pill"
@@ -45,7 +45,7 @@ export function MiniMap({ spot, onPress }: { spot: Spot; onPress: () => void }) 
         />
       </View>
 
-      {/* Untere Leiste: Adresse + „öffnen" */}
+      {/* Bottom bar: address + "open" */}
       <View
         className="absolute bottom-2 left-2 right-2 flex-row items-center justify-between rounded-pill px-3.5 py-2"
         style={{ backgroundColor: "rgba(26,26,26,0.82)" }}
@@ -56,7 +56,7 @@ export function MiniMap({ spot, onPress }: { spot: Spot; onPress: () => void }) 
         >
           {spot.address}
         </Text>
-        <Text className="font-hk-bold text-[12px] text-accent">In Karte ↗</Text>
+        <Text className="font-hk-bold text-[12px] text-accent">On map ↗</Text>
       </View>
     </Pressable>
   );

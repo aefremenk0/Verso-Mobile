@@ -1,10 +1,10 @@
 import { Text } from "react-native";
 
-// Der editoriale italic-Hook, gelb hinterlegt ("Marker"-Optik).
+// The editorial italic hook, with a yellow background ("highlighter" look).
 //
-// Im HTML nutzt das Mockup `box-decoration-break: clone`, damit jede Zeile
-// ihren eigenen gelben Block bekommt. React-Native-Text kann das nicht
-// per Zeile, also hinterlegen wir den ganzen Hook gelb – optisch sehr nah dran.
+// In HTML the mockup uses `box-decoration-break: clone`, so each line gets its
+// own yellow block. React Native Text cannot do that per line, so we give the
+// whole hook a yellow background – visually very close.
 
 interface HookHighlightProps {
   children: string;
@@ -19,7 +19,7 @@ export function HookHighlight({ children, size = 17 }: HookHighlightProps) {
         fontSize: size,
         lineHeight: size * 1.5,
         backgroundColor: "#FFE500",
-        // Innenabstände + Rundung wie im Mockup (padding 3×8, radius 8)
+        // Padding + rounding like in the mockup (padding 3×8, radius 8)
         paddingHorizontal: 8,
         paddingVertical: 3,
         borderRadius: 8,

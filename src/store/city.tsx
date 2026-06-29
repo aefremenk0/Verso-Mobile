@@ -7,8 +7,8 @@ import {
 } from "react";
 import { CITIES, type City } from "../data/cities";
 
-// Aktuell gewählte Stadt. Wird auf dem Welcome-Screen gesetzt und vom
-// Feed-Dropdown sowie der Stadt-Übersicht gelesen.
+// Currently selected city. Set on the Welcome screen and read by the feed
+// dropdown and the city overview.
 
 interface CityContextValue {
   city: City;
@@ -19,8 +19,8 @@ interface CityContextValue {
 const CityContext = createContext<CityContextValue | null>(null);
 
 export function CityProvider({ children }: { children: ReactNode }) {
-  // Pilotstadt München ist Standard (und in der Pilot-Phase die einzige
-  // auswählbare Stadt).
+  // Pilot city München is the default (and in the pilot phase the only
+  // selectable city).
   const [city, setCity] = useState<City>("München");
 
   const value = useMemo<CityContextValue>(
@@ -34,7 +34,7 @@ export function CityProvider({ children }: { children: ReactNode }) {
 export function useCity(): CityContextValue {
   const ctx = useContext(CityContext);
   if (!ctx) {
-    throw new Error("useCity muss innerhalb von <CityProvider> genutzt werden.");
+    throw new Error("useCity must be used within <CityProvider>.");
   }
   return ctx;
 }

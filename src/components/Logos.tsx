@@ -1,9 +1,9 @@
 import Svg, { Path } from "react-native-svg";
 
-// Marken-Logos als SVG (Pfade exakt aus dem Mockup).
-// react-native-svg ist in Expo Go enthalten.
+// Brand logos as SVG (paths taken exactly from the mockup).
+// react-native-svg is included in Expo Go.
 
-/** Apple-Logo, einfarbig (Standard: weiß für dunkle Buttons). */
+/** Apple logo, single color (default: white for dark buttons). */
 export function AppleLogo({ size = 17, color = "#FFFFFF" }: { size?: number; color?: string }) {
   return (
     <Svg viewBox="0 0 24 24" width={size} height={size}>
@@ -15,7 +15,7 @@ export function AppleLogo({ size = 17, color = "#FFFFFF" }: { size?: number; col
   );
 }
 
-/** Google-Logo in Originalfarben. */
+/** Google logo in its original colors. */
 export function GoogleLogo({ size = 18 }: { size?: number }) {
   return (
     <Svg viewBox="0 0 48 48" width={size} height={size}>

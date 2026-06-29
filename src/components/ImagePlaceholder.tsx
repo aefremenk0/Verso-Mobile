@@ -2,11 +2,11 @@ import { Text, View, type ViewStyle } from "react-native";
 import type { PlaceholderTone } from "../data/types";
 import { StripeTexture } from "./StripeTexture";
 
-// Dunkler Bild-Platzhalter mit diagonalem Streifen-Overlay.
+// Dark image placeholder with a diagonal stripe overlay.
 //
-// Im HTML-Mockup ist das ein `repeating-linear-gradient`. In React Native
-// gibt es das nicht direkt, also bauen wir die Textur aus mehreren dünnen,
-// gedrehten Balken nach – subtil, genau wie im Design.
+// In the HTML mockup this is a `repeating-linear-gradient`. React Native has
+// no direct equivalent, so we recreate the texture from several thin, rotated
+// bars – subtle, exactly like in the design.
 
 const TONE_BG: Record<PlaceholderTone, string> = {
   brown: "#2A211C",
@@ -16,13 +16,13 @@ const TONE_BG: Record<PlaceholderTone, string> = {
 
 interface ImagePlaceholderProps {
   tone?: PlaceholderTone;
-  /** Höhe der Fläche. */
+  /** Height of the area. */
   height?: number;
-  /** Eckenradius (Karte 24 / Sheet 30 / Hero 0). */
+  /** Corner radius (card 24 / sheet 30 / hero 0). */
   radius?: number;
-  /** Optionale Maschinen-Notiz unten links ("// kerzenlicht, sechs hocker"). */
+  /** Optional machine-style note bottom-left ("// candlelight, six stools"). */
   note?: string;
-  /** Overlays (Badge, Buttons) werden als Kinder über das Bild gelegt. */
+  /** Overlays (badge, buttons) are placed over the image as children. */
   children?: React.ReactNode;
   style?: ViewStyle;
 }
@@ -40,7 +40,7 @@ export function ImagePlaceholder({
       style={[{ height, borderRadius: radius, backgroundColor: TONE_BG[tone] }, style]}
       className="overflow-hidden"
     >
-      {/* Diagonale Streifen-Textur (dekorativ, leicht aufgehellt). */}
+      {/* Diagonal stripe texture (decorative, slightly lightened). */}
       <StripeTexture />
 
       {note ? (

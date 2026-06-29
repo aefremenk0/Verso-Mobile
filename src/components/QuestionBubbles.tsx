@@ -14,16 +14,16 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 
-// Verspieltes Easter Egg: gelbe „?"-Bubbles, die von der Tipp-Stelle nach oben
-// aufsteigen und ausfaden. Genutzt vom Welcome-Screen, wenn man auf die
-// „verso"-Wortmarke tippt (dort ist man noch nicht registriert).
+// Playful easter egg: yellow "?" bubbles that rise from the tap point and fade
+// out. Used by the Welcome screen when tapping the "verso" wordmark (where the
+// user is not yet registered).
 //
-// Über die ref-Methode `burst(x, y)` (Bildschirmkoordinaten) wird ein Schwung
-// ausgelöst. Mehrfaches Tippen häuft Bubbles an („ganz viele").
+// A burst is triggered via the ref method `burst(x, y)` (screen coordinates).
+// Tapping repeatedly piles up bubbles ("lots of them").
 
 export interface QuestionBubblesHandle {
-  // direction: "up" (Standard) lässt die Bubbles aufsteigen, "down" fallen —
-  // nützlich, wenn die Tipp-Stelle nah am oberen Rand ist.
+  // direction: "up" (default) makes the bubbles rise, "down" makes them fall —
+  // useful when the tap point is near the top edge.
   burst: (x: number, y: number, direction?: "up" | "down") => void;
 }
 
@@ -31,7 +31,7 @@ interface BubbleData {
   id: number;
   x: number;
   y: number;
-  dir: number; // -1 = nach oben, 1 = nach unten
+  dir: number; // -1 = upward, 1 = downward
 }
 
 let nextId = 0;
@@ -53,14 +53,14 @@ function Bubble({
 }) {
   const p = useSharedValue(0);
 
-  // Zufallsparameter einmalig festlegen (jede Bubble fliegt etwas anders).
+  // Set random parameters once (each bubble flies a little differently).
   const [cfg] = useState(() => ({
-    drift: (Math.random() - 0.5) * 140, // seitliches Wandern (px)
-    rise: 200 + Math.random() * 220, // Steighöhe (px)
-    size: 24 + Math.random() * 22, // Durchmesser (px)
-    dur: 1200 + Math.random() * 900, // Lebensdauer (ms)
-    delay: Math.random() * 120, // leicht versetzter Start (ms)
-    rot: (Math.random() - 0.5) * 50, // Drehung (Grad)
+    drift: (Math.random() - 0.5) * 140, // sideways drift (px)
+    rise: 200 + Math.random() * 220, // rise height (px)
+    size: 24 + Math.random() * 22, // diameter (px)
+    dur: 1200 + Math.random() * 900, // lifetime (ms)
+    delay: Math.random() * 120, // slightly staggered start (ms)
+    rot: (Math.random() - 0.5) * 50, // rotation (degrees)
   }));
 
   useEffect(() => {
@@ -70,23 +70,23 @@ function Bubble({
         1,
         { duration: cfg.dur, easing: Easing.out(Easing.quad) },
         (finished) => {
-          // Nach dem Aufstieg sich selbst aus der Liste entfernen.
+          // After rising, remove itself from the list.
           if (finished) runOnJS(onDone)(id);
         },
       ),
     );
-    // Nur beim Mounten starten.
+    // Only start on mount.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const style = useAnimatedStyle(() => ({
     transform: [
       { translateX: cfg.drift * p.value },
-      { translateY: dir * cfg.rise * p.value }, // dir: -1 hoch, 1 runter
+      { translateY: dir * cfg.rise * p.value }, // dir: -1 up, 1 down
       { scale: 0.5 + p.value * 0.7 },
       { rotate: `${cfg.rot * p.value}deg` },
     ],
-    // schnell einblenden, gegen Ende ausfaden
+    // fade in quickly, fade out toward the end
     opacity:
       p.value < 0.12
         ? p.value / 0.12
@@ -128,9 +128,9 @@ function Bubble({
 }
 
 interface QuestionBubblesProps {
-  glyph?: string; // Standard „?"
-  color?: string; // Bubble-Hintergrund (Standard Signalgelb)
-  textColor?: string; // Glyph-Farbe
+  glyph?: string; // default "?"
+  color?: string; // bubble background (default signal yellow)
+  textColor?: string; // glyph color
 }
 
 export const QuestionBubbles = forwardRef<
@@ -145,7 +145,7 @@ export const QuestionBubbles = forwardRef<
     useImperativeHandle(ref, () => ({
       burst: (x, y, direction = "up") => {
         const dir = direction === "down" ? 1 : -1;
-        const count = 10 + Math.floor(Math.random() * 6); // 10–15 pro Tipp
+        const count = 10 + Math.floor(Math.random() * 6); // 10–15 per tap
         const batch: BubbleData[] = [];
         for (let i = 0; i < count; i++) batch.push({ id: nextId++, x, y, dir });
         setBubbles((prev) => [...prev, ...batch]);

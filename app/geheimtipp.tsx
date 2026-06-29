@@ -16,49 +16,49 @@ import { getSpotById } from "../src/data/spots";
 import { notifySuccess } from "../src/lib/haptics";
 import { useGeheimtipp } from "../src/store/geheimtipp";
 
-// Screen 08 — Geheimtipp der Woche.
-// Phase 1: dunkler Lade-Screen (drehender Ring ums "?", durchlaufender Balken).
-// Phase 2: gelber Reveal (Bild "pocht" = antippbar) -> markiert den Tipp als
-// abgeholt, sodass das "?"-Badge im Feed verschwindet.
+// Screen 08 — Hidden gem of the week.
+// Phase 1: dark loading screen (spinning ring around the "?", sweeping bar).
+// Phase 2: yellow reveal (image "throbs" = tappable) -> marks the gem as
+// collected, so the "?" badge in the feed disappears.
 //
-// Alle Animationen laufen über react-native-reanimated (NICHT CSS @keyframes).
+// All animations run via react-native-reanimated (NOT CSS @keyframes).
 
-const LOAD_MS = 2600; // wie lange der Lade-Screen läuft
+const LOAD_MS = 2600; // how long the loading screen runs
 
 export default function Geheimtipp() {
   const router = useRouter();
   const { markAbgeholt, spotId } = useGeheimtipp();
   const [phase, setPhase] = useState<"loading" | "reveal">("loading");
-  // Tipp der aktuell gewählten Stadt (kommt aus dem city-abhängigen Store).
+  // Gem for the currently selected city (comes from the city-aware store).
   const spot = getSpotById(spotId);
 
-  // ── Shared Values (laufen auf dem UI-Thread) ──
-  const spin = useSharedValue(0); // Ring-Rotation 0..360
-  const sweep = useSharedValue(0); // Lade-Balken 0..1 (links -> rechts)
-  const throb = useSharedValue(0); // Bild-Puls 0..1
+  // ── Shared Values (run on the UI thread) ──
+  const spin = useSharedValue(0); // ring rotation 0..360
+  const sweep = useSharedValue(0); // loading bar 0..1 (left -> right)
+  const throb = useSharedValue(0); // image pulse 0..1
 
   useEffect(() => {
-    // verso-spin: 360° endlos, linear, ~9s
+    // verso-spin: 360° endless, linear, ~9s
     spin.value = withRepeat(
       withTiming(360, { duration: 9000, easing: Easing.linear }),
       -1,
     );
-    // verso-load: Balken läuft endlos durch, ~1.3s
+    // verso-load: bar sweeps endlessly, ~1.3s
     sweep.value = withRepeat(
       withTiming(1, { duration: 1300, easing: Easing.inOut(Easing.ease) }),
       -1,
     );
-    // verso-throb: Bild pocht endlos, ~1.5s
+    // verso-throb: image throbs endlessly, ~1.5s
     throb.value = withRepeat(
       withTiming(1, { duration: 1500, easing: Easing.inOut(Easing.ease) }),
       -1,
     );
 
-    // Nach dem Laden automatisch aufdecken + Tipp als abgeholt merken.
+    // After loading, reveal automatically + mark the gem as collected.
     const t = setTimeout(() => {
       setPhase("reveal");
       markAbgeholt();
-      notifySuccess(); // haptischer „Reveal"-Moment
+      notifySuccess(); // haptic "reveal" moment
     }, LOAD_MS);
     return () => clearTimeout(t);
   }, [spin, sweep, throb, markAbgeholt]);
@@ -67,14 +67,14 @@ export default function Geheimtipp() {
     transform: [{ rotate: `${spin.value}deg` }],
   }));
 
-  // Balken (45% breit) wandert von links (-45%) nach rechts (100%) durch.
+  // Bar (45% wide) sweeps from left (-45%) to right (100%).
   const TRACK = 170;
   const BAR = TRACK * 0.45;
   const sweepStyle = useAnimatedStyle(() => ({
     transform: [{ translateX: -BAR + sweep.value * (TRACK + BAR) }],
   }));
 
-  // Throb: dunkler Ring hinter dem Bild wächst nach außen und fadet aus.
+  // Throb: dark ring behind the image grows outward and fades out.
   const throbStyle = useAnimatedStyle(() => ({
     opacity: 0.45 * (1 - throb.value),
     transform: [{ scale: 1 + throb.value * 0.08 }],
@@ -85,14 +85,14 @@ export default function Geheimtipp() {
     if (spot) router.push(`/spot/${spot.id}`);
   };
 
-  // ───────────── Lade-Screen (dunkel, Vollbild) ─────────────
+  // ───────────── Loading screen (dark, fullscreen) ─────────────
   if (phase === "loading") {
     return (
       <SafeAreaView className="flex-1 bg-night" edges={["top", "bottom"]}>
         <View className="flex-row justify-end px-6 pt-3">
           <Pressable
             onPress={() => router.back()}
-            accessibilityLabel="Schließen"
+            accessibilityLabel="Close"
             className="h-[42px] w-[42px] items-center justify-center rounded-pill"
             style={{ borderWidth: 1, borderColor: "rgba(247,244,239,0.25)" }}
           >
@@ -101,7 +101,7 @@ export default function Geheimtipp() {
         </View>
 
         <View className="flex-1 items-center justify-center px-8">
-          {/* "?" mit drehender, krummliniger Umrandung (Squiggle wie in der Nav) */}
+          {/* "?" with a spinning, wavy outline (squiggle like in the nav) */}
           <View className="h-[150px] w-[150px] items-center justify-center">
             <Animated.View
               style={[{ position: "absolute", width: 150, height: 150 }, ringStyle]}
@@ -120,13 +120,13 @@ export default function Geheimtipp() {
           </View>
 
           <Text className="mt-9 font-hk-semibold text-[11px] tracking-[2px] text-screen/55">
-            GEHEIMTIPP DER WOCHE
+            HIDDEN GEM OF THE WEEK
           </Text>
           <Text className="mt-3 text-center font-hk-extrabold-italic text-[22px] leading-[29px] text-screen">
-            Wir kramen kurz{"\n"}im Hinterzimmer …
+            Digging through{"\n"}the back room …
           </Text>
 
-          {/* Durchlaufender Lade-Balken */}
+          {/* Sweeping loading bar */}
           <View
             className="mt-7 h-[5px] overflow-hidden rounded-pill"
             style={{ width: TRACK, backgroundColor: "rgba(247,244,239,0.14)" }}
@@ -139,24 +139,24 @@ export default function Geheimtipp() {
         </View>
 
         <Text className="pb-6 text-center font-hk-semibold text-[10px] tracking-[2px] text-screen/40">
-          FÜR ALLE · EINMAL WÖCHENTLICH
+          FOR EVERYONE · ONCE A WEEK
         </Text>
       </SafeAreaView>
     );
   }
 
-  // ───────────── Reveal-Screen (gelb) ─────────────
+  // ───────────── Reveal screen (yellow) ─────────────
   return (
     <SafeAreaView className="flex-1 bg-accent" edges={["top", "bottom"]}>
       <View className="flex-row items-center justify-between px-6 pt-3">
         <View className="rounded-pill bg-night px-3.5 py-2">
           <Text className="font-hk-semibold text-[10px] tracking-[1.5px] text-accent">
-            ✓ AUFGEDECKT
+            ✓ REVEALED
           </Text>
         </View>
         <Pressable
           onPress={() => router.back()}
-          accessibilityLabel="Schließen"
+          accessibilityLabel="Close"
           className="h-[42px] w-[42px] items-center justify-center rounded-pill"
           style={{ borderWidth: 1, borderColor: "rgba(26,26,26,0.25)" }}
         >
@@ -164,10 +164,10 @@ export default function Geheimtipp() {
         </Pressable>
       </View>
 
-      {/* Café vertikal zentriert in der Karte */}
+      {/* Café vertically centered in the card */}
       <View className="flex-1 justify-center px-6">
         <Text className="font-hk-semibold text-[10px] tracking-[2px] text-accent-ink/55">
-          GEHEIMTIPP DER WOCHE
+          HIDDEN GEM OF THE WEEK
         </Text>
 
         {spot ? (
@@ -176,7 +176,7 @@ export default function Geheimtipp() {
               {spot.name}
             </Text>
 
-            {/* Antippbares Bild mit "Throb"-Puls dahinter */}
+            {/* Tappable image with a "throb" pulse behind it */}
             <View className="mt-5">
               <Animated.View
                 pointerEvents="none"
@@ -224,7 +224,7 @@ export default function Geheimtipp() {
           className="mt-7 flex-row items-center justify-between rounded-[18px] bg-night px-5 py-4"
         >
           <Text className="font-hk-extrabold text-[17px] text-screen">
-            Weiter zu deinem Profil
+            Continue to your profile
           </Text>
           <View className="h-[34px] w-[34px] items-center justify-center rounded-pill bg-accent">
             <Text className="font-hk-bold text-[16px] text-accent-ink">→</Text>

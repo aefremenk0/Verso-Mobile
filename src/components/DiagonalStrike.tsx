@@ -1,8 +1,8 @@
 import { View } from "react-native";
 
-// Diagonaler „Durchstrich" über eine Pille/ein Oval — markiert „kommt bald"-
-// Städte. Liegt absolut über dem (relativ positionierten) Elternelement und
-// wird am Pillen-Radius geclippt. pointerEvents none, rein dekorativ.
+// Diagonal "strikethrough" over a pill/oval — marks "coming soon" cities.
+// Sits absolutely over the (relatively positioned) parent element and is
+// clipped at the pill radius. pointerEvents none, purely decorative.
 export function DiagonalStrike({
   color = "rgba(26,26,26,0.6)",
 }: {

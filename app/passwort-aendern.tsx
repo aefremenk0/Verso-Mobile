@@ -7,9 +7,9 @@ import {
   KEYBOARD_DONE_ID,
 } from "../src/components/KeyboardDoneBar";
 
-// Screen 07d — Passwort ändern (reine UI, keine echte Logik im MVP).
+// Screen 07d — Change password (UI only, no real logic in the MVP).
 
-// Passwort-Eingabefeld, optional mit "Zeigen"-Umschalter.
+// Password input field, optionally with a "show" toggle.
 function PwField({
   label,
   value,
@@ -43,7 +43,7 @@ function PwField({
         {showToggle ? (
           <Pressable onPress={() => setVisible((v) => !v)} hitSlop={8}>
             <Text className="font-hk-semibold text-[11px] tracking-[0.5px] text-ink-3">
-              {visible ? "VERBERGEN" : "ZEIGEN"}
+              {visible ? "HIDE" : "SHOW"}
             </Text>
           </Pressable>
         ) : null}
@@ -69,7 +69,7 @@ export default function PasswortAendern() {
         >
           <Text className="font-hk-extrabold text-[18px] text-ink">←</Text>
         </Pressable>
-        <Text className="font-hk-extrabold text-[28px] text-ink">Passwort ändern</Text>
+        <Text className="font-hk-extrabold text-[28px] text-ink">Change password</Text>
       </View>
 
       <ScrollView
@@ -78,39 +78,39 @@ export default function PasswortAendern() {
       >
         <View className="gap-3.5">
           <PwField
-            label="AKTUELLES PASSWORT"
+            label="CURRENT PASSWORD"
             value={current}
             onChangeText={setCurrent}
             showToggle
           />
-          <PwField label="NEUES PASSWORT" value={next} onChangeText={setNext} />
+          <PwField label="NEW PASSWORD" value={next} onChangeText={setNext} />
           <PwField
-            label="NEUES PASSWORT BESTÄTIGEN"
+            label="CONFIRM NEW PASSWORD"
             value={confirm}
             onChangeText={setConfirm}
           />
         </View>
 
         <Text className="mt-3.5 font-hk-medium text-[12px] leading-[18px] text-ink-2">
-          Mindestens 8 Zeichen, davon eine Zahl und ein Sonderzeichen.
+          At least 8 characters, including a number and a special character.
         </Text>
         <Text className="mt-4 self-start font-hk-semibold text-[12px] text-ink underline">
-          Passwort vergessen?
+          Forgot password?
         </Text>
 
-        {/* Aktualisieren (unten) */}
+        {/* Update (at the bottom) */}
         <View className="flex-1" />
         <Pressable
           onPress={() => router.back()}
           className="mt-8 items-center rounded-[16px] bg-accent py-4"
         >
           <Text className="font-hk-extrabold text-[17px] text-accent-ink">
-            Passwort aktualisieren
+            Update password
           </Text>
         </Pressable>
       </ScrollView>
 
-      {/* „Fertig"-Leiste über der Tastatur (iOS) für die Passwortfelder */}
+      {/* "Done" bar above the keyboard (iOS) for the password fields */}
       <KeyboardDoneBar />
     </SafeAreaView>
   );

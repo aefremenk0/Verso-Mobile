@@ -8,15 +8,15 @@ import {
 } from "react";
 import { MOCK_USER } from "../data/user";
 
-// Speichert die gemerkten Spots im Arbeitsspeicher (in-memory).
-// Im MVP bewusst KEINE Persistenz/DB – nur ein React-Context, damit
-// "Merken" im Detail-Screen und die Gespeichert-Liste denselben Stand teilen.
+// Stores the saved spots in memory (in-memory).
+// In the MVP deliberately NO persistence/DB – just a React context so that
+// "Save" in the detail screen and the Saved list share the same state.
 
 interface SavedContextValue {
   savedIds: string[];
   isSaved: (id: string) => boolean;
   toggle: (id: string) => void;
-  /** Beim Abmelden: zurück auf die Startwerte. */
+  /** On logout: back to the initial values. */
   reset: () => void;
 }
 
@@ -46,11 +46,11 @@ export function SavedProvider({ children }: { children: ReactNode }) {
   return <SavedContext.Provider value={value}>{children}</SavedContext.Provider>;
 }
 
-/** Zugriff auf den Merken-Store. Muss innerhalb von <SavedProvider> stehen. */
+/** Access to the saved store. Must be within <SavedProvider>. */
 export function useSaved(): SavedContextValue {
   const ctx = useContext(SavedContext);
   if (!ctx) {
-    throw new Error("useSaved muss innerhalb von <SavedProvider> genutzt werden.");
+    throw new Error("useSaved must be used within <SavedProvider>.");
   }
   return ctx;
 }

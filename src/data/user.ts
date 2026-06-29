@@ -1,26 +1,26 @@
 import type { City } from "./cities";
 import type { GeheimtippDerWoche, User } from "./types";
 
-/** Mock-Profil. Im MVP gibt es kein echtes Login. */
+/** Mock profile. There is no real login in the MVP. */
 export const MOCK_USER: User = {
   name: "Lena Hofer",
   username: "@lenahofer",
-  bio: "Sammelt Hinterzimmer und Plätze ohne Schild.",
-  // Startwerte; gemerkte Orte verwaltet zur Laufzeit der SavedProvider.
-  // (München-Spots — Pilotstadt.)
+  bio: "Collects back rooms and places without a sign.",
+  // Initial values; saved places are managed at runtime by the SavedProvider.
+  // (Munich spots — pilot city.)
   savedSpotIds: ["glasscherbe", "kellerkind", "isarliebe"],
 };
 
 /**
- * Der "Geheimtipp der Woche" — pro Stadt einer. Pilot-Phase: nur München hat
- * einen Tipp (andere Städte sind „kommt bald", nicht auswählbar). `spotId` muss
- * eine echte Spot-id aus `spots.ts` derselben Stadt sein. Der Store fällt auf
- * München zurück, falls je eine Stadt ohne Eintrag aktiv würde.
+ * The "Hidden Gem of the Week" — one per city. Pilot phase: only Munich has
+ * a tip (other cities are "coming soon", not selectable). `spotId` must be a
+ * real spot id from `spots.ts` of the same city. The store falls back to
+ * Munich should a city without an entry ever become active.
  */
 export const GEHEIMTIPP_BY_CITY: Partial<Record<City, GeheimtippDerWoche>> = {
   München: {
-    spotId: "kellerkind", // Kellerbar im Glockenbach, Handys an der Garderobe
+    spotId: "kellerkind", // cellar bar in Glockenbach, phones at the coat check
     weekLabel: "KW 26",
-    teaser: "Wir kramen kurz im Hinterzimmer …",
+    teaser: "Digging through the back room …",
   },
 };

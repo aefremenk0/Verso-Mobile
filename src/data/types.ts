@@ -1,17 +1,17 @@
-// Datenmodelle für Verso (MVP: alles nur Mock, kein Backend).
+// Data models for Verso (MVP: everything is mock only, no backend).
 
-/** Kategorien eines Spots. Der Feed-Filter basiert hierauf. */
+/** Categories of a spot. The feed filter is based on this. */
 export type Category =
   | "restaurant"
   | "snack"
   | "cafe"
   | "bar"
   | "club"
-  // Spezifischere Party-Arten (event-artig: mit Datum/Ticket):
+  // More specific party types (event-like: with date/ticket):
   | "weintasting"
   | "sport";
 
-/** Ambiente-Werte (Karte-Filter in Phase 2, als Tag schon im MVP nutzbar). */
+/** Ambience values (map filter in phase 2, already usable as a tag in the MVP). */
 export type Ambience =
   | "intim"
   | "lebhaft"
@@ -21,25 +21,25 @@ export type Ambience =
   | "draußen";
 
 /**
- * Farbton des dunklen Bild-Platzhalters. Im Mockup variieren die
- * Platzhalter zwischen bräunlich und dunkelgrün – das hält den Feed lebendig.
+ * Color tone of the dark image placeholder. In the mockup the placeholders
+ * vary between brownish and dark green – this keeps the feed lively.
  */
 export type PlaceholderTone = "brown" | "green" | "charcoal";
 
 /**
- * Ein Ort (oder Event). Events sind Spots mit `category: "event"` und den
- * zusätzlichen Feldern `dateLabel`, `meetingPoint`, `ticketUrl`.
+ * A place (or event). Events are spots with `category: "event"` and the
+ * additional fields `dateLabel`, `meetingPoint`, `ticketUrl`.
  */
 export interface Spot {
   id: string;
   name: string;
   category: Category;
-  city: string; // z. B. "Wien"
-  neighborhood: string; // z. B. "Wieden, 4. Bezirk"
-  hook: string; // poetischer italic-Einzeiler
-  imageNote: string; // die "//"-Maschinen-Notiz auf dem Bild
-  description: string; // 2–3 Sätze
-  tags: string[]; // z. B. ["Cocktails", "Natural"]
+  city: string; // e.g. "Wien"
+  neighborhood: string; // e.g. "Wieden, 4. Bezirk"
+  hook: string; // poetic italic one-liner
+  imageNote: string; // the "//" machine note on the image
+  description: string; // 2–3 sentences
+  tags: string[]; // e.g. ["Cocktails", "Natural"]
   priceLevel: 1 | 2 | 3; // € / €€ / €€€
   address: string;
   ambience: Ambience[];
@@ -47,25 +47,25 @@ export interface Spot {
   lat: number;
   lng: number;
   tone: PlaceholderTone;
-  reserveUrl?: string; // z. B. OpenTable-Link (nur extern verlinkt)
-  /** Optionale Öffnungszeiten (24h; close > 24 = nach Mitternacht). Fehlt das
-   *  Feld, leitet `getOpenState` die Zeit aus der Kategorie ab. */
+  reserveUrl?: string; // e.g. OpenTable link (only linked externally)
+  /** Optional opening hours (24h; close > 24 = after midnight). If this
+   *  field is missing, `getOpenState` derives the time from the category. */
   hours?: { open: number; close: number };
 
-  // Nur für Events gesetzt:
+  // Set only for events:
   dateLabel?: string; // "Sa · 12. Juli · 22:00–06:00"
-  meetingPoint?: string; // Treffpunkt
-  ticketUrl?: string; // externer Ticket-Link
+  meetingPoint?: string; // meeting point
+  ticketUrl?: string; // external ticket link
 }
 
-/** Der kuratierte "Geheimtipp der Woche" – einer für alle. */
+/** The curated "Hidden Gem of the Week" – one for everyone. */
 export interface GeheimtippDerWoche {
   spotId: string;
-  weekLabel: string; // z. B. "KW 26"
-  teaser: string; // Lade-Text, z. B. "Wir kramen kurz im Hinterzimmer …"
+  weekLabel: string; // e.g. "KW 26"
+  teaser: string; // loading text, e.g. "Digging through the back room …"
 }
 
-/** Mock-Nutzerprofil (kein echtes Auth im MVP). */
+/** Mock user profile (no real auth in the MVP). */
 export interface User {
   name: string;
   username: string;
@@ -73,7 +73,7 @@ export interface User {
   savedSpotIds: string[];
 }
 
-/** Ein Stadtteil in der Stadt-Übersicht, mit poetischem Einzeiler. */
+/** A neighborhood in the city overview, with a poetic one-liner. */
 export interface Neighborhood {
   city: string;
   name: string;
