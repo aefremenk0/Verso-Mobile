@@ -509,7 +509,18 @@ npm test               # Unit-Tests der reinen Logik (vitest, src/**)
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-30 · Gespeichert: Suche + Filter (wie im Feed)
+### (dieser Commit) · 2026-06-30 · Gespeichert: Wisch-Aktionen wachsen mit (YouTube-Style)
+- **Swipe-Zeilen neu auf Reanimated-Pan** (statt `Swipeable`): die farbige
+  **Teilen-/Löschen-Box wächst mit dem Finger** — ihre Breite folgt der
+  Wisch-Distanz (`width = ±translationX`), Icon am äußeren Rand. Wie in der
+  YouTube-Mobile-App.
+- **Auslösung** ab `SWIPE_THRESHOLD` (96px): rechts → Teilen (federt zurück),
+  links → Löschen (Zeile gleitet raus → `toggle` entfernt sie). Darunter spring
+  zurück. Vertikales Wischen lässt die Liste scrollen (`failOffsetY`).
+- Zeilentext jetzt **lokalisiert** über `spotText` (Name/Hook in DE), Share-
+  Nachricht ebenso. Kein `openRef`-Sonderfall mehr (Tippen öffnet immer Detail).
+
+### 17bdc77 · 2026-06-30 · Gespeichert: Suche + Filter (wie im Feed)
 - **Gespeichert** bekommt dieselbe **Such-/Filter-Zeile wie der Feed**:
   `SearchField` (matcht Name/Viertel/Tag) + Trichter-`FilterButton` →
   `MapFilterSheet` (`showArt={false}`, da die Kategorie-Hotbar die Art macht).

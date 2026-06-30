@@ -1,7 +1,14 @@
 import { useRouter } from "expo-router";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { FlatList, Pressable, ScrollView, Share, Text, View } from "react-native";
-import { Swipeable } from "react-native-gesture-handler";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import Animated, {
+  runOnJS,
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+  withTiming,
+} from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { GoogleExportSheet } from "../src/components/GoogleExportSheet";
 import { CityDropdown } from "../src/components/CityDropdown";
@@ -17,6 +24,7 @@ import { categoryLabel, sortByCategory } from "../src/data/categories";
 import { SPOTS } from "../src/data/spots";
 import type { Category, Spot } from "../src/data/types";
 import { useT, useLang } from "../src/lib/i18n";
+import { spotText } from "../src/lib/localized";
 import { DEFAULT_FILTER, matchesFilter, type MapFilter } from "../src/lib/mapFilter";
 import { PIN_COLORS } from "../src/lib/pinColors";
 import { SCENE_CATEGORIES, sceneFilters } from "../src/lib/scene";
@@ -27,97 +35,139 @@ import { shadows } from "../src/theme";
 
 // Screen 06 — Saved.
 // List of saved places (filled via the "Save" toggle in the detail view).
-// Like in the Mail app: swipe a card LEFT -> delete, RIGHT -> share.
+// Swipe a card RIGHT -> share, LEFT -> delete. YouTube-style: the colored
+// action box GROWS with the finger (its width tracks the drag distance).
 
-// A swipeable row.
+const SWIPE_THRESHOLD = 96; // drag distance that triggers the action
+
+// A swipeable row built on a Reanimated Pan gesture for full control over the
+// growing action boxes (the built-in Swipeable can't stretch its actions).
 function SavedRow({ spot }: { spot: Spot }) {
   const router = useRouter();
   const t = useT();
   const lang = useLang();
+  const txt = spotText(spot, lang);
   const { toggle } = useSaved();
-  const ref = useRef<Swipeable>(null);
-  // Tracks whether the row is open (e.g. after sharing). Then a tap only
-  // closes the row instead of navigating to the detail page.
-  const openRef = useRef(false);
 
-  const onShare = () => {
+  const tx = useSharedValue(0); // current horizontal drag (px)
+  const rowW = useSharedValue(0); // measured row width (for the delete slide-off)
+
+  const doShare = () => {
     Share.share({
       message: t(
-        `${spot.name} — ${spot.hook}\nFound on Verso: https://verso.app`,
-        `${spot.name} — ${spot.hook}\nGefunden auf Verso: https://verso.app`,
+        `${txt.name} — ${txt.hook}\nFound on Verso: https://verso.app`,
+        `${txt.name} — ${txt.hook}\nGefunden auf Verso: https://verso.app`,
       ),
     }).catch(() => {});
   };
+  const doDelete = () => toggle(spot.id); // removes from the saved places
+  const openDetail = () => router.push(`/spot/${spot.id}`);
 
-  // Actions revealed behind the row when swiping.
-  const renderLeft = () => (
-    <View className="my-1 mr-2 w-28 items-center justify-center rounded-card bg-accent">
-      <Text className="text-[20px] text-accent-ink">↗</Text>
-      <Text className="mt-1 font-hk-bold text-[11px] tracking-[1px] text-accent-ink">
-        {t("SHARE", "TEILEN")}
-      </Text>
-    </View>
-  );
-  const renderRight = () => (
-    <View className="my-1 ml-2 w-28 items-center justify-center rounded-card bg-[#E2402F]">
-      <Text className="text-[18px] text-white">✕</Text>
-      <Text className="mt-1 font-hk-bold text-[11px] tracking-[1px] text-white">
-        {t("DELETE", "LÖSCHEN")}
-      </Text>
-    </View>
-  );
+  // Horizontal pan only (vertical movement fails it -> the FlatList scrolls).
+  const pan = Gesture.Pan()
+    .activeOffsetX([-12, 12])
+    .failOffsetY([-14, 14])
+    .onUpdate((e) => {
+      tx.value = e.translationX;
+    })
+    .onEnd((e) => {
+      if (e.translationX <= -SWIPE_THRESHOLD) {
+        // Far left -> delete: slide the row off, then remove it.
+        tx.value = withTiming(-rowW.value, { duration: 180 }, (fin) => {
+          if (fin) runOnJS(doDelete)();
+        });
+      } else if (e.translationX >= SWIPE_THRESHOLD) {
+        // Far right -> share, then spring back.
+        runOnJS(doShare)();
+        tx.value = withSpring(0, { damping: 18, stiffness: 220 });
+      } else {
+        tx.value = withSpring(0, { damping: 18, stiffness: 220 });
+      }
+    });
+
+  const rowStyle = useAnimatedStyle(() => ({
+    transform: [{ translateX: tx.value }],
+  }));
+  // Share box (left) grows when swiping right; delete box (right) when left.
+  const shareStyle = useAnimatedStyle(() => ({ width: Math.max(0, tx.value) }));
+  const deleteStyle = useAnimatedStyle(() => ({ width: Math.max(0, -tx.value) }));
 
   return (
-    <Swipeable
-      ref={ref}
-      friction={2}
-      leftThreshold={80}
-      rightThreshold={80}
-      renderLeftActions={renderLeft}
-      renderRightActions={renderRight}
-      onSwipeableWillOpen={() => {
-        openRef.current = true;
+    <View
+      onLayout={(e) => {
+        rowW.value = e.nativeEvent.layout.width;
       }}
-      onSwipeableClose={() => {
-        openRef.current = false;
-      }}
-      onSwipeableOpen={(direction) => {
-        // direction "right" = swiped left -> delete action (right side).
-        // direction "left"  = swiped right -> share action (left side).
-        if (direction === "right") {
-          toggle(spot.id); // removes from the saved places
-        } else {
-          onShare();
-          // The row stays open -> the next tap only closes it (no jump to the
-          // detail page). Only afterwards does a tap navigate normally again.
-        }
-      }}
-      containerStyle={{ marginBottom: 8 }}
+      style={{ marginBottom: 8, borderRadius: 16, overflow: "hidden" }}
     >
-      <Pressable
-        onPress={() => {
-          if (openRef.current) {
-            ref.current?.close();
-            return;
-          }
-          router.push(`/spot/${spot.id}`);
-        }}
-        className="flex-row items-center bg-screen py-2"
+      {/* Action backgrounds that GROW with the swipe (width tracks the drag). */}
+      <Animated.View
+        pointerEvents="none"
+        style={[
+          {
+            position: "absolute",
+            left: 0,
+            top: 0,
+            bottom: 0,
+            overflow: "hidden",
+            alignItems: "flex-start",
+            justifyContent: "center",
+            paddingLeft: 22,
+            backgroundColor: "#FFE500",
+          },
+          shareStyle,
+        ]}
       >
-        <ImagePlaceholder tone={spot.tone} height={64} radius={16} style={{ width: 64 }} />
-        <View className="ml-4 flex-1">
-          <Text className="font-hk-bold text-[10px] tracking-[1px] text-ink-3">
-            {categoryLabel(spot.category, lang)} · {spot.neighborhood.toUpperCase()}
-          </Text>
-          <Text className="mt-0.5 font-hk-extrabold text-[18px] text-ink">
-            {spot.name}
-          </Text>
-          <Text className="mt-0.5 font-hk-medium-italic text-[13px] text-ink-2">
-            {spot.hook}
-          </Text>
-        </View>
-      </Pressable>
-    </Swipeable>
+        <Text className="text-[20px] text-accent-ink">↗</Text>
+        <Text className="mt-1 font-hk-bold text-[11px] tracking-[1px] text-accent-ink">
+          {t("SHARE", "TEILEN")}
+        </Text>
+      </Animated.View>
+      <Animated.View
+        pointerEvents="none"
+        style={[
+          {
+            position: "absolute",
+            right: 0,
+            top: 0,
+            bottom: 0,
+            overflow: "hidden",
+            alignItems: "flex-end",
+            justifyContent: "center",
+            paddingRight: 22,
+            backgroundColor: "#E2402F",
+          },
+          deleteStyle,
+        ]}
+      >
+        <Text className="text-[18px] text-white">✕</Text>
+        <Text className="mt-1 font-hk-bold text-[11px] tracking-[1px] text-white">
+          {t("DELETE", "LÖSCHEN")}
+        </Text>
+      </Animated.View>
+
+      {/* Row content — slides with the finger, sits on top (bg covers actions). */}
+      <GestureDetector gesture={pan}>
+        <Animated.View style={rowStyle}>
+          <Pressable
+            onPress={openDetail}
+            className="flex-row items-center bg-screen py-2"
+          >
+            <ImagePlaceholder tone={spot.tone} height={64} radius={16} style={{ width: 64 }} />
+            <View className="ml-4 flex-1">
+              <Text className="font-hk-bold text-[10px] tracking-[1px] text-ink-3">
+                {categoryLabel(spot.category, lang)} · {spot.neighborhood.toUpperCase()}
+              </Text>
+              <Text className="mt-0.5 font-hk-extrabold text-[18px] text-ink">
+                {txt.name}
+              </Text>
+              <Text className="mt-0.5 font-hk-medium-italic text-[13px] text-ink-2">
+                {txt.hook}
+              </Text>
+            </View>
+          </Pressable>
+        </Animated.View>
+      </GestureDetector>
+    </View>
   );
 }
 
