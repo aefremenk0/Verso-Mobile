@@ -509,7 +509,13 @@ npm test               # Unit-Tests der reinen Logik (vitest, src/**)
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-30 · Einstellungen: Notification-Toggles animiert
+### (dieser Commit) · 2026-06-30 · Szene: „Wein / Cooking" zu Essen verschoben
+- `SCENE_CATEGORIES` in `scene.ts`: **`weintasting` von `feiern` → `essen`**.
+  Feiern jetzt Bar · Club · Sport; Essen Restaurant · Snack · Café · Wein/Cooking.
+  (Münchner Mock-Daten haben aktuell keine weintasting/sport-Spots → nur
+  Hotbar-Zuordnung betroffen.) Tests bleiben grün (Szenen überschneidungsfrei).
+
+### 932ce76 · 2026-06-30 · Einstellungen: Notification-Toggles animiert
 - Die On/Off-Schalter (NOTIFICATIONS) waren statisch (Knopf sprang) → jetzt
   **Reanimated**: der Knopf **federt** per `withSpring` rüber, Track- und
   Knopf-Farbe **crossfaden** (`interpolateColor`). `tapSelection`-Haptik +
