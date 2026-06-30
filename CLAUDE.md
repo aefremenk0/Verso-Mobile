@@ -148,6 +148,8 @@ src/
                           VersoLoader (Marken-Lade-Screen: weißer Hintergrund,
                           kursives „verso" poppt durch Farb-/Schriftwechsel,
                           fadet zur braunen Welcome aus — in app/_layout.tsx),
+                          LanguageToggle (Emoji-Sprach-Toggle EN 🇬🇧 / DE 🇩🇪 in
+                          den Einstellungen; gelber Selector gleitet + Flaggen-Pop),
                           RangeSlider (Budget, PanResponder)
   lib/mapFilter.ts        Filter-Typ + matchesFilter (Art/Budget/Bewertung/Ambiente)
   lib/pinColors.ts        Karten-Pin-Farben pro Kategorie (oval/inner/dot)
@@ -504,7 +506,16 @@ npm test               # Unit-Tests der reinen Logik (vitest, src/**)
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-30 · Zweisprachig (EN/DE) + Sprach-Toggle + englische Städtenamen
+### (dieser Commit) · 2026-06-30 · Emoji-Sprach-Toggle (Slide+Pop) + Feed-Karten-Adresse alignt
+- **`LanguageToggle`** (neu): Emoji-Toggle **EN 🇬🇧 / DE 🇩🇪** in den Einstellungen
+  (ersetzt die Text-Zeile). **Slide + Pop:** gelber Selector gleitet per Spring
+  auf die gewählte Seite, die neue Flagge „poppt" (Scale-Bounce); Selektions-
+  Haptik nur bei echtem Wechsel. Schaltet sofort die ganze App um.
+- **Fix Feed-Karten:** Adress-Zeile in `SpotCard` war nicht auf einer Linie —
+  `flex-row` → **`flex-row items-baseline`**, sodass „ADRESSE"-Label und Adresse
+  auf gemeinsamer Grundlinie sitzen (Adresse saß vorher zu tief).
+
+### d231d03 · 2026-06-30 · Zweisprachig (EN/DE) + Sprach-Toggle + englische Städtenamen
 - **i18n eingeführt:** App läuft jetzt **Englisch & Deutsch**. Umschaltung im
   **Account → Einstellungen → „Language/Sprache"** (toggelt sofort die ganze App).
   Default = **Gerätesprache** (`expo-localization` ~17.0.9, neu).

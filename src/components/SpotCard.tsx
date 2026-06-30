@@ -157,7 +157,7 @@ export function SpotCard({
             {metaLine}
           </Text>
 
-          <View className="mt-2 flex-row">
+          <View className="mt-2 flex-row items-baseline">
             <Text className="font-hk-semibold text-[11px] tracking-[1px] text-ink-3">
               {t("ADDRESS", "ADRESSE")}{"  "}
             </Text>

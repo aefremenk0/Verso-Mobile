@@ -2,10 +2,10 @@ import { useRouter } from "expo-router";
 import { useState } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { LanguageToggle } from "../src/components/LanguageToggle";
 import { useT } from "../src/lib/i18n";
 import { useGeheimtipp } from "../src/store/geheimtipp";
 import { useInterests } from "../src/store/interests";
-import { useLanguage } from "../src/store/language";
 import { useSaved } from "../src/store/saved";
 
 // Screen 07 — Settings.
@@ -63,7 +63,6 @@ function NavRow({
 export default function Settings() {
   const router = useRouter();
   const t = useT();
-  const { lang, toggle: toggleLang } = useLanguage();
   const geheimtipp = useGeheimtipp();
   const saved = useSaved();
   const interests = useInterests();
@@ -149,12 +148,13 @@ export default function Settings() {
           APP
         </Text>
         <View className="overflow-hidden rounded-[18px] border border-black/[0.08] bg-surface">
-          {/* Language row — toggles the whole app between English and German. */}
-          <NavRow
-            label={t("Language", "Sprache")}
-            value={lang === "de" ? "Deutsch" : "English"}
-            onPress={toggleLang}
-          />
+          {/* Language row — emoji toggle flips the whole app EN <-> DE. */}
+          <View className="flex-row items-center justify-between border-b border-black/5 px-4 py-2.5">
+            <Text className="font-hk-extrabold text-[15px] text-ink">
+              {t("Language", "Sprache")}
+            </Text>
+            <LanguageToggle />
+          </View>
           <NavRow
             label={t("Appearance", "Erscheinungsbild")}
             value={t("Light", "Hell")}
