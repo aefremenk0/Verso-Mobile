@@ -351,7 +351,7 @@ export function CityMap({
       <Text className="absolute font-hk-medium text-[10px] text-[#9C978E]" style={{ top: 80, left: 40 }}>
         Operngasse
       </Text>
-      <Text className="absolute font-hk-medium text-[10px] text-[#9C978E]" style={{ top: 300, left: 230 }}>
+      <Text className="absolute font-hk-medium text-[10px] text-[#9C978E]" style={{ top: 300, left: "62%" }}>
         Rechte Wienzeile
       </Text>
 

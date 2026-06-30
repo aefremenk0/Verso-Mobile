@@ -509,7 +509,14 @@ npm test               # Unit-Tests der reinen Logik (vitest, src/**)
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-30 · Responsiveness Cycle 1: große Display-Schrift skaliert/fittet
+### (dieser Commit) · 2026-06-30 · Responsiveness Cycle 2: Audit + Fallback-Karten-Label
+- **Audit** (Screens + Komponenten): App ist responsiv — Pins prozentual,
+  Layouts flex/Prozent, Bars scrollen, große Display-Schrift skaliert/fittet
+  (Cycle 1). Keine echten Overflow-Bugs.
+- **Fix:** dekoratives Fallback-Karten-Straßenlabel „Rechte Wienzeile" stand auf
+  `left:230` → klippte auf 320pt; jetzt `left:"62%"` (proportional).
+
+### f9a72e6 · 2026-06-30 · Responsiveness Cycle 1: große Display-Schrift skaliert/fittet
 - **`lib/responsive.ts`** neu (`useScaleSize()`): skaliert px-Größen nach
   Bildschirmbreite (Referenz 390pt, clamp 0.84–1.12) → passt von iPhone SE
   (320) bis Pro Max (430).
@@ -518,7 +525,11 @@ npm test               # Unit-Tests der reinen Logik (vitest, src/**)
 - **Dynamische Display-Titel** bekommen `numberOfLines` + `adjustsFontSizeToFit`:
   Spot-Name (46px) und Viertel-Name (38px) schrumpfen statt überzulaufen
   (lange Namen wie „Westend / Schwanthalerhöhe" auf 320pt).
-- (Audit weiterer Screens/Komponenten läuft — Folge-Commit bei Bedarf.)
+- **Audit (2 Cycles, je Screens + Komponenten):** App ist grundsätzlich
+  responsiv — Karten-Pins sind **prozentual** positioniert, Layouts nutzen
+  flex/Prozent, horizontale Bars scrollen. Einziger echter Schmalbild-Mangel:
+  ein dekoratives Fallback-Karten-Straßenlabel (`left:230`) lief auf 320pt aus
+  dem Bild → auf `left:"62%"` umgestellt. Keine weiteren Bugs gefunden.
 
 ### 4c7fee4 · 2026-06-30 · Einstellungen gestreckt + „S"-Fix + Legal-Screen (zweisprachig)
 - **Einstellungen:** Titel „Settings/Einstellungen" wurde oben leicht
