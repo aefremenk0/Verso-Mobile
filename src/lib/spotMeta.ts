@@ -12,9 +12,15 @@ const CATEGORY_HOURS: Record<Category, { open: number; close: number } | null> =
   cafe: { open: 8, close: 18 },
   restaurant: { open: 12, close: 23 },
   snack: { open: 10, close: 22 },
+  dessert: { open: 11, close: 22 },
+  streetfood: { open: 11, close: 22 },
+  biergarten: { open: 11, close: 23 },
   bar: { open: 18, close: 26 },
   club: { open: 23, close: 30 },
-  weintasting: null,
+  livemusik: { open: 19, close: 27 }, // until ~3:00
+  rooftop: { open: 16, close: 25 }, // until ~1:00
+  kino: { open: 14, close: 24 },
+  weintasting: null, // event-like -> date instead of hours
   sport: null,
 };
 

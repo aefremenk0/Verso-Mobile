@@ -7,13 +7,14 @@ import type { Category } from "../data/types";
 import type { Lang } from "./lang";
 
 // Two "scenes" toggled between in the top right:
-//  - feiern (going out): Bar · Club · Sport
-//  - essen (eating):     Restaurant · Snack · Café · Wine / Cooking
+//  - feiern (going out): Bar · Club · Sport · Live Music · Rooftop · Cinema/Date
+//  - essen (eating):     Restaurant · Snack · Café · Wine/Cooking · Sweets ·
+//                        Street Food · Beer Garden
 export type Scene = "feiern" | "essen";
 
 export const SCENE_CATEGORIES: Record<Scene, Category[]> = {
-  feiern: ["bar", "club", "sport"],
-  essen: ["restaurant", "snack", "cafe", "weintasting"],
+  feiern: ["bar", "club", "sport", "livemusik", "rooftop", "kino"],
+  essen: ["restaurant", "snack", "cafe", "weintasting", "dessert", "streetfood", "biergarten"],
 };
 
 // Category pills per scene: "All" + the categories of the scene

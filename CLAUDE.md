@@ -509,7 +509,20 @@ npm test               # Unit-Tests der reinen Logik (vitest, src/**)
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-30 · Szene: „Wein / Cooking" zu Essen verschoben
+### (dieser Commit) · 2026-06-30 · 6 neue Kategorien (Party + Essen) + Mock-Spots
+- **Neue Kategorien.** Feiern: **Live-Musik** (`livemusik`), **Rooftop**
+  (`rooftop`), **Kino / Date** (`kino`). Essen: **Süßes** (`dessert`),
+  **Street Food** (`streetfood`), **Biergarten** (`biergarten`).
+- Durchgängig verdrahtet: `Category`-Typ (types.ts), `CATEGORY_FILTERS`/
+  `CATEGORY_LABEL`/`CATEGORY_ORDER` (+ DE), `PIN_COLORS` (eigene Farben:
+  violet/blau/teal/pink/gold/oliv), `SCENE_CATEGORIES`, `ART_OPTIONS` (+ DE),
+  `CATEGORY_HOURS` (Öffnungszeiten je neue Kategorie in spotMeta.ts).
+- **6 Münchner Mock-Spots** (je 1 pro neue Kategorie, zweisprachig mit `de`):
+  Kellerton (Live-Musik), Dachfunk (Rooftop), Lichtspiel (Kino), Zuckerbruch
+  (Süßes), Hallengold (Street Food), Kastanienhof (Biergarten) → Hotbar-Pills
+  nicht leer. München jetzt 16 Spots. Integritäts-Test bleibt grün.
+
+### ea7ecc2 · 2026-06-30 · Szene: „Wein / Cooking" zu Essen verschoben
 - `SCENE_CATEGORIES` in `scene.ts`: **`weintasting` von `feiern` → `essen`**.
   Feiern jetzt Bar · Club · Sport; Essen Restaurant · Snack · Café · Wein/Cooking.
   (Münchner Mock-Daten haben aktuell keine weintasting/sport-Spots → nur

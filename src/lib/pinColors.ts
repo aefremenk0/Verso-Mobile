@@ -16,15 +16,19 @@ export interface PinColor {
 // Eating = warm/shiny, going out = cool. Spread across the color wheel
 // (red · orange · green · teal · blue · violet · magenta).
 export const PIN_COLORS: Record<Category, PinColor> = {
-  // Eating (warm, shiny). Snack/orange deepened slightly -> white text more legible.
+  // Eating (warm, shiny). White text throughout (user preference).
   restaurant: { oval: "#E5392F", inner: "#FFFFFF", dot: "#E5392F" }, // red
   snack: { oval: "#D9700A", inner: "#FFFFFF", dot: "#D9700A" }, // deep orange
   cafe: { oval: "#1E9E54", inner: "#FFFFFF", dot: "#1E9E54" }, // green
-  // Going out (clearly distinct hues: lime · cyan · orange · magenta). Lime
-  // deepened (better white contrast); club moved from red-orange to pure orange
-  // so it clearly stands apart from restaurant red.
-  bar: { oval: "#6FA82B", inner: "#FFFFFF", dot: "#6FA82B" }, // deep lime
-  sport: { oval: "#0FB3C4", inner: "#FFFFFF", dot: "#0FB3C4" }, // cyan/teal
-  club: { oval: "#FF7A00", inner: "#FFFFFF", dot: "#FF7A00" }, // pure orange
   weintasting: { oval: "#C0297A", inner: "#FFFFFF", dot: "#C0297A" }, // magenta/pink
+  dessert: { oval: "#EC4899", inner: "#FFFFFF", dot: "#EC4899" }, // pink
+  streetfood: { oval: "#CA8A04", inner: "#FFFFFF", dot: "#CA8A04" }, // amber/gold
+  biergarten: { oval: "#4D7C0F", inner: "#FFFFFF", dot: "#4D7C0F" }, // leaf/olive
+  // Going out (cool / clearly distinct hues).
+  bar: { oval: "#6FA82B", inner: "#FFFFFF", dot: "#6FA82B" }, // deep lime
+  club: { oval: "#FF7A00", inner: "#FFFFFF", dot: "#FF7A00" }, // pure orange
+  sport: { oval: "#0FB3C4", inner: "#FFFFFF", dot: "#0FB3C4" }, // cyan/teal
+  livemusik: { oval: "#7C3AED", inner: "#FFFFFF", dot: "#7C3AED" }, // violet
+  rooftop: { oval: "#2563EB", inner: "#FFFFFF", dot: "#2563EB" }, // blue
+  kino: { oval: "#0E7490", inner: "#FFFFFF", dot: "#0E7490" }, // deep teal
 };

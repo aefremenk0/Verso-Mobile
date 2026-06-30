@@ -2,14 +2,21 @@
 
 /** Categories of a spot. The feed filter is based on this. */
 export type Category =
+  // Eating
   | "restaurant"
   | "snack"
   | "cafe"
+  | "weintasting" // wine tasting / cooking (event-like: with date/ticket)
+  | "dessert" // sweets & ice cream
+  | "streetfood" // market halls / street food
+  | "biergarten" // beer garden
+  // Going out
   | "bar"
   | "club"
-  // More specific party types (event-like: with date/ticket):
-  | "weintasting"
-  | "sport";
+  | "sport" // event-like: with date/ticket
+  | "livemusik" // live music / jazz cellars
+  | "rooftop" // rooftop bars & terraces
+  | "kino"; // cinema / date night
 
 /** Ambience values (map filter in phase 2, already usable as a tag in the MVP). */
 export type Ambience =

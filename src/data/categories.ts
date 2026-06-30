@@ -16,10 +16,16 @@ export const CATEGORY_FILTERS: CategoryFilter[] = [
   { key: "restaurant", label: "Restaurant" },
   { key: "snack", label: "Snack" },
   { key: "cafe", label: "Coffee" },
+  { key: "weintasting", label: "Wine / Cooking" },
+  { key: "dessert", label: "Sweets" },
+  { key: "streetfood", label: "Street Food" },
+  { key: "biergarten", label: "Beer Garden" },
   { key: "bar", label: "Bars" },
   { key: "club", label: "Clubs" },
-  { key: "weintasting", label: "Wine / Cooking" },
   { key: "sport", label: "Sports" },
+  { key: "livemusik", label: "Live Music" },
+  { key: "rooftop", label: "Rooftop" },
+  { key: "kino", label: "Cinema / Date" },
 ];
 
 const CATEGORY_FILTERS_DE: CategoryFilter[] = [
@@ -27,10 +33,16 @@ const CATEGORY_FILTERS_DE: CategoryFilter[] = [
   { key: "restaurant", label: "Restaurant" },
   { key: "snack", label: "Snack" },
   { key: "cafe", label: "Kaffee" },
+  { key: "weintasting", label: "Wein / Cooking" },
+  { key: "dessert", label: "Süßes" },
+  { key: "streetfood", label: "Street Food" },
+  { key: "biergarten", label: "Biergarten" },
   { key: "bar", label: "Bars" },
   { key: "club", label: "Clubs" },
-  { key: "weintasting", label: "Wein / Cooking" },
   { key: "sport", label: "Sport" },
+  { key: "livemusik", label: "Live-Musik" },
+  { key: "rooftop", label: "Rooftop" },
+  { key: "kino", label: "Kino / Date" },
 ];
 
 /** Localized category filters (use this at render sites, pass the language). */
@@ -43,20 +55,32 @@ export const CATEGORY_LABEL: Record<Category, string> = {
   restaurant: "RESTAURANT",
   snack: "SNACK",
   cafe: "CAFÉ",
+  weintasting: "WINE / COOKING",
+  dessert: "SWEETS",
+  streetfood: "STREET FOOD",
+  biergarten: "BEER GARDEN",
   bar: "BAR",
   club: "CLUB",
-  weintasting: "WINE / COOKING",
   sport: "SPORTS",
+  livemusik: "LIVE MUSIC",
+  rooftop: "ROOFTOP",
+  kino: "CINEMA / DATE",
 };
 
 const CATEGORY_LABEL_DE: Record<Category, string> = {
   restaurant: "RESTAURANT",
   snack: "SNACK",
   cafe: "CAFÉ",
+  weintasting: "WEIN / COOKING",
+  dessert: "SÜSSES",
+  streetfood: "STREET FOOD",
+  biergarten: "BIERGARTEN",
   bar: "BAR",
   club: "CLUB",
-  weintasting: "WEIN / COOKING",
   sport: "SPORT",
+  livemusik: "LIVE-MUSIK",
+  rooftop: "ROOFTOP",
+  kino: "KINO / DATE",
 };
 
 /** Localized short caps label for a category. */
@@ -77,13 +101,20 @@ export function priceLabel(level: 1 | 2 | 3): string {
 // Fixed sort order of the categories (for all listings, so the cards don't
 // appear chaotically mixed but grouped by type).
 export const CATEGORY_ORDER: Record<Category, number> = {
+  // Eating first, then going out (so lists group eating above going-out).
   restaurant: 0,
   snack: 1,
   cafe: 2,
-  bar: 3,
-  club: 4,
-  weintasting: 5,
-  sport: 6,
+  weintasting: 3,
+  dessert: 4,
+  streetfood: 5,
+  biergarten: 6,
+  bar: 7,
+  club: 8,
+  sport: 9,
+  livemusik: 10,
+  rooftop: 11,
+  kino: 12,
 };
 
 // Sorts spots by category (stable -> order within the same category is
