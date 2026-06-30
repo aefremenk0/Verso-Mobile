@@ -509,7 +509,14 @@ npm test               # Unit-Tests der reinen Logik (vitest, src/**)
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-30 · 6 neue Kategorien (Party + Essen) + Mock-Spots
+### (dieser Commit) · 2026-06-30 · Discord-Server-Icon (PNG) aus dem App-Icon
+- **`design/verso-discord-icon-1024.png` + `-512.png`**: das Favoriten-App-Icon
+  (kursives „v." in Gelb `#FFE500` auf `#1A1A1A`, Radius ~22 %, DM Serif Display
+  italic) als PNG fürs Discord-Server-Profilbild gerendert (2× Supersampling).
+  „v." optisch zentriert → übersteht Discords Kreis-Crop. (Reines Asset, kein
+  App-Code.)
+
+### 52c0185 · 2026-06-30 · 6 neue Kategorien (Party + Essen) + Mock-Spots
 - **Neue Kategorien.** Feiern: **Live-Musik** (`livemusik`), **Rooftop**
   (`rooftop`), **Kino / Date** (`kino`). Essen: **Süßes** (`dessert`),
   **Street Food** (`streetfood`), **Biergarten** (`biergarten`).
