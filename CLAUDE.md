@@ -117,6 +117,8 @@ app/                      Screens (Expo Router – Dateiname = Route)
   insider.tsx             „Verso Insider"-Hinweis (Feature kommt noch, modal)
   settings.tsx            07 Einstellungen (+ Sprach-Toggle, Abmelden)
   legal.tsx               Rechtliches & Hilfe (Mock-Text, zweisprachig)
+  ort-vorschlagen.tsx     Ort zum Review einreichen (Mock-Formular, modal;
+                          „+"-FAB auf der Karte)
   profil-bearbeiten.tsx   07c Profil bearbeiten (UI)
   passwort-aendern.tsx    07d Passwort ändern (UI)
 
@@ -511,7 +513,17 @@ npm test               # Unit-Tests der reinen Logik (vitest, src/**)
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-30 · Insider-Szenen: Sport + Live Events (oben rechts)
+### (dieser Commit) · 2026-06-30 · Kategorie-Icons + Karte „+"-Ort-vorschlagen
+- **Kategorie-Pills haben jetzt ein kleines Icon links** vom Namen
+  (`CATEGORY_ICON` in `categories.ts`; `categoryFilters()` stellt es dem Label
+  voran). Greift überall (Feed, Karte, Gespeichert, Bezirk) via `sceneFilters`.
+  „Alle/All" bleibt ohne Icon. Caps-Labels (Karten-Badges) unverändert.
+- **Karte: gelber „+"-FAB** (unten rechts, über der Nav; ausgeblendet, solange
+  eine Spot-Karte offen ist) → neuer modaler Screen **`app/ort-vorschlagen.tsx`**:
+  Mock-Formular (Name, Kategorie-Pills mit Icons, Viertel/Adresse, „warum
+  besonders") + Danke-Zustand. Zweisprachig, `KeyboardDoneBar`. Kein Backend.
+
+### 011652c · 2026-06-30 · Insider-Szenen: Sport + Live Events (oben rechts)
 - **`SceneToggle` hat jetzt 4 Szenen** (oben rechts): Feiern 🎉 · Essen 🍴 +
   **Sport 🏃** und **Live Events 🎫** — Letztere sind **nur für Verso Insider**
   (🔒). Tippen auf eine gesperrte Szene öffnet die Insider-Seite (Upsell).

@@ -147,6 +147,24 @@ export default function Karte() {
         </Pressable>
       ) : null}
 
+      {/* "+" — submit a place for review. Hidden while a spot card is open
+          (so it doesn't overlap it). */}
+      {!card ? (
+        <Pressable
+          onPress={() => router.push("/ort-vorschlagen")}
+          accessibilityLabel={t("Submit a place", "Ort vorschlagen")}
+          className="absolute h-14 w-14 items-center justify-center rounded-pill bg-accent"
+          style={[{ bottom: insets.bottom + 92, right: 16 }, shadows.card]}
+        >
+          <Text
+            className="font-hk-bold text-accent-ink"
+            style={{ fontSize: 30, lineHeight: 34, marginTop: -2 }}
+          >
+            +
+          </Text>
+        </Pressable>
+      ) : null}
+
       {/* Filter sheet */}
       {filterOpen ? (
         <MapFilterSheet

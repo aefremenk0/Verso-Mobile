@@ -76,6 +76,10 @@ export default function RootLayout() {
             />
             <Stack.Screen name="settings" />
             <Stack.Screen name="legal" />
+            <Stack.Screen
+              name="ort-vorschlagen"
+              options={{ presentation: "modal", animation: "slide_from_bottom" }}
+            />
             <Stack.Screen name="profil-bearbeiten" />
             <Stack.Screen name="passwort-aendern" />
             <Stack.Screen name="bezirk/[name]" />

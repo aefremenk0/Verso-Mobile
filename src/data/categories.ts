@@ -63,9 +63,41 @@ const CATEGORY_FILTERS_DE: CategoryFilter[] = [
   { key: "kino", label: "Kino / Date" },
 ];
 
-/** Localized category filters (use this at render sites, pass the language). */
+/** Small leading icon per category — shown left of the pill label. */
+export const CATEGORY_ICON: Record<Category, string> = {
+  // Eating
+  restaurant: "🍽️",
+  snack: "🥨",
+  cafe: "☕",
+  weintasting: "🍷",
+  dessert: "🍦",
+  streetfood: "🌮",
+  biergarten: "🍺",
+  // Going out
+  bar: "🍸",
+  club: "🪩",
+  rooftop: "🌆",
+  // Sport
+  sport: "🏅",
+  pilates: "🧘",
+  runclub: "🏃",
+  cycleclub: "🚴",
+  gym: "🏋️",
+  // Live Events
+  konzerte: "🎤",
+  livemusik: "🎷",
+  kino: "🎬",
+};
+
+/**
+ * Localized category filters with a small leading icon (use at render sites).
+ * The "All" pill (key === null) stays plain.
+ */
 export function categoryFilters(lang: Lang): CategoryFilter[] {
-  return lang === "de" ? CATEGORY_FILTERS_DE : CATEGORY_FILTERS;
+  const base = lang === "de" ? CATEGORY_FILTERS_DE : CATEGORY_FILTERS;
+  return base.map((f) =>
+    f.key ? { ...f, label: `${CATEGORY_ICON[f.key]}  ${f.label}` } : f,
+  );
 }
 
 /** Short caps label per category (for the district line on cards). */
