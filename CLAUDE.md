@@ -112,7 +112,7 @@ app/                      Screens (Expo Router – Dateiname = Route)
     profil.tsx            07 Profil
   spot/[id].tsx           03 Spot- UND Event-Detail (eine Route)
   bezirk/[name].tsx       Bezirks-Detail (Spots eines Viertels)
-  gespeichert.tsx         06 Gespeichert
+  gespeichert.tsx         06 Gespeichert (Suche + Filter wie im Feed)
   geheimtipp.tsx          08 Geheimtipp (Laden -> Reveal, Reanimated, modal)
   insider.tsx             „Verso Insider"-Hinweis (Feature kommt noch, modal)
   settings.tsx            07 Einstellungen (+ Sprach-Toggle, Abmelden)
@@ -509,7 +509,20 @@ npm test               # Unit-Tests der reinen Logik (vitest, src/**)
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-30 · Responsiveness Cycle 2: Audit + Fallback-Karten-Label
+### (dieser Commit) · 2026-06-30 · Gespeichert: Suche + Filter (wie im Feed)
+- **Gespeichert** bekommt dieselbe **Such-/Filter-Zeile wie der Feed**:
+  `SearchField` (matcht Name/Viertel/Tag) + Trichter-`FilterButton` →
+  `MapFilterSheet` (`showArt={false}`, da die Kategorie-Hotbar die Art macht).
+  `KeyboardDoneBar` fürs Suchfeld ergänzt.
+- **Filterkette:** Stadt → Szene → Hotbar-Kategorie → **Suchtext** →
+  **Budget/Bewertung/Ambiente** (`matchesFilter`), dann `sortByCategory`. Das
+  Anzahl-Badge („X PLACES/ORTE") und der Leerzustand spiegeln jetzt das
+  Such-/Filter-Ergebnis (eigener Leertext bei aktiver Suche/Filter).
+- **Layout an den Screen angepasst:** Such-/Filter-Zeile fix unter dem Stadt-
+  Kopf (nur wenn etwas gemerkt ist), Hotbar + Wisch-Hinweis scrollen im
+  `ListHeaderComponent`; Abstände gestrafft (paddingTop 8, Hotbar mt-3).
+
+### 9f1f55a · 2026-06-30 · Responsiveness Cycle 2: Audit + Fallback-Karten-Label
 - **Audit** (Screens + Komponenten): App ist responsiv — Pins prozentual,
   Layouts flex/Prozent, Bars scrollen, große Display-Schrift skaliert/fittet
   (Cycle 1). Keine echten Overflow-Bugs.

@@ -5,14 +5,19 @@ import { Swipeable } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { GoogleExportSheet } from "../src/components/GoogleExportSheet";
 import { CityDropdown } from "../src/components/CityDropdown";
+import { FilterButton } from "../src/components/FilterButton";
 import { ImagePlaceholder } from "../src/components/ImagePlaceholder";
+import { KeyboardDoneBar } from "../src/components/KeyboardDoneBar";
 import { GoogleLogo } from "../src/components/Logos";
+import { MapFilterSheet } from "../src/components/MapFilterSheet";
 import { Pill } from "../src/components/Pill";
 import { SceneToggle } from "../src/components/SceneToggle";
+import { SearchField } from "../src/components/SearchField";
 import { categoryLabel, sortByCategory } from "../src/data/categories";
 import { SPOTS } from "../src/data/spots";
 import type { Category, Spot } from "../src/data/types";
 import { useT, useLang } from "../src/lib/i18n";
+import { DEFAULT_FILTER, matchesFilter, type MapFilter } from "../src/lib/mapFilter";
 import { PIN_COLORS } from "../src/lib/pinColors";
 import { SCENE_CATEGORIES, sceneFilters } from "../src/lib/scene";
 import { useCity } from "../src/store/city";
@@ -125,21 +130,43 @@ export default function Gespeichert() {
   const { city } = useCity();
   const [exportOpen, setExportOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState<Category | null>(null);
+  const [query, setQuery] = useState("");
+  // Budget/rating/ambience filter (same sheet as feed/map). The category hotbar
+  // handles "type" here -> hidden in the sheet (showArt={false}).
+  const [filter, setFilter] = useState<MapFilter>(DEFAULT_FILTER);
+  const [filterOpen, setFilterOpen] = useState(false);
 
   // Reset the category selection when the scene changes.
   useEffect(() => setActiveCategory(null), [scene]);
+
+  // Are budget/rating/ambience set differently from the default? (type = hotbar)
+  const filterActive =
+    filter.minPrice > 0 ||
+    filter.maxPrice < 100 ||
+    filter.minRating > 0 ||
+    filter.ambiente.length > 0;
 
   // Keep the order of the saved spots.
   const saved = savedIds
     .map((id) => SPOTS.find((s) => s.id === id))
     .filter((s): s is (typeof SPOTS)[number] => Boolean(s));
 
-  // Filter by city (dropdown) -> scene -> hotbar category, group by type.
+  // Filter: city -> scene -> hotbar category -> search text (name/neighborhood/
+  // tag) -> budget/rating/ambience. Then group by type (like the feed).
+  const q = query.trim().toLowerCase();
   const shown = sortByCategory(
     saved
       .filter((s) => s.city === city)
       .filter((s) => SCENE_CATEGORIES[scene].includes(s.category))
-      .filter((s) => (activeCategory ? s.category === activeCategory : true)),
+      .filter((s) => (activeCategory ? s.category === activeCategory : true))
+      .filter((s) =>
+        q
+          ? s.name.toLowerCase().includes(q) ||
+            s.neighborhood.toLowerCase().includes(q) ||
+            s.tags.some((tag) => tag.toLowerCase().includes(q))
+          : true,
+      )
+      .filter((s) => matchesFilter(s, filter)),
   );
 
   return (
@@ -167,6 +194,23 @@ export default function Gespeichert() {
         }
       />
 
+      {/* Search + filter row (like the feed) — only when there's something saved */}
+      {saved.length > 0 ? (
+        <View className="mt-3 flex-row items-center gap-2 px-6">
+          <View className="flex-1">
+            <SearchField
+              value={query}
+              onChangeText={setQuery}
+              placeholder={t(
+                "Search place, area or tag …",
+                "Ort, Viertel oder Tag suchen …",
+              )}
+            />
+          </View>
+          <FilterButton active={filterActive} onPress={() => setFilterOpen(true)} />
+        </View>
+      ) : null}
+
       {saved.length === 0 ? (
         <View style={{ paddingHorizontal: 24, paddingTop: 12 }}>
           <Text className="mt-10 font-hk-medium-italic text-[15px] leading-[22px] text-ink-3">
@@ -184,13 +228,13 @@ export default function Gespeichert() {
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{
             paddingHorizontal: 24,
-            paddingTop: 12,
+            paddingTop: 8,
             paddingBottom: 96, // room for the export button at the bottom right
           }}
           ListHeaderComponent={
             <View>
               {/* Category hotbar (selecting the spots), colors per category */}
-              <View className="-mx-6 mt-4">
+              <View className="-mx-6 mt-3">
                 <ScrollView
                   horizontal
                   showsHorizontalScrollIndicator={false}
@@ -221,10 +265,15 @@ export default function Gespeichert() {
           }
           ListEmptyComponent={
             <Text className="mt-2 font-hk-medium-italic text-[15px] text-ink-3">
-              {t(
-                "Nothing saved here right now — switch city, scene or category.",
-                "Hier ist gerade nichts gemerkt — wechsle Stadt, Szene oder Kategorie.",
-              )}
+              {q || filterActive
+                ? t(
+                    "Nothing matches your search/filter. Loosen the criteria.",
+                    "Nichts passt zu Suche/Filter. Lockere die Kriterien.",
+                  )
+                : t(
+                    "Nothing saved here right now — switch city, scene or category.",
+                    "Hier ist gerade nichts gemerkt — wechsle Stadt, Szene oder Kategorie.",
+                  )}
             </Text>
           }
         />
@@ -244,12 +293,26 @@ export default function Gespeichert() {
         </Pressable>
       ) : null}
 
+      {/* Filter sheet (docked at the top). The hotbar handles "type" -> off here. */}
+      {filterOpen ? (
+        <MapFilterSheet
+          filter={filter}
+          setFilter={setFilter}
+          count={shown.length}
+          onClose={() => setFilterOpen(false)}
+          showArt={false}
+        />
+      ) : null}
+
       {exportOpen ? (
         <GoogleExportSheet
           count={saved.length}
           onClose={() => setExportOpen(false)}
         />
       ) : null}
+
+      {/* "Done" bar above the keyboard (iOS) for the search field */}
+      <KeyboardDoneBar />
     </SafeAreaView>
   );
 }
