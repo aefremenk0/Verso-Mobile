@@ -12,6 +12,7 @@ import { VersoLoader } from "../src/components/VersoLoader";
 import { CityProvider } from "../src/store/city";
 import { LanguageProvider } from "../src/store/language";
 import { GeheimtippProvider } from "../src/store/geheimtipp";
+import { InsiderProvider } from "../src/store/insider";
 import { InterestsProvider } from "../src/store/interests";
 import { SavedProvider } from "../src/store/saved";
 import { SceneProvider } from "../src/store/scene";
@@ -43,6 +44,7 @@ export default function RootLayout() {
         <SceneProvider>
         <SavedProvider>
           <GeheimtippProvider>
+          <InsiderProvider>
           <InterestsProvider>
           <StatusBar style="dark" />
           <Stack
@@ -79,6 +81,7 @@ export default function RootLayout() {
             <Stack.Screen name="bezirk/[name]" />
           </Stack>
           </InterestsProvider>
+          </InsiderProvider>
           </GeheimtippProvider>
         </SavedProvider>
         </SceneProvider>

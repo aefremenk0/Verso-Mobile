@@ -45,9 +45,14 @@ export const ART_OPTIONS: { label: string; cat: Category }[] = [
   { label: "Beer Garden", cat: "biergarten" },
   { label: "Bar", cat: "bar" },
   { label: "Club", cat: "club" },
-  { label: "Sports", cat: "sport" },
-  { label: "Live Music", cat: "livemusik" },
   { label: "Rooftop", cat: "rooftop" },
+  { label: "Sports", cat: "sport" },
+  { label: "Pilates", cat: "pilates" },
+  { label: "Run Club", cat: "runclub" },
+  { label: "Cycle Club", cat: "cycleclub" },
+  { label: "Gym", cat: "gym" },
+  { label: "Concerts", cat: "konzerte" },
+  { label: "Live Music", cat: "livemusik" },
   { label: "Cinema / Date", cat: "kino" },
 ];
 
@@ -61,9 +66,14 @@ const ART_OPTIONS_DE: { label: string; cat: Category }[] = [
   { label: "Biergarten", cat: "biergarten" },
   { label: "Bar", cat: "bar" },
   { label: "Club", cat: "club" },
-  { label: "Sport", cat: "sport" },
-  { label: "Live-Musik", cat: "livemusik" },
   { label: "Rooftop", cat: "rooftop" },
+  { label: "Sport", cat: "sport" },
+  { label: "Pilates", cat: "pilates" },
+  { label: "Run Club", cat: "runclub" },
+  { label: "Cycle Club", cat: "cycleclub" },
+  { label: "Fitnessstudio", cat: "gym" },
+  { label: "Konzerte", cat: "konzerte" },
+  { label: "Live-Musik", cat: "livemusik" },
   { label: "Kino / Date", cat: "kino" },
 ];
 

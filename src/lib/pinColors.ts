@@ -27,8 +27,15 @@ export const PIN_COLORS: Record<Category, PinColor> = {
   // Going out (cool / clearly distinct hues).
   bar: { oval: "#6FA82B", inner: "#FFFFFF", dot: "#6FA82B" }, // deep lime
   club: { oval: "#FF7A00", inner: "#FFFFFF", dot: "#FF7A00" }, // pure orange
-  sport: { oval: "#0FB3C4", inner: "#FFFFFF", dot: "#0FB3C4" }, // cyan/teal
-  livemusik: { oval: "#7C3AED", inner: "#FFFFFF", dot: "#7C3AED" }, // violet
   rooftop: { oval: "#2563EB", inner: "#FFFFFF", dot: "#2563EB" }, // blue
+  // Sport (Insider scene). Distinct within the scene (shown on its own).
+  sport: { oval: "#0FB3C4", inner: "#FFFFFF", dot: "#0FB3C4" }, // cyan/teal
+  pilates: { oval: "#DB2777", inner: "#FFFFFF", dot: "#DB2777" }, // rose
+  runclub: { oval: "#EA580C", inner: "#FFFFFF", dot: "#EA580C" }, // burnt orange
+  cycleclub: { oval: "#0891B2", inner: "#FFFFFF", dot: "#0891B2" }, // cyan
+  gym: { oval: "#4F46E5", inner: "#FFFFFF", dot: "#4F46E5" }, // indigo
+  // Live Events (Insider scene).
+  konzerte: { oval: "#C026D3", inner: "#FFFFFF", dot: "#C026D3" }, // fuchsia
+  livemusik: { oval: "#7C3AED", inner: "#FFFFFF", dot: "#7C3AED" }, // violet
   kino: { oval: "#0E7490", inner: "#FFFFFF", dot: "#0E7490" }, // deep teal
 };

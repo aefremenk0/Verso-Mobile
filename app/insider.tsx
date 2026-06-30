@@ -11,6 +11,7 @@ import Animated, {
 import { SafeAreaView } from "react-native-safe-area-context";
 import Svg, { Path } from "react-native-svg";
 import { useT } from "../src/lib/i18n";
+import { useInsider } from "../src/store/insider";
 
 // Modal "Verso Insider" notice — same pop-up style as the hidden gem
 // loading screen (dark, a spinning squiggle around the symbol). Says the feature
@@ -21,6 +22,7 @@ import { useT } from "../src/lib/i18n";
 export default function Insider() {
   const router = useRouter();
   const t = useT();
+  const { isInsider, setInsider } = useInsider();
   const spin = useSharedValue(0); // spinning squiggle 0..360
 
   useEffect(() => {
@@ -75,24 +77,60 @@ export default function Insider() {
         </Text>
         <Text className="mt-4 max-w-[300px] text-center font-hk-medium text-[14px] leading-[20px] text-screen/60">
           {t(
-            "This feature isn't available yet. It awakens in an upcoming version of Verso — stay tuned.",
-            "Dieses Feature ist noch nicht verfügbar. Es erwacht in einer kommenden Version von Verso — bleib dran.",
+            "Sport and Live Events are Insider features — the scenes top right with the 🔒. Turn on the preview to try them out.",
+            "Sport und Live Events sind Insider-Features — die Szenen oben rechts mit dem 🔒. Aktiviere die Vorschau, um sie auszuprobieren.",
+          )}
+        </Text>
+        <Text className="mt-3 text-center font-hk-medium text-[11px] text-screen/35">
+          {t(
+            "Preview is a mock — no real purchase in the MVP.",
+            "Vorschau ist ein Mock — kein echter Kauf im MVP.",
           )}
         </Text>
       </View>
 
-      {/* Back to the profile */}
+      {/* Primary: toggle the (mock) Insider preview */}
       <View className="px-6 pb-8">
+        {!isInsider ? (
+          <Pressable
+            onPress={() => {
+              setInsider(true);
+              router.back();
+            }}
+            className="flex-row items-center justify-between rounded-[18px] bg-accent px-5 py-4"
+          >
+            <Text className="font-hk-extrabold text-[17px] text-accent-ink">
+              {t("Turn on Insider preview", "Insider-Vorschau aktivieren")}
+            </Text>
+            <View className="h-[34px] w-[34px] items-center justify-center rounded-pill bg-night">
+              <Text className="font-hk-bold text-[16px] text-accent">→</Text>
+            </View>
+          </Pressable>
+        ) : (
+          <Pressable
+            onPress={() => router.back()}
+            className="flex-row items-center justify-between rounded-[18px] bg-accent px-5 py-4"
+          >
+            <Text className="font-hk-extrabold text-[17px] text-accent-ink">
+              {t("Insider preview is on ✓", "Insider-Vorschau ist an ✓")}
+            </Text>
+            <View className="h-[34px] w-[34px] items-center justify-center rounded-pill bg-night">
+              <Text className="font-hk-bold text-[16px] text-accent">→</Text>
+            </View>
+          </Pressable>
+        )}
         <Pressable
-          onPress={() => router.back()}
-          className="flex-row items-center justify-between rounded-[18px] bg-accent px-5 py-4"
+          onPress={() => {
+            if (isInsider) setInsider(false);
+            else router.back();
+          }}
+          className="mt-3 items-center py-1"
         >
-          <Text className="font-hk-extrabold text-[17px] text-accent-ink">
-            {t("Back to profile", "Zurück zum Profil")}
+          <Text className="font-hk-semibold text-[12px] text-screen/50">
+            {isInsider
+              ? t("Turn off preview", "Vorschau beenden")
+              : t("Back to profile", "Zurück zum Profil")}
           </Text>
-          <View className="h-[34px] w-[34px] items-center justify-center rounded-pill bg-night">
-            <Text className="font-hk-bold text-[16px] text-accent">→</Text>
-          </View>
         </Pressable>
       </View>
     </SafeAreaView>

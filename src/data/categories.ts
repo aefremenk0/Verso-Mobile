@@ -13,6 +13,7 @@ export interface CategoryFilter {
 
 export const CATEGORY_FILTERS: CategoryFilter[] = [
   { key: null, label: "All" },
+  // Eating
   { key: "restaurant", label: "Restaurant" },
   { key: "snack", label: "Snack" },
   { key: "cafe", label: "Coffee" },
@@ -20,16 +21,25 @@ export const CATEGORY_FILTERS: CategoryFilter[] = [
   { key: "dessert", label: "Sweets" },
   { key: "streetfood", label: "Street Food" },
   { key: "biergarten", label: "Beer Garden" },
+  // Going out
   { key: "bar", label: "Bars" },
   { key: "club", label: "Clubs" },
-  { key: "sport", label: "Sports" },
-  { key: "livemusik", label: "Live Music" },
   { key: "rooftop", label: "Rooftop" },
+  // Sport (Insider)
+  { key: "sport", label: "Sports" },
+  { key: "pilates", label: "Pilates" },
+  { key: "runclub", label: "Run Club" },
+  { key: "cycleclub", label: "Cycle Club" },
+  { key: "gym", label: "Gym" },
+  // Live Events (Insider)
+  { key: "konzerte", label: "Concerts" },
+  { key: "livemusik", label: "Live Music" },
   { key: "kino", label: "Cinema / Date" },
 ];
 
 const CATEGORY_FILTERS_DE: CategoryFilter[] = [
   { key: null, label: "Alle" },
+  // Essen
   { key: "restaurant", label: "Restaurant" },
   { key: "snack", label: "Snack" },
   { key: "cafe", label: "Kaffee" },
@@ -37,11 +47,19 @@ const CATEGORY_FILTERS_DE: CategoryFilter[] = [
   { key: "dessert", label: "Süßes" },
   { key: "streetfood", label: "Street Food" },
   { key: "biergarten", label: "Biergarten" },
+  // Feiern
   { key: "bar", label: "Bars" },
   { key: "club", label: "Clubs" },
-  { key: "sport", label: "Sport" },
-  { key: "livemusik", label: "Live-Musik" },
   { key: "rooftop", label: "Rooftop" },
+  // Sport (Insider)
+  { key: "sport", label: "Sport" },
+  { key: "pilates", label: "Pilates" },
+  { key: "runclub", label: "Run Club" },
+  { key: "cycleclub", label: "Cycle Club" },
+  { key: "gym", label: "Fitnessstudio" },
+  // Live Events (Insider)
+  { key: "konzerte", label: "Konzerte" },
+  { key: "livemusik", label: "Live-Musik" },
   { key: "kino", label: "Kino / Date" },
 ];
 
@@ -61,9 +79,14 @@ export const CATEGORY_LABEL: Record<Category, string> = {
   biergarten: "BEER GARDEN",
   bar: "BAR",
   club: "CLUB",
-  sport: "SPORTS",
-  livemusik: "LIVE MUSIC",
   rooftop: "ROOFTOP",
+  sport: "SPORTS",
+  pilates: "PILATES",
+  runclub: "RUN CLUB",
+  cycleclub: "CYCLE CLUB",
+  gym: "GYM",
+  konzerte: "CONCERTS",
+  livemusik: "LIVE MUSIC",
   kino: "CINEMA / DATE",
 };
 
@@ -77,9 +100,14 @@ const CATEGORY_LABEL_DE: Record<Category, string> = {
   biergarten: "BIERGARTEN",
   bar: "BAR",
   club: "CLUB",
-  sport: "SPORT",
-  livemusik: "LIVE-MUSIK",
   rooftop: "ROOFTOP",
+  sport: "SPORT",
+  pilates: "PILATES",
+  runclub: "RUN CLUB",
+  cycleclub: "CYCLE CLUB",
+  gym: "FITNESSSTUDIO",
+  konzerte: "KONZERTE",
+  livemusik: "LIVE-MUSIK",
   kino: "KINO / DATE",
 };
 
@@ -90,7 +118,7 @@ export function categoryLabel(c: Category, lang: Lang): string {
 
 // "Event-like" categories: they show date/meeting point/ticket and, on the map,
 // the rectangle box with a date.
-export const EVENT_CATEGORIES: Category[] = ["weintasting", "sport"];
+export const EVENT_CATEGORIES: Category[] = ["weintasting", "sport", "konzerte"];
 export const isEventCategory = (c: Category) => EVENT_CATEGORIES.includes(c);
 
 /** € display from the priceLevel (1–3). */
@@ -101,7 +129,7 @@ export function priceLabel(level: 1 | 2 | 3): string {
 // Fixed sort order of the categories (for all listings, so the cards don't
 // appear chaotically mixed but grouped by type).
 export const CATEGORY_ORDER: Record<Category, number> = {
-  // Eating first, then going out (so lists group eating above going-out).
+  // Eating, then going out, then sport, then live events.
   restaurant: 0,
   snack: 1,
   cafe: 2,
@@ -111,10 +139,15 @@ export const CATEGORY_ORDER: Record<Category, number> = {
   biergarten: 6,
   bar: 7,
   club: 8,
-  sport: 9,
-  livemusik: 10,
-  rooftop: 11,
-  kino: 12,
+  rooftop: 9,
+  sport: 10,
+  pilates: 11,
+  runclub: 12,
+  cycleclub: 13,
+  gym: 14,
+  konzerte: 15,
+  livemusik: 16,
+  kino: 17,
 };
 
 // Sorts spots by category (stable -> order within the same category is

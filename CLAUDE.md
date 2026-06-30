@@ -176,8 +176,10 @@ app.config.js             Expo-Config (ersetzt app.json; Mapbox-Token via Env)
                           categories.ts,
                           user.ts  (kein Backend; GEHEIMTIPP_BY_CITY nur München)
   store/                  city.tsx, saved.tsx, geheimtipp.tsx,
-                          interests.tsx (Onboarding-Vibes, max 3)  (React-Context,
-                          alles in-memory)
+                          interests.tsx (Onboarding-Vibes, max 3),
+                          insider.tsx (Verso-Insider-Flag, Default aus;
+                          schaltet Sport-/Live-Events-Szenen frei)  (React-
+                          Context, alles in-memory)
   lib/maps.ts             Deep-Links Apple/Google Maps
   theme.ts                Design-Tokens als JS (Fonts, Farben, Schatten)
 
@@ -509,7 +511,25 @@ npm test               # Unit-Tests der reinen Logik (vitest, src/**)
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-30 · Discord-Server-Icon (PNG) aus dem App-Icon
+### (dieser Commit) · 2026-06-30 · Insider-Szenen: Sport + Live Events (oben rechts)
+- **`SceneToggle` hat jetzt 4 Szenen** (oben rechts): Feiern 🎉 · Essen 🍴 +
+  **Sport 🏃** und **Live Events 🎫** — Letztere sind **nur für Verso Insider**
+  (🔒). Tippen auf eine gesperrte Szene öffnet die Insider-Seite (Upsell).
+- **Neuer `store/insider.tsx`** (`useInsider`, in-memory, Default aus): kein
+  Backend → die **Insider-Seite (`app/insider.tsx`) bietet eine Mock-Vorschau**
+  („Insider-Vorschau aktivieren"), die die gesperrten Szenen freischaltet.
+  `InsiderProvider` in `_layout.tsx`; Abmelden setzt Insider + Szene zurück.
+- **Neue Kategorien.** Sport-Szene: **Pilates · Run Club · Cycle Club ·
+  Fitnessstudio** (+ generisches Sport). Live-Events-Szene: **Konzerte** (neu) +
+  Live-Musik & Kino/Date (aus Feiern hierher verschoben). Feiern jetzt nur noch
+  Bar · Club · Rooftop.
+- Durchgängig verdrahtet (types, categories +DE, PIN_COLORS, ART_OPTIONS +DE,
+  CATEGORY_HOURS, SCENE_CATEGORIES). `konzerte` ist event-artig (Datum/Ticket).
+- **5 neue Münchner Mock-Spots** (zweisprachig): Kernkraft (Pilates), Isarläufer
+  (Run Club), Kettenreaktion (Cycle Club), Eisenhof (Gym), Hallenklang (Konzert,
+  mit dateLabel). München jetzt 21 Spots. Tests grün (18).
+
+### afdaf1d · 2026-06-30 · Discord-Server-Icon (PNG) aus dem App-Icon
 - **`design/verso-discord-icon-1024.png` + `-512.png`**: das Favoriten-App-Icon
   (kursives „v." in Gelb `#FFE500` auf `#1A1A1A`, Radius ~22 %, DM Serif Display
   italic) als PNG fürs Discord-Server-Profilbild gerendert (2× Supersampling).

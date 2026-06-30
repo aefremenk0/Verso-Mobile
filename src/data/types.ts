@@ -13,9 +13,16 @@ export type Category =
   // Going out
   | "bar"
   | "club"
-  | "sport" // event-like: with date/ticket
-  | "livemusik" // live music / jazz cellars
   | "rooftop" // rooftop bars & terraces
+  // Sport (Insider scene)
+  | "sport" // generic sports (event-like)
+  | "pilates"
+  | "runclub" // run club
+  | "cycleclub" // cycle club
+  | "gym" // fitness studio
+  // Live Events (Insider scene)
+  | "konzerte" // concerts (event-like)
+  | "livemusik" // live music / jazz cellars
   | "kino"; // cinema / date night
 
 /** Ambience values (map filter in phase 2, already usable as a tag in the MVP). */

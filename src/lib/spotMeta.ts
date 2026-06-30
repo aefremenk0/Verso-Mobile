@@ -17,11 +17,18 @@ const CATEGORY_HOURS: Record<Category, { open: number; close: number } | null> =
   biergarten: { open: 11, close: 23 },
   bar: { open: 18, close: 26 },
   club: { open: 23, close: 30 },
-  livemusik: { open: 19, close: 27 }, // until ~3:00
   rooftop: { open: 16, close: 25 }, // until ~1:00
+  livemusik: { open: 19, close: 27 }, // until ~3:00
   kino: { open: 14, close: 24 },
-  weintasting: null, // event-like -> date instead of hours
+  // Sport (Insider)
+  pilates: { open: 7, close: 21 },
+  runclub: { open: 6, close: 21 },
+  cycleclub: { open: 6, close: 21 },
+  gym: { open: 6, close: 23 },
+  // Event-like -> date instead of hours.
+  weintasting: null,
   sport: null,
+  konzerte: null,
 };
 
 function fmtHour(h: number): string {

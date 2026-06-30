@@ -12,8 +12,10 @@ import { LanguageToggle } from "../src/components/LanguageToggle";
 import { tapSelection } from "../src/lib/haptics";
 import { useT } from "../src/lib/i18n";
 import { useGeheimtipp } from "../src/store/geheimtipp";
+import { useInsider } from "../src/store/insider";
 import { useInterests } from "../src/store/interests";
 import { useSaved } from "../src/store/saved";
+import { useScene } from "../src/store/scene";
 
 // Screen 07 — Settings.
 // Grouped cards per the mockup. The toggles work (local state, no real effect
@@ -113,6 +115,8 @@ export default function Settings() {
   const geheimtipp = useGeheimtipp();
   const saved = useSaved();
   const interests = useInterests();
+  const insider = useInsider();
+  const { setScene } = useScene();
 
   const [tippN, setTippN] = useState(true);
   const [spotsN, setSpotsN] = useState(true);
@@ -124,6 +128,8 @@ export default function Settings() {
     geheimtipp.reset();
     saved.reset();
     interests.reset();
+    insider.reset(); // drop Insider preview
+    setScene("essen"); // leave any Insider-only scene
     router.replace("/");
   };
 
