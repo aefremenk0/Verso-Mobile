@@ -12,6 +12,7 @@ import {
 import { isComingSoon, type City } from "../src/data/cities";
 import { useCity } from "../src/store/city";
 import { useT, useLang } from "../src/lib/i18n";
+import { useScaleSize } from "../src/lib/responsive";
 import { cityLabel } from "../src/lib/lang";
 
 // Fixed arrangement of the cities on the Welcome screen (3 rows, as desired).
@@ -31,6 +32,7 @@ export default function Welcome() {
   const insets = useSafeAreaInsets();
   const t = useT();
   const lang = useLang();
+  const scale = useScaleSize();
   const bubblesRef = useRef<QuestionBubblesHandle>(null);
 
   return (
@@ -61,7 +63,10 @@ export default function Welcome() {
             }
             className="self-start"
           >
-            <Text className="font-hk-extrabold-italic text-[92px] leading-[83px] text-screen">
+            <Text
+              className="font-hk-extrabold-italic text-screen"
+              style={{ fontSize: scale(92), lineHeight: scale(83) }}
+            >
               verso
             </Text>
           </Pressable>

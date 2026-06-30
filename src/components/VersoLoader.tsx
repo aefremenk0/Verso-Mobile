@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Platform, StyleSheet } from "react-native";
+import { Platform, StyleSheet, useWindowDimensions } from "react-native";
 import Animated, {
   Easing,
   runOnJS,
@@ -45,6 +45,9 @@ export function VersoLoader({ onDone }: { onDone: () => void }) {
   // Font/color live in React render, so the visible step is plain state; the
   // pop (scale/rotate/opacity) is driven by Reanimated shared values.
   const [step, setStep] = useState(0);
+  // Scale the wordmark to the screen width so it fits narrow phones too.
+  const { width } = useWindowDimensions();
+  const wordSize = Math.round(88 * Math.min(1.12, Math.max(0.84, width / 390)));
   const scale = useSharedValue(0.6);
   const rot = useSharedValue(-7);
   const wordOpacity = useSharedValue(0);
@@ -101,7 +104,7 @@ export function VersoLoader({ onDone }: { onDone: () => void }) {
         style={[
           styles.word,
           wordStyle,
-          { fontFamily: current.font, color: current.color },
+          { fontSize: wordSize, fontFamily: current.font, color: current.color },
         ]}
       >
         verso

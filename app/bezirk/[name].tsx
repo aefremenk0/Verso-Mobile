@@ -68,6 +68,8 @@ export default function Bezirk() {
       <Text
         className="px-6 font-hk-extrabold text-ink"
         style={{ fontSize: 38, lineHeight: 40, marginTop: 8 }}
+        numberOfLines={2}
+        adjustsFontSizeToFit
       >
         {name}
       </Text>

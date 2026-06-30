@@ -161,6 +161,8 @@ src/
   lib/lang.ts             i18n-Kern: Lang-Typ ("en"|"de"), cityLabel (Stadt-
                           Anzeigename pro Sprache), pick()  (RN-frei, testbar)
   lib/i18n.ts             useT() -> t("EN","DE"); useLang() -> aktuelle Sprache
+  lib/responsive.ts       useScaleSize() — skaliert große Display-Schrift nach
+                          Bildschirmbreite (clamp 0.84–1.12), für SE…Pro Max
   lib/localized.ts        Daten-Lokalisierung: spotText / neighborhoodBlurb /
                           geheimtippTeaser (EN-Basis, DE-Variante)  (RN-frei)
   store/language.tsx      Sprach-Store (Default = Gerätesprache, sonst EN),
@@ -507,7 +509,18 @@ npm test               # Unit-Tests der reinen Logik (vitest, src/**)
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-30 · Einstellungen gestreckt + „S"-Fix + Legal-Screen (zweisprachig)
+### (dieser Commit) · 2026-06-30 · Responsiveness Cycle 1: große Display-Schrift skaliert/fittet
+- **`lib/responsive.ts`** neu (`useScaleSize()`): skaliert px-Größen nach
+  Bildschirmbreite (Referenz 390pt, clamp 0.84–1.12) → passt von iPhone SE
+  (320) bis Pro Max (430).
+- **Welcome „verso"-Wortmarke** (92px) und **VersoLoader** (88px) skalieren jetzt
+  mit der Breite (kein Überlaufen auf schmalen Geräten).
+- **Dynamische Display-Titel** bekommen `numberOfLines` + `adjustsFontSizeToFit`:
+  Spot-Name (46px) und Viertel-Name (38px) schrumpfen statt überzulaufen
+  (lange Namen wie „Westend / Schwanthalerhöhe" auf 320pt).
+- (Audit weiterer Screens/Komponenten läuft — Folge-Commit bei Bedarf.)
+
+### 4c7fee4 · 2026-06-30 · Einstellungen gestreckt + „S"-Fix + Legal-Screen (zweisprachig)
 - **Einstellungen:** Titel „Settings/Einstellungen" wurde oben leicht
   abgeschnitten → `lineHeight: 38` + `includeFontPadding:false`. Seite +
   weiße Karten **gestreckt**: ScrollView `flexGrow:1`, höhere Zeilen

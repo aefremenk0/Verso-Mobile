@@ -152,6 +152,8 @@ export default function SpotDetail() {
           <Text
             className="mt-3 font-hk-extrabold text-ink"
             style={{ fontSize: 46, lineHeight: 48 }}
+            numberOfLines={2}
+            adjustsFontSizeToFit
           >
             {txt.name}
           </Text>
