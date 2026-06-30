@@ -1,5 +1,6 @@
 import { Pressable, Text, TextInput, View } from "react-native";
 import Svg, { Circle, Line } from "react-native-svg";
+import { useT } from "../lib/i18n";
 import { KEYBOARD_DONE_ID } from "./KeyboardDoneBar";
 
 // Slim search field in the Verso style (pill, soft shape). Reusable —
@@ -26,12 +27,14 @@ function SearchGlyph({ size = 18, color = "#8A857C" }: { size?: number; color?: 
 export function SearchField({
   value,
   onChangeText,
-  placeholder = "Search …",
+  placeholder,
 }: {
   value: string;
   onChangeText: (t: string) => void;
   placeholder?: string;
 }) {
+  const t = useT();
+  const ph = placeholder ?? t("Search …", "Suchen …");
   return (
     <View
       className="flex-row items-center rounded-pill bg-chip px-4"
@@ -41,20 +44,20 @@ export function SearchField({
       <TextInput
         value={value}
         onChangeText={onChangeText}
-        placeholder={placeholder}
+        placeholder={ph}
         placeholderTextColor="#8A857C"
         className="ml-2.5 flex-1 font-hk-medium text-[15px] text-ink"
         returnKeyType="search"
         autoCorrect={false}
         autoCapitalize="none"
-        accessibilityLabel="Search places"
+        accessibilityLabel={t("Search places", "Orte durchsuchen")}
         inputAccessoryViewID={KEYBOARD_DONE_ID}
       />
       {value.length > 0 ? (
         <Pressable
           onPress={() => onChangeText("")}
           hitSlop={10}
-          accessibilityLabel="Clear search"
+          accessibilityLabel={t("Clear search", "Suche löschen")}
           className="ml-2 h-6 w-6 items-center justify-center rounded-pill"
           style={{ backgroundColor: "rgba(26,26,26,0.12)" }}
         >

@@ -10,6 +10,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Svg, { Path } from "react-native-svg";
+import { useT } from "../src/lib/i18n";
 
 // Modal "Verso Insider" notice — same pop-up style as the hidden gem
 // loading screen (dark, a spinning squiggle around the symbol). Says the feature
@@ -19,6 +20,7 @@ import Svg, { Path } from "react-native-svg";
 
 export default function Insider() {
   const router = useRouter();
+  const t = useT();
   const spin = useSharedValue(0); // spinning squiggle 0..360
 
   useEffect(() => {
@@ -69,11 +71,13 @@ export default function Insider() {
           VERSO INSIDER
         </Text>
         <Text className="mt-3 text-center font-hk-extrabold-italic text-[22px] leading-[29px] text-screen">
-          Still under wraps …
+          {t("Still under wraps …", "Noch im Verborgenen …")}
         </Text>
         <Text className="mt-4 max-w-[300px] text-center font-hk-medium text-[14px] leading-[20px] text-screen/60">
-          This feature isn't available yet. It awakens in an upcoming
-          version of Verso — stay tuned.
+          {t(
+            "This feature isn't available yet. It awakens in an upcoming version of Verso — stay tuned.",
+            "Dieses Feature ist noch nicht verfügbar. Es erwacht in einer kommenden Version von Verso — bleib dran.",
+          )}
         </Text>
       </View>
 
@@ -84,7 +88,7 @@ export default function Insider() {
           className="flex-row items-center justify-between rounded-[18px] bg-accent px-5 py-4"
         >
           <Text className="font-hk-extrabold text-[17px] text-accent-ink">
-            Back to profile
+            {t("Back to profile", "Zurück zum Profil")}
           </Text>
           <View className="h-[34px] w-[34px] items-center justify-center rounded-pill bg-night">
             <Text className="font-hk-bold text-[16px] text-accent">→</Text>

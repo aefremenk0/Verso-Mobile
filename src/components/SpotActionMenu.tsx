@@ -6,6 +6,7 @@ import Animated, {
   withDelay,
   withSpring,
 } from "react-native-reanimated";
+import { useT } from "../lib/i18n";
 import { shadows } from "../theme";
 
 // Pop-up action menu over a spot card (Pinterest-style): two circles that
@@ -77,6 +78,7 @@ export function SpotActionMenu({
   onShare,
   onClose,
 }: SpotActionMenuProps) {
+  const t = useT();
   return (
     <View
       className="absolute inset-0 items-center justify-center"
@@ -93,7 +95,7 @@ export function SpotActionMenu({
           glyph={saved ? "♥" : "♡"}
           glyphColor="#1A1A1A"
           glyphSize={26}
-          label="SAVE"
+          label={t("SAVE", "MERKEN")}
           onPress={onSave}
         />
         <Circle
@@ -102,7 +104,7 @@ export function SpotActionMenu({
           glyph="↗"
           glyphColor="#1A1A1A"
           glyphSize={24}
-          label="SHARE"
+          label={t("SHARE", "TEILEN")}
           onPress={onShare}
         />
       </View>

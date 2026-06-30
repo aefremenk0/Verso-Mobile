@@ -22,5 +22,6 @@ export const GEHEIMTIPP_BY_CITY: Partial<Record<City, GeheimtippDerWoche>> = {
     spotId: "kellerkind", // cellar bar in Glockenbach, phones at the coat check
     weekLabel: "KW 26",
     teaser: "Digging through the back room …",
+    teaserDe: "Wir kramen kurz im Hinterzimmer …",
   },
 };

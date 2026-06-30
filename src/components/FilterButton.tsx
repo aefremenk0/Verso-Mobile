@@ -1,5 +1,6 @@
 import { Pressable, View } from "react-native";
 import Svg, { Path } from "react-native-svg";
+import { useT } from "../lib/i18n";
 
 // Funnel icon (filter) — SVG, fits the editorial tone (no emoji).
 function FilterGlyph({ color = "#1A1A1A" }: { color?: string }) {
@@ -26,10 +27,11 @@ export function FilterButton({
   active: boolean;
   onPress: () => void;
 }) {
+  const t = useT();
   return (
     <Pressable
       onPress={onPress}
-      accessibilityLabel="Open filters"
+      accessibilityLabel={t("Open filters", "Filter öffnen")}
       className={`h-11 w-11 items-center justify-center rounded-pill ${
         active ? "bg-accent" : "bg-chip"
       }`}

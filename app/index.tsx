@@ -11,6 +11,8 @@ import {
 } from "../src/components/QuestionBubbles";
 import { isComingSoon, type City } from "../src/data/cities";
 import { useCity } from "../src/store/city";
+import { useT, useLang } from "../src/lib/i18n";
+import { cityLabel } from "../src/lib/lang";
 
 // Fixed arrangement of the cities on the Welcome screen (3 rows, as desired).
 const WELCOME_ROWS: City[][] = [
@@ -27,6 +29,8 @@ export default function Welcome() {
   const router = useRouter();
   const { city, setCity } = useCity();
   const insets = useSafeAreaInsets();
+  const t = useT();
+  const lang = useLang();
   const bubblesRef = useRef<QuestionBubblesHandle>(null);
 
   return (
@@ -39,7 +43,10 @@ export default function Welcome() {
         {/* diagonal stripe texture */}
         <StripeTexture />
         <Text className="mt-12 px-[30px] font-hk-semibold text-[10px] tracking-[2.2px] text-screen/60">
-          // your first night in a city you don't know
+          {t(
+            "// your first night in a city you don't know",
+            "// dein erster abend in einer fremden stadt",
+          )}
         </Text>
 
         <View className="mt-auto px-[30px] pb-8">
@@ -59,7 +66,10 @@ export default function Welcome() {
             </Text>
           </Pressable>
           <Text className="mt-3.5 max-w-[280px] font-hk-medium text-[14px] leading-[21px] text-screen/90">
-            Real places. Real people. The city like no one else shows you.
+            {t(
+              "Real places. Real people. The city like no one else shows you.",
+              "Echte Orte. Echte Menschen. Die Stadt, wie sie dir sonst niemand zeigt.",
+            )}
           </Text>
         </View>
       </View>
@@ -70,7 +80,10 @@ export default function Welcome() {
           Hi Insider.
         </Text>
         <Text className="mt-1.5 font-hk-medium text-[12.5px] leading-[18px] text-accent-ink/85">
-          No lists for everyone — only places we'd show you ourselves.
+          {t(
+            "No lists for everyone — only places we'd show you ourselves.",
+            "Keine Listen für alle — nur Orte, die wir dir selbst zeigen würden.",
+          )}
         </Text>
       </View>
 
@@ -80,7 +93,7 @@ export default function Welcome() {
         style={{ flex: 1, paddingBottom: insets.bottom + 8 }}
       >
         <Text className="font-hk-semibold text-[10px] tracking-[2.2px] text-ink-3">
-          WHERE DO WE START?
+          {t("WHERE DO WE START?", "WO FANGEN WIR AN?")}
         </Text>
         <View className="mt-4 gap-2">
           {WELCOME_ROWS.map((row, ri) => (
@@ -93,7 +106,11 @@ export default function Welcome() {
                   <View
                     key={c}
                     pointerEvents={soon ? "none" : "auto"}
-                    accessibilityLabel={soon ? `${c} — coming soon` : c}
+                    accessibilityLabel={
+                      soon
+                        ? `${cityLabel(c, lang)} — ${t("coming soon", "kommt bald")}`
+                        : cityLabel(c, lang)
+                    }
                     style={soon ? { opacity: 0.5 } : undefined}
                   >
                     <AnimatedChip
@@ -122,7 +139,7 @@ export default function Welcome() {
                           includeFontPadding: false,
                         }}
                       >
-                        {c}
+                        {cityLabel(c, lang)}
                       </Text>
                     </AnimatedChip>
                     {soon ? <DiagonalStrike /> : null}
@@ -138,7 +155,7 @@ export default function Welcome() {
           className="mb-2 mt-auto flex-row items-center justify-between rounded-[18px] bg-night px-5 py-[18px]"
         >
           <Text className="font-hk-extrabold text-[18px] text-screen">
-            Let's go
+            {t("Let's go", "Los geht's")}
           </Text>
           <Text className="text-[18px] text-screen">→</Text>
         </Pressable>

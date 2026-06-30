@@ -56,6 +56,17 @@ export interface Spot {
   dateLabel?: string; // "Sa · 12. Juli · 22:00–06:00"
   meetingPoint?: string; // meeting point
   ticketUrl?: string; // external ticket link
+
+  /** German content variant. Base fields above are English; when the app is in
+   *  German these override them (see `lib/localized.ts`). `name` only differs
+   *  for translated names (most are proper nouns and stay the same). */
+  de?: {
+    name?: string;
+    hook: string;
+    description: string;
+    tags: string[];
+    imageNote: string;
+  };
 }
 
 /** The curated "Hidden Gem of the Week" – one for everyone. */
@@ -63,6 +74,7 @@ export interface GeheimtippDerWoche {
   spotId: string;
   weekLabel: string; // e.g. "KW 26"
   teaser: string; // loading text, e.g. "Digging through the back room …"
+  teaserDe?: string; // German loading text
 }
 
 /** Mock user profile (no real auth in the MVP). */
@@ -78,4 +90,5 @@ export interface Neighborhood {
   city: string;
   name: string;
   blurb: string;
+  blurbDe?: string; // German one-liner
 }

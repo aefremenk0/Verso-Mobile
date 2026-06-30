@@ -15,8 +15,10 @@ import Animated, {
   withSequence,
   withTiming,
 } from "react-native-reanimated";
-import { CATEGORY_LABEL } from "../data/categories";
+import { categoryLabel } from "../data/categories";
 import type { Spot } from "../data/types";
+import { useLang, useT } from "../lib/i18n";
+import { spotText } from "../lib/localized";
 import { PIN_COLORS } from "../lib/pinColors";
 import { useSaved } from "../store/saved";
 import { shadows } from "../theme";
@@ -44,6 +46,9 @@ export function SpotCard({
   hintCandidate?: boolean;
 }) {
   const router = useRouter();
+  const t = useT();
+  const lang = useLang();
+  const txt = spotText(spot, lang);
   const { isSaved, toggle } = useSaved();
   const burstRef = useRef<QuestionBubblesHandle>(null);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -77,7 +82,7 @@ export function SpotCard({
   }, []);
 
   // Caps line: neighborhood + first two tags (e.g. "WIEDEN · NATURAL · LATE").
-  const metaLine = [spot.neighborhood.split(",")[0], ...spot.tags.slice(0, 2)]
+  const metaLine = [spot.neighborhood.split(",")[0], ...txt.tags.slice(0, 2)]
     .join("  ·  ")
     .toUpperCase();
 
@@ -110,7 +115,10 @@ export function SpotCard({
   const onShare = () => {
     setMenuOpen(false);
     Share.share({
-      message: `${spot.name} — ${spot.hook}\nFound on Verso: https://verso.app`,
+      message: t(
+        `${txt.name} — ${txt.hook}\nFound on Verso: https://verso.app`,
+        `${txt.name} — ${txt.hook}\nGefunden auf Verso: https://verso.app`,
+      ),
     }).catch(() => {});
   };
 
@@ -133,16 +141,16 @@ export function SpotCard({
               className="font-hk-bold text-[11px] tracking-[1px]"
               style={{ color: col.inner }}
             >
-              {CATEGORY_LABEL[spot.category]}
+              {categoryLabel(spot.category, lang)}
             </Text>
           </View>
         </ImagePlaceholder>
 
         <View className="px-5 pb-5 pt-4">
-          <Text className="font-hk-extrabold text-title-md text-ink">{spot.name}</Text>
+          <Text className="font-hk-extrabold text-title-md text-ink">{txt.name}</Text>
 
           <Text className="mt-1.5 font-hk-bold-italic text-hook text-ink">
-            {spot.hook}
+            {txt.hook}
           </Text>
 
           <Text className="mt-3 font-hk-semibold text-[11px] tracking-[1px] text-ink-3">
@@ -151,7 +159,7 @@ export function SpotCard({
 
           <View className="mt-2 flex-row">
             <Text className="font-hk-semibold text-[11px] tracking-[1px] text-ink-3">
-              ADDRESS{"  "}
+              {t("ADDRESS", "ADRESSE")}{"  "}
             </Text>
             <Text className="flex-1 font-hk-medium text-[13px] text-ink-2">
               {spot.address}
@@ -178,7 +186,7 @@ export function SpotCard({
         >
           <View className="rounded-pill bg-night px-3 py-1.5" style={shadows.card}>
             <Text className="font-hk-semibold text-[11px] text-screen">
-              Long-press: Save & Share
+              {t("Long-press: Save & Share", "Lange drücken: Merken & Teilen")}
             </Text>
           </View>
         </Animated.View>

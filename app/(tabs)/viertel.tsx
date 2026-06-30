@@ -4,6 +4,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Arrow } from "../../src/components/Arrow";
 import { CityDropdown } from "../../src/components/CityDropdown";
 import { NEIGHBORHOODS } from "../../src/data/cities";
+import { useLang, useT } from "../../src/lib/i18n";
+import { neighborhoodBlurb } from "../../src/lib/localized";
 import { useCity } from "../../src/store/city";
 
 // Screen 05 — City overview.
@@ -11,6 +13,8 @@ import { useCity } from "../../src/store/city";
 
 export default function Viertel() {
   const router = useRouter();
+  const t = useT();
+  const lang = useLang();
   const { city } = useCity();
   const hoods = NEIGHBORHOODS.filter((n) => n.city === city);
 
@@ -29,8 +33,14 @@ export default function Viertel() {
       >
         <Text className="font-hk-medium text-[15px] leading-[21px] text-ink-2">
           {hoods.length > 0
-            ? `Where to? ${hoods.length} neighborhoods, ${hoods.length} moods.`
-            : "We're curating this city right now. It'll kick off here soon."}
+            ? t(
+                `Where to? ${hoods.length} neighborhoods, ${hoods.length} moods.`,
+                `Wo geht die Reise hin? ${hoods.length} Bezirke, ${hoods.length} Stimmungen.`,
+              )
+            : t(
+                "We're curating this city right now. It'll kick off here soon.",
+                "Diese Stadt kuratieren wir gerade. Bald geht's hier los.",
+              )}
         </Text>
 
         <View className="mt-6">
@@ -45,7 +55,7 @@ export default function Viertel() {
                   {n.name}
                 </Text>
                 <Text className="mt-1 font-hk-medium text-[14px] leading-[19px] text-ink-2">
-                  {n.blurb}
+                  {neighborhoodBlurb(n, lang)}
                 </Text>
               </View>
               <View className="h-9 w-9 items-center justify-center rounded-pill bg-accent">

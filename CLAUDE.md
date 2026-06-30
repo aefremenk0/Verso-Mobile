@@ -56,6 +56,7 @@ Expo **SDK 54**. Diese Versionen sind bewusst gepinnt — siehe Stolperfallen.
 | react-native-svg | **15.12.1** (exakt) | Logos/Vektorgrafik, in Expo Go |
 | @rnmapbox/maps | ^10.3.1 | echte Karte, **NUR Dev Build** (nicht Expo Go) |
 | @expo-google-fonts/hanken-grotesk | ^0.4.x | |
+| expo-localization | ~17.0.9 | Gerätesprache (i18n-Default) |
 | expo-image, expo-font, expo-splash-screen | SDK-54-Stände | |
 
 ---
@@ -153,6 +154,14 @@ src/
   lib/spotMeta.ts         Detail-Tiefe: getOpenState (Öffnungsstatus) +
                           distanceLabel (Entfernung zum Stadtzentrum)
   lib/scene.ts            Szene (feiern/essen): Kategoriengruppen + Pills
+                          (+ sceneFilters(scene, lang) — lokalisierte Pills)
+  lib/lang.ts             i18n-Kern: Lang-Typ ("en"|"de"), cityLabel (Stadt-
+                          Anzeigename pro Sprache), pick()  (RN-frei, testbar)
+  lib/i18n.ts             useT() -> t("EN","DE"); useLang() -> aktuelle Sprache
+  lib/localized.ts        Daten-Lokalisierung: spotText / neighborhoodBlurb /
+                          geheimtippTeaser (EN-Basis, DE-Variante)  (RN-frei)
+  store/language.tsx      Sprach-Store (Default = Gerätesprache, sonst EN),
+                          Settings-Toggle schaltet zur Laufzeit  (in-memory)
   store/scene.tsx         aktuelle Szene (Feiern vs. Essen), app-weit
 
 app.config.js             Expo-Config (ersetzt app.json; Mapbox-Token via Env)
@@ -191,12 +200,43 @@ Stack-Screens darüber. `geheimtipp` ist ein modaler Screen. **Abmelden**
   CSS-`@keyframes` aus dem Mockup übernehmen — nur als Referenz lesen
   (`verso-spin` 9s, `verso-load` 1.3s, `verso-throb` 1.5s, `verso-pulse`).
 - **Daten:** alles Mock in `src/data/`. Kein Login/Backend/DB im MVP.
-- **Kommentare auf Englisch**, knapp, erklären *warum*. (Die App-UI ist seit
-  2026-06-29 komplett englisch — Eigennamen wie „München" und die Viertelnamen
-  bleiben deutsch.)
+- **Kommentare auf Englisch**, knapp, erklären *warum*.
+- **App-UI zweisprachig (EN/DE)** seit 2026-06-30 — neue sichtbare Texte IMMER
+  über `t("EN","DE")` (siehe Abschnitt „Mehrsprachigkeit (i18n)"); Daten-Texte
+  über `localized.ts`. Eigennamen („München", Viertelnamen) bleiben deutsch.
 - **Vor jedem Commit:** `npx tsc --noEmit` (Typecheck), `npm test` (vitest,
   reine Logik) und idealerweise
   `npx expo export --platform ios --output-dir /tmp/x` (Bundle baut?).
+
+---
+
+## Mehrsprachigkeit (i18n) — Englisch & Deutsch
+
+Die App ist **zweisprachig** (Englisch = Default, Deutsch). Umschaltung im
+**Account → Einstellungen → „Language/Sprache"** (toggelt sofort die ganze App).
+
+- **Default = Gerätesprache** (`expo-localization` `getLocales()`): DE-Geräte
+  starten auf Deutsch, sonst Englisch. Danach steuert der `language`-Store
+  (`src/store/language.tsx`, in-memory) die Sprache; `LanguageProvider` liegt
+  ganz außen in `app/_layout.tsx`.
+- **UI-Strings:** Inline-Picker statt zentralem Dictionary —
+  `const t = useT();` dann `t("English", "Deutsch")` (aus `src/lib/i18n.ts`).
+  Beide Sprachen stehen direkt an der Stelle; Platzhalter (`${…}`) in beiden
+  identisch halten. Für die Sprache selbst: `const lang = useLang();`.
+- **Städtenamen:** der **kanonische `City`-Wert bleibt deutsch** („München" —
+  damit Daten/IDs nie brechen). Angezeigt wird `cityLabel(city, lang)`
+  (`src/lib/lang.ts`): EN → Munich/Vienna/Zurich/…, DE → München/Wien/Zürich/…
+- **Daten-Inhalte (Orte/Viertel):** englische Basisfelder + **deutsche Variante**
+  (`Spot.de`, `Neighborhood.blurbDe`, `GeheimtippDerWoche.teaserDe`). Im Render
+  über `spotText(spot, lang)` / `neighborhoodBlurb(n, lang)` /
+  `geheimtippTeaser(g, lang)` (`src/lib/localized.ts`).
+- **Label-Listen sind sprach-bewusst:** `categoryLabel(c, lang)`,
+  `categoryFilters(lang)`, `sceneFilters(scene, lang)` (categories.ts/scene.ts),
+  `artOptions/ratingOptions/ambienteOptions(lang)` (mapFilter.ts),
+  `getOpenState(spot, now, lang)` / `distanceLabel(spot, lang)` (spotMeta.ts).
+  Die englischen Konstanten bleiben als Default bestehen (Tests RN-frei/grün).
+- **Bewusst NICHT übersetzt:** Eigennamen (Viertelnamen, Adressen, „verso",
+  „Hi Insider."), Code-Identifier/Routen, Daten-Keys.
 
 ---
 
@@ -464,7 +504,28 @@ npm test               # Unit-Tests der reinen Logik (vitest, src/**)
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-29 · Marken-Lade-Screen „verso" (Pop-Animation)
+### (dieser Commit) · 2026-06-30 · Zweisprachig (EN/DE) + Sprach-Toggle + englische Städtenamen
+- **i18n eingeführt:** App läuft jetzt **Englisch & Deutsch**. Umschaltung im
+  **Account → Einstellungen → „Language/Sprache"** (toggelt sofort die ganze App).
+  Default = **Gerätesprache** (`expo-localization` ~17.0.9, neu).
+- **Neue Bausteine:** `src/lib/lang.ts` (Lang-Typ, `cityLabel`, `pick`),
+  `src/lib/i18n.ts` (`useT`/`useLang`), `src/lib/localized.ts` (`spotText`/
+  `neighborhoodBlurb`/`geheimtippTeaser`), `src/store/language.tsx`
+  (`LanguageProvider`, in `_layout.tsx` ganz außen). `expo-localization` als
+  Plugin in `app.config.js`.
+- **Englische Städtenamen:** in EN zeigt die App **Munich/Vienna/Zurich/Berlin/
+  Hamburg/Frankfurt/Düsseldorf**; der **kanonische `City`-Wert bleibt deutsch**
+  („München") — Daten/IDs unverändert. Anzeige überall via `cityLabel(city, lang)`
+  (CityDropdown, Welcome, Bezirk-Kopf, …).
+- **Deutsche Inhalte zurück:** `Spot.de` (alle 10 Spots), `Neighborhood.blurbDe`
+  (8 Viertel), `GeheimtippDerWoche.teaserDe`, Profil-Bio — über `localized.ts`.
+- **Label-Listen sprach-bewusst:** `categoryLabel`/`categoryFilters`/`sceneFilters`,
+  `artOptions`/`ratingOptions`/`ambienteOptions`, `getOpenState`/`distanceLabel`
+  nehmen jetzt `lang` (EN-Default → Tests bleiben grün, 18/18).
+- **Alle Screens & Komponenten** auf `t("EN","DE")` umgestellt (Inline-Picker,
+  kein zentrales Dictionary). `tsc` sauber, iOS-Bundle baut.
+
+### 4864330 · 2026-06-29 · Marken-Lade-Screen „verso" (Pop-Animation)
 - Neue **`VersoLoader`**-Komponente (`src/components/VersoLoader.tsx`): beim
   App-Start liegt ein **weißer Vollbild-Screen** über allem; das kursive
   **„verso"** „poppt" per Reanimated-Spring durch **7 Schritte** mit jeweils

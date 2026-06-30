@@ -11,7 +11,7 @@ import { KeyboardDoneBar } from "../../src/components/KeyboardDoneBar";
 import { MapFilterSheet } from "../../src/components/MapFilterSheet";
 import { SceneToggle } from "../../src/components/SceneToggle";
 import { SearchField } from "../../src/components/SearchField";
-import { CATEGORY_LABEL, priceLabel } from "../../src/data/categories";
+import { categoryLabel, priceLabel } from "../../src/data/categories";
 import { SPOTS } from "../../src/data/spots";
 import type { Category, Spot } from "../../src/data/types";
 import {
@@ -19,6 +19,8 @@ import {
   matchesFilter,
   type MapFilter,
 } from "../../src/lib/mapFilter";
+import { useLang, useT } from "../../src/lib/i18n";
+import { spotText } from "../../src/lib/localized";
 import { SCENE_CATEGORIES } from "../../src/lib/scene";
 import { useCity } from "../../src/store/city";
 import { useScene } from "../../src/store/scene";
@@ -31,6 +33,8 @@ import { shadows } from "../../src/theme";
 
 export default function Karte() {
   const router = useRouter();
+  const t = useT();
+  const lang = useLang();
   const insets = useSafeAreaInsets();
   const { city } = useCity();
   const { scene } = useScene();
@@ -91,7 +95,7 @@ export default function Karte() {
           <SearchField
             value={query}
             onChangeText={setQuery}
-            placeholder="Search place, area or tag …"
+            placeholder={t("Search place, area or tag …", "Ort, Viertel oder Tag suchen …")}
           />
         </View>
         <FilterButton active={filterActive} onPress={() => setFilterOpen(true)} />
@@ -125,11 +129,11 @@ export default function Karte() {
           <ImagePlaceholder tone={card.tone} height={66} radius={18} style={{ width: 66 }} />
           <View className="flex-1">
             <Text className="font-hk-semibold text-[9px] tracking-[1.5px] text-ink-3">
-              {CATEGORY_LABEL[card.category]} · {card.neighborhood.split(",")[0].toUpperCase()} · {priceLabel(card.priceLevel)}
+              {categoryLabel(card.category, lang)} · {card.neighborhood.split(",")[0].toUpperCase()} · {priceLabel(card.priceLevel)}
             </Text>
-            <Text className="mt-0.5 font-hk-extrabold text-[22px] text-ink">{card.name}</Text>
+            <Text className="mt-0.5 font-hk-extrabold text-[22px] text-ink">{spotText(card, lang).name}</Text>
             <Text className="mt-0.5 font-hk-medium-italic text-[12px] text-ink-2" numberOfLines={1}>
-              {card.hook}
+              {spotText(card, lang).hook}
             </Text>
           </View>
           {/* Close (clear selection) */}

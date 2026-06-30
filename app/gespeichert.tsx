@@ -9,11 +9,12 @@ import { ImagePlaceholder } from "../src/components/ImagePlaceholder";
 import { GoogleLogo } from "../src/components/Logos";
 import { Pill } from "../src/components/Pill";
 import { SceneToggle } from "../src/components/SceneToggle";
-import { CATEGORY_LABEL, sortByCategory } from "../src/data/categories";
+import { categoryLabel, sortByCategory } from "../src/data/categories";
 import { SPOTS } from "../src/data/spots";
 import type { Category, Spot } from "../src/data/types";
+import { useT, useLang } from "../src/lib/i18n";
 import { PIN_COLORS } from "../src/lib/pinColors";
-import { SCENE_CATEGORIES, SCENE_FILTERS } from "../src/lib/scene";
+import { SCENE_CATEGORIES, sceneFilters } from "../src/lib/scene";
 import { useCity } from "../src/store/city";
 import { useSaved } from "../src/store/saved";
 import { useScene } from "../src/store/scene";
@@ -26,6 +27,8 @@ import { shadows } from "../src/theme";
 // A swipeable row.
 function SavedRow({ spot }: { spot: Spot }) {
   const router = useRouter();
+  const t = useT();
+  const lang = useLang();
   const { toggle } = useSaved();
   const ref = useRef<Swipeable>(null);
   // Tracks whether the row is open (e.g. after sharing). Then a tap only
@@ -34,7 +37,10 @@ function SavedRow({ spot }: { spot: Spot }) {
 
   const onShare = () => {
     Share.share({
-      message: `${spot.name} — ${spot.hook}\nFound on Verso: https://verso.app`,
+      message: t(
+        `${spot.name} — ${spot.hook}\nFound on Verso: https://verso.app`,
+        `${spot.name} — ${spot.hook}\nGefunden auf Verso: https://verso.app`,
+      ),
     }).catch(() => {});
   };
 
@@ -43,7 +49,7 @@ function SavedRow({ spot }: { spot: Spot }) {
     <View className="my-1 mr-2 w-28 items-center justify-center rounded-card bg-accent">
       <Text className="text-[20px] text-accent-ink">↗</Text>
       <Text className="mt-1 font-hk-bold text-[11px] tracking-[1px] text-accent-ink">
-        SHARE
+        {t("SHARE", "TEILEN")}
       </Text>
     </View>
   );
@@ -51,7 +57,7 @@ function SavedRow({ spot }: { spot: Spot }) {
     <View className="my-1 ml-2 w-28 items-center justify-center rounded-card bg-[#E2402F]">
       <Text className="text-[18px] text-white">✕</Text>
       <Text className="mt-1 font-hk-bold text-[11px] tracking-[1px] text-white">
-        DELETE
+        {t("DELETE", "LÖSCHEN")}
       </Text>
     </View>
   );
@@ -96,7 +102,7 @@ function SavedRow({ spot }: { spot: Spot }) {
         <ImagePlaceholder tone={spot.tone} height={64} radius={16} style={{ width: 64 }} />
         <View className="ml-4 flex-1">
           <Text className="font-hk-bold text-[10px] tracking-[1px] text-ink-3">
-            {CATEGORY_LABEL[spot.category]} · {spot.neighborhood.toUpperCase()}
+            {categoryLabel(spot.category, lang)} · {spot.neighborhood.toUpperCase()}
           </Text>
           <Text className="mt-0.5 font-hk-extrabold text-[18px] text-ink">
             {spot.name}
@@ -112,6 +118,8 @@ function SavedRow({ spot }: { spot: Spot }) {
 
 export default function Gespeichert() {
   const router = useRouter();
+  const t = useT();
+  const lang = useLang();
   const { savedIds } = useSaved();
   const { scene } = useScene();
   const { city } = useCity();
@@ -140,7 +148,7 @@ export default function Gespeichert() {
       <View className="flex-row items-center justify-between px-6 pt-2">
         <Pressable
           onPress={() => router.back()}
-          accessibilityLabel="Back"
+          accessibilityLabel={t("Back", "Zurück")}
           className="h-10 w-10 items-center justify-center rounded-pill bg-chip"
         >
           <Text className="font-hk-bold text-[18px] text-ink">←</Text>
@@ -153,7 +161,7 @@ export default function Gespeichert() {
         right={
           <View className="rounded-pill bg-accent px-3 py-1.5">
             <Text className="font-hk-bold text-[11px] tracking-[1px] text-accent-ink">
-              {shown.length} PLACES
+              {t(`${shown.length} PLACES`, `${shown.length} ORTE`)}
             </Text>
           </View>
         }
@@ -162,8 +170,10 @@ export default function Gespeichert() {
       {saved.length === 0 ? (
         <View style={{ paddingHorizontal: 24, paddingTop: 12 }}>
           <Text className="mt-10 font-hk-medium-italic text-[15px] leading-[22px] text-ink-3">
-            Nothing saved yet. Tap "Save +" on a place's detail view — then it
-            lands here.
+            {t(
+              `Nothing saved yet. Tap "Save +" on a place's detail view — then it lands here.`,
+              `Noch nichts gemerkt. Tipp im Detail eines Ortes auf „Merken +" — dann landet er hier.`,
+            )}
           </Text>
         </View>
       ) : (
@@ -186,7 +196,7 @@ export default function Gespeichert() {
                   showsHorizontalScrollIndicator={false}
                   contentContainerStyle={{ paddingHorizontal: 24, gap: 8 }}
                 >
-                  {SCENE_FILTERS[scene].map((f) => {
+                  {sceneFilters(scene, lang).map((f) => {
                     const col = f.key ? PIN_COLORS[f.key] : null;
                     return (
                       <Pill
@@ -204,14 +214,17 @@ export default function Gespeichert() {
 
               {/* Swipe hint */}
               <Text className="mt-3 font-hk-medium text-[12px] text-ink-3">
-                Swipe a card: → share, ← delete.
+                {t("Swipe a card: → share, ← delete.", "Wische eine Karte: → teilen, ← löschen.")}
               </Text>
               <View style={{ height: 16 }} />
             </View>
           }
           ListEmptyComponent={
             <Text className="mt-2 font-hk-medium-italic text-[15px] text-ink-3">
-              Nothing saved here right now — switch city, scene or category.
+              {t(
+                "Nothing saved here right now — switch city, scene or category.",
+                "Hier ist gerade nichts gemerkt — wechsle Stadt, Szene oder Kategorie.",
+              )}
             </Text>
           }
         />
@@ -226,7 +239,7 @@ export default function Gespeichert() {
         >
           <GoogleLogo size={18} />
           <Text className="font-hk-bold text-[13px] text-screen">
-            Export to Google Maps
+            {t("Export to Google Maps", "Nach Google Maps exportieren")}
           </Text>
         </Pressable>
       ) : null}

@@ -9,8 +9,11 @@ import { sortByCategory } from "../../src/data/categories";
 import { NEIGHBORHOODS } from "../../src/data/cities";
 import { SPOTS } from "../../src/data/spots";
 import type { Category } from "../../src/data/types";
+import { useT, useLang } from "../../src/lib/i18n";
+import { cityLabel } from "../../src/lib/lang";
+import { neighborhoodBlurb } from "../../src/lib/localized";
 import { PIN_COLORS } from "../../src/lib/pinColors";
-import { SCENE_CATEGORIES, SCENE_FILTERS } from "../../src/lib/scene";
+import { SCENE_CATEGORIES, sceneFilters } from "../../src/lib/scene";
 import { useCity } from "../../src/store/city";
 import { useScene } from "../../src/store/scene";
 
@@ -23,14 +26,17 @@ export default function Bezirk() {
   const router = useRouter();
   const { city } = useCity();
   const { scene } = useScene();
+  const t = useT();
+  const lang = useLang();
   const [activeCategory, setActiveCategory] = useState<Category | null>(null);
 
   // Reset the category selection when the scene changes.
   useEffect(() => setActiveCategory(null), [scene]);
 
-  const blurb = NEIGHBORHOODS.find(
+  const neighborhood = NEIGHBORHOODS.find(
     (n) => n.city === city && n.name === name,
-  )?.blurb;
+  );
+  const blurb = neighborhood ? neighborhoodBlurb(neighborhood, lang) : undefined;
 
   // The spot `neighborhood` now matches the neighborhood name EXACTLY (data rework)
   // -> exact comparison instead of fragile `startsWith` (no more prefix mismatch).
@@ -47,7 +53,7 @@ export default function Bezirk() {
       <View className="flex-row items-center justify-between px-6 pb-2 pt-3">
         <Pressable
           onPress={() => router.back()}
-          accessibilityLabel="Back"
+          accessibilityLabel={t("Back", "Zurück")}
           className="h-[42px] w-[42px] items-center justify-center rounded-pill"
           style={{ borderWidth: 1, borderColor: "rgba(26,26,26,0.18)" }}
         >
@@ -57,7 +63,7 @@ export default function Bezirk() {
       </View>
 
       <Text className="px-6 font-hk-bold text-[11px] tracking-[1.5px] text-ink-3">
-        {city.toUpperCase()}
+        {cityLabel(city, lang).toUpperCase()}
       </Text>
       <Text
         className="px-6 font-hk-extrabold text-ink"
@@ -78,7 +84,7 @@ export default function Bezirk() {
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={{ paddingHorizontal: 24, gap: 8, paddingBottom: 6 }}
         >
-          {SCENE_FILTERS[scene].map((f) => {
+          {sceneFilters(scene, lang).map((f) => {
             const col = f.key ? PIN_COLORS[f.key] : null;
             return (
               <Pill
@@ -102,7 +108,10 @@ export default function Bezirk() {
           spots.map((spot) => <SpotCard key={spot.id} spot={spot} />)
         ) : (
           <Text className="mt-6 font-hk-medium-italic text-[15px] leading-[22px] text-ink-3">
-            Still digging here. Soon there'll be something to discover in {name} too.
+            {t(
+              `Still digging here. Soon there'll be something to discover in ${name} too.`,
+              `Hier kramen wir noch. Bald gibt's auch in ${name} etwas zu entdecken.`,
+            )}
           </Text>
         )}
       </ScrollView>

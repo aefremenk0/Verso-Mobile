@@ -1,6 +1,7 @@
 import { Pressable, Text, View } from "react-native";
 import Svg, { Line, Rect } from "react-native-svg";
 import type { Spot } from "../data/types";
+import { useT } from "../lib/i18n";
 import { PIN_COLORS } from "../lib/pinColors";
 
 // Lightweight, stylized mini-map for the spot detail page (Expo-Go-safe, no
@@ -9,11 +10,12 @@ import { PIN_COLORS } from "../lib/pinColors";
 
 export function MiniMap({ spot, onPress }: { spot: Spot; onPress: () => void }) {
   const col = PIN_COLORS[spot.category];
+  const t = useT();
 
   return (
     <Pressable
       onPress={onPress}
-      accessibilityLabel="Open in maps app"
+      accessibilityLabel={t("Open in maps app", "In Karten-App öffnen")}
       className="overflow-hidden rounded-card"
       style={{ height: 150 }}
     >
@@ -56,7 +58,9 @@ export function MiniMap({ spot, onPress }: { spot: Spot; onPress: () => void }) 
         >
           {spot.address}
         </Text>
-        <Text className="font-hk-bold text-[12px] text-accent">On map ↗</Text>
+        <Text className="font-hk-bold text-[12px] text-accent">
+          {t("On map ↗", "In Karte ↗")}
+        </Text>
       </View>
     </Pressable>
   );

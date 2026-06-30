@@ -15,6 +15,7 @@ import { sortByCategory } from "../../src/data/categories";
 import { SPOTS } from "../../src/data/spots";
 import type { Category } from "../../src/data/types";
 import { tapMedium } from "../../src/lib/haptics";
+import { useT } from "../../src/lib/i18n";
 import { DEFAULT_FILTER, matchesFilter, type MapFilter } from "../../src/lib/mapFilter";
 import { SCENE_CATEGORIES } from "../../src/lib/scene";
 import { useCity } from "../../src/store/city";
@@ -27,6 +28,7 @@ import { useScene } from "../../src/store/scene";
 
 export default function Feed() {
   const router = useRouter();
+  const t = useT();
   const { city } = useCity();
   const { scene } = useScene();
   const { interests } = useInterests();
@@ -110,7 +112,7 @@ export default function Feed() {
           <SearchField
             value={query}
             onChangeText={setQuery}
-            placeholder="Search place, area or tag …"
+            placeholder={t("Search place, area or tag …", "Ort, Viertel oder Tag suchen …")}
           />
         </View>
         <FilterButton active={filterActive} onPress={() => setFilterOpen(true)} />
@@ -144,7 +146,7 @@ export default function Feed() {
               {/* Subtle hint when the feed is tuned to the vibe */}
               {interests.length > 0 && !q ? (
                 <Text className="mb-3 font-hk-semibold text-[11px] tracking-[1px] text-ink-3">
-                  ✦ TUNED TO YOUR VIBE
+                  {t("✦ TUNED TO YOUR VIBE", "✦ AUF DEINEN VIBE ABGESTIMMT")}
                 </Text>
               ) : null}
             </View>
@@ -152,8 +154,14 @@ export default function Feed() {
           ListEmptyComponent={
             <Text className="mt-10 text-center font-hk-medium-italic text-[15px] text-ink-3">
               {q || filterActive
-                ? "Nothing matches your search/filter. Loosen the criteria."
-                : "Still digging here. Check back soon."}
+                ? t(
+                    "Nothing matches your search/filter. Loosen the criteria.",
+                    "Nichts passt zu Suche/Filter. Lockere die Kriterien.",
+                  )
+                : t(
+                    "Still digging here. Check back soon.",
+                    "Hier kramen wir noch. Schau bald wieder rein.",
+                  )}
             </Text>
           }
         />

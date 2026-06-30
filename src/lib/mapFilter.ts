@@ -1,4 +1,5 @@
 import type { Ambience, Category, Spot } from "../data/types";
+import type { Lang } from "./lang";
 
 // Central filter logic for the map view.
 // OR within a group (e.g. several types), AND between the groups.
@@ -33,7 +34,7 @@ export function matchesFilter(s: Spot, f: MapFilter): boolean {
   return true;
 }
 
-// Selection options + labels for the filter sheet.
+// Selection options + labels for the filter sheet (English defaults).
 export const ART_OPTIONS: { label: string; cat: Category }[] = [
   { label: "Bar", cat: "bar" },
   { label: "Restaurant", cat: "restaurant" },
@@ -44,11 +45,37 @@ export const ART_OPTIONS: { label: string; cat: Category }[] = [
   { label: "Sports", cat: "sport" },
 ];
 
+const ART_OPTIONS_DE: { label: string; cat: Category }[] = [
+  { label: "Bar", cat: "bar" },
+  { label: "Restaurant", cat: "restaurant" },
+  { label: "Club", cat: "club" },
+  { label: "Café", cat: "cafe" },
+  { label: "Snack", cat: "snack" },
+  { label: "Wein / Cooking", cat: "weintasting" },
+  { label: "Sport", cat: "sport" },
+];
+
+/** Localized type options for the filter sheet. */
+export function artOptions(lang: Lang) {
+  return lang === "de" ? ART_OPTIONS_DE : ART_OPTIONS;
+}
+
 export const RATING_OPTIONS: { label: string; value: number }[] = [
   { label: "All", value: 0 },
   { label: "4.0 ★", value: 4.0 },
   { label: "4.5 ★", value: 4.5 },
 ];
+
+const RATING_OPTIONS_DE: { label: string; value: number }[] = [
+  { label: "Alle", value: 0 },
+  { label: "4,0 ★", value: 4.0 },
+  { label: "4,5 ★", value: 4.5 },
+];
+
+/** Localized rating options (note German comma decimals). */
+export function ratingOptions(lang: Lang) {
+  return lang === "de" ? RATING_OPTIONS_DE : RATING_OPTIONS;
+}
 
 export const AMBIENTE_OPTIONS: { name: Ambience; label: string; desc: string }[] = [
   { name: "intim", label: "Intimate", desc: "dim, snug, for dates & quiet evenings" },
@@ -58,3 +85,17 @@ export const AMBIENTE_OPTIONS: { name: Ambience; label: string; desc: string }[]
   { name: "elegant", label: "Elegant", desc: "chic, designed, for special occasions" },
   { name: "draußen", label: "Outdoors", desc: "garden, terrace, courtyard" },
 ];
+
+const AMBIENTE_OPTIONS_DE: { name: Ambience; label: string; desc: string }[] = [
+  { name: "intim", label: "Intim", desc: "gedämpft, eng, für Dates & ruhige Abende" },
+  { name: "lebhaft", label: "Lebhaft", desc: "voll, energetisch, laut" },
+  { name: "gemütlich", label: "Gemütlich", desc: "warm, entspannt, zum Verweilen" },
+  { name: "underground", label: "Underground", desc: "roh, versteckt, ungeschliffen" },
+  { name: "elegant", label: "Elegant", desc: "schick, durchdesignt, besonderer Anlass" },
+  { name: "draußen", label: "Draußen", desc: "Garten, Terrasse, Hof" },
+];
+
+/** Localized ambience options for the filter sheet. */
+export function ambienteOptions(lang: Lang) {
+  return lang === "de" ? AMBIENTE_OPTIONS_DE : AMBIENTE_OPTIONS;
+}

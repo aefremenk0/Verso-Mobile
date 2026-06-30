@@ -1,3 +1,4 @@
+import type { Lang } from "../lib/lang";
 import type { Category } from "./types";
 
 /**
@@ -21,6 +22,22 @@ export const CATEGORY_FILTERS: CategoryFilter[] = [
   { key: "sport", label: "Sports" },
 ];
 
+const CATEGORY_FILTERS_DE: CategoryFilter[] = [
+  { key: null, label: "Alle" },
+  { key: "restaurant", label: "Restaurant" },
+  { key: "snack", label: "Snack" },
+  { key: "cafe", label: "Kaffee" },
+  { key: "bar", label: "Bars" },
+  { key: "club", label: "Clubs" },
+  { key: "weintasting", label: "Wein / Cooking" },
+  { key: "sport", label: "Sport" },
+];
+
+/** Localized category filters (use this at render sites, pass the language). */
+export function categoryFilters(lang: Lang): CategoryFilter[] {
+  return lang === "de" ? CATEGORY_FILTERS_DE : CATEGORY_FILTERS;
+}
+
 /** Short caps label per category (for the district line on cards). */
 export const CATEGORY_LABEL: Record<Category, string> = {
   restaurant: "RESTAURANT",
@@ -31,6 +48,21 @@ export const CATEGORY_LABEL: Record<Category, string> = {
   weintasting: "WINE / COOKING",
   sport: "SPORTS",
 };
+
+const CATEGORY_LABEL_DE: Record<Category, string> = {
+  restaurant: "RESTAURANT",
+  snack: "SNACK",
+  cafe: "CAFÉ",
+  bar: "BAR",
+  club: "CLUB",
+  weintasting: "WEIN / COOKING",
+  sport: "SPORT",
+};
+
+/** Localized short caps label for a category. */
+export function categoryLabel(c: Category, lang: Lang): string {
+  return (lang === "de" ? CATEGORY_LABEL_DE : CATEGORY_LABEL)[c];
+}
 
 // "Event-like" categories: they show date/meeting point/ticket and, on the map,
 // the rectangle box with a date.

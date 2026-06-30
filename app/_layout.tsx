@@ -10,6 +10,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { VersoLoader } from "../src/components/VersoLoader";
 import { CityProvider } from "../src/store/city";
+import { LanguageProvider } from "../src/store/language";
 import { GeheimtippProvider } from "../src/store/geheimtipp";
 import { InterestsProvider } from "../src/store/interests";
 import { SavedProvider } from "../src/store/saved";
@@ -37,6 +38,7 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
     <SafeAreaProvider>
+      <LanguageProvider>
       <CityProvider>
         <SceneProvider>
         <SavedProvider>
@@ -80,6 +82,7 @@ export default function RootLayout() {
         </SavedProvider>
         </SceneProvider>
       </CityProvider>
+      </LanguageProvider>
     </SafeAreaProvider>
     {/* On top of everything: the branded launch loader (white -> verso pops ->
         fades out to the brown Welcome hero). */}

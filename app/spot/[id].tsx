@@ -12,12 +12,14 @@ import {
   type QuestionBubblesHandle,
 } from "../../src/components/QuestionBubbles";
 import {
-  CATEGORY_LABEL,
+  categoryLabel,
   isEventCategory,
   priceLabel,
 } from "../../src/data/categories";
 import { getSpotById } from "../../src/data/spots";
 import { notifySuccess, tapLight } from "../../src/lib/haptics";
+import { useT, useLang } from "../../src/lib/i18n";
+import { spotText } from "../../src/lib/localized";
 import { openAppleMaps, openExternal, openGoogleMaps } from "../../src/lib/maps";
 import { distanceLabel, getOpenState } from "../../src/lib/spotMeta";
 import { useSaved } from "../../src/store/saved";
@@ -31,6 +33,8 @@ export default function SpotDetail() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { isSaved, toggle } = useSaved();
+  const t = useT();
+  const lang = useLang();
 
   const spot = getSpotById(id);
 
@@ -38,26 +42,30 @@ export default function SpotDetail() {
     return (
       <View className="flex-1 items-center justify-center bg-screen px-8">
         <Text className="font-hk-semibold text-[16px] text-ink-2">
-          This place doesn't exist (yet).
+          {t("This place doesn't exist (yet).", "Diesen Ort gibt es (noch) nicht.")}
         </Text>
         <Pressable onPress={() => router.back()} className="mt-4">
-          <Text className="font-hk-bold text-[15px] text-ink underline">Back</Text>
+          <Text className="font-hk-bold text-[15px] text-ink underline">{t("Back", "Zurück")}</Text>
         </Pressable>
       </View>
     );
   }
 
+  const txt = spotText(spot, lang);
   const isEvent = isEventCategory(spot.category);
   const saved = isSaved(spot.id);
-  const metaLine = `${CATEGORY_LABEL[spot.category]} · ${spot.neighborhood.toUpperCase()}`;
+  const metaLine = `${categoryLabel(spot.category, lang)} · ${spot.neighborhood.toUpperCase()}`;
   // Detail depth: open status (null for events) + distance to the center.
-  const openState = getOpenState(spot);
-  const distanz = distanceLabel(spot);
+  const openState = getOpenState(spot, new Date(), lang);
+  const distanz = distanceLabel(spot, lang);
 
   // Share place/event via the native share sheet (iMessage, WhatsApp, …).
   const onShare = () => {
     Share.share({
-      message: `${spot.name} — ${spot.hook}\nFound on Verso: https://verso.app`,
+      message: t(
+        `${txt.name} — ${txt.hook}\nFound on Verso: https://verso.app`,
+        `${txt.name} — ${txt.hook}\nGefunden auf Verso: https://verso.app`,
+      ),
     }).catch(() => {});
   };
 
@@ -93,7 +101,7 @@ export default function SpotDetail() {
           >
             <Pressable
               onPress={() => router.back()}
-              accessibilityLabel="Back"
+              accessibilityLabel={t("Back", "Zurück")}
               className="h-10 w-10 items-center justify-center rounded-pill bg-surface"
             >
               <Text className="font-hk-bold text-[18px] text-ink">←</Text>
@@ -102,7 +110,7 @@ export default function SpotDetail() {
               {/* Share (share sheet) */}
               <Pressable
                 onPress={onShare}
-                accessibilityLabel="Share place"
+                accessibilityLabel={t("Share place", "Ort teilen")}
                 className="h-10 w-10 items-center justify-center rounded-pill bg-surface"
               >
                 <Text className="font-hk-bold text-[16px] text-ink">↗</Text>
@@ -123,7 +131,7 @@ export default function SpotDetail() {
                   }}
                 >
                   <Text className="font-hk-bold text-[13px] text-ink">
-                    {saved ? "Saved ✓" : "Save +"}
+                    {saved ? t("Saved ✓", "Gemerkt ✓") : t("Save +", "Merken +")}
                   </Text>
                 </AnimatedChip>
               </View>
@@ -145,7 +153,7 @@ export default function SpotDetail() {
             className="mt-3 font-hk-extrabold text-ink"
             style={{ fontSize: 46, lineHeight: 48 }}
           >
-            {spot.name}
+            {txt.name}
           </Text>
 
           {/* Hook: italic + underlined (no yellow block) */}
@@ -153,7 +161,7 @@ export default function SpotDetail() {
             className="mt-4 font-hk-extrabold-italic text-[20px] leading-[28px] text-ink"
             style={{ textDecorationLine: "underline" }}
           >
-            {spot.hook}
+            {txt.hook}
           </Text>
 
           {/* Status line: "Open now?" (not for events) + distance */}
@@ -166,7 +174,7 @@ export default function SpotDetail() {
                     style={{ backgroundColor: openState.openNow ? "#1E9E54" : "#C0392B" }}
                   />
                   <Text className="font-hk-bold text-[12px] text-ink">
-                    {openState.openNow ? "Open now" : "Closed"}
+                    {openState.openNow ? t("Open now", "Geöffnet") : t("Closed", "Geschlossen")}
                   </Text>
                   <Text className="ml-1.5 font-hk-medium text-[12px] text-ink-3">
                     · {openState.label}
@@ -189,7 +197,7 @@ export default function SpotDetail() {
             <View className="mt-5 rounded-card bg-surface p-4">
               <View className="flex-row">
                 <Text className="w-20 font-hk-bold text-[11px] tracking-[1px] text-ink-3">
-                  WHEN
+                  {t("WHEN", "WANN")}
                 </Text>
                 <Text className="flex-1 font-hk-semibold text-[14px] text-ink">
                   {spot.dateLabel}
@@ -197,7 +205,7 @@ export default function SpotDetail() {
               </View>
               <View className="mt-3 flex-row">
                 <Text className="w-20 font-hk-bold text-[11px] tracking-[1px] text-ink-3">
-                  MEET
+                  {t("MEET", "TREFF")}
                 </Text>
                 <Text className="flex-1 font-hk-semibold text-[14px] text-ink">
                   {spot.meetingPoint}
@@ -207,13 +215,13 @@ export default function SpotDetail() {
           ) : null}
 
           <Text className="mt-5 font-hk-medium text-[15px] leading-[22px] text-ink-2">
-            {spot.description}
+            {txt.description}
           </Text>
 
           {/* Tags + price */}
           <View className="mt-5 flex-row flex-wrap items-center gap-2">
-            {spot.tags.map((t) => (
-              <Pill key={t} label={t} small />
+            {txt.tags.map((tag) => (
+              <Pill key={tag} label={tag} small />
             ))}
             <Pill label={priceLabel(spot.priceLevel)} small />
           </View>
@@ -221,7 +229,7 @@ export default function SpotDetail() {
           {/* Address — label and value aligned to the baseline */}
           <View className="mt-5 flex-row items-baseline">
             <Text className="mr-2 font-hk-bold text-[11px] tracking-[1px] text-ink-3">
-              ADDRESS
+              {t("ADDRESS", "ADRESSE")}
             </Text>
             <Text className="flex-1 font-hk-medium text-[14px] text-ink-2">
               {spot.address}
@@ -243,17 +251,17 @@ export default function SpotDetail() {
           <View>
             {isEvent ? (
               <Button
-                label="Book ticket"
+                label={t("Book ticket", "Ticket buchen")}
                 variant="accent"
-                subtitle="via oeticket"
+                subtitle={t("via oeticket", "über oeticket")}
                 trailing="arrow"
                 onPress={() => spot.ticketUrl && openExternal(spot.ticketUrl)}
               />
             ) : (
               <Button
-                label="Reserve a table"
+                label={t("Reserve a table", "Tisch reservieren")}
                 variant="accent"
-                subtitle="via opentable"
+                subtitle={t("via opentable", "über opentable")}
                 trailing="arrow"
                 onPress={() =>
                   openExternal(spot.reserveUrl ?? "https://www.opentable.de/")
@@ -266,7 +274,7 @@ export default function SpotDetail() {
           <View className="mt-3 flex-row gap-3">
             <View className="flex-1">
               <Button
-                label="Apple Maps"
+                label={t("Apple Maps", "Apple Karten")}
                 variant="light"
                 trailing="external"
                 onPress={() => openAppleMaps(`${spot.name} ${spot.address}`)}

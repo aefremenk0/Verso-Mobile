@@ -1,7 +1,8 @@
 import { ScrollView } from "react-native";
 import type { Category } from "../data/types";
+import { useLang } from "../lib/i18n";
 import { PIN_COLORS } from "../lib/pinColors";
-import { SCENE_FILTERS } from "../lib/scene";
+import { sceneFilters } from "../lib/scene";
 import { useScene } from "../store/scene";
 import { Pill } from "./Pill";
 
@@ -17,13 +18,14 @@ export function CategoryBar({
   onSelect: (c: Category | null) => void;
 }) {
   const { scene } = useScene();
+  const lang = useLang();
   return (
     <ScrollView
       horizontal
       showsHorizontalScrollIndicator={false}
       contentContainerStyle={{ paddingHorizontal: 24, gap: 8, paddingVertical: 8 }}
     >
-      {SCENE_FILTERS[scene].map((f) => {
+      {sceneFilters(scene, lang).map((f) => {
         const col = f.key ? PIN_COLORS[f.key] : null;
         return (
           <Pill

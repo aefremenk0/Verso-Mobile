@@ -11,6 +11,8 @@ import { useCity } from "../../src/store/city";
 import { useGeheimtipp } from "../../src/store/geheimtipp";
 import { useSaved } from "../../src/store/saved";
 import { openExternal } from "../../src/lib/maps";
+import { useLang, useT } from "../../src/lib/i18n";
+import { spotText } from "../../src/lib/localized";
 
 // Screen 07 — Profile.
 // User header, hidden-gem card, stats and entry points (Saved, Settings, etc.).
@@ -52,6 +54,8 @@ function Row({
 
 export default function Profil() {
   const router = useRouter();
+  const t = useT();
+  const lang = useLang();
   const { savedIds } = useSaved();
 
   // Hidden gem of the currently selected city (city-dependent store).
@@ -66,8 +70,10 @@ export default function Profil() {
   // Verso thrives on word of mouth -> open the native share sheet.
   const onInvite = () => {
     Share.share({
-      message:
+      message: t(
         "Verso — curated places hardly anyone knows. Take a look: https://verso.app",
+        "Verso — kuratierte Orte, die kaum jemand kennt. Schau mal: https://verso.app",
+      ),
     }).catch(() => {});
   };
 
@@ -85,7 +91,7 @@ export default function Profil() {
         showsVerticalScrollIndicator={false}
       >
         <Text className="font-hk-bold text-[11px] tracking-[1.5px] text-ink-3">
-          PROFILE
+          {t("PROFILE", "PROFIL")}
         </Text>
 
         {/* Header: avatar + name */}
@@ -109,7 +115,7 @@ export default function Profil() {
         >
           <View className="flex-row items-center justify-between">
             <Text className="font-hk-bold text-[10px] tracking-[1.5px] text-white/50">
-              HIDDEN GEM OF THE WEEK · FOR EVERYONE
+              {t("HIDDEN GEM OF THE WEEK · FOR EVERYONE", "GEHEIMTIPP DER WOCHE · FÜR ALLE")}
             </Text>
             <View className="h-7 w-7 items-center justify-center rounded-pill bg-accent">
               <Text className="font-hk-extrabold text-[14px] text-accent-ink">?</Text>
@@ -118,10 +124,10 @@ export default function Profil() {
           {tippSpot ? (
             <>
               <Text className="mt-3 font-hk-extrabold text-title-sm text-white">
-                {tippSpot.name}
+                {spotText(tippSpot, lang).name}
               </Text>
               <Text className="mt-1 font-hk-medium-italic text-[14px] leading-[19px] text-white/70">
-                {tippSpot.hook}
+                {spotText(tippSpot, lang).hook}
               </Text>
             </>
           ) : null}
@@ -130,9 +136,9 @@ export default function Profil() {
         {/* Stats */}
         <View className="mt-6 flex-row rounded-card bg-surface py-4">
           {[
-            { n: savedIds.length, l: "SAVED" },
-            { n: viertelCount, l: "AREAS" },
-            { n: cityCount, l: "CITIES" },
+            { n: savedIds.length, l: t("SAVED", "GESPEICHERT") },
+            { n: viertelCount, l: t("AREAS", "VIERTEL") },
+            { n: cityCount, l: t("CITIES", "STÄDTE") },
           ].map((s, i) => (
             <View
               key={s.l}
@@ -149,18 +155,18 @@ export default function Profil() {
         {/* Entry points */}
         <View className="mt-4">
           <Row
-            label="Saved places"
+            label={t("Saved places", "Gespeicherte Orte")}
             value={String(savedIds.length)}
             onPress={() => router.push("/gespeichert")}
           />
-          <Row label="Settings" onPress={() => router.push("/settings")} />
+          <Row label={t("Settings", "Einstellungen")} onPress={() => router.push("/settings")} />
           <Row
-            label="Support Verso"
-            badge="DONATE"
+            label={t("Support Verso", "Verso unterstützen")}
+            badge={t("DONATE", "SPENDE")}
             onPress={() => openExternal("https://verso.app")}
           />
           <Row
-            label="Make a suggestion"
+            label={t("Make a suggestion", "Vorschlag machen")}
             value="verso.app ↗"
             onPress={() => openExternal("https://verso.app")}
           />
@@ -174,10 +180,11 @@ export default function Profil() {
         >
           <View className="flex-1 pr-3">
             <Text className="font-hk-extrabold-italic text-[18px] text-screen">
-              Know someone with good taste?
+              {t("Know someone with good taste?", "Kennst du jemanden mit Gespür?")}
             </Text>
             <Text className="mt-1 font-hk-medium text-[13px] leading-[18px] text-screen/60">
-              Verso thrives on word of mouth.{"\n"}Pass the hidden gem on.
+              {t("Verso thrives on word of mouth.", "Verso lebt von Mundpropaganda.")}{"\n"}
+              {t("Pass the hidden gem on.", "Gib den Geheimtipp weiter.")}
             </Text>
           </View>
           <View className="h-10 w-10 items-center justify-center rounded-pill bg-accent">
@@ -198,7 +205,10 @@ export default function Profil() {
             adjustsFontSizeToFit
             className="mt-3 text-center font-hk-medium-italic text-[12px] leading-[18px] text-ink-3"
           >
-            The city belongs to those who look behind the doors.
+            {t(
+              "The city belongs to those who look behind the doors.",
+              "Die Stadt gehört denen, die hinter die Türen schauen.",
+            )}
           </Text>
         </View>
       </ScrollView>

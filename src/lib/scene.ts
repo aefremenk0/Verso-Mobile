@@ -1,5 +1,10 @@
-import { CATEGORY_FILTERS, type CategoryFilter } from "../data/categories";
+import {
+  CATEGORY_FILTERS,
+  categoryFilters,
+  type CategoryFilter,
+} from "../data/categories";
 import type { Category } from "../data/types";
+import type { Lang } from "./lang";
 
 // Two "scenes" toggled between in the top right:
 //  - feiern (going out): Bar · Club · Event
@@ -21,6 +26,13 @@ export const SCENE_FILTERS: Record<Scene, CategoryFilter[]> = {
     (f) => f.key === null || SCENE_CATEGORIES.essen.includes(f.key),
   ),
 };
+
+/** Localized category pills for a scene (use at render sites, pass language). */
+export function sceneFilters(scene: Scene, lang: Lang): CategoryFilter[] {
+  return categoryFilters(lang).filter(
+    (f) => f.key === null || SCENE_CATEGORIES[scene].includes(f.key),
+  );
+}
 
 // Does a category belong to the current scene?
 export function inScene(category: Category, scene: Scene): boolean {

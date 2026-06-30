@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Pressable, Text, View } from "react-native";
+import { useT } from "../lib/i18n";
 import { shadows } from "../theme";
 import { GoogleLogo } from "./Logos";
 
@@ -17,6 +18,7 @@ export function GoogleExportSheet({
   onClose: () => void;
 }) {
   const [done, setDone] = useState(false);
+  const t = useT();
 
   return (
     <View className="absolute inset-0 justify-end" style={{ zIndex: 20 }}>
@@ -27,17 +29,21 @@ export function GoogleExportSheet({
         {done ? (
           <>
             <Text className="font-hk-extrabold text-[24px] text-ink">
-              Exported ✓
+              {t("Exported ✓", "Exportiert ✓")}
             </Text>
             <Text className="mt-2 font-hk-medium text-[14px] leading-[20px] text-ink-2">
-              {count} {count === 1 ? "place is" : "places are"} now in your
-              Google Maps list "?". Open Google Maps → Saved → "?".
+              {t(
+                `${count} ${count === 1 ? "place is" : "places are"} now in your Google Maps list "?". Open Google Maps → Saved → "?".`,
+                `${count} ${count === 1 ? "Ort liegt" : "Orte liegen"} jetzt in deiner Google-Maps-Liste „?". Öffne Google Maps → Gespeichert → „?".`,
+              )}
             </Text>
             <Pressable
               onPress={onClose}
               className="mt-6 items-center rounded-[18px] bg-night py-4"
             >
-              <Text className="font-hk-extrabold text-[16px] text-screen">Done</Text>
+              <Text className="font-hk-extrabold text-[16px] text-screen">
+                {t("Done", "Fertig")}
+              </Text>
             </Pressable>
           </>
         ) : (
@@ -45,12 +51,14 @@ export function GoogleExportSheet({
             <View className="flex-row items-center gap-2">
               <GoogleLogo size={20} />
               <Text className="font-hk-extrabold text-[22px] text-ink">
-                To Google Maps
+                {t("To Google Maps", "Nach Google Maps")}
               </Text>
             </View>
             <Text className="mt-2 font-hk-medium text-[14px] leading-[20px] text-ink-2">
-              Link your Google account to export your {count} saved places to
-              Google Maps as a list called "?".
+              {t(
+                `Link your Google account to export your ${count} saved places to Google Maps as a list called "?".`,
+                `Verknüpfe dein Google-Konto, um deine ${count} gemerkten Orte als Liste „?" nach Google Maps zu exportieren.`,
+              )}
             </Text>
             <Pressable
               onPress={() => setDone(true)}
@@ -58,12 +66,12 @@ export function GoogleExportSheet({
             >
               <GoogleLogo size={18} />
               <Text className="font-hk-extrabold text-[15px] text-screen">
-                Link account & export
+                {t("Link account & export", "Konto verknüpfen & exportieren")}
               </Text>
             </Pressable>
             <Pressable onPress={onClose} className="mt-3 items-center py-2">
               <Text className="font-hk-semibold text-[14px] text-ink-3">
-                Cancel
+                {t("Cancel", "Abbrechen")}
               </Text>
             </Pressable>
           </>

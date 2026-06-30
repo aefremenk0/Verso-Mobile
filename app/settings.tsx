@@ -2,13 +2,16 @@ import { useRouter } from "expo-router";
 import { useState } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useT } from "../src/lib/i18n";
 import { useGeheimtipp } from "../src/store/geheimtipp";
 import { useInterests } from "../src/store/interests";
+import { useLanguage } from "../src/store/language";
 import { useSaved } from "../src/store/saved";
 
 // Screen 07 — Settings.
 // Grouped cards per the mockup. The toggles work (local state, no real effect
-// in the MVP). "Log out" resets the mock state and leads to the Welcome screen.
+// in the MVP). The "Language" row toggles the whole app between English and
+// German. "Log out" resets the mock state and leads to the Welcome screen.
 
 // On/off switch in the Verso style (yellow = on).
 function Toggle({ value, onChange }: { value: boolean; onChange: () => void }) {
@@ -59,6 +62,8 @@ function NavRow({
 
 export default function Settings() {
   const router = useRouter();
+  const t = useT();
+  const { lang, toggle: toggleLang } = useLanguage();
   const geheimtipp = useGeheimtipp();
   const saved = useSaved();
   const interests = useInterests();
@@ -82,13 +87,15 @@ export default function Settings() {
       <View className="flex-row items-center gap-3.5 px-6 pb-4 pt-3">
         <Pressable
           onPress={() => router.back()}
-          accessibilityLabel="Back"
+          accessibilityLabel={t("Back", "Zurück")}
           className="h-[42px] w-[42px] items-center justify-center rounded-pill"
           style={{ borderWidth: 1, borderColor: "rgba(26,26,26,0.18)" }}
         >
           <Text className="font-hk-extrabold text-[18px] text-ink">←</Text>
         </Pressable>
-        <Text className="font-hk-extrabold text-title-md text-ink">Settings</Text>
+        <Text className="font-hk-extrabold text-title-md text-ink">
+          {t("Settings", "Einstellungen")}
+        </Text>
       </View>
 
       <ScrollView
@@ -97,16 +104,16 @@ export default function Settings() {
       >
         {/* ACCOUNT */}
         <Text className="mb-2.5 font-hk-semibold text-[10px] tracking-[1.5px] text-ink-3">
-          ACCOUNT
+          {t("ACCOUNT", "KONTO")}
         </Text>
         <View className="overflow-hidden rounded-[18px] border border-black/[0.08] bg-surface">
           <NavRow
-            label="Edit profile"
+            label={t("Edit profile", "Profil bearbeiten")}
             onPress={() => router.push("/profil-bearbeiten")}
           />
-          <NavRow label="Email" value="lena@verso.app" />
+          <NavRow label={t("Email", "E-Mail")} value="lena@verso.app" />
           <NavRow
-            label="Change password"
+            label={t("Change password", "Passwort ändern")}
             last
             onPress={() => router.push("/passwort-aendern")}
           />
@@ -114,19 +121,25 @@ export default function Settings() {
 
         {/* NOTIFICATIONS */}
         <Text className="mb-2.5 mt-7 font-hk-semibold text-[10px] tracking-[1.5px] text-ink-3">
-          NOTIFICATIONS
+          {t("NOTIFICATIONS", "BENACHRICHTIGUNGEN")}
         </Text>
         <View className="overflow-hidden rounded-[18px] border border-black/[0.08] bg-surface">
           <View className="flex-row items-center justify-between border-b border-black/5 px-4 py-3">
-            <Text className="font-hk-extrabold text-[15px] text-ink">Hidden gem of the week</Text>
+            <Text className="font-hk-extrabold text-[15px] text-ink">
+              {t("Hidden gem of the week", "Geheimtipp der Woche")}
+            </Text>
             <Toggle value={tippN} onChange={() => setTippN((v) => !v)} />
           </View>
           <View className="flex-row items-center justify-between border-b border-black/5 px-4 py-3">
-            <Text className="font-hk-extrabold text-[15px] text-ink">New spots nearby</Text>
+            <Text className="font-hk-extrabold text-[15px] text-ink">
+              {t("New spots nearby", "Neue Spots in der Nähe")}
+            </Text>
             <Toggle value={spotsN} onChange={() => setSpotsN((v) => !v)} />
           </View>
           <View className="flex-row items-center justify-between px-4 py-3">
-            <Text className="font-hk-extrabold text-[15px] text-ink">Events & dates</Text>
+            <Text className="font-hk-extrabold text-[15px] text-ink">
+              {t("Events & dates", "Events & Termine")}
+            </Text>
             <Toggle value={eventsN} onChange={() => setEventsN((v) => !v)} />
           </View>
         </View>
@@ -136,9 +149,17 @@ export default function Settings() {
           APP
         </Text>
         <View className="overflow-hidden rounded-[18px] border border-black/[0.08] bg-surface">
-          <NavRow label="Language" value="English" />
-          <NavRow label="Appearance" value="Light" />
-          <NavRow label="Legal & help" last />
+          {/* Language row — toggles the whole app between English and German. */}
+          <NavRow
+            label={t("Language", "Sprache")}
+            value={lang === "de" ? "Deutsch" : "English"}
+            onPress={toggleLang}
+          />
+          <NavRow
+            label={t("Appearance", "Erscheinungsbild")}
+            value={t("Light", "Hell")}
+          />
+          <NavRow label={t("Legal & help", "Rechtliches & Hilfe")} last />
         </View>
 
         {/* Log out */}
@@ -148,10 +169,12 @@ export default function Settings() {
             className="w-full items-center rounded-[16px] border py-4"
             style={{ borderColor: "rgba(26,26,26,0.2)" }}
           >
-            <Text className="font-hk-extrabold text-[15px] text-ink">Log out</Text>
+            <Text className="font-hk-extrabold text-[15px] text-ink">
+              {t("Log out", "Abmelden")}
+            </Text>
           </Pressable>
           <Text className="mt-3 font-hk-semibold text-[11px] text-ink/40">
-            Delete account
+            {t("Delete account", "Konto löschen")}
           </Text>
         </View>
       </ScrollView>

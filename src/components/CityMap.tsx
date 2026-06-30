@@ -13,6 +13,8 @@ import Animated, {
 } from "react-native-reanimated";
 import { isEventCategory } from "../data/categories";
 import type { Spot } from "../data/types";
+import { useLang, useT } from "../lib/i18n";
+import { spotText } from "../lib/localized";
 import { PIN_COLORS } from "../lib/pinColors";
 import { useReduceMotion } from "../lib/useReduceMotion";
 import { shadows } from "../theme";
@@ -70,6 +72,8 @@ function Pin({
   popAll: boolean;
   onPress: () => void;
 }) {
+  const lang = useLang();
+  const name = spotText(spot, lang).name;
   // Initial value matching the state, so the first pin does not animate by accident.
   const pop = useSharedValue(active ? 1 : 0);
   // Easter egg: double-tapping the map shows/hides ALL labels (toggle).
@@ -151,7 +155,7 @@ function Pin({
                 style={{ color: c.inner }}
                 numberOfLines={1}
               >
-                {spot.name}
+                {name}
               </Text>
               {spot.dateLabel ? (
                 <Text
@@ -174,7 +178,7 @@ function Pin({
                 style={{ color: c.inner }}
                 numberOfLines={1}
               >
-                {spot.name}
+                {name}
               </Text>
             </View>
           )}
@@ -244,6 +248,7 @@ export function CityMap({
   onSelect,
   onClearSelection,
 }: CityMapProps) {
+  const t = useT();
   // Easter egg: double-tap on the empty map area -> TOGGLE: all pins pop open;
   // another double-tap hides them again. Both also reset the single selection,
   // so no selected pin/card stays "stuck".
@@ -385,7 +390,7 @@ export function CityMap({
         >
           <View className="rounded-pill bg-night px-3 py-2" style={shadows.card}>
             <Text className="font-hk-semibold text-[11px] text-screen">
-              Double-tap to show all places
+              {t("Double-tap to show all places", "Doppeltippen zeigt alle Orte")}
             </Text>
           </View>
         </Animated.View>

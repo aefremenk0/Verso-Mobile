@@ -11,9 +11,11 @@ import Animated, {
 import { SafeAreaView } from "react-native-safe-area-context";
 import Svg, { Path } from "react-native-svg";
 import { ImagePlaceholder } from "../src/components/ImagePlaceholder";
-import { CATEGORY_LABEL, priceLabel } from "../src/data/categories";
+import { categoryLabel, priceLabel } from "../src/data/categories";
 import { getSpotById } from "../src/data/spots";
 import { notifySuccess } from "../src/lib/haptics";
+import { useT, useLang } from "../src/lib/i18n";
+import { spotText } from "../src/lib/localized";
 import { useGeheimtipp } from "../src/store/geheimtipp";
 
 // Screen 08 — Hidden gem of the week.
@@ -27,10 +29,13 @@ const LOAD_MS = 2600; // how long the loading screen runs
 
 export default function Geheimtipp() {
   const router = useRouter();
+  const t = useT();
+  const lang = useLang();
   const { markAbgeholt, spotId } = useGeheimtipp();
   const [phase, setPhase] = useState<"loading" | "reveal">("loading");
   // Gem for the currently selected city (comes from the city-aware store).
   const spot = getSpotById(spotId);
+  const spotLoc = spot ? spotText(spot, lang) : null;
 
   // ── Shared Values (run on the UI thread) ──
   const spin = useSharedValue(0); // ring rotation 0..360
@@ -92,7 +97,7 @@ export default function Geheimtipp() {
         <View className="flex-row justify-end px-6 pt-3">
           <Pressable
             onPress={() => router.back()}
-            accessibilityLabel="Close"
+            accessibilityLabel={t("Close", "Schließen")}
             className="h-[42px] w-[42px] items-center justify-center rounded-pill"
             style={{ borderWidth: 1, borderColor: "rgba(247,244,239,0.25)" }}
           >
@@ -120,10 +125,13 @@ export default function Geheimtipp() {
           </View>
 
           <Text className="mt-9 font-hk-semibold text-[11px] tracking-[2px] text-screen/55">
-            HIDDEN GEM OF THE WEEK
+            {t("HIDDEN GEM OF THE WEEK", "GEHEIMTIPP DER WOCHE")}
           </Text>
           <Text className="mt-3 text-center font-hk-extrabold-italic text-[22px] leading-[29px] text-screen">
-            Digging through{"\n"}the back room …
+            {t(
+              `Digging through${"\n"}the back room …`,
+              `Wir kramen kurz${"\n"}im Hinterzimmer …`,
+            )}
           </Text>
 
           {/* Sweeping loading bar */}
@@ -139,7 +147,7 @@ export default function Geheimtipp() {
         </View>
 
         <Text className="pb-6 text-center font-hk-semibold text-[10px] tracking-[2px] text-screen/40">
-          FOR EVERYONE · ONCE A WEEK
+          {t("FOR EVERYONE · ONCE A WEEK", "FÜR ALLE · EINMAL WÖCHENTLICH")}
         </Text>
       </SafeAreaView>
     );
@@ -151,12 +159,12 @@ export default function Geheimtipp() {
       <View className="flex-row items-center justify-between px-6 pt-3">
         <View className="rounded-pill bg-night px-3.5 py-2">
           <Text className="font-hk-semibold text-[10px] tracking-[1.5px] text-accent">
-            ✓ REVEALED
+            {t("✓ REVEALED", "✓ AUFGEDECKT")}
           </Text>
         </View>
         <Pressable
           onPress={() => router.back()}
-          accessibilityLabel="Close"
+          accessibilityLabel={t("Close", "Schließen")}
           className="h-[42px] w-[42px] items-center justify-center rounded-pill"
           style={{ borderWidth: 1, borderColor: "rgba(26,26,26,0.25)" }}
         >
@@ -167,13 +175,13 @@ export default function Geheimtipp() {
       {/* Café vertically centered in the card */}
       <View className="flex-1 justify-center px-6">
         <Text className="font-hk-semibold text-[10px] tracking-[2px] text-accent-ink/55">
-          HIDDEN GEM OF THE WEEK
+          {t("HIDDEN GEM OF THE WEEK", "GEHEIMTIPP DER WOCHE")}
         </Text>
 
-        {spot ? (
+        {spot && spotLoc ? (
           <>
             <Text className="mt-3 font-hk-extrabold text-[40px] leading-[44px] text-accent-ink">
-              {spot.name}
+              {spotLoc.name}
             </Text>
 
             {/* Tappable image with a "throb" pulse behind it */}
@@ -197,7 +205,7 @@ export default function Geheimtipp() {
                 <ImagePlaceholder tone="green" height={236} radius={24}>
                   <View className="absolute left-3.5 top-3.5 rounded-pill bg-accent px-3 py-1.5">
                     <Text className="font-hk-semibold text-[9px] tracking-[1.5px] text-accent-ink">
-                      {CATEGORY_LABEL[spot.category]} · {spot.neighborhood.split(",")[0].toUpperCase()} · {priceLabel(spot.priceLevel)}
+                      {categoryLabel(spot.category, lang)} · {spot.neighborhood.split(",")[0].toUpperCase()} · {priceLabel(spot.priceLevel)}
                     </Text>
                   </View>
                   <View className="absolute right-3 top-3 h-[34px] w-[34px] items-center justify-center rounded-pill bg-accent">
@@ -211,7 +219,7 @@ export default function Geheimtipp() {
             </View>
 
             <Text className="mt-4 font-hk-extrabold-italic text-[18px] leading-[24px] text-accent-ink">
-              {spot.hook}
+              {spotLoc.hook}
             </Text>
           </>
         ) : null}
@@ -224,7 +232,7 @@ export default function Geheimtipp() {
           className="mt-7 flex-row items-center justify-between rounded-[18px] bg-night px-5 py-4"
         >
           <Text className="font-hk-extrabold text-[17px] text-screen">
-            Continue to your profile
+            {t("Continue to your profile", "Weiter zu deinem Profil")}
           </Text>
           <View className="h-[34px] w-[34px] items-center justify-center rounded-pill bg-accent">
             <Text className="font-hk-bold text-[16px] text-accent-ink">→</Text>

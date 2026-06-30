@@ -9,6 +9,8 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { isComingSoon } from "../data/cities";
+import { useT, useLang } from "../lib/i18n";
+import { cityLabel } from "../lib/lang";
 import { useCity } from "../store/city";
 import { DiagonalStrike } from "./DiagonalStrike";
 import { Pill } from "./Pill";
@@ -79,12 +81,14 @@ function CityName({ city }: { city: string }) {
 function DropdownCity({
   index,
   label,
+  a11yLabel,
   active,
   comingSoon,
   onPress,
 }: {
   index: number;
   label: string;
+  a11yLabel: string;
   active: boolean;
   comingSoon: boolean;
   onPress: () => void;
@@ -106,7 +110,7 @@ function DropdownCity({
     <Animated.View style={style}>
       <View
         pointerEvents={comingSoon ? "none" : "auto"}
-        accessibilityLabel={comingSoon ? `${label} — coming soon` : label}
+        accessibilityLabel={a11yLabel}
         style={comingSoon ? { opacity: 0.45 } : undefined}
       >
         <Pill label={label} active={active} onPress={comingSoon ? () => {} : onPress} />
@@ -122,6 +126,8 @@ function DropdownCity({
 
 export function CityDropdown({ right }: { right?: ReactNode }) {
   const { city, setCity, cities } = useCity();
+  const t = useT();
+  const lang = useLang();
   const [open, setOpen] = useState(false);
 
   // Caret rotates from ▾ to ▴ (180°) when opening.
@@ -145,7 +151,7 @@ export function CityDropdown({ right }: { right?: ReactNode }) {
               className="flex-row items-center"
             >
               {/* City name with roll+fade transition, always at full size. */}
-              <CityName city={city} />
+              <CityName city={cityLabel(city, lang)} />
               <Animated.Text
                 style={[
                   { marginLeft: 4, fontSize: 18, color: "#8A857C", fontWeight: "700" },
@@ -168,19 +174,26 @@ export function CityDropdown({ right }: { right?: ReactNode }) {
           contentContainerStyle={{ paddingHorizontal: 24, gap: 8 }}
           className="mt-3 max-h-[44px] flex-none"
         >
-          {cities.map((c, i) => (
-            <DropdownCity
-              key={c}
-              index={i}
-              label={c}
-              active={c === city}
-              comingSoon={isComingSoon(c)}
-              onPress={() => {
-                setCity(c);
-                setOpen(false);
-              }}
-            />
-          ))}
+          {cities.map((c, i) => {
+            const comingSoon = isComingSoon(c);
+            const label = cityLabel(c, lang);
+            return (
+              <DropdownCity
+                key={c}
+                index={i}
+                label={label}
+                a11yLabel={
+                  comingSoon ? `${label} — ${t("coming soon", "kommt bald")}` : label
+                }
+                active={c === city}
+                comingSoon={comingSoon}
+                onPress={() => {
+                  setCity(c);
+                  setOpen(false);
+                }}
+              />
+            );
+          })}
         </ScrollView>
       ) : null}
     </View>

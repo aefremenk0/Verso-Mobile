@@ -16,13 +16,14 @@ import Animated, {
 } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
-  AMBIENTE_OPTIONS,
-  ART_OPTIONS,
+  ambienteOptions,
+  artOptions,
   DEFAULT_FILTER,
-  RATING_OPTIONS,
+  ratingOptions,
   type MapFilter,
 } from "../lib/mapFilter";
 import { tapSelection } from "../lib/haptics";
+import { useLang, useT } from "../lib/i18n";
 import { PIN_COLORS } from "../lib/pinColors";
 import { SCENE_CATEGORIES } from "../lib/scene";
 import { useScene } from "../store/scene";
@@ -50,6 +51,8 @@ export function MapFilterSheet({
 }) {
   const { height: screenH } = useWindowDimensions();
   const { scene } = useScene();
+  const t = useT();
+  const lang = useLang();
 
   // Enter: slightly from the top + fade in. Exit: out to the top + fade out.
   const ty = useSharedValue(-40);
@@ -134,7 +137,7 @@ export function MapFilterSheet({
             <Text className="font-hk-extrabold text-title-md text-ink">Filter</Text>
             <Pressable onPress={() => setFilter(DEFAULT_FILTER)}>
               <Text className="font-hk-semibold text-[11px] tracking-[1px] text-ink-3">
-                RESET
+                {t("RESET", "ZURÜCKSETZEN")}
               </Text>
             </Pressable>
           </View>
@@ -147,11 +150,11 @@ export function MapFilterSheet({
             {showArt ? (
             <>
             <Text className="mb-2.5 mt-3 font-hk-semibold text-[10px] tracking-[1.5px] text-ink-3">
-              TYPE
+              {t("TYPE", "ART")}
             </Text>
             <View className="flex-row flex-wrap gap-2">
               {SCENE_CATEGORIES[scene].map((cat) => {
-                const a = ART_OPTIONS.find((o) => o.cat === cat)!;
+                const a = artOptions(lang).find((o) => o.cat === cat)!;
                 const on = filter.art.includes(cat);
                 const col = PIN_COLORS[cat];
                 return (
@@ -204,10 +207,10 @@ export function MapFilterSheet({
 
             {/* RATING */}
             <Text className="mb-2.5 mt-5 font-hk-semibold text-[10px] tracking-[1.5px] text-ink-3">
-              RATING
+              {t("RATING", "BEWERTUNG")}
             </Text>
             <View className="flex-row gap-2">
-              {RATING_OPTIONS.map((b) => {
+              {ratingOptions(lang).map((b) => {
                 const on = b.value === filter.minRating;
                 return (
                   <AnimatedChip
@@ -241,10 +244,10 @@ export function MapFilterSheet({
 
             {/* AMBIENCE */}
             <Text className="mb-2.5 mt-5 font-hk-semibold text-[10px] tracking-[1.5px] text-ink-3">
-              AMBIENCE
+              {t("AMBIENCE", "AMBIENTE")}
             </Text>
             <View className="gap-2">
-              {AMBIENTE_OPTIONS.map((a) => {
+              {ambienteOptions(lang).map((a) => {
                 const on = filter.ambiente.includes(a.name);
                 return (
                   <AnimatedChip
@@ -286,7 +289,10 @@ export function MapFilterSheet({
               className="flex-row items-center justify-center gap-2 rounded-[18px] bg-night py-4"
             >
               <Text className="font-hk-extrabold text-[17px] text-screen">
-                Show {count} {count === 1 ? "place" : "places"}
+                {t(
+                  `Show ${count} ${count === 1 ? "place" : "places"}`,
+                  `${count} ${count === 1 ? "Ort" : "Orte"} zeigen`,
+                )}
               </Text>
               <Text className="text-[16px] text-screen">→</Text>
             </Pressable>

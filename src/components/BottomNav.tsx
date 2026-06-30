@@ -8,6 +8,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useT } from "../lib/i18n";
 import { useGeheimtipp } from "../store/geheimtipp";
 import { shadows } from "../theme";
 import { GeheimtippButton } from "./GeheimtippButton";
@@ -21,11 +22,6 @@ import { InitialsAvatar } from "./InitialsAvatar";
 // The "profil" tab shows the initials icon instead of a text label.
 
 const TABS = ["feed", "viertel", "karte", "profil"] as const;
-const LABELS: Record<string, string> = {
-  feed: "Feed",
-  viertel: "Areas",
-  karte: "Map",
-};
 
 const PADDING = 7;
 const BAR_HEIGHT = 62;
@@ -38,7 +34,14 @@ interface BottomNavProps {
 
 export function BottomNav({ state, navigation }: BottomNavProps) {
   const router = useRouter();
+  const t = useT();
   const insets = useSafeAreaInsets();
+  // Localized tab labels (feed stays "Feed" in both languages).
+  const LABELS: Record<string, string> = {
+    feed: "Feed",
+    viertel: t("Areas", "Viertel"),
+    karte: t("Map", "Karte"),
+  };
   const { abgeholt } = useGeheimtipp();
   const [barWidth, setBarWidth] = useState(0);
 

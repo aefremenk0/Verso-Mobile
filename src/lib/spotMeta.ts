@@ -1,4 +1,5 @@
 import type { Category, Spot } from "../data/types";
+import type { Lang } from "./lang";
 
 // Derived detail info for the spot page — deliberately without backend/GPS:
 //  - opening status ("Open now?") from typical hours per category
@@ -29,7 +30,11 @@ export interface OpenState {
 }
 
 /** Opening status now — null for events (which show a date instead of hours). */
-export function getOpenState(spot: Spot, now: Date = new Date()): OpenState | null {
+export function getOpenState(
+  spot: Spot,
+  now: Date = new Date(),
+  lang: Lang = "en",
+): OpenState | null {
   const base = spot.hours ?? CATEGORY_HOURS[spot.category];
   if (!base) return null;
   const h = now.getHours() + now.getMinutes() / 60;
@@ -37,10 +42,14 @@ export function getOpenState(spot: Spot, now: Date = new Date()): OpenState | nu
     base.close <= 24
       ? h >= base.open && h < base.close
       : h >= base.open || h < base.close - 24; // window across midnight
-  return {
-    openNow,
-    label: openNow ? `until ${fmtHour(base.close)}` : `from ${fmtHour(base.open)}`,
-  };
+  const until = openNow
+    ? lang === "de"
+      ? `bis ${fmtHour(base.close)}`
+      : `until ${fmtHour(base.close)}`
+    : lang === "de"
+      ? `ab ${fmtHour(base.open)}`
+      : `from ${fmtHour(base.open)}`;
+  return { openNow, label: until };
 }
 
 // Approximate city centers (for the distance label). Deliberately rough.
@@ -69,11 +78,17 @@ function haversineKm(
   return 2 * R * Math.asin(Math.sqrt(x));
 }
 
-/** Distance spot → city center as an English label ("approx. 1.2 km from center"). */
-export function distanceLabel(spot: Spot): string | null {
+/** Distance spot → city center, localized ("approx. 1.2 km from center" /
+ *  "ca. 1,2 km vom Zentrum"). */
+export function distanceLabel(spot: Spot, lang: Lang = "en"): string | null {
   const center = CITY_CENTER[spot.city];
   if (!center) return null;
   const km = haversineKm(center, { lat: spot.lat, lng: spot.lng });
+  if (lang === "de") {
+    const txt =
+      km < 1 ? `${Math.round(km * 1000)} m` : `${km.toFixed(1).replace(".", ",")} km`;
+    return `ca. ${txt} vom Zentrum`;
+  }
   const txt = km < 1 ? `${Math.round(km * 1000)} m` : `${km.toFixed(1)} km`;
   return `approx. ${txt} from center`;
 }

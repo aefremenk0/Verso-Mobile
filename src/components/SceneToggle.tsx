@@ -1,5 +1,6 @@
 import { Text, View } from "react-native";
 import { tapSelection } from "../lib/haptics";
+import { useT } from "../lib/i18n";
 import { useScene } from "../store/scene";
 import { AnimatedChip } from "./AnimatedChip";
 
@@ -7,6 +8,7 @@ import { AnimatedChip } from "./AnimatedChip";
 // Restaurant/Snack/Café). Both halves use AnimatedChip (color crossfade + pop + press).
 export function SceneToggle() {
   const { scene, setScene } = useScene();
+  const t = useT();
 
   // Only give haptic feedback on an actual change (no feedback on re-tap).
   const switchTo = (next: "feiern" | "essen") => {
@@ -22,7 +24,7 @@ export function SceneToggle() {
         activeBg="#FFE500"
         inactiveBg="rgba(255,229,0,0)"
         style={{ borderRadius: 999, paddingHorizontal: 12, paddingVertical: 6 }}
-        accessibilityLabel="Show going out"
+        accessibilityLabel={t("Show going out", "Ausgehen anzeigen")}
       >
         <Text className="text-[16px]">🎉</Text>
       </AnimatedChip>
@@ -33,7 +35,7 @@ export function SceneToggle() {
         activeBg="#FFE500"
         inactiveBg="rgba(255,229,0,0)"
         style={{ borderRadius: 999, paddingHorizontal: 12, paddingVertical: 6 }}
-        accessibilityLabel="Show dining"
+        accessibilityLabel={t("Show dining", "Essen anzeigen")}
       >
         <Text className="text-[16px]">🍴</Text>
       </AnimatedChip>

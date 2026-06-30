@@ -16,8 +16,9 @@ import {
   KEYBOARD_DONE_ID,
 } from "../src/components/KeyboardDoneBar";
 import { AppleLogo, GoogleLogo } from "../src/components/Logos";
-import { AMBIENTE_OPTIONS } from "../src/lib/mapFilter";
+import { ambienteOptions } from "../src/lib/mapFilter";
 import { useInterests } from "../src/store/interests";
+import { useT, useLang } from "../src/lib/i18n";
 
 // Screen 01 — Sign up / Sign in.
 // UI only: Apple/Google/Email are placeholders. Every path leads to the feed.
@@ -27,6 +28,8 @@ export default function Register() {
   const [mode, setMode] = useState<"register" | "login">("register");
   const [email, setEmail] = useState("");
   const { interests, toggle, max } = useInterests();
+  const t = useT();
+  const lang = useLang();
 
   // No real login in the MVP – we replace the screen with the feed,
   // so the Back button doesn't lead back here.
@@ -38,7 +41,7 @@ export default function Register() {
       <View className="flex-row items-center px-6 pt-2">
         <Pressable
           onPress={() => router.back()}
-          accessibilityLabel="Back"
+          accessibilityLabel={t("Back", "Zurück")}
           className="h-10 w-10 items-center justify-center rounded-pill bg-chip"
         >
           <Text className="font-hk-bold text-[18px] text-ink">←</Text>
@@ -54,13 +57,16 @@ export default function Register() {
         showsVerticalScrollIndicator={false}
       >
         <Text className="mt-8 font-hk-bold text-[11px] tracking-[1.5px] text-ink-3">
-          ACCOUNT
+          {t("ACCOUNT", "KONTO")}
         </Text>
         <Text className="mt-2 font-hk-extrabold text-title-lg text-ink">
-          Almost in.
+          {t("Almost in.", "Fast drin.")}
         </Text>
         <Text className="mt-3 font-hk-medium text-[15px] leading-[21px] text-ink-2">
-          So Verso remembers what you like — and saves your weekly gem for you.
+          {t(
+            "So Verso remembers what you like — and saves your weekly gem for you.",
+            "Damit Verso sich merkt, was dir gefällt — und dir den Wochentipp aufhebt.",
+          )}
         </Text>
 
         {/* Onboarding personalization: pick a vibe (only when signing up).
@@ -68,13 +74,16 @@ export default function Register() {
         {mode === "register" ? (
           <View className="mt-6">
             <Text className="font-hk-bold text-[11px] tracking-[1.5px] text-ink-3">
-              YOUR VIBE
+              {t("YOUR VIBE", "DEIN VIBE")}
             </Text>
             <Text className="mt-1.5 font-hk-medium text-[13px] leading-[18px] text-ink-2">
-              Pick up to {max} — we'll tune your feed to it. (Optional)
+              {t(
+                `Pick up to ${max} — we'll tune your feed to it. (Optional)`,
+                `Wähle bis zu ${max} — wir stimmen deinen Feed darauf ab. (Optional)`,
+              )}
             </Text>
             <View className="mt-3 flex-row flex-wrap gap-2">
-              {AMBIENTE_OPTIONS.map((a) => {
+              {ambienteOptions(lang).map((a) => {
                 const on = interests.includes(a.name);
                 return (
                   <AnimatedChip
@@ -122,7 +131,9 @@ export default function Register() {
                     active ? "text-ink" : "text-ink-3"
                   }`}
                 >
-                  {m === "register" ? "Sign up" : "Sign in"}
+                  {m === "register"
+                    ? t("Sign up", "Registrieren")
+                    : t("Sign in", "Anmelden")}
                 </Text>
               </Pressable>
             );
@@ -136,7 +147,7 @@ export default function Register() {
             className="flex-row items-center justify-center gap-2.5 rounded-[16px] bg-night py-4"
           >
             <Text className="font-hk-semibold text-[14px] text-screen">
-              Continue with Apple
+              {t("Continue with Apple", "Weiter mit Apple")}
             </Text>
             <AppleLogo size={17} color="#FFFFFF" />
           </Pressable>
@@ -146,7 +157,7 @@ export default function Register() {
             style={{ borderWidth: 1, borderColor: "rgba(26,26,26,0.16)" }}
           >
             <Text className="font-hk-semibold text-[14px] text-ink">
-              Continue with Google
+              {t("Continue with Google", "Weiter mit Google")}
             </Text>
             <GoogleLogo size={18} />
           </Pressable>
@@ -156,7 +167,7 @@ export default function Register() {
         <View className="my-6 flex-row items-center">
           <View className="h-px flex-1 bg-black/10" />
           <Text className="mx-3 font-hk-semibold text-[11px] tracking-[1.5px] text-ink-3">
-            OR WITH EMAIL
+            {t("OR WITH EMAIL", "ODER MIT E-MAIL")}
           </Text>
           <View className="h-px flex-1 bg-black/10" />
         </View>
@@ -164,7 +175,7 @@ export default function Register() {
         <TextInput
           value={email}
           onChangeText={setEmail}
-          placeholder="Your email address"
+          placeholder={t("Your email address", "Deine E-Mail-Adresse")}
           placeholderTextColor="#8A857C"
           keyboardType="email-address"
           autoCapitalize="none"
@@ -175,7 +186,11 @@ export default function Register() {
 
         <View className="mt-5">
           <Button
-            label={mode === "register" ? "Create account" : "Sign in"}
+            label={
+              mode === "register"
+                ? t("Create account", "Konto erstellen")
+                : t("Sign in", "Anmelden")
+            }
             variant="accent"
             trailing="arrow"
             onPress={enter}
@@ -183,10 +198,15 @@ export default function Register() {
         </View>
 
         <Text className="mt-6 text-center font-hk-medium text-[12px] leading-[18px] text-ink-3">
-          By signing up you accept our{" "}
-          <Text className="font-hk-semibold text-ink-2 underline">Terms</Text>{" "}
+          {t("By signing up you accept our", "Mit der Registrierung akzeptierst du")}{" "}
+          <Text className="font-hk-semibold text-ink-2 underline">
+            {t("Terms", "Bedingungen")}
+          </Text>{" "}
           &{" "}
-          <Text className="font-hk-semibold text-ink-2 underline">Privacy Policy</Text>.
+          <Text className="font-hk-semibold text-ink-2 underline">
+            {t("Privacy Policy", "Datenschutz")}
+          </Text>
+          .
         </Text>
       </ScrollView>
 

@@ -42,40 +42,48 @@ export const NEIGHBORHOODS: Neighborhood[] = [
     city: "München",
     name: "Glockenbachviertel",
     blurb: "Munich's most wide-awake nights — queer, with no curfew in mind.",
+    blurbDe: "Münchens wachste Nächte — queer, ohne Sperrstunde im Kopf.",
   },
   {
     city: "München",
     name: "Gärtnerplatzviertel",
     blurb: "Brunch at the roundabout that slides into the next negroni.",
+    blurbDe: "Brunch am Rondell, der in den nächsten Negroni übergeht.",
   },
   {
     city: "München",
     name: "Maxvorstadt",
     blurb: "Between the Pinakothek and the pub, student-relaxed.",
+    blurbDe: "Zwischen Pinakothek und Kneipe, studentisch entspannt.",
   },
   {
     city: "München",
     name: "Schwabing",
     blurb: "Bohemia in retirement, still wide awake.",
+    blurbDe: "Boheme im Ruhestand, immer noch wach.",
   },
   {
     city: "München",
     name: "Isarvorstadt / Flaucher",
     blurb: "In summer the city's living room — on the gravel riverbank.",
+    blurbDe: "Im Sommer das Wohnzimmer der Stadt — am Kiesufer.",
   },
   {
     city: "München",
     name: "Werksviertel",
     blurb: "Where the concrete dances: clubs, rooftops, a Ferris wheel.",
+    blurbDe: "Wo der Beton tanzt: Clubs, Rooftops, ein Riesenrad.",
   },
   {
     city: "München",
     name: "Westend / Schwanthalerhöhe",
     blurb: "A multicultural block with the tables nobody talks about.",
+    blurbDe: "Multikulti-Block mit den Tischen, von denen keiner spricht.",
   },
   {
     city: "München",
     name: "Haidhausen",
     blurb: "The French Quarter, quiet pride.",
+    blurbDe: "Franzosenviertel, leiser Stolz.",
   },
 ];

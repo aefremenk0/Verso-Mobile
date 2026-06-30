@@ -24,6 +24,13 @@ export const SPOTS: Spot[] = [
     lat: 48.1283,
     lng: 11.5743,
     tone: "brown",
+    de: {
+      hook: "Cortado zwischen Antiquariat und Aschenbecher.",
+      description:
+        "Halb Antiquariat, halb Café, ganz aus der Zeit gefallen. Cortado, ein vergilbtes Buch, ein Platz am Fenster. Niemand stört, niemand drängt.",
+      tags: ["Cortado", "Bücher", "Ruhig"],
+      imageNote: "// bücher, rauch, ruhe",
+    },
   },
   {
     id: "kellerkind",
@@ -43,6 +50,13 @@ export const SPOTS: Spot[] = [
     lat: 48.1304,
     lng: 11.5712,
     tone: "charcoal",
+    de: {
+      hook: "Treppe runter, Tür zu, Telefon weg.",
+      description:
+        "Eine Kellerbar, in der Handys an der Garderobe bleiben. Gedämpftes Licht, ehrliche Drinks, Gespräche, die länger werden, weil keiner aufs Display schaut.",
+      tags: ["Cocktails", "Intim", "Spät"],
+      imageNote: "// kein netz, mit absicht",
+    },
   },
   {
     id: "muc-gaertnerei",
@@ -62,6 +76,13 @@ export const SPOTS: Spot[] = [
     lat: 48.1308,
     lng: 11.5764,
     tone: "green",
+    de: {
+      hook: "Brunch am Rondell, bis der erste Spritz kommt.",
+      description:
+        "Ein heller Eckladen am Gärtnerplatz, in dem der Brunch nahtlos in den Aperitivo übergeht. Sauerteig, pochierte Eier, und irgendwann steht statt Kaffee ein Spritz auf dem Tisch.",
+      tags: ["Brunch", "Sauerteig", "Spritz"],
+      imageNote: "// langer tisch, später spritz",
+    },
   },
   {
     id: "foehnsturm",
@@ -81,6 +102,13 @@ export const SPOTS: Spot[] = [
     lat: 48.1487,
     lng: 11.5651,
     tone: "charcoal",
+    de: {
+      hook: "Negroni bei offenem Fenster, wenn der Wind passt.",
+      description:
+        "Eine kleine Bar, die bei Föhn die Fenster aufreißt und die Stadt reinlässt. Negroni, ein Plattenspieler, der Barchef sucht selbst die Seite aus.",
+      tags: ["Negroni", "Vinyl"],
+      imageNote: "// fenster auf bei föhn",
+    },
   },
   {
     id: "lichthof-muc",
@@ -100,6 +128,13 @@ export const SPOTS: Spot[] = [
     lat: 48.1512,
     lng: 11.5772,
     tone: "green",
+    de: {
+      hook: "Glasdach, Cappuccino, Studenten mit Romanen.",
+      description:
+        "Ein verglaster Innenhof zwischen zwei Altbauten, in dem das Licht von oben fällt. Cappuccino, dicke Romane, das leise Blättern von Seiten. Die Uni ist nah, die Ruhe näher.",
+      tags: ["Cappuccino", "Hell", "Ruhig"],
+      imageNote: "// licht von oben",
+    },
   },
   {
     id: "muc-leopold",
@@ -119,6 +154,13 @@ export const SPOTS: Spot[] = [
     lat: 48.1622,
     lng: 11.5862,
     tone: "brown",
+    de: {
+      hook: "Negroni, einen Steinwurf vom Englischen Garten.",
+      description:
+        "Eine schmale Bar in einer Schwabinger Seitenstraße, nah genug am Englischen Garten, um danach barfuß heimzugehen. Klassische Drinks, kein Schnickschnack, ein Wirt mit Gedächtnis.",
+      tags: ["Negroni", "Klassisch", "Spät"],
+      imageNote: "// vor dem garten, nach der arbeit",
+    },
   },
   {
     id: "isarliebe",
@@ -139,6 +181,13 @@ export const SPOTS: Spot[] = [
     lng: 11.5942,
     tone: "green",
     reserveUrl: "https://www.opentable.de/",
+    de: {
+      hook: "Wirtshaus von außen, Feinkost von innen.",
+      description:
+        "Außen Stammtisch und Hirschgeweih, innen eine Küche, die jeden Klassiker zerlegt und neu baut. Der Schweinsbraten kommt, aber nicht so, wie du denkst.",
+      tags: ["Bayrisch", "Modern"],
+      imageNote: "// schweinsbraten, aber anders",
+    },
   },
   {
     id: "weisswurst-um-zehn",
@@ -158,6 +207,14 @@ export const SPOTS: Spot[] = [
     lat: 48.1235,
     lng: 11.5798,
     tone: "brown",
+    de: {
+      name: "Weißwurst um Zehn",
+      hook: "Vor zwölf, im Stehen, mit Brezn.",
+      description:
+        "Eine Metzgerei mit Stehtischen, an denen die Weißwurst nach altem Gesetz nie das Mittagsläuten hört. Süßer Senf, frische Brezn, ein Weißbier dazu — fertig.",
+      tags: ["Weißwurst", "Bayrisch", "Günstig"],
+      imageNote: "// nie nach mittag",
+    },
   },
   {
     id: "muc-westendkueche",
@@ -178,6 +235,13 @@ export const SPOTS: Spot[] = [
     lng: 11.5392,
     tone: "brown",
     reserveUrl: "https://www.opentable.de/",
+    de: {
+      hook: "Multikulti-Block, ein Tisch, von dem keiner spricht.",
+      description:
+        "Im weniger touristischen Westend kocht ein kleines Team quer durch den Mittelmeerraum, je nachdem, was der Markt hergab. Zehn Tische, lange Abende, faire Preise.",
+      tags: ["Mediterran", "Saisonal", "Multikulti"],
+      imageNote: "// karte? was frisch war",
+    },
   },
   {
     id: "tramklub",
@@ -197,6 +261,13 @@ export const SPOTS: Spot[] = [
     lat: 48.1268,
     lng: 11.6041,
     tone: "charcoal",
+    de: {
+      hook: "Alte Remise, neue Anlage, kein Schild.",
+      description:
+        "Im Werksviertel hinterm Ostbahnhof läuft an Wochenenden eine Anlage, die zu gut ist für den Raum. Du findest es nur, wenn dir jemand sagt, wo — oder dem Bass folgst.",
+      tags: ["House", "Spät", "Underground"],
+      imageNote: "// gleise, dann bass",
+    },
   },
 ];
 

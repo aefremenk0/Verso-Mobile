@@ -8,6 +8,7 @@ import {
 } from "../src/components/KeyboardDoneBar";
 import { StripeTexture } from "../src/components/StripeTexture";
 import { MOCK_USER } from "../src/data/user";
+import { useT } from "../src/lib/i18n";
 
 // Screen 07c — Edit profile (UI only, no real saving in the MVP).
 
@@ -54,6 +55,7 @@ function Field({
 
 export default function ProfilBearbeiten() {
   const router = useRouter();
+  const t = useT();
   const [name, setName] = useState(MOCK_USER.name);
   const [username, setUsername] = useState(MOCK_USER.username);
   const [bio, setBio] = useState(MOCK_USER.bio);
@@ -69,7 +71,7 @@ export default function ProfilBearbeiten() {
         >
           <Text className="font-hk-extrabold text-[18px] text-ink">←</Text>
         </Pressable>
-        <Text className="font-hk-extrabold text-[28px] text-ink">Edit profile</Text>
+        <Text className="font-hk-extrabold text-[28px] text-ink">{t("Edit profile", "Profil bearbeiten")}</Text>
       </View>
 
       <ScrollView
@@ -93,15 +95,15 @@ export default function ProfilBearbeiten() {
             </View>
           </View>
           <Text className="mt-2.5 font-hk-semibold text-[12px] text-ink underline">
-            Change photo
+            {t("Change photo", "Foto ändern")}
           </Text>
         </View>
 
         {/* Fields */}
         <View className="gap-3.5">
-          <Field label="NAME" value={name} onChangeText={setName} />
-          <Field label="USERNAME" value={username} onChangeText={setUsername} />
-          <Field label="BIO" value={bio} onChangeText={setBio} multiline />
+          <Field label={t("NAME", "NAME")} value={name} onChangeText={setName} />
+          <Field label={t("USERNAME", "BENUTZERNAME")} value={username} onChangeText={setUsername} />
+          <Field label={t("BIO", "BIO")} value={bio} onChangeText={setBio} multiline />
         </View>
 
         {/* Save (at the bottom) */}
@@ -110,7 +112,7 @@ export default function ProfilBearbeiten() {
           onPress={() => router.back()}
           className="mt-8 items-center rounded-[16px] bg-accent py-4"
         >
-          <Text className="font-hk-extrabold text-[17px] text-accent-ink">Save</Text>
+          <Text className="font-hk-extrabold text-[17px] text-accent-ink">{t("Save", "Speichern")}</Text>
         </Pressable>
       </ScrollView>
 

@@ -38,6 +38,7 @@ export default {
     plugins: [
       "expo-router",
       "expo-font",
+      "expo-localization",
       [
         "@rnmapbox/maps",
         {

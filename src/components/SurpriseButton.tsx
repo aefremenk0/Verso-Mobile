@@ -6,6 +6,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import Svg, { Path } from "react-native-svg";
+import { useT } from "../lib/i18n";
 
 // "Surprise me" — draws a random place. Fits the hidden-gem core:
 // dark pill, yellow sparkle, brief press-bounce (Reanimated).
@@ -22,6 +23,7 @@ function Sparkle({ size = 16, color = "#FFE500" }: { size?: number; color?: stri
 }
 
 export function SurpriseButton({ onPress }: { onPress: () => void }) {
+  const t = useT();
   const scale = useSharedValue(1);
   const style = useAnimatedStyle(() => ({ transform: [{ scale: scale.value }] }));
 
@@ -35,12 +37,15 @@ export function SurpriseButton({ onPress }: { onPress: () => void }) {
         onPressOut={() => {
           scale.value = withSpring(1, { damping: 12, stiffness: 220 });
         }}
-        accessibilityLabel="Surprise me — show a random place"
+        accessibilityLabel={t(
+          "Surprise me — show a random place",
+          "Überrasch mich — zufälligen Ort zeigen",
+        )}
         className="flex-row items-center justify-center gap-2 rounded-pill bg-night py-3"
       >
         <Sparkle />
         <Text className="font-hk-extrabold text-[15px] text-screen">
-          Surprise me
+          {t("Surprise me", "Überrasch mich")}
         </Text>
       </Pressable>
     </Animated.View>

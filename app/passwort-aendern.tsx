@@ -6,6 +6,7 @@ import {
   KeyboardDoneBar,
   KEYBOARD_DONE_ID,
 } from "../src/components/KeyboardDoneBar";
+import { useT } from "../src/lib/i18n";
 
 // Screen 07d — Change password (UI only, no real logic in the MVP).
 
@@ -22,6 +23,7 @@ function PwField({
   showToggle?: boolean;
 }) {
   const [visible, setVisible] = useState(false);
+  const t = useT();
   return (
     <View>
       <Text className="mb-1.5 font-hk-semibold text-[10px] tracking-[1.5px] text-ink-3">
@@ -43,7 +45,7 @@ function PwField({
         {showToggle ? (
           <Pressable onPress={() => setVisible((v) => !v)} hitSlop={8}>
             <Text className="font-hk-semibold text-[11px] tracking-[0.5px] text-ink-3">
-              {visible ? "HIDE" : "SHOW"}
+              {visible ? t("HIDE", "VERBERGEN") : t("SHOW", "ZEIGEN")}
             </Text>
           </Pressable>
         ) : null}
@@ -54,6 +56,7 @@ function PwField({
 
 export default function PasswortAendern() {
   const router = useRouter();
+  const t = useT();
   const [current, setCurrent] = useState("");
   const [next, setNext] = useState("");
   const [confirm, setConfirm] = useState("");
@@ -69,7 +72,7 @@ export default function PasswortAendern() {
         >
           <Text className="font-hk-extrabold text-[18px] text-ink">←</Text>
         </Pressable>
-        <Text className="font-hk-extrabold text-[28px] text-ink">Change password</Text>
+        <Text className="font-hk-extrabold text-[28px] text-ink">{t("Change password", "Passwort ändern")}</Text>
       </View>
 
       <ScrollView
@@ -78,24 +81,31 @@ export default function PasswortAendern() {
       >
         <View className="gap-3.5">
           <PwField
-            label="CURRENT PASSWORD"
+            label={t("CURRENT PASSWORD", "AKTUELLES PASSWORT")}
             value={current}
             onChangeText={setCurrent}
             showToggle
           />
-          <PwField label="NEW PASSWORD" value={next} onChangeText={setNext} />
           <PwField
-            label="CONFIRM NEW PASSWORD"
+            label={t("NEW PASSWORD", "NEUES PASSWORT")}
+            value={next}
+            onChangeText={setNext}
+          />
+          <PwField
+            label={t("CONFIRM NEW PASSWORD", "NEUES PASSWORT BESTÄTIGEN")}
             value={confirm}
             onChangeText={setConfirm}
           />
         </View>
 
         <Text className="mt-3.5 font-hk-medium text-[12px] leading-[18px] text-ink-2">
-          At least 8 characters, including a number and a special character.
+          {t(
+            "At least 8 characters, including a number and a special character.",
+            "Mindestens 8 Zeichen, davon eine Zahl und ein Sonderzeichen.",
+          )}
         </Text>
         <Text className="mt-4 self-start font-hk-semibold text-[12px] text-ink underline">
-          Forgot password?
+          {t("Forgot password?", "Passwort vergessen?")}
         </Text>
 
         {/* Update (at the bottom) */}
@@ -105,7 +115,7 @@ export default function PasswortAendern() {
           className="mt-8 items-center rounded-[16px] bg-accent py-4"
         >
           <Text className="font-hk-extrabold text-[17px] text-accent-ink">
-            Update password
+            {t("Update password", "Passwort aktualisieren")}
           </Text>
         </Pressable>
       </ScrollView>

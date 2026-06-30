@@ -6,6 +6,7 @@ import {
   Text,
   View,
 } from "react-native";
+import { useT } from "../lib/i18n";
 
 // Shared ID: TextInputs point to this bar via `inputAccessoryViewID`.
 export const KEYBOARD_DONE_ID = "verso-kb-done";
@@ -15,6 +16,7 @@ export const KEYBOARD_DONE_ID = "verso-kb-done";
 // renders (there the system back button closes the keyboard).
 // Render ONCE per screen; all text fields on the screen share the ID.
 export function KeyboardDoneBar() {
+  const t = useT();
   if (Platform.OS !== "ios") return null;
   return (
     <InputAccessoryView nativeID={KEYBOARD_DONE_ID}>
@@ -25,9 +27,11 @@ export function KeyboardDoneBar() {
         <Pressable
           onPress={() => Keyboard.dismiss()}
           hitSlop={8}
-          accessibilityLabel="Close keyboard"
+          accessibilityLabel={t("Close keyboard", "Tastatur schließen")}
         >
-          <Text className="font-hk-bold text-[15px] text-ink">Done</Text>
+          <Text className="font-hk-bold text-[15px] text-ink">
+            {t("Done", "Fertig")}
+          </Text>
         </Pressable>
       </View>
     </InputAccessoryView>
