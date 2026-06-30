@@ -115,7 +115,8 @@ app/                      Screens (Expo Router – Dateiname = Route)
   gespeichert.tsx         06 Gespeichert
   geheimtipp.tsx          08 Geheimtipp (Laden -> Reveal, Reanimated, modal)
   insider.tsx             „Verso Insider"-Hinweis (Feature kommt noch, modal)
-  settings.tsx            07 Einstellungen (+ Abmelden)
+  settings.tsx            07 Einstellungen (+ Sprach-Toggle, Abmelden)
+  legal.tsx               Rechtliches & Hilfe (Mock-Text, zweisprachig)
   profil-bearbeiten.tsx   07c Profil bearbeiten (UI)
   passwort-aendern.tsx    07d Passwort ändern (UI)
 
@@ -506,7 +507,18 @@ npm test               # Unit-Tests der reinen Logik (vitest, src/**)
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-30 · Emoji-Sprach-Toggle (Slide+Pop) + Feed-Karten-Adresse alignt
+### (dieser Commit) · 2026-06-30 · Einstellungen gestreckt + „S"-Fix + Legal-Screen (zweisprachig)
+- **Einstellungen:** Titel „Settings/Einstellungen" wurde oben leicht
+  abgeschnitten → `lineHeight: 38` + `includeFontPadding:false`. Seite +
+  weiße Karten **gestreckt**: ScrollView `flexGrow:1`, höhere Zeilen
+  (`py-[18px]`/`py-[17px]`), und **flexible Spacer** zwischen ACCOUNT /
+  NOTIFICATIONS / APP / Abmelden → Sektionen verteilen sich gleichmäßig über
+  die Seitenhöhe statt oben zu klumpen.
+- **Neuer `app/legal.tsx`** (Rechtliches & Hilfe): zweisprachiger **Mock-Text**
+  (HILFE & FAQ, IMPRESSUM, DATENSCHUTZ, NUTZUNGSBEDINGUNGEN, KONTAKT) im
+  Verso-Ton; verlinkt aus Einstellungen, im Root-Stack registriert.
+
+### 5b92080 · 2026-06-30 · Emoji-Sprach-Toggle (Slide+Pop) + Feed-Karten-Adresse alignt
 - **`LanguageToggle`** (neu): Emoji-Toggle **EN 🇬🇧 / DE 🇩🇪** in den Einstellungen
   (ersetzt die Text-Zeile). **Slide + Pop:** gelber Selector gleitet per Spring
   auf die gewählte Seite, die neue Flagge „poppt" (Scale-Bounce); Selektions-

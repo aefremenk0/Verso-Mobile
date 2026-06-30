@@ -46,7 +46,7 @@ function NavRow({
   return (
     <Pressable
       onPress={onPress}
-      className={`flex-row items-center justify-between px-4 py-3.5 ${
+      className={`flex-row items-center justify-between px-4 py-[18px] ${
         last ? "" : "border-b border-black/5"
       }`}
     >
@@ -92,13 +92,24 @@ export default function Settings() {
         >
           <Text className="font-hk-extrabold text-[18px] text-ink">←</Text>
         </Pressable>
-        <Text className="font-hk-extrabold text-title-md text-ink">
+        <Text
+          className="font-hk-extrabold text-title-md text-ink"
+          style={{ lineHeight: 38, includeFontPadding: false }}
+        >
           {t("Settings", "Einstellungen")}
         </Text>
       </View>
 
       <ScrollView
-        contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 24 }}
+        contentContainerStyle={{
+          paddingHorizontal: 24,
+          paddingTop: 6,
+          paddingBottom: 20,
+          // Fill at least the full height so the sections can spread evenly
+          // (the flexible spacers below push them apart instead of clustering
+          // at the top).
+          flexGrow: 1,
+        }}
         showsVerticalScrollIndicator={false}
       >
         {/* ACCOUNT */}
@@ -118,24 +129,27 @@ export default function Settings() {
           />
         </View>
 
+        {/* Flexible gap -> spreads the sections evenly over the page height. */}
+        <View style={{ flexGrow: 1, minHeight: 22 }} />
+
         {/* NOTIFICATIONS */}
-        <Text className="mb-2.5 mt-7 font-hk-semibold text-[10px] tracking-[1.5px] text-ink-3">
+        <Text className="mb-2.5 font-hk-semibold text-[10px] tracking-[1.5px] text-ink-3">
           {t("NOTIFICATIONS", "BENACHRICHTIGUNGEN")}
         </Text>
         <View className="overflow-hidden rounded-[18px] border border-black/[0.08] bg-surface">
-          <View className="flex-row items-center justify-between border-b border-black/5 px-4 py-3">
+          <View className="flex-row items-center justify-between border-b border-black/5 px-4 py-[17px]">
             <Text className="font-hk-extrabold text-[15px] text-ink">
               {t("Hidden gem of the week", "Geheimtipp der Woche")}
             </Text>
             <Toggle value={tippN} onChange={() => setTippN((v) => !v)} />
           </View>
-          <View className="flex-row items-center justify-between border-b border-black/5 px-4 py-3">
+          <View className="flex-row items-center justify-between border-b border-black/5 px-4 py-[17px]">
             <Text className="font-hk-extrabold text-[15px] text-ink">
               {t("New spots nearby", "Neue Spots in der Nähe")}
             </Text>
             <Toggle value={spotsN} onChange={() => setSpotsN((v) => !v)} />
           </View>
-          <View className="flex-row items-center justify-between px-4 py-3">
+          <View className="flex-row items-center justify-between px-4 py-[17px]">
             <Text className="font-hk-extrabold text-[15px] text-ink">
               {t("Events & dates", "Events & Termine")}
             </Text>
@@ -143,13 +157,15 @@ export default function Settings() {
           </View>
         </View>
 
+        <View style={{ flexGrow: 1, minHeight: 22 }} />
+
         {/* APP */}
-        <Text className="mb-2.5 mt-7 font-hk-semibold text-[10px] tracking-[1.5px] text-ink-3">
+        <Text className="mb-2.5 font-hk-semibold text-[10px] tracking-[1.5px] text-ink-3">
           APP
         </Text>
         <View className="overflow-hidden rounded-[18px] border border-black/[0.08] bg-surface">
           {/* Language row — emoji toggle flips the whole app EN <-> DE. */}
-          <View className="flex-row items-center justify-between border-b border-black/5 px-4 py-2.5">
+          <View className="flex-row items-center justify-between border-b border-black/5 px-4 py-3">
             <Text className="font-hk-extrabold text-[15px] text-ink">
               {t("Language", "Sprache")}
             </Text>
@@ -159,11 +175,17 @@ export default function Settings() {
             label={t("Appearance", "Erscheinungsbild")}
             value={t("Light", "Hell")}
           />
-          <NavRow label={t("Legal & help", "Rechtliches & Hilfe")} last />
+          <NavRow
+            label={t("Legal & help", "Rechtliches & Hilfe")}
+            last
+            onPress={() => router.push("/legal")}
+          />
         </View>
 
+        <View style={{ flexGrow: 1, minHeight: 28 }} />
+
         {/* Log out */}
-        <View className="mt-8 items-center">
+        <View className="items-center">
           <Pressable
             onPress={abmelden}
             className="w-full items-center rounded-[16px] border py-4"
