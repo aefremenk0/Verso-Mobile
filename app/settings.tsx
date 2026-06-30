@@ -1,8 +1,15 @@
 import { useRouter } from "expo-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
+import Animated, {
+  interpolateColor,
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+} from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LanguageToggle } from "../src/components/LanguageToggle";
+import { tapSelection } from "../src/lib/haptics";
 import { useT } from "../src/lib/i18n";
 import { useGeheimtipp } from "../src/store/geheimtipp";
 import { useInterests } from "../src/store/interests";
@@ -13,21 +20,61 @@ import { useSaved } from "../src/store/saved";
 // in the MVP). The "Language" row toggles the whole app between English and
 // German. "Log out" resets the mock state and leads to the Welcome screen.
 
-// On/off switch in the Verso style (yellow = on).
+// On/off switch in the Verso style (yellow = on). Animated: the knob springs
+// across and track + knob colors crossfade (Reanimated).
+const TOGGLE_TRAVEL = 17; // track 42 - padding 2*2.5 - knob 20 = 17px
+
 function Toggle({ value, onChange }: { value: boolean; onChange: () => void }) {
+  const p = useSharedValue(value ? 1 : 0);
+
+  useEffect(() => {
+    p.value = withSpring(value ? 1 : 0, {
+      damping: 15,
+      stiffness: 220,
+      mass: 0.6,
+    });
+  }, [value, p]);
+
+  const trackStyle = useAnimatedStyle(() => ({
+    backgroundColor: interpolateColor(
+      p.value,
+      [0, 1],
+      ["rgba(26,26,26,0.16)", "#FFE500"],
+    ),
+  }));
+  const knobStyle = useAnimatedStyle(() => ({
+    transform: [{ translateX: p.value * TOGGLE_TRAVEL }],
+    backgroundColor: interpolateColor(p.value, [0, 1], ["#FFFFFF", "#1A1A1A"]),
+  }));
+
   return (
     <Pressable
-      onPress={onChange}
-      className="h-[25px] w-[42px] justify-center rounded-pill px-[2.5px]"
-      style={{ backgroundColor: value ? "#FFE500" : "rgba(26,26,26,0.16)" }}
+      onPress={() => {
+        tapSelection(); // subtle "tick"
+        onChange();
+      }}
+      accessibilityRole="switch"
+      accessibilityState={{ checked: value }}
     >
-      <View
-        className="h-[20px] w-[20px] rounded-pill"
-        style={{
-          backgroundColor: value ? "#1A1A1A" : "#FFFFFF",
-          alignSelf: value ? "flex-end" : "flex-start",
-        }}
-      />
+      <Animated.View
+        style={[
+          {
+            height: 25,
+            width: 42,
+            borderRadius: 999,
+            justifyContent: "center",
+            paddingHorizontal: 2.5,
+          },
+          trackStyle,
+        ]}
+      >
+        <Animated.View
+          style={[
+            { height: 20, width: 20, borderRadius: 999 },
+            knobStyle,
+          ]}
+        />
+      </Animated.View>
     </Pressable>
   );
 }

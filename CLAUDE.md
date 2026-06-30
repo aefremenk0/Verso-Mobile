@@ -509,7 +509,13 @@ npm test               # Unit-Tests der reinen Logik (vitest, src/**)
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-30 · Gespeichert: Wisch-Aktionen wachsen mit (YouTube-Style)
+### (dieser Commit) · 2026-06-30 · Einstellungen: Notification-Toggles animiert
+- Die On/Off-Schalter (NOTIFICATIONS) waren statisch (Knopf sprang) → jetzt
+  **Reanimated**: der Knopf **federt** per `withSpring` rüber, Track- und
+  Knopf-Farbe **crossfaden** (`interpolateColor`). `tapSelection`-Haptik +
+  `accessibilityRole="switch"` ergänzt. `TOGGLE_TRAVEL = 17px`.
+
+### 49ab951 · 2026-06-30 · Gespeichert: Wisch-Aktionen wachsen mit (YouTube-Style)
 - **Swipe-Zeilen neu auf Reanimated-Pan** (statt `Swipeable`): die farbige
   **Teilen-/Löschen-Box wächst mit dem Finger** — ihre Breite folgt der
   Wisch-Distanz (`width = ±translationX`), Icon am äußeren Rand. Wie in der
