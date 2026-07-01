@@ -407,6 +407,53 @@ dass Kuration nie käuflich wirkt.
 
 ---
 
+## Geplante Integrationen: RevenueCat + Supabase (noch NICHT verbunden)
+
+> Richtungsentscheidung für den Weg vom Mock-MVP zum echten Backend. Aktuell ist
+> **alles Mock/in-memory** (`src/data/*`, React-Context-Stores) — das soll später
+> durch **Supabase** (Backend/Auth/DB) und **RevenueCat** (Abo/IAP für Insider)
+> ersetzt werden. Beides ist **Expo-tauglich**, braucht aber (wie die Karte)
+> einen **Dev/Release Build** (native Module → nicht in Expo Go).
+
+### Supabase — Backend, Auth, Persistenz
+- **Ersetzt die Mock-Daten:** `src/data/spots.ts` / `cities.ts` / `user.ts` →
+  Tabellen `spots`, `neighborhoods`, `geheimtipp_by_city`, `profiles`. Die CSVs
+  in `data-collection/` sind bereits im Spot-Schema → als Import-Vorlage nutzen.
+- **Ersetzt „Auth ist nur UI":** `app/register.tsx` → echtes Supabase Auth
+  (E-Mail/OTP, Apple/Google Sign-In). Danach `MOCK_USER` durch das echte Profil.
+- **Ersetzt die in-memory Stores** (Persistenz-Falle im Backlog): `store/saved`,
+  `store/geheimtipp`, `store/city`, `store/interests` schreiben/lesen dann aus
+  Supabase (bzw. `AsyncStorage` als Offline-Cache). API hinter den bestehenden
+  Store-Hooks kapseln, damit die Screens sich kaum ändern.
+- **Bibliothek:** `@supabase/supabase-js` + `react-native-url-polyfill`; Keys über
+  `EXPO_PUBLIC_SUPABASE_URL` / `EXPO_PUBLIC_SUPABASE_ANON_KEY` (in `app.config.js`
+  bzw. EAS-Secrets, nicht ins Repo).
+- **Wichtig:** die lokalisierten Datenfelder beibehalten (`Spot.de`, `blurbDe`,
+  `teaserDe`) → als Spalten in der DB; `spotText`/`neighborhoodBlurb` bleiben.
+
+### RevenueCat — Abo für „Verso Insider"
+- **Ersetzt den Mock-Insider-Flag:** `src/store/insider.tsx` (`useInsider`,
+  aktuell Default aus + Mock-Vorschau in `app/insider.tsx`) → RevenueCat-
+  **Entitlement** („insider"). `isInsider = customerInfo.entitlements.active`.
+- **Schaltet frei:** die Insider-Szenen (Sport, Live Events) im `SceneToggle`
+  und die geplanten Premium-Features (unbegrenzte Geheimtipps, verborgene Ebene,
+  Türöffner — siehe „Verso Insider"-Abschnitt).
+- **`app/insider.tsx`** wird vom Mock-Upsell zur echten **Paywall**
+  (RevenueCat-Angebote/Preise, „Kaufen"/„Wiederherstellen").
+- **Bibliothek:** `react-native-purchases`; Produkte/Preise in App Store Connect
+  (Abo-Gruppe) + RevenueCat-Dashboard; API-Key über Env/EAS-Secret. StoreKit-
+  Käufe testen via **TestFlight-Sandbox**.
+- **Leitplanke bleibt:** Kuration nie käuflich (siehe „Monetarisierung") — Geld
+  nur über Insider-Abo/Türöffner, keine Feed-Werbung.
+
+### Reihenfolge (Vorschlag)
+1. **Supabase** zuerst (Daten + Auth + Persistenz) — größter Hebel, entschärft die
+   ⚠️-Backlog-Punkte (Persistenz/Backend/Auth).
+2. **RevenueCat** danach (baut auf echtem Auth/Profil auf; Insider-Flag → Abo).
+3. Erst dann die restlichen Premium-Features hinter das Entitlement hängen.
+
+---
+
 ## Aktueller Stand
 
 **Pilot-Phase: nur München ist freigeschaltet** (`LIVE_CITIES` in `cities.ts`).
@@ -479,15 +526,17 @@ Gespeichert, Profil, Einstellungen, Geheimtipp) + Legal + Ort-vorschlagen.
   (`lib/spotMeta.ts` + `MiniMap`). Alles Expo-Go-fest, ohne GPS-Prompt.
 
 ### 🔴 Größer (strategisch / Architektur)
+> **Alle drei Punkte → geplant via Supabase + RevenueCat** (siehe Abschnitt
+> „Geplante Integrationen").
 - **⚠️⚠️ Persistenz fehlt** — *wichtigster Punkt.* Alle Stores (`saved`, `scene`,
   `city`, `geheimtipp`) sind rein in-memory → App schließen = gemerkte Orte,
-  abgeholter Tipp, gewählte Stadt sind weg. Lösung: `AsyncStorage`/MMKV hinter
-  die Stores. Überschaubarer Aufwand, riesiger gefühlter Unterschied.
-- **⚠️ Kein Backend / Daten nur als Mock**: Orte ändern sich, aber die Liste
-  steckt im App-Bundle → Aktualisieren nur per App-Store-Update. (= frühere
-  Google-Sheets/CMS-Diskussion.)
-- **⚠️ Auth ist nur UI** (`register` → Feed). Für Sync/Personalisierung später
-  echtes Auth nötig.
+  abgeholter Tipp, gewählte Stadt sind weg. Lösung: **Supabase** (+ `AsyncStorage`
+  als Offline-Cache) hinter die Stores. Riesiger gefühlter Unterschied.
+- **⚠️ Kein Backend / Daten nur als Mock**: Orte stecken im App-Bundle →
+  Aktualisieren nur per App-Store-Update. Lösung: **Supabase**-Tabellen
+  (CSV-Vorlagen in `data-collection/` als Import).
+- **⚠️ Auth ist nur UI** (`register` → Feed). Lösung: **Supabase Auth**.
+  Insider-Freischaltung (`useInsider`) später über **RevenueCat**-Entitlement.
 
 ### ⚠️ Aktiv geflaggte Risiken / latente Fallen
 1. (erledigt) ~~**Listen ohne Virtualisierung**~~: Feed & Gespeichert nutzen jetzt
