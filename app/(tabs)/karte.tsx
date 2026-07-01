@@ -110,6 +110,10 @@ export default function Karte() {
           selectedId={card?.id}
           onSelect={onSelectSpot}
           onClearSelection={() => setSelected(null)}
+          // Native map insets (expo-maps only): clear the floating category bar
+          // on top and lift the Apple logo above the floating bottom nav.
+          topInset={58}
+          bottomInset={insets.bottom + 74}
         />
         <View
           pointerEvents="box-none"

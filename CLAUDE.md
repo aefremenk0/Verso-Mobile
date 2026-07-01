@@ -514,7 +514,23 @@ npm test               # Unit-Tests der reinen Logik (vitest, src/**)
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-07-01 · Echte Karte auf Apple Maps (expo-maps) statt Mapbox
+### (dieser Commit) · 2026-07-01 · App-Icon + Apple-Maps-Controls einrücken
+- **App-Icon** ergänzt (Prebuild-Warnung „No icon" behoben): `assets/icon.png`
+  (1024, **deckend** dunkel, gelbes kursives „v.", KEINE runden Ecken — iOS
+  maskiert selbst) + `assets/adaptive-icon.png` (Android-Foreground, transparent,
+  „v." kleiner für die Safe-Zone) auf dunklem `backgroundColor`. In
+  `app.config.js` als `icon` / `android.adaptiveIcon` verdrahtet. Gerendert mit
+  DM Serif Display italic (2× Supersampling), gleiche Marke wie das Discord-Icon.
+  **→ Icon erscheint erst nach nativem Rebuild** (`npx expo run:ios`).
+- **Apple-Maps-Controls eingerückt:** expo-maps hat KEIN Padding/Inset-API; die
+  nativen Controls (Positions-Button oben, **Apple-Logo unten** = Pflicht sichtbar)
+  hängen am Map-View-Frame. Lösung: `CityMap` bekommt `topInset`/`bottomInset`,
+  die im expo-maps-Zweig als `marginTop`/`marginBottom` den Frame schrumpfen →
+  Positions-Button unter der Kategorie-Leiste, Apple-Logo über der Bottom-Nav.
+  `karte.tsx` gibt `topInset={58}` / `bottomInset={insets.bottom+74}`. Nur echte
+  Karte; Fallback (Expo Go) bleibt full-bleed. (JS-only → Reload reicht.)
+
+### 1eeff0c · 2026-07-01 · Echte Karte auf Apple Maps (expo-maps) statt Mapbox
 - **Mapbox → `expo-maps` (~0.12.10):** die echte Karte ist jetzt **Apple Maps
   auf iOS** (kein Token nötig), Google Maps auf Android. `@rnmapbox/maps`
   deinstalliert, Mapbox-Plugin + `MAPBOX_*`-Tokens aus `app.config.js` raus,

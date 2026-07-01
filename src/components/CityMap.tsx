@@ -236,6 +236,16 @@ interface CityMapProps {
   onSelect: (spot: Spot) => void;
   /** Double-tap resets the view -> also clear the single selection. */
   onClearSelection?: () => void;
+  /**
+   * Insets for the REAL native map only (expo-maps). Apple/Google pin their
+   * controls (location button top, Apple logo bottom) to the map view's frame,
+   * and there's no padding API — so we shrink the frame: `topInset` pushes the
+   * location button below the floating category bar; `bottomInset` lifts the
+   * Apple logo above the floating bottom nav (required by Apple). Ignored by the
+   * Expo Go fallback map.
+   */
+  topInset?: number;
+  bottomInset?: number;
 }
 
 // Once per session: on the first open of the map, show the double-tap gesture
@@ -247,6 +257,8 @@ export function CityMap({
   selectedId,
   onSelect,
   onClearSelection,
+  topInset = 0,
+  bottomInset = 0,
 }: CityMapProps) {
   const t = useT();
   const lang = useLang();
@@ -314,14 +326,20 @@ export function CityMap({
 
     const MapView =
       Platform.OS === "ios" ? ExpoMaps.AppleMaps.View : ExpoMaps.GoogleMaps.View;
+    // Inset the frame so the native controls clear our floating chrome: the
+    // location button sits below the category bar (top) and the Apple logo above
+    // the bottom nav (bottom). Background behind the insets stays cream.
     return (
-      <MapView
-        style={{ flex: 1 }}
-        cameraPosition={cameraPosition}
-        markers={markers}
-        onMarkerClick={onMarkerClick}
-        onMapClick={onMapClick}
-      />
+      <View className="flex-1 bg-screen">
+        <MapView
+          style={{ flex: 1, marginTop: topInset, marginBottom: bottomInset }}
+          cameraPosition={cameraPosition}
+          markers={markers}
+          onMarkerClick={onMarkerClick}
+          onMapClick={onMapClick}
+          uiSettings={{ scaleBarEnabled: false }}
+        />
+      </View>
     );
   }
 

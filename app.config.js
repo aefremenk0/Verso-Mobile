@@ -17,6 +17,9 @@ export default {
     scheme: "verso",
     userInterfaceStyle: "light",
     newArchEnabled: true,
+    // App icon: yellow italic "v." on dark (design/Verso_App_Icon). iOS masks
+    // the square automatically (no pre-rounded corners in the asset).
+    icon: "./assets/icon.png",
     splash: {
       backgroundColor: "#1A1A1A",
       resizeMode: "contain",
@@ -28,7 +31,9 @@ export default {
     android: {
       package: "app.verso.mobile",
       adaptiveIcon: {
-        backgroundColor: "#FFE500",
+        // Yellow "v." foreground on the dark brand background.
+        foregroundImage: "./assets/adaptive-icon.png",
+        backgroundColor: "#1A1A1A",
       },
     },
     web: {
