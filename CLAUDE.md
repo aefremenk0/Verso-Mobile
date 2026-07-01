@@ -176,6 +176,10 @@ src/
                           Bildschirmbreite (clamp 0.84–1.12), für SE…Pro Max
   lib/localized.ts        Daten-Lokalisierung: spotText / neighborhoodBlurb /
                           geheimtippTeaser (EN-Basis, DE-Variante)  (RN-frei)
+  lib/supabase.ts         Supabase-Client (URL/Key aus app.config extra);
+                          `hasSupabase`-Flag. Noch nicht von Screens genutzt.
+supabase/                 SQL: migrations/0001_init.sql (Schema+RLS), seed.sql
+scripts/gen-seed.ts       erzeugt supabase/seed.sql aus src/data/* (via tsx)
   store/language.tsx      Sprach-Store (Default = Gerätesprache, sonst EN),
                           Settings-Toggle schaltet zur Laufzeit  (in-memory)
   store/scene.tsx         aktuelle Szene (Feiern vs. Essen), app-weit
@@ -585,6 +589,21 @@ npm test               # Unit-Tests der reinen Logik (vitest, src/**)
 
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
+
+### (dieser Commit) · 2026-07-01 · Supabase-Fundament: Client + Schema + Seed
+- **Supabase-Client** (`src/lib/supabase.ts`): `@supabase/supabase-js` (2.x) +
+  `react-native-url-polyfill`. URL + publishable key in `app.config.js` `extra`
+  (Key ist public by design; Schutz via RLS). `hasSupabase`-Flag für Fallback.
+  Reines JS → **läuft auch in Expo Go**.
+- **Schema + RLS** (`supabase/migrations/0001_init.sql`): Tabellen `spots`,
+  `neighborhoods`, `geheimtipp_by_city`, `profiles` (inkl. DE-Felder: `blurb_de`,
+  `teaser_de`, `spots.de` jsonb). Katalog öffentlich lesbar, `profiles` privat.
+- **Seed** (`supabase/seed.sql`, generiert via `scripts/gen-seed.ts` mit `tsx`
+  aus `src/data/*`): 8 Viertel, 21 Spots, 1 Geheimtipp — Upserts, re-runnbar.
+- **Noch NICHT verbunden:** die Screens lesen weiter aus dem Mock (`src/data/*`).
+  Nächster Schritt: Feed/Karte/Detail auf DB-Reads umstellen (mit Mock-Fallback),
+  dann Auth, dann Persistenz. **Setup:** im Supabase-SQL-Editor erst
+  `0001_init.sql`, dann `seed.sql` ausführen.
 
 ### 238c575 · 2026-07-01 · Spot-Detail „Auf Karte" → Verso-Karte statt native Maps
 - Der **Mini-Karten-Tap** im Spot-Detail (`MiniMap`) öffnet jetzt **Versos

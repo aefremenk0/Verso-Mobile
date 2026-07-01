@@ -51,5 +51,11 @@ export default {
       bundler: "metro",
       output: "single",
     },
+    // Supabase config. The publishable key is public by design (ships in the
+    // app); write access is protected by Row Level Security, not by secrecy.
+    extra: {
+      supabaseUrl: "https://nzdhnfkoegzcjpkkmbmm.supabase.co",
+      supabaseKey: "sb_publishable_zQEIeJRC-xcoRgnGat6oEQ_nV4km4UG",
+    },
   },
 };
