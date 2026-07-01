@@ -56,6 +56,9 @@ Expo **SDK 54**. Diese Versionen sind bewusst gepinnt — siehe Stolperfallen.
 | react-native-gesture-handler | ~2.28.0 | Swipe-Zeilen (Gespeichert), Expo-Go-ok |
 | react-native-svg | **15.12.1** (exakt) | Logos/Vektorgrafik, in Expo Go |
 | react-native-maps | 1.20.1 | echte Karte: Apple Maps (iOS)/Google (Android), `mapPadding`, **NUR Dev Build** |
+| react-native-purchases | **10.4.0** (exakt) | RevenueCat (Insider-Abo), natives Modul, **NUR Dev Build** |
+| @supabase/supabase-js | 2.x | Backend/Auth/DB (Expo-Go-fest) |
+| @react-native-async-storage/async-storage | 2.2.0 | Session + Offline-Cache |
 | @expo-google-fonts/hanken-grotesk | ^0.4.x | |
 | expo-localization | ~17.0.9 | Gerätesprache (i18n-Default) |
 | expo-image, expo-font, expo-splash-screen | SDK-54-Stände | |
@@ -203,11 +206,14 @@ app.config.js             Expo-Config (ersetzt app.json; iOS-Location-Permission
                           interests.tsx (Onboarding-Vibes, max 3) — die drei
                           sind pro Nutzer PERSISTENT (Supabase profiles +
                           AsyncStorage via usePersistedList), Gast = Mock;
-                          insider.tsx (Verso-Insider-Flag, Default aus;
-                          schaltet Sport-/Live-Events-Szenen frei; in-memory)
+                          insider.tsx (Verso-Insider: RevenueCat-Entitlement
+                          „insider" im Dev Build, sonst Mock-Vorschau; schaltet
+                          Sport-/Live-Events-Szenen frei; purchase/restore)
   store/usePersistedList.ts  Hook: String-Liste ↔ AsyncStorage + profiles-Spalte
   lib/profile.ts          Persistenz-Helfer (loadLocal/saveLocal/fetch/patch,
                           fail-soft)
+  lib/revenuecat.ts       RevenueCat-Wrapper (hasRevenueCat-Flag; Key aus extra;
+                          require-Guard → Expo-Go-fest, nativ nur im Dev Build)
   lib/maps.ts             Deep-Links Apple/Google Maps
   theme.ts                Design-Tokens als JS (Fonts, Farben, Schatten)
 
@@ -603,7 +609,27 @@ npm test               # Unit-Tests der reinen Logik (vitest, src/**)
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-07-01 · Persistenz: saved/interests/geheimtipp in die DB (+ Demo-Login)
+### (dieser Commit) · 2026-07-01 · RevenueCat: Insider-Entitlement + Paywall (Dev Build)
+- **`useInsider` ist jetzt echt statt Mock (im Dev Build):** `src/store/insider.tsx`
+  spiegelt das RevenueCat-**Entitlement „insider"** — `isInsider =
+  customerInfo.entitlements.active.insider`. Kauf/Wiederherstellen über den Store
+  (`purchase`/`restore`), RevenueCat-Identität an den Supabase-User gekoppelt
+  (`Purchases.logIn(user.id)` / `logOut`).
+- **Expo-Go-fest via Fallback:** `src/lib/revenuecat.ts` lädt
+  `react-native-purchases` (10.4.0) **nur außerhalb Expo Go** (`require`-Guard über
+  `Constants.executionEnvironment`) → in Expo Go bleibt die **Mock-Vorschau**
+  (`setInsider(true)`) wie bisher. `hasRevenueCat`-Flag steuert den Modus.
+- **`app/insider.tsx` = echte Paywall** wenn verfügbar: listet die Offering-Pakete
+  mit Preis, Kauf-Button + „Käufe wiederherstellen", Fehleranzeige. Ohne Paywall
+  (Expo Go) unverändert die Vorschau-Umschaltung.
+- **Key** in `app.config.js` `extra.revenueCatIosKey` (RevenueCat **Test-Store**-
+  Key `test_…`, public by design) + `revenueCatEntitlement: "insider"`.
+- **Braucht Dev Build** (natives Modul): `npx expo run:ios`. Im RevenueCat-
+  Dashboard ein Entitlement `insider` + eine Offering anlegen; echte Käufe via
+  Test-Store bzw. später App-Store-Connect-Produkte + TestFlight-Sandbox.
+- tsc sauber, 18/18 vitest, iOS-Bundle baut.
+
+### 7ac4c70 · 2026-07-01 · Persistenz: saved/interests/geheimtipp in die DB (+ Demo-Login)
 - **Stores sind nicht mehr in-memory:** `saved`, `interests` und `geheimtipp`
   werden jetzt **pro angemeldetem Nutzer persistiert** — Supabase `profiles`
   (Spalten `saved_spot_ids`, `interests`, `geheimtipp_abgeholt`) als Quelle der

@@ -53,9 +53,15 @@ export default {
     },
     // Supabase config. The publishable key is public by design (ships in the
     // app); write access is protected by Row Level Security, not by secrecy.
+    // RevenueCat: the public SDK key is likewise safe to ship (it can only read
+    // offerings / make purchases as the user, never manage the account).
     extra: {
       supabaseUrl: "https://nzdhnfkoegzcjpkkmbmm.supabase.co",
       supabaseKey: "sb_publishable_zQEIeJRC-xcoRgnGat6oEQ_nV4km4UG",
+      // iOS public SDK key (RevenueCat Test Store key for now).
+      revenueCatIosKey: "test_GgChnfUgBORlmxIgyTaLCwfucJn",
+      // Entitlement identifier that unlocks Insider (create it in the dashboard).
+      revenueCatEntitlement: "insider",
     },
   },
 };
