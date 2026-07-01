@@ -46,21 +46,16 @@ interface InsiderContextValue {
 
 const InsiderContext = createContext<InsiderContextValue | null>(null);
 
-// Decide whether the customer counts as an Insider. Prefer the named entitlement
-// ("insider"), but fall back to ANY active entitlement or ANY active
-// subscription / purchase — so a successful test purchase unlocks Insider even
-// if the entitlement isn't wired up in the dashboard yet (single premium tier).
+// Insider = the "insider" entitlement is active. Canonical RevenueCat check
+// (JS equivalent of `customerInfo.entitlements["insider"]?.isActive == true`):
+// entries under `entitlements.active` are active by definition; we also look at
+// `entitlements.all[...].isActive` for parity with the docs snippet.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function activeEntitlement(info: any): boolean {
-  if (!info) return false;
-  const active = info.entitlements?.active ?? {};
-  if (active[ENTITLEMENT_ID]) return true;
-  if (Object.keys(active).length > 0) return true;
-  if (Array.isArray(info.activeSubscriptions) && info.activeSubscriptions.length > 0)
-    return true;
-  const purchased = info.allPurchasedProductIdentifiers;
-  if (Array.isArray(purchased) && purchased.length > 0) return true;
-  return false;
+  const ent =
+    info?.entitlements?.active?.[ENTITLEMENT_ID] ??
+    info?.entitlements?.all?.[ENTITLEMENT_ID];
+  return ent?.isActive === true;
 }
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function mapPackage(p: any): InsiderPackage {
