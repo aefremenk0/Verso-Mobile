@@ -32,6 +32,9 @@ export default {
         // Needed for the blue "you are here" dot + location button on the map.
         NSLocationWhenInUseUsageDescription:
           "Verso uses your location to show where you are on the map.",
+        // Standard HTTPS only -> declare no non-exempt encryption, so TestFlight
+        // doesn't ask the export-compliance question on every build.
+        ITSAppUsesNonExemptEncryption: false,
       },
     },
     android: {
