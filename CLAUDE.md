@@ -639,10 +639,12 @@ npm test               # Unit-Tests der reinen Logik (vitest, src/**)
   dem Lade-Screen direkt im Feed (Redirect unter dem Loader, kein Welcome-Flash).
 - **Feed-Übergang:** die Liste fadet + steigt leicht auf beim Szenen-/Kategorie-
   Wechsel (statt hart zu erscheinen).
-- **Verbundene Konten** (`app/verbundene-konten.tsx`, neu): OpenTable · oeticket ·
-  Apple · Google zum Verknüpfen (Mock; Apple/Google vor-verbunden je nach Login-
-  Provider). In Einstellungen ersetzt „Verbundene Konten" die alte E-Mail-Zeile;
-  die **E-Mail steht jetzt (read-only) im „Profil bearbeiten"-Screen**.
+- **Profil bearbeiten** ist prefilled aus `useProfile` und **speichert** wirklich.
+- **„Nach Google Maps exportieren" (Gespeichert) entfernt** — redundant zu den
+  Deep-Links; `GoogleExportSheet` nicht mehr genutzt. (Ein zwischenzeitlicher
+  „Verbundene Konten"-Screen wurde nach Abwägung wieder verworfen: einfache
+  Deep-Links reichen; Apple/Google-Login steckt schon im Auth-Flow. E-Mail bleibt
+  in den Einstellungen.)
 - tsc sauber, 18/18 vitest, iOS-Bundle baut.
 
 ### 5cbe7e4 · 2026-07-01 · Name/Username bei Registrierung + Google/Apple-Login + goldenes Insider-Banner

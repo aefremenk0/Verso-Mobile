@@ -9,7 +9,6 @@ import {
 import { StripeTexture } from "../src/components/StripeTexture";
 import { initialsFromName } from "../src/lib/initials";
 import { useT } from "../src/lib/i18n";
-import { useAuth } from "../src/store/auth";
 import { useProfile } from "../src/store/profile";
 
 // Screen 07c — Edit profile. Prefilled from the user's profile; Save upserts
@@ -53,8 +52,6 @@ export default function ProfilBearbeiten() {
   const router = useRouter();
   const t = useT();
   const profile = useProfile();
-  const { user } = useAuth();
-  const email = user?.email ?? "";
   const [name, setName] = useState(profile.name);
   const [username, setUsername] = useState(profile.username);
   const [bio, setBio] = useState(profile.bio);
@@ -115,24 +112,6 @@ export default function ProfilBearbeiten() {
           <Field label={t("NAME", "NAME")} value={name} onChangeText={setName} />
           <Field label={t("USERNAME", "BENUTZERNAME")} value={username} onChangeText={setUsername} />
           <Field label={t("BIO", "BIO")} value={bio} onChangeText={setBio} multiline />
-
-          {/* Email — read-only (changing it needs re-verification) */}
-          <View>
-            <Text className="mb-1.5 font-hk-semibold text-[10px] tracking-[1.5px] text-ink-3">
-              {t("EMAIL", "E-MAIL")}
-            </Text>
-            <View
-              className="flex-row items-center justify-between rounded-[14px] bg-chip px-4 py-3.5"
-              style={{ borderWidth: 1, borderColor: "rgba(26,26,26,0.12)" }}
-            >
-              <Text className="font-hk-medium text-[15px] text-ink-2">
-                {email || t("Not signed in", "Nicht angemeldet")}
-              </Text>
-              <Text className="font-hk-semibold text-[10px] tracking-[1px] text-ink-3">
-                {t("FIXED", "FEST")}
-              </Text>
-            </View>
-          </View>
         </View>
 
         {/* Save (at the bottom) */}

@@ -10,12 +10,10 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { GoogleExportSheet } from "../src/components/GoogleExportSheet";
 import { CityDropdown } from "../src/components/CityDropdown";
 import { FilterButton } from "../src/components/FilterButton";
 import { ImagePlaceholder } from "../src/components/ImagePlaceholder";
 import { KeyboardDoneBar } from "../src/components/KeyboardDoneBar";
-import { GoogleLogo } from "../src/components/Logos";
 import { MapFilterSheet } from "../src/components/MapFilterSheet";
 import { Pill } from "../src/components/Pill";
 import { SceneToggle } from "../src/components/SceneToggle";
@@ -31,7 +29,6 @@ import { useCatalog } from "../src/store/catalog";
 import { useCity } from "../src/store/city";
 import { useSaved } from "../src/store/saved";
 import { useScene } from "../src/store/scene";
-import { shadows } from "../src/theme";
 
 // Screen 06 — Saved.
 // List of saved places (filled via the "Save" toggle in the detail view).
@@ -179,7 +176,6 @@ export default function Gespeichert() {
   const { savedIds } = useSaved();
   const { scene } = useScene();
   const { city } = useCity();
-  const [exportOpen, setExportOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState<Category | null>(null);
   const [query, setQuery] = useState("");
   // Budget/rating/ambience filter (same sheet as feed/map). The category hotbar
@@ -330,20 +326,6 @@ export default function Gespeichert() {
         />
       )}
 
-      {/* Export to Google Maps — bottom right (only if there are places) */}
-      {saved.length > 0 ? (
-        <Pressable
-          onPress={() => setExportOpen(true)}
-          className="absolute flex-row items-center gap-2 rounded-pill bg-night px-4 py-3"
-          style={[{ bottom: 26, right: 20, zIndex: 10 }, shadows.card]}
-        >
-          <GoogleLogo size={18} />
-          <Text className="font-hk-bold text-[13px] text-screen">
-            {t("Export to Google Maps", "Nach Google Maps exportieren")}
-          </Text>
-        </Pressable>
-      ) : null}
-
       {/* Filter sheet (docked at the top). The hotbar handles "type" -> off here. */}
       {filterOpen ? (
         <MapFilterSheet
@@ -352,13 +334,6 @@ export default function Gespeichert() {
           count={shown.length}
           onClose={() => setFilterOpen(false)}
           showArt={false}
-        />
-      ) : null}
-
-      {exportOpen ? (
-        <GoogleExportSheet
-          count={saved.length}
-          onClose={() => setExportOpen(false)}
         />
       ) : null}
 

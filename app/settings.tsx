@@ -118,7 +118,7 @@ export default function Settings() {
   const interests = useInterests();
   const insider = useInsider();
   const { setScene } = useScene();
-  const { signOut } = useAuth();
+  const { user, signOut } = useAuth();
 
   const [tippN, setTippN] = useState(true);
   const [spotsN, setSpotsN] = useState(true);
@@ -178,10 +178,7 @@ export default function Settings() {
             label={t("Edit profile", "Profil bearbeiten")}
             onPress={() => router.push("/profil-bearbeiten")}
           />
-          <NavRow
-            label={t("Connected accounts", "Verbundene Konten")}
-            onPress={() => router.push("/verbundene-konten")}
-          />
+          <NavRow label={t("Email", "E-Mail")} value={user?.email ?? "lena@verso.app"} />
           <NavRow
             label={t("Change password", "Passwort ändern")}
             last
