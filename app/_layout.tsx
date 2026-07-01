@@ -12,6 +12,7 @@ import { VersoLoader } from "../src/components/VersoLoader";
 import { AuthProvider } from "../src/store/auth";
 import { CatalogProvider } from "../src/store/catalog";
 import { CityProvider } from "../src/store/city";
+import { ProfileProvider } from "../src/store/profile";
 import { LanguageProvider } from "../src/store/language";
 import { GeheimtippProvider } from "../src/store/geheimtipp";
 import { InsiderProvider } from "../src/store/insider";
@@ -43,6 +44,7 @@ export default function RootLayout() {
     <SafeAreaProvider>
       <LanguageProvider>
       <AuthProvider>
+      <ProfileProvider>
       <CatalogProvider>
       <CityProvider>
         <SceneProvider>
@@ -95,6 +97,7 @@ export default function RootLayout() {
         </SceneProvider>
       </CityProvider>
       </CatalogProvider>
+      </ProfileProvider>
       </AuthProvider>
       </LanguageProvider>
     </SafeAreaProvider>

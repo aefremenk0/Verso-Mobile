@@ -4,9 +4,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Arrow } from "../../src/components/Arrow";
 import { Brand } from "../../src/components/Brand";
 import { MysticBadge } from "../../src/components/MysticBadge";
-import { MOCK_USER } from "../../src/data/user";
 import { useCatalog } from "../../src/store/catalog";
 import { useCity } from "../../src/store/city";
+import { useProfile } from "../../src/store/profile";
 import { useGeheimtipp } from "../../src/store/geheimtipp";
 import { useSaved } from "../../src/store/saved";
 import { openExternal } from "../../src/lib/maps";
@@ -57,6 +57,15 @@ export default function Profil() {
   const lang = useLang();
   const { savedIds } = useSaved();
   const { neighborhoods, getSpotById } = useCatalog();
+  const { name, username } = useProfile();
+  // Initials from the name (first letters of up to two words) for the avatar.
+  const initials =
+    name
+      .trim()
+      .split(/\s+/)
+      .slice(0, 2)
+      .map((w) => w[0]?.toUpperCase() ?? "")
+      .join("") || "?";
 
   // Hidden gem of the currently selected city (city-dependent store).
   const { spotId } = useGeheimtipp();
@@ -94,15 +103,18 @@ export default function Profil() {
           {t("PROFILE", "PROFIL")}
         </Text>
 
-        {/* Header: avatar + name */}
+        {/* Header: avatar + name + username */}
         <View className="mt-3 flex-row items-center">
           <View className="h-14 w-14 items-center justify-center rounded-pill bg-night">
-            <Text className="font-hk-extrabold text-[18px] text-white">LH</Text>
+            <Text className="font-hk-extrabold text-[18px] text-white">{initials}</Text>
           </View>
-          <View className="ml-4">
-            <Text className="font-hk-extrabold text-title-sm text-ink">
-              {MOCK_USER.name}
+          <View className="ml-4 flex-1">
+            <Text className="font-hk-extrabold text-title-sm text-ink" numberOfLines={1}>
+              {name}
             </Text>
+            {username ? (
+              <Text className="font-hk-medium text-[13px] text-ink-3">{username}</Text>
+            ) : null}
             <MysticBadge />
           </View>
         </View>

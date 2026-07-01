@@ -17,13 +17,15 @@ import {
 } from "../src/components/KeyboardDoneBar";
 import { AppleLogo, GoogleLogo } from "../src/components/Logos";
 import { ambienteOptions } from "../src/lib/mapFilter";
-import { useAuth } from "../src/store/auth";
+import { useAuth, type OAuthProvider } from "../src/store/auth";
 import { useInterests } from "../src/store/interests";
+import { useProfile } from "../src/store/profile";
 import { useT, useLang } from "../src/lib/i18n";
 
 // Screen 01 — Sign up / Sign in.
-// Email + password go through real Supabase Auth (src/store/auth). Apple/Google
-// stay UI-only placeholders (guest entry). Every success leads to the feed.
+// Email + password and Google/Apple go through real Supabase Auth
+// (src/store/auth). On sign-up the chosen name + username are saved to the
+// profile. Every success leads to the feed.
 
 // Fixed demo account for quick testing. The button below signs in with it (and
 // creates it on first use if email confirmation is turned off in Supabase).
@@ -33,14 +35,21 @@ const DEMO_PASSWORD = "versodemo";
 export default function Register() {
   const router = useRouter();
   const [mode, setMode] = useState<"register" | "login">("register");
+  const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { interests, toggle, max } = useInterests();
-  const { signUp, signIn } = useAuth();
+  const { signUp, signIn, signInWithProvider } = useAuth();
+  const { save: saveProfile } = useProfile();
   const t = useT();
   const lang = useLang();
+
+  // Normalize the username to a handle: strip a leading @, lowercase, no spaces.
+  const cleanUsername = (raw: string) =>
+    raw.trim().replace(/^@+/, "").replace(/\s+/g, "").toLowerCase();
 
   // Replace the screen with the feed so Back doesn't lead here again.
   const enter = () => router.replace("/(tabs)/feed");
@@ -54,18 +63,47 @@ export default function Register() {
       setError(t("Enter email and password.", "E-Mail und Passwort eingeben."));
       return;
     }
-    if (mode === "register" && password.length < 6) {
-      setError(
-        t(
-          "Password needs at least 6 characters.",
-          "Das Passwort braucht mindestens 6 Zeichen.",
-        ),
-      );
-      return;
+    if (mode === "register") {
+      if (password.length < 6) {
+        setError(
+          t(
+            "Password needs at least 6 characters.",
+            "Das Passwort braucht mindestens 6 Zeichen.",
+          ),
+        );
+        return;
+      }
+      if (!name.trim()) {
+        setError(t("Please enter your name.", "Bitte gib deinen Namen ein."));
+        return;
+      }
     }
     setBusy(true);
     const { error: err } =
       mode === "register" ? await signUp(mail, password) : await signIn(mail, password);
+    if (err) {
+      setBusy(false);
+      setError(err);
+      return;
+    }
+    // On sign-up, save the chosen name + username to the profile.
+    if (mode === "register") {
+      const handle = cleanUsername(username);
+      await saveProfile({
+        name: name.trim(),
+        username: handle ? `@${handle}` : "",
+      });
+    }
+    setBusy(false);
+    enter();
+  };
+
+  // Google / Apple via the system browser (Supabase OAuth).
+  const oauth = async (provider: OAuthProvider) => {
+    if (busy) return;
+    setError(null);
+    setBusy(true);
+    const { error: err } = await signInWithProvider(provider);
     setBusy(false);
     if (err) {
       setError(err);
@@ -85,11 +123,14 @@ export default function Register() {
       const up = await signUp(DEMO_EMAIL, DEMO_PASSWORD);
       res = up.error ? up : await signIn(DEMO_EMAIL, DEMO_PASSWORD);
     }
-    setBusy(false);
     if (res.error) {
+      setBusy(false);
       setError(res.error);
       return;
     }
+    // Give the demo account a friendly name/handle for the profile screen.
+    await saveProfile({ name: "Demo", username: "@demo" });
+    setBusy(false);
     enter();
   };
 
@@ -201,10 +242,11 @@ export default function Register() {
           })}
         </View>
 
-        {/* Social login (UI only). Custom buttons with real logos. */}
+        {/* Social login via Supabase OAuth (system browser). */}
         <View className="mt-5 gap-2.5">
           <Pressable
-            onPress={enter}
+            onPress={() => oauth("apple")}
+            disabled={busy}
             className="flex-row items-center justify-center gap-2.5 rounded-[16px] bg-night py-4"
           >
             <Text className="font-hk-semibold text-[14px] text-screen">
@@ -213,7 +255,8 @@ export default function Register() {
             <AppleLogo size={17} color="#FFFFFF" />
           </Pressable>
           <Pressable
-            onPress={enter}
+            onPress={() => oauth("google")}
+            disabled={busy}
             className="flex-row items-center justify-center gap-2.5 rounded-[16px] bg-surface py-4"
             style={{ borderWidth: 1, borderColor: "rgba(26,26,26,0.16)" }}
           >
@@ -232,6 +275,37 @@ export default function Register() {
           </Text>
           <View className="h-px flex-1 bg-black/10" />
         </View>
+
+        {/* Name + username — only when signing up */}
+        {mode === "register" ? (
+          <>
+            <TextInput
+              value={name}
+              onChangeText={setName}
+              placeholder={t("Your name", "Dein Name")}
+              placeholderTextColor="#8A857C"
+              autoCapitalize="words"
+              autoComplete="name"
+              className="mb-2.5 rounded-button bg-surface px-5 py-4 font-hk-medium text-[15px] text-ink"
+              style={{ borderWidth: 1, borderColor: "rgba(0,0,0,0.08)" }}
+              inputAccessoryViewID={KEYBOARD_DONE_ID}
+            />
+            <View className="mb-2.5 flex-row items-center rounded-button bg-surface px-5" style={{ borderWidth: 1, borderColor: "rgba(0,0,0,0.08)" }}>
+              <Text className="font-hk-medium text-[15px] text-ink-3">@</Text>
+              <TextInput
+                value={username}
+                onChangeText={setUsername}
+                placeholder={t("username", "benutzername")}
+                placeholderTextColor="#8A857C"
+                autoCapitalize="none"
+                autoCorrect={false}
+                autoComplete="username-new"
+                className="flex-1 py-4 pl-1 font-hk-medium text-[15px] text-ink"
+                inputAccessoryViewID={KEYBOARD_DONE_ID}
+              />
+            </View>
+          </>
+        ) : null}
 
         <TextInput
           value={email}

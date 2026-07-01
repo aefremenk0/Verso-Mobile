@@ -7,7 +7,14 @@ import {
   type ReactNode,
 } from "react";
 import type { Session, User } from "@supabase/supabase-js";
+import * as Linking from "expo-linking";
+import * as WebBrowser from "expo-web-browser";
 import { hasSupabase, supabase } from "../lib/supabase";
+
+// Ensure the auth browser session closes cleanly when it redirects back.
+WebBrowser.maybeCompleteAuthSession();
+
+export type OAuthProvider = "google" | "apple";
 
 // Auth store — wraps Supabase Auth (email + password). The session is persisted
 // in AsyncStorage (see lib/supabase.ts), so a logged-in user stays logged in
@@ -27,6 +34,8 @@ interface AuthContextValue {
   loading: boolean;
   signUp: (email: string, password: string) => Promise<AuthResult>;
   signIn: (email: string, password: string) => Promise<AuthResult>;
+  /** Sign in via an OAuth provider (Google/Apple) through the system browser. */
+  signInWithProvider: (provider: OAuthProvider) => Promise<AuthResult>;
   signOut: () => Promise<void>;
 }
 
@@ -76,6 +85,33 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           password,
         });
         return { error: error?.message ?? null };
+      },
+      signInWithProvider: async (provider) => {
+        if (!hasSupabase) return { error: "Auth not configured" };
+        try {
+          // Deep link the provider redirects back to (must be allow-listed in
+          // Supabase -> Authentication -> URL Configuration).
+          const redirectTo = Linking.createURL("auth-callback");
+          const { data, error } = await supabase.auth.signInWithOAuth({
+            provider,
+            options: { redirectTo, skipBrowserRedirect: true },
+          });
+          if (error) return { error: error.message };
+          if (!data?.url) return { error: "No auth URL returned" };
+          // Open the provider's login in the system browser and wait for the
+          // redirect back to our app.
+          const res = await WebBrowser.openAuthSessionAsync(data.url, redirectTo);
+          if (res.type !== "success" || !res.url) return { error: null }; // cancelled
+          // PKCE: pull the ?code=… out of the redirect and exchange it.
+          const code = /[?&]code=([^&]+)/.exec(res.url)?.[1];
+          if (!code) return { error: null };
+          const { error: exErr } = await supabase.auth.exchangeCodeForSession(
+            decodeURIComponent(code),
+          );
+          return { error: exErr?.message ?? null };
+        } catch (e) {
+          return { error: e instanceof Error ? e.message : "Sign-in failed" };
+        }
       },
       signOut: async () => {
         if (!hasSupabase) return;

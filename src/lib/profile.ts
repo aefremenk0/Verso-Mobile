@@ -66,3 +66,37 @@ export async function patchProfileColumn(
     // ignore — the local cache still holds the value
   }
 }
+
+/** Read text fields (name/username/bio) from the profile row (null on error). */
+export async function fetchProfileRow(
+  userId: string,
+  columns: string[],
+): Promise<Record<string, unknown> | null> {
+  if (!hasSupabase) return null;
+  try {
+    const { data, error } = await supabase
+      .from("profiles")
+      .select(columns.join(","))
+      .eq("id", userId)
+      .maybeSingle();
+    if (error || !data) return null;
+    return data as unknown as Record<string, unknown>;
+  } catch {
+    return null;
+  }
+}
+
+/** Upsert arbitrary profile fields (e.g. name/username/bio), fail-soft. */
+export async function patchProfile(
+  userId: string,
+  patch: Record<string, unknown>,
+): Promise<void> {
+  if (!hasSupabase) return;
+  try {
+    await supabase
+      .from("profiles")
+      .upsert({ id: userId, ...patch }, { onConflict: "id" });
+  } catch {
+    // ignore
+  }
+}

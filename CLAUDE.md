@@ -190,9 +190,11 @@ scripts/gen-seed.ts       erzeugt supabase/seed.sql aus src/data/* (via tsx)
                           swappt bei konfiguriertem Supabase die DB-Zeilen ein
                           (Mock-Fallback). useCatalog() → spots/neighborhoods/
                           getSpotById/source. Screens lesen NUR hierüber.
-  store/auth.tsx          Supabase Auth (E-Mail+Passwort): session/user,
-                          signUp/signIn/signOut, loading. Ohne Supabase =
-                          Gastmodus. Session via AsyncStorage persistent.
+  store/auth.tsx          Supabase Auth: session/user, signUp/signIn/signOut +
+                          signInWithProvider (Google/Apple OAuth via Browser,
+                          PKCE). Ohne Supabase = Gastmodus. Session persistent.
+  store/profile.tsx       Nutzerprofil (name/username/bio) aus profiles;
+                          useProfile().save() upsertet. Gast = Mock.
   lib/supabase.ts         Supabase-Client (hasSupabase-Flag; URL+Key aus extra;
                           AsyncStorage-Session, autoRefresh)
 
@@ -609,7 +611,29 @@ npm test               # Unit-Tests der reinen Logik (vitest, src/**)
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-07-01 · RevenueCat: Insider-Entitlement + Paywall (Dev Build)
+### (dieser Commit) · 2026-07-01 · Name/Username bei Registrierung + Google/Apple-Login + goldenes Insider-Banner
+- **Name & Username bei der Registrierung:** `register.tsx` hat im Registrier-
+  Modus neue Felder **Name** (Pflicht) und **@username** (optional, wird zu einem
+  Handle normalisiert). Beim Sign-up werden sie in `profiles` (`name`/`username`)
+  gespeichert. **Neuer `src/store/profile.tsx`** (`ProfileProvider`/`useProfile`):
+  lädt name/username/bio des angemeldeten Users, `save()` upsertet sie; Gast =
+  Mock-Profil. `ProfileProvider` in `_layout.tsx` unter `AuthProvider`.
+- **Profil zeigt echte Daten:** `profil.tsx` nutzt `useProfile` → echter Name,
+  `@username` und **Initialen aus dem Namen** (statt hart „LH"/`MOCK_USER`).
+- **Google/Apple-Login (Supabase OAuth):** `auth.tsx` `signInWithProvider` öffnet
+  den Provider im System-Browser (`expo-web-browser`), Redirect via
+  `Linking.createURL("auth-callback")`, PKCE → `exchangeCodeForSession`. Client
+  auf `flowType: "pkce"` gestellt. Die Apple/Google-Buttons sind verdrahtet.
+  **Setup nötig:** Provider in Supabase (Authentication → Providers) aktivieren +
+  Redirect-URL unter URL Configuration erlauben; Google/Apple-Credentials in den
+  jeweiligen Consoles. Ohne Konfiguration zeigt der Button eine Fehlermeldung.
+- **Goldenes Insider-Banner:** `MysticBadge` wechselt bei aktivem Abo von „???"
+  (schwarz, pulsierende gelbe Kontur) zu **„✦ VERSO INSIDER"** (Gold `#F4C430`,
+  Glow, schimmernder Funke) — spiegelt `useInsider().isInsider`. Die Insider-
+  Szenen (Sport/Live Events) schalten wie gehabt über denselben Flag frei.
+- **`expo-web-browser`** ergänzt (Expo-Go-fest). tsc sauber, 18/18 vitest, Bundle baut.
+
+### d21c7a0 · 2026-07-01 · RevenueCat: Insider-Entitlement + Paywall (Dev Build)
 - **`useInsider` ist jetzt echt statt Mock (im Dev Build):** `src/store/insider.tsx`
   spiegelt das RevenueCat-**Entitlement „insider"** — `isInsider =
   customerInfo.entitlements.active.insider`. Kauf/Wiederherstellen über den Store

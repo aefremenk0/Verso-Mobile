@@ -1,6 +1,6 @@
 import { useRouter } from "expo-router";
 import { useEffect } from "react";
-import { Pressable, Text } from "react-native";
+import { Pressable, Text, View } from "react-native";
 import Animated, {
   Easing,
   interpolateColor,
@@ -9,30 +9,35 @@ import Animated, {
   withRepeat,
   withTiming,
 } from "react-native-reanimated";
+import { useT } from "../lib/i18n";
 import { useReduceMotion } from "../lib/useReduceMotion";
+import { useInsider } from "../store/insider";
 
-// Mysterious "???" badge in the profile header — in the style of the former
-// insider star: black pill, yellow "???", whose outline gently pulses yellow
-// (Reanimated). Tapping opens the modal "Verso Insider" hint (`/insider`).
+// Badge in the profile header. Two states:
+//  • Not an Insider -> mysterious "???" (black pill, gently pulsing yellow
+//    outline). Tapping opens the "/insider" upsell/paywall.
+//  • Insider (subscription active) -> golden "✦ VERSO INSIDER" pill with a soft
+//    shimmering sparkle. Tapping still opens "/insider" (manage/status).
 export function MysticBadge() {
   const router = useRouter();
+  const t = useT();
+  const { isInsider } = useInsider();
   const pulse = useSharedValue(0);
   const reduceMotion = useReduceMotion();
 
   useEffect(() => {
     if (reduceMotion) {
-      pulse.value = 0.6; // calm, fixed outline instead of an endless pulse
+      pulse.value = 0.6; // calm, fixed instead of an endless pulse
       return;
     }
-    // Slow swelling/fading of the outline -> feels mysterious, "alive".
     pulse.value = withRepeat(
       withTiming(1, { duration: 1600, easing: Easing.inOut(Easing.ease) }),
-      -1, // infinite
-      true, // back and forth
+      -1,
+      true,
     );
   }, [pulse, reduceMotion]);
 
-  // Only the border color pulses (slightly yellow), the box stays black.
+  // "???" state: only the outline pulses (slightly yellow), box stays black.
   const borderStyle = useAnimatedStyle(() => ({
     borderColor: interpolateColor(
       pulse.value,
@@ -40,6 +45,45 @@ export function MysticBadge() {
       ["rgba(255,229,0,0.3)", "rgba(255,229,0,0.9)"],
     ),
   }));
+  // Insider state: the sparkle softly shimmers.
+  const sparkleStyle = useAnimatedStyle(() => ({
+    opacity: 0.45 + pulse.value * 0.55,
+  }));
+
+  if (isInsider) {
+    return (
+      <Pressable onPress={() => router.push("/insider")} hitSlop={8}>
+        <View
+          style={{
+            marginTop: 4,
+            alignSelf: "flex-start",
+            flexDirection: "row",
+            alignItems: "center",
+            borderRadius: 999,
+            backgroundColor: "#F4C430", // gold
+            paddingHorizontal: 12,
+            paddingVertical: 4,
+            borderWidth: 1.5,
+            borderColor: "#FFE9A8",
+            // soft golden glow
+            shadowColor: "#F4C430",
+            shadowOpacity: 0.6,
+            shadowRadius: 8,
+            shadowOffset: { width: 0, height: 0 },
+          }}
+        >
+          <Animated.Text
+            style={[{ fontSize: 11, color: "#1A1A1A" }, sparkleStyle]}
+          >
+            ✦{" "}
+          </Animated.Text>
+          <Text className="font-hk-bold text-[11px] tracking-[2px] text-night">
+            {t("VERSO INSIDER", "VERSO INSIDER")}
+          </Text>
+        </View>
+      </Pressable>
+    );
+  }
 
   return (
     <Pressable onPress={() => router.push("/insider")} hitSlop={8}>

@@ -29,5 +29,9 @@ export const supabase = createClient(url, key, {
     persistSession: true,
     autoRefreshToken: true,
     detectSessionInUrl: false,
+    // PKCE: required for the OAuth (Google/Apple) redirect flow on native —
+    // the browser returns a ?code=… that we exchange for a session. Does not
+    // affect email/password sign-in.
+    flowType: "pkce",
   },
 });
