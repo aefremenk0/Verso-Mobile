@@ -3,9 +3,9 @@ import { Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Arrow } from "../../src/components/Arrow";
 import { CityDropdown } from "../../src/components/CityDropdown";
-import { NEIGHBORHOODS } from "../../src/data/cities";
 import { useLang, useT } from "../../src/lib/i18n";
 import { neighborhoodBlurb } from "../../src/lib/localized";
+import { useCatalog } from "../../src/store/catalog";
 import { useCity } from "../../src/store/city";
 
 // Screen 05 — City overview.
@@ -15,8 +15,9 @@ export default function Viertel() {
   const router = useRouter();
   const t = useT();
   const lang = useLang();
+  const { neighborhoods } = useCatalog();
   const { city } = useCity();
-  const hoods = NEIGHBORHOODS.filter((n) => n.city === city);
+  const hoods = neighborhoods.filter((n) => n.city === city);
 
   return (
     <SafeAreaView className="flex-1 bg-screen" edges={["top"]}>

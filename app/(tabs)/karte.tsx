@@ -12,7 +12,6 @@ import { MapFilterSheet } from "../../src/components/MapFilterSheet";
 import { SceneToggle } from "../../src/components/SceneToggle";
 import { SearchField } from "../../src/components/SearchField";
 import { categoryLabel, priceLabel } from "../../src/data/categories";
-import { SPOTS } from "../../src/data/spots";
 import type { Category, Spot } from "../../src/data/types";
 import {
   DEFAULT_FILTER,
@@ -22,6 +21,7 @@ import {
 import { useLang, useT } from "../../src/lib/i18n";
 import { spotText } from "../../src/lib/localized";
 import { SCENE_CATEGORIES, type Scene } from "../../src/lib/scene";
+import { useCatalog } from "../../src/store/catalog";
 import { useCity } from "../../src/store/city";
 import { useScene } from "../../src/store/scene";
 import { shadows } from "../../src/theme";
@@ -37,6 +37,7 @@ export default function Karte() {
   const t = useT();
   const lang = useLang();
   const insets = useSafeAreaInsets();
+  const { spots: SPOTS } = useCatalog();
   const { city } = useCity();
   const { scene, setScene } = useScene();
   // "focus" param: set when the user taps "On map" on a spot's detail page ->
@@ -68,7 +69,7 @@ export default function Karte() {
     setSelected(sp);
     setCenterOn({ latitude: sp.lat, longitude: sp.lng, key: Date.now() });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [focus]);
+  }, [focus, SPOTS]);
 
   // Budget/rating/ambience set? (the category bar handles "type")
   const filterActive =
@@ -99,7 +100,7 @@ export default function Karte() {
             : true,
         )
         .filter((s) => matchesFilter(s, filter)),
-    [city, scene, activeCategory, q, filter],
+    [SPOTS, city, scene, activeCategory, q, filter],
   );
 
   // Only show the selected spot if it's still in the filtered result.

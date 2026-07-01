@@ -183,6 +183,11 @@ scripts/gen-seed.ts       erzeugt supabase/seed.sql aus src/data/* (via tsx)
   store/language.tsx      Sprach-Store (Default = Gerätesprache, sonst EN),
                           Settings-Toggle schaltet zur Laufzeit  (in-memory)
   store/scene.tsx         aktuelle Szene (Feiern vs. Essen), app-weit
+  store/catalog.tsx       Katalog (spots + neighborhoods): startet mit dem Mock,
+                          swappt bei konfiguriertem Supabase die DB-Zeilen ein
+                          (Mock-Fallback). useCatalog() → spots/neighborhoods/
+                          getSpotById/source. Screens lesen NUR hierüber.
+  lib/supabase.ts         Supabase-Client (hasSupabase-Flag; URL+Key aus extra)
 
 app.config.js             Expo-Config (ersetzt app.json; iOS-Location-Permission)
   data/                   types.ts, spots.ts (Mock-Orte — Pilot: nur München),
@@ -590,7 +595,25 @@ npm test               # Unit-Tests der reinen Logik (vitest, src/**)
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-07-01 · Supabase-Fundament: Client + Schema + Seed
+### (dieser Commit) · 2026-07-01 · Screens lesen aus Supabase (CatalogProvider, Mock-Fallback)
+- **Neuer `src/store/catalog.tsx`** (`CatalogProvider` / `useCatalog()`): hält
+  `spots` + `neighborhoods`, startet mit dem lokalen Mock (`src/data/*`, sofort
+  sichtbar/offline) und **swappt bei konfiguriertem Supabase** die echten Zeilen
+  ein (`spots`/`neighborhoods` `select("*")`, snake→camel via `rowToSpot`/
+  `rowToNeighborhood`). Fehler/leeres Ergebnis → **Mock bleibt** (sicherer
+  Fallback). Exponiert außerdem `getSpotById` (Map) und `source` ("mock"|
+  "supabase"). `CatalogProvider` in `_layout.tsx` ganz außen (unter
+  `LanguageProvider`).
+- **Alle Screens auf `useCatalog()` umgestellt** statt direkter Mock-Imports:
+  Feed, Karte, Viertel, Bezirk, Gespeichert, Profil, Spot-Detail, Geheimtipp
+  (SPOTS → `spots`, NEIGHBORHOODS → `neighborhoods`, `getSpotById` aus dem
+  Katalog). `SPOTS` in die betroffenen `useMemo`-Deps ergänzt (Feed/Karte),
+  Karte-`focus`-Effekt bekommt `SPOTS` in die Deps.
+- Reines JS → **läuft in Expo Go**. tsc sauber, 18/18 vitest, iOS-Bundle baut.
+  **Nächste Schritte:** Auth (`register` → Supabase Auth + Session-Persistenz),
+  dann Persistenz der Stores (`saved`/`interests`/`geheimtipp`) in die DB.
+
+### bbff402 · 2026-07-01 · Supabase-Fundament: Client + Schema + Seed
 - **Supabase-Client** (`src/lib/supabase.ts`): `@supabase/supabase-js` (2.x) +
   `react-native-url-polyfill`. URL + publishable key in `app.config.js` `extra`
   (Key ist public by design; Schutz via RLS). `hasSupabase`-Flag für Fallback.

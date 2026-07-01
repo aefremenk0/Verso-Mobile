@@ -5,8 +5,7 @@ import { Arrow } from "../../src/components/Arrow";
 import { Brand } from "../../src/components/Brand";
 import { MysticBadge } from "../../src/components/MysticBadge";
 import { MOCK_USER } from "../../src/data/user";
-import { getSpotById } from "../../src/data/spots";
-import { NEIGHBORHOODS } from "../../src/data/cities";
+import { useCatalog } from "../../src/store/catalog";
 import { useCity } from "../../src/store/city";
 import { useGeheimtipp } from "../../src/store/geheimtipp";
 import { useSaved } from "../../src/store/saved";
@@ -57,15 +56,16 @@ export default function Profil() {
   const t = useT();
   const lang = useLang();
   const { savedIds } = useSaved();
+  const { neighborhoods, getSpotById } = useCatalog();
 
   // Hidden gem of the currently selected city (city-dependent store).
   const { spotId } = useGeheimtipp();
   const { city } = useCity();
   const tippSpot = getSpotById(spotId);
-  const cityCount = new Set(NEIGHBORHOODS.map((n) => n.city)).size;
+  const cityCount = new Set(neighborhoods.map((n) => n.city)).size;
   // The number of neighborhoods varies per city (München 8, Wien 7, Zürich 5 …)
-  // -> derive it dynamically from NEIGHBORHOODS for the current city (was hard 8).
-  const viertelCount = NEIGHBORHOODS.filter((n) => n.city === city).length;
+  // -> derive it dynamically from the catalog for the current city (was hard 8).
+  const viertelCount = neighborhoods.filter((n) => n.city === city).length;
 
   // Verso thrives on word of mouth -> open the native share sheet.
   const onInvite = () => {

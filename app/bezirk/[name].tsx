@@ -6,14 +6,13 @@ import { Pill } from "../../src/components/Pill";
 import { SceneToggle } from "../../src/components/SceneToggle";
 import { SpotCard } from "../../src/components/SpotCard";
 import { sortByCategory } from "../../src/data/categories";
-import { NEIGHBORHOODS } from "../../src/data/cities";
-import { SPOTS } from "../../src/data/spots";
 import type { Category } from "../../src/data/types";
 import { useT, useLang } from "../../src/lib/i18n";
 import { cityLabel } from "../../src/lib/lang";
 import { neighborhoodBlurb } from "../../src/lib/localized";
 import { PIN_COLORS } from "../../src/lib/pinColors";
 import { SCENE_CATEGORIES, sceneFilters } from "../../src/lib/scene";
+import { useCatalog } from "../../src/store/catalog";
 import { useCity } from "../../src/store/city";
 import { useScene } from "../../src/store/scene";
 
@@ -24,6 +23,7 @@ import { useScene } from "../../src/store/scene";
 export default function Bezirk() {
   const { name } = useLocalSearchParams<{ name: string }>();
   const router = useRouter();
+  const { spots: SPOTS, neighborhoods } = useCatalog();
   const { city } = useCity();
   const { scene } = useScene();
   const t = useT();
@@ -33,7 +33,7 @@ export default function Bezirk() {
   // Reset the category selection when the scene changes.
   useEffect(() => setActiveCategory(null), [scene]);
 
-  const neighborhood = NEIGHBORHOODS.find(
+  const neighborhood = neighborhoods.find(
     (n) => n.city === city && n.name === name,
   );
   const blurb = neighborhood ? neighborhoodBlurb(neighborhood, lang) : undefined;

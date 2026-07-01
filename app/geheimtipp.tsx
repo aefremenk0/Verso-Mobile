@@ -12,10 +12,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Svg, { Path } from "react-native-svg";
 import { ImagePlaceholder } from "../src/components/ImagePlaceholder";
 import { categoryLabel, priceLabel } from "../src/data/categories";
-import { getSpotById } from "../src/data/spots";
 import { notifySuccess } from "../src/lib/haptics";
 import { useT, useLang } from "../src/lib/i18n";
 import { spotText } from "../src/lib/localized";
+import { useCatalog } from "../src/store/catalog";
 import { useGeheimtipp } from "../src/store/geheimtipp";
 
 // Screen 08 — Hidden gem of the week.
@@ -31,6 +31,7 @@ export default function Geheimtipp() {
   const router = useRouter();
   const t = useT();
   const lang = useLang();
+  const { getSpotById } = useCatalog();
   const { markAbgeholt, spotId } = useGeheimtipp();
   const [phase, setPhase] = useState<"loading" | "reveal">("loading");
   // Gem for the currently selected city (comes from the city-aware store).

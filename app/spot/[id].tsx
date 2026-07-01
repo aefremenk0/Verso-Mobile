@@ -16,12 +16,12 @@ import {
   isEventCategory,
   priceLabel,
 } from "../../src/data/categories";
-import { getSpotById } from "../../src/data/spots";
 import { notifySuccess, tapLight } from "../../src/lib/haptics";
 import { useT, useLang } from "../../src/lib/i18n";
 import { spotText } from "../../src/lib/localized";
 import { openAppleMaps, openExternal, openGoogleMaps } from "../../src/lib/maps";
 import { distanceLabel, getOpenState } from "../../src/lib/spotMeta";
+import { useCatalog } from "../../src/store/catalog";
 import { useSaved } from "../../src/store/saved";
 
 // Screen 03 — Spot detail (and event detail).
@@ -32,6 +32,7 @@ export default function SpotDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { getSpotById } = useCatalog();
   const { isSaved, toggle } = useSaved();
   const t = useT();
   const lang = useLang();

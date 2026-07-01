@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { VersoLoader } from "../src/components/VersoLoader";
+import { CatalogProvider } from "../src/store/catalog";
 import { CityProvider } from "../src/store/city";
 import { LanguageProvider } from "../src/store/language";
 import { GeheimtippProvider } from "../src/store/geheimtipp";
@@ -40,6 +41,7 @@ export default function RootLayout() {
     <GestureHandlerRootView style={{ flex: 1 }}>
     <SafeAreaProvider>
       <LanguageProvider>
+      <CatalogProvider>
       <CityProvider>
         <SceneProvider>
         <SavedProvider>
@@ -90,6 +92,7 @@ export default function RootLayout() {
         </SavedProvider>
         </SceneProvider>
       </CityProvider>
+      </CatalogProvider>
       </LanguageProvider>
     </SafeAreaProvider>
     {/* On top of everything: the branded launch loader (white -> verso pops ->

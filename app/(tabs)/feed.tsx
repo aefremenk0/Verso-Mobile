@@ -12,12 +12,12 @@ import { SearchField } from "../../src/components/SearchField";
 import { SpotCard } from "../../src/components/SpotCard";
 import { SurpriseButton } from "../../src/components/SurpriseButton";
 import { sortByCategory } from "../../src/data/categories";
-import { SPOTS } from "../../src/data/spots";
 import type { Category } from "../../src/data/types";
 import { tapMedium } from "../../src/lib/haptics";
 import { useT } from "../../src/lib/i18n";
 import { DEFAULT_FILTER, matchesFilter, type MapFilter } from "../../src/lib/mapFilter";
 import { SCENE_CATEGORIES } from "../../src/lib/scene";
+import { useCatalog } from "../../src/store/catalog";
 import { useCity } from "../../src/store/city";
 import { useInterests } from "../../src/store/interests";
 import { useScene } from "../../src/store/scene";
@@ -29,6 +29,7 @@ import { useScene } from "../../src/store/scene";
 export default function Feed() {
   const router = useRouter();
   const t = useT();
+  const { spots: SPOTS } = useCatalog();
   const { city } = useCity();
   const { scene } = useScene();
   const { interests } = useInterests();
@@ -69,7 +70,7 @@ export default function Feed() {
           )
           .filter((s) => matchesFilter(s, filter)),
       ),
-    [city, scene, activeCategory, q, filter],
+    [SPOTS, city, scene, activeCategory, q, filter],
   );
 
   // Onboarding personalization: spots whose ambience matches one of the chosen
@@ -90,7 +91,7 @@ export default function Feed() {
       SPOTS.filter(
         (s) => s.city === city && SCENE_CATEGORIES[scene].includes(s.category),
       ),
-    [city, scene],
+    [SPOTS, city, scene],
   );
   const onSurprise = () => {
     if (surprisePool.length === 0) return;
