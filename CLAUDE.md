@@ -32,8 +32,9 @@ in drei Farbvarianten: Gelb/Schwarz, Schwarz/Gelb, Weiß/Schwarz; **Gelb/Schwarz
 `#FFE500` auf `#1A1A1A`** = Homescreen-Favorit, Schrift DM Serif Display italic,
 Radius ~22 % der Kantenlänge). Vorlage fürs spätere 1024er-App-Icon (iOS).
 
-Der Nutzer hat **wenig App-Erfahrung** → Code aufgeräumt und **auf Deutsch
-kommentiert** halten, Entscheidungen kurz erklären.
+Der Nutzer hat **wenig App-Erfahrung** → Code aufgeräumt und **auf Englisch
+kommentiert** halten (Konvention seit der i18n-Umstellung), Entscheidungen kurz
+erklären. Sichtbare Texte immer zweisprachig (EN/DE) über `t("EN","DE")`.
 
 ---
 
@@ -113,7 +114,8 @@ app/                      Screens (Expo Router – Dateiname = Route)
     _layout.tsx           Tabs mit custom <BottomNav/>
     feed.tsx              02 Discovery-Feed (Stadt-Dropdown + Kategorie-Filter)
     viertel.tsx           05 Stadt-Übersicht
-    karte.tsx             04 Kartenansicht (stilisierte Karte, Pins, Phase 1)
+    karte.tsx             04 Kartenansicht (Apple Maps via react-native-maps im
+                          Dev Build; stilisierte Fallback-Karte in Expo Go)
     profil.tsx            07 Profil
   spot/[id].tsx           03 Spot- UND Event-Detail (eine Route)
   bezirk/[name].tsx       Bezirks-Detail (Spots eines Viertels)
@@ -413,9 +415,23 @@ gedimmt + **diagonal durchgestrichen** (`DiagonalStrike`), nicht auswählbar
 (`pointerEvents="none"`). Mock-Daten der anderen Städte wurden **gelöscht**
 (Spots, Viertel, Geheimtipps) — nur München bleibt. Default-Stadt = München.
 
-**Phase 1 (MVP) — fertig**, läuft komplett in Expo Go. Alle Screens 01–08
+**Phase 1 (MVP) — fertig**, läuft in Expo Go. Alle Screens 01–08
 (Welcome, Registrierung, Feed, Spot-/Event-Detail, Stadt-Übersicht,
-Gespeichert, Profil, Einstellungen, Geheimtipp). Karte-Tab = Platzhalter.
+Gespeichert, Profil, Einstellungen, Geheimtipp) + Legal + Ort-vorschlagen.
+
+**Seitdem dazugekommen** (alles gepusht):
+- **Zweisprachig EN/DE** (i18n) mit Sprach-Toggle im Account; englische
+  Städte-Anzeigenamen (kanonischer Wert bleibt „München").
+- **Echte Karte = Apple Maps** (`react-native-maps`, Dev Build): full-bleed,
+  Stadt-Kopf/Suche im weißen Feld, Kategorie-Pills schweben, `mapPadding` hält
+  Positions-Button/Apple-Logo frei; Marker-Tap → Spot-Karte; „Auf Karte" im
+  Detail zentriert die Verso-Karte. In Expo Go weiterhin Fallback-Karte.
+- **Bottom-Nav = durchgehendes Feld** (keine Insel mehr), app-weit.
+- **Kategorien erweitert** (Essen/Feiern/Sport/Live Events) mit Icons in den
+  Pills; **Insider-Szenen** (Sport, Live Events) hinter Insider-Flag + Mock-
+  Vorschau; Marken-App-Icon gesetzt.
+- Der **Dev Build** ist nötig, um Apple Maps zu sehen (`npx expo run:ios`);
+  reine JS/Layout-Änderungen brauchen nur Reload.
 
 ## Nächste Schritte (Phase 2 — erst nach Abnahme)
 
@@ -521,7 +537,7 @@ npm test               # Unit-Tests der reinen Logik (vitest, src/**)
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-07-01 · Spot-Detail „Auf Karte" → Verso-Karte statt native Maps
+### 238c575 · 2026-07-01 · Spot-Detail „Auf Karte" → Verso-Karte statt native Maps
 - Der **Mini-Karten-Tap** im Spot-Detail (`MiniMap`) öffnet jetzt **Versos
   eigenen Karte-Tab** statt der nativen Maps-App: `router.navigate("/karte",
   { focus: spot.id })`.
