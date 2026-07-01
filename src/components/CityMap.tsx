@@ -83,6 +83,20 @@ function Pin({
       : withTiming(0, { duration: 120 }); // quick, calm fade-out
   }, [active, pop]);
 
+  // The dot itself bounces when it becomes selected (scale up, spring back).
+  const dotScale = useSharedValue(1);
+  useEffect(() => {
+    if (active) {
+      dotScale.value = withSequence(
+        withSpring(1.45, { damping: 6, stiffness: 240, mass: 0.5 }),
+        withSpring(1, { damping: 12, stiffness: 200 }),
+      );
+    }
+  }, [active, dotScale]);
+  const dotStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: dotScale.value }],
+  }));
+
   // popAll on -> all labels pop open and STAY; popAll off -> gone again.
   useEffect(() => {
     flash.value = popAll
@@ -201,15 +215,18 @@ function Pin({
               pulseStyle,
             ]}
           />
-          <View
+          <Animated.View
             className="rounded-pill"
-            style={{
-              width: 14,
-              height: 14,
-              backgroundColor: c.dot,
-              borderWidth: 2.5,
-              borderColor: dotBorder,
-            }}
+            style={[
+              {
+                width: 14,
+                height: 14,
+                backgroundColor: c.dot,
+                borderWidth: 2.5,
+                borderColor: dotBorder,
+              },
+              dotStyle,
+            ]}
           />
         </View>
       </Pressable>

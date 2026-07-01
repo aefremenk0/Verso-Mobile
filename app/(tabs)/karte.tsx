@@ -1,6 +1,11 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
 import { Pressable, Text, View } from "react-native";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+} from "react-native-reanimated";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { CategoryBar } from "../../src/components/CategoryBar";
 import { CityDropdown } from "../../src/components/CityDropdown";
@@ -27,10 +32,70 @@ import { useScene } from "../../src/store/scene";
 import { shadows } from "../../src/theme";
 
 // Screen 04 — Map view.
-// Map (Apple/Google Maps via expo-maps in the dev build, otherwise stylized).
-// Pins are tappable -> only
-// then does the small spot card appear. FILTER opens the filter sheet whose
-// selection filters pins AND the count immediately.
+// Map (Apple/Google Maps via react-native-maps in the dev build, otherwise
+// stylized). Pins are tappable -> only then does the small spot card appear.
+// FILTER opens the filter sheet whose selection filters pins AND the count.
+
+// Floating spot card that springs up when a pin is selected. Rendered with a
+// `key={spot.id}` so switching pins remounts it -> it re-pops each time.
+function MapSpotCard({
+  spot,
+  lang,
+  bottom,
+  onOpen,
+  onClose,
+}: {
+  spot: Spot;
+  lang: ReturnType<typeof useLang>;
+  bottom: number;
+  onOpen: () => void;
+  onClose: () => void;
+}) {
+  const p = useSharedValue(0);
+  useEffect(() => {
+    // Pop in: rise + scale up + fade (spring).
+    p.value = withSpring(1, { damping: 15, stiffness: 200, mass: 0.7 });
+  }, [p]);
+  const style = useAnimatedStyle(() => ({
+    opacity: p.value,
+    transform: [
+      { translateY: (1 - p.value) * 26 },
+      { scale: 0.92 + p.value * 0.08 },
+    ],
+  }));
+  const txt = spotText(spot, lang);
+
+  return (
+    <Animated.View
+      style={[{ position: "absolute", left: 16, right: 16, bottom }, style]}
+    >
+      <Pressable
+        onPress={onOpen}
+        className="flex-row items-center gap-3.5 rounded-card bg-surface p-3.5"
+        style={shadows.card}
+      >
+        <ImagePlaceholder tone={spot.tone} height={66} radius={18} style={{ width: 66 }} />
+        <View className="flex-1">
+          <Text className="font-hk-semibold text-[9px] tracking-[1.5px] text-ink-3">
+            {categoryLabel(spot.category, lang)} · {spot.neighborhood.split(",")[0].toUpperCase()} · {priceLabel(spot.priceLevel)}
+          </Text>
+          <Text className="mt-0.5 font-hk-extrabold text-[22px] text-ink">{txt.name}</Text>
+          <Text className="mt-0.5 font-hk-medium-italic text-[12px] text-ink-2" numberOfLines={1}>
+            {txt.hook}
+          </Text>
+        </View>
+        {/* Close (clear selection) */}
+        <Pressable
+          onPress={onClose}
+          hitSlop={10}
+          className="h-7 w-7 items-center justify-center rounded-pill bg-chip"
+        >
+          <Text className="font-hk-bold text-[13px] text-ink-2">✕</Text>
+        </Pressable>
+      </Pressable>
+    </Animated.View>
+  );
+}
 
 export default function Karte() {
   const router = useRouter();
@@ -106,9 +171,14 @@ export default function Karte() {
   // Only show the selected spot if it's still in the filtered result.
   const card = selected && spots.some((s) => s.id === selected.id) ? selected : null;
 
-  // Tap a pin: select it — tap the same one again: hide it.
+  // Tap a pin: select it — tap the same one again: hide it. On select, gently
+  // recenter the real map on that pin (native animateToRegion) for feedback.
   const onSelectSpot = (s: Spot) =>
-    setSelected((prev) => (prev?.id === s.id ? null : s));
+    setSelected((prev) => {
+      const next = prev?.id === s.id ? null : s;
+      if (next) setCenterOn({ latitude: s.lat, longitude: s.lng, key: Date.now() });
+      return next;
+    });
 
   // Bottom nav field height. The map area ends exactly at the nav's top edge
   // (marginBottom), so the Apple logo (pinned to the map frame bottom) sits
@@ -159,33 +229,17 @@ export default function Karte() {
         </View>
       </View>
 
-      {/* Spot card: appears only once a pin has been tapped. Sits just above
-          the bottom nav field. */}
+      {/* Spot card: appears once a pin has been tapped. Pops up (spring) and
+          re-pops when switching pins (keyed by id). Sits above the bottom nav. */}
       {card ? (
-        <Pressable
-          onPress={() => router.push(`/spot/${card.id}`)}
-          className="absolute left-4 right-4 flex-row items-center gap-3.5 rounded-card bg-surface p-3.5"
-          style={[{ bottom: navH + 12 }, shadows.card]}
-        >
-          <ImagePlaceholder tone={card.tone} height={66} radius={18} style={{ width: 66 }} />
-          <View className="flex-1">
-            <Text className="font-hk-semibold text-[9px] tracking-[1.5px] text-ink-3">
-              {categoryLabel(card.category, lang)} · {card.neighborhood.split(",")[0].toUpperCase()} · {priceLabel(card.priceLevel)}
-            </Text>
-            <Text className="mt-0.5 font-hk-extrabold text-[22px] text-ink">{spotText(card, lang).name}</Text>
-            <Text className="mt-0.5 font-hk-medium-italic text-[12px] text-ink-2" numberOfLines={1}>
-              {spotText(card, lang).hook}
-            </Text>
-          </View>
-          {/* Close (clear selection) */}
-          <Pressable
-            onPress={() => setSelected(null)}
-            hitSlop={10}
-            className="h-7 w-7 items-center justify-center rounded-pill bg-chip"
-          >
-            <Text className="font-hk-bold text-[13px] text-ink-2">✕</Text>
-          </Pressable>
-        </Pressable>
+        <MapSpotCard
+          key={card.id}
+          spot={card}
+          lang={lang}
+          bottom={navH + 12}
+          onOpen={() => router.push(`/spot/${card.id}`)}
+          onClose={() => setSelected(null)}
+        />
       ) : null}
 
       {/* "+" — submit a place for review. Hidden while a spot card is open
