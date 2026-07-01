@@ -119,10 +119,16 @@ export function InsiderProvider({ children }: { children: ReactNode }) {
     })();
   }, [user?.id]);
 
-  const setInsider = useCallback((v: boolean) => {
-    if (hasRevenueCat) return; // real entitlement decides -> ignore mock toggle
-    setIsInsider(v);
-  }, []);
+  const setInsider = useCallback(
+    (v: boolean) => {
+      // The mock preview is allowed whenever there is nothing real to buy
+      // (Expo Go, or a dev build without a configured RevenueCat offering).
+      // Once real packages exist, the entitlement decides -> ignore the toggle.
+      if (hasRevenueCat && packages.length > 0) return;
+      setIsInsider(v);
+    },
+    [packages.length],
+  );
 
   const reset = useCallback(() => {
     if (hasRevenueCat) {

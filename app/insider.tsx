@@ -123,7 +123,7 @@ export default function Insider() {
 
       {/* Action area */}
       <View className="px-6 pb-8">
-        {hasPaywall ? (
+        {hasPaywall && packages.length > 0 ? (
           // ── Real paywall (dev build with RevenueCat) ──
           isInsider ? (
             <Pressable
