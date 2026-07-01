@@ -187,7 +187,11 @@ scripts/gen-seed.ts       erzeugt supabase/seed.sql aus src/data/* (via tsx)
                           swappt bei konfiguriertem Supabase die DB-Zeilen ein
                           (Mock-Fallback). useCatalog() → spots/neighborhoods/
                           getSpotById/source. Screens lesen NUR hierüber.
-  lib/supabase.ts         Supabase-Client (hasSupabase-Flag; URL+Key aus extra)
+  store/auth.tsx          Supabase Auth (E-Mail+Passwort): session/user,
+                          signUp/signIn/signOut, loading. Ohne Supabase =
+                          Gastmodus. Session via AsyncStorage persistent.
+  lib/supabase.ts         Supabase-Client (hasSupabase-Flag; URL+Key aus extra;
+                          AsyncStorage-Session, autoRefresh)
 
 app.config.js             Expo-Config (ersetzt app.json; iOS-Location-Permission)
   data/                   types.ts, spots.ts (Mock-Orte — Pilot: nur München),
@@ -595,7 +599,28 @@ npm test               # Unit-Tests der reinen Logik (vitest, src/**)
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-07-01 · Screens lesen aus Supabase (CatalogProvider, Mock-Fallback)
+### (dieser Commit) · 2026-07-01 · Echte Supabase-Auth (E-Mail + Passwort, Session persistent)
+- **Login ist jetzt echt** statt Mock: `register.tsx` „Konto erstellen"/
+  „Anmelden" laufen über **Supabase Auth (E-Mail + Passwort)**. Neues
+  **Passwort-Feld** (min. 6 Zeichen bei Registrierung), Fehler-/Ladezustand,
+  Enter → Submit. Apple/Google bleiben UI-Platzhalter (Gast-Eintritt).
+- **Neuer `src/store/auth.tsx`** (`AuthProvider`/`useAuth()`): hält `session`/
+  `user`, `signUp`/`signIn`/`signOut`, `loading`. Läuft **ohne Supabase im
+  Gastmodus** (Aktionen no-op → App bleibt nutzbar). `AuthProvider` in
+  `_layout.tsx` unter `LanguageProvider`.
+- **Session persistent:** `@react-native-async-storage/async-storage` (2.2.0,
+  Expo-Go-fest) als Auth-Storage in `lib/supabase.ts` (`persistSession: true`,
+  `autoRefreshToken: true`). **Eingeloggt bleibt eingeloggt** über App-Neustarts;
+  Welcome-CTA zeigt dann „Weiter/Continue" → direkt in den Feed.
+- **Abmelden** (`settings.tsx`) ruft jetzt `signOut()` (+ Store-Reset wie
+  bisher); E-Mail-Zeile zeigt die **echte** angemeldete Adresse.
+- **DB-Trigger** (`supabase/migrations/0002_profiles_trigger.sql`): neuer
+  Auth-User → automatisch eine `profiles`-Zeile (`security definer`, umgeht RLS
+  für den Insert). **Setup:** nach `0001_init.sql` einmal ausführen.
+- tsc sauber, 18/18 vitest, iOS-Bundle baut. Reines JS → **läuft in Expo Go**.
+  **Nächster Schritt:** Persistenz von `saved`/`interests`/`geheimtipp` in die DB.
+
+### 7534c59 · 2026-07-01 · Screens lesen aus Supabase (CatalogProvider, Mock-Fallback)
 - **Neuer `src/store/catalog.tsx`** (`CatalogProvider` / `useCatalog()`): hält
   `spots` + `neighborhoods`, startet mit dem lokalen Mock (`src/data/*`, sofort
   sichtbar/offline) und **swappt bei konfiguriertem Supabase** die echten Zeilen

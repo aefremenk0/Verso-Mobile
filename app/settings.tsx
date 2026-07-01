@@ -11,6 +11,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { LanguageToggle } from "../src/components/LanguageToggle";
 import { tapSelection } from "../src/lib/haptics";
 import { useT } from "../src/lib/i18n";
+import { useAuth } from "../src/store/auth";
 import { useGeheimtipp } from "../src/store/geheimtipp";
 import { useInsider } from "../src/store/insider";
 import { useInterests } from "../src/store/interests";
@@ -117,14 +118,17 @@ export default function Settings() {
   const interests = useInterests();
   const insider = useInsider();
   const { setScene } = useScene();
+  const { user, signOut } = useAuth();
 
   const [tippN, setTippN] = useState(true);
   const [spotsN, setSpotsN] = useState(true);
   const [eventsN, setEventsN] = useState(false);
 
   const abmelden = () => {
-    // Reset the mock login: hidden gem fresh again, saved list back to start,
-    // clear the selected vibes/interests.
+    // End the Supabase session (persisted in AsyncStorage) …
+    signOut();
+    // … and reset the in-memory stores: hidden gem fresh again, saved list back
+    // to start, clear the selected vibes/interests + Insider preview.
     geheimtipp.reset();
     saved.reset();
     interests.reset();
@@ -174,7 +178,7 @@ export default function Settings() {
             label={t("Edit profile", "Profil bearbeiten")}
             onPress={() => router.push("/profil-bearbeiten")}
           />
-          <NavRow label={t("Email", "E-Mail")} value="lena@verso.app" />
+          <NavRow label={t("Email", "E-Mail")} value={user?.email ?? "lena@verso.app"} />
           <NavRow
             label={t("Change password", "Passwort ändern")}
             last

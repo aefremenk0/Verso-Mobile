@@ -17,23 +17,57 @@ import {
 } from "../src/components/KeyboardDoneBar";
 import { AppleLogo, GoogleLogo } from "../src/components/Logos";
 import { ambienteOptions } from "../src/lib/mapFilter";
+import { useAuth } from "../src/store/auth";
 import { useInterests } from "../src/store/interests";
 import { useT, useLang } from "../src/lib/i18n";
 
 // Screen 01 — Sign up / Sign in.
-// UI only: Apple/Google/Email are placeholders. Every path leads to the feed.
+// Email + password go through real Supabase Auth (src/store/auth). Apple/Google
+// stay UI-only placeholders (guest entry). Every success leads to the feed.
 
 export default function Register() {
   const router = useRouter();
   const [mode, setMode] = useState<"register" | "login">("register");
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const { interests, toggle, max } = useInterests();
+  const { signUp, signIn } = useAuth();
   const t = useT();
   const lang = useLang();
 
-  // No real login in the MVP – we replace the screen with the feed,
-  // so the Back button doesn't lead back here.
+  // Replace the screen with the feed so Back doesn't lead here again.
   const enter = () => router.replace("/(tabs)/feed");
+
+  // Email + password submit: create the account or sign in via Supabase.
+  const submit = async () => {
+    if (busy) return;
+    setError(null);
+    const mail = email.trim();
+    if (!mail || !password) {
+      setError(t("Enter email and password.", "E-Mail und Passwort eingeben."));
+      return;
+    }
+    if (mode === "register" && password.length < 6) {
+      setError(
+        t(
+          "Password needs at least 6 characters.",
+          "Das Passwort braucht mindestens 6 Zeichen.",
+        ),
+      );
+      return;
+    }
+    setBusy(true);
+    const { error: err } =
+      mode === "register" ? await signUp(mail, password) : await signIn(mail, password);
+    setBusy(false);
+    if (err) {
+      setError(err);
+      return;
+    }
+    enter();
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-screen" edges={["top", "bottom"]}>
@@ -121,7 +155,10 @@ export default function Register() {
             return (
               <Pressable
                 key={m}
-                onPress={() => setMode(m)}
+                onPress={() => {
+                  setMode(m);
+                  setError(null);
+                }}
                 className={`flex-1 items-center rounded-pill py-2.5 ${
                   active ? "bg-surface" : ""
                 }`}
@@ -179,21 +216,46 @@ export default function Register() {
           placeholderTextColor="#8A857C"
           keyboardType="email-address"
           autoCapitalize="none"
+          autoComplete="email"
           className="rounded-button bg-surface px-5 py-4 font-hk-medium text-[15px] text-ink"
           style={{ borderWidth: 1, borderColor: "rgba(0,0,0,0.08)" }}
           inputAccessoryViewID={KEYBOARD_DONE_ID}
         />
 
+        <TextInput
+          value={password}
+          onChangeText={setPassword}
+          placeholder={t("Password", "Passwort")}
+          placeholderTextColor="#8A857C"
+          secureTextEntry
+          autoCapitalize="none"
+          autoComplete={mode === "register" ? "new-password" : "password"}
+          className="mt-2.5 rounded-button bg-surface px-5 py-4 font-hk-medium text-[15px] text-ink"
+          style={{ borderWidth: 1, borderColor: "rgba(0,0,0,0.08)" }}
+          inputAccessoryViewID={KEYBOARD_DONE_ID}
+          onSubmitEditing={submit}
+          returnKeyType={mode === "register" ? "done" : "go"}
+        />
+
+        {/* Error message (invalid credentials, email in use, …) */}
+        {error ? (
+          <Text className="mt-3 font-hk-medium text-[13px] leading-[18px] text-[#C0392B]">
+            {error}
+          </Text>
+        ) : null}
+
         <View className="mt-5">
           <Button
             label={
-              mode === "register"
-                ? t("Create account", "Konto erstellen")
-                : t("Sign in", "Anmelden")
+              busy
+                ? t("Please wait …", "Bitte warten …")
+                : mode === "register"
+                  ? t("Create account", "Konto erstellen")
+                  : t("Sign in", "Anmelden")
             }
             variant="accent"
             trailing="arrow"
-            onPress={enter}
+            onPress={submit}
           />
         </View>
 

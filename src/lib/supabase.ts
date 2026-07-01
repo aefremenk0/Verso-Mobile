@@ -1,4 +1,5 @@
 import "react-native-url-polyfill/auto";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import Constants from "expo-constants";
 import { createClient } from "@supabase/supabase-js";
 
@@ -7,7 +8,9 @@ import { createClient } from "@supabase/supabase-js";
 // is guarded by Row Level Security in the database, not by hiding the key).
 //
 // supabase-js is pure JS -> works in Expo Go too (no dev build needed for data
-// reads/auth). Auth session persistence (AsyncStorage) comes with the auth step.
+// reads/auth). The auth session is persisted in AsyncStorage (a pure-JS wrapper
+// that is bundled with Expo Go), so a logged-in user stays logged in across
+// app restarts. `detectSessionInUrl` is off (no browser URL on native).
 
 const extra = (Constants.expoConfig?.extra ?? {}) as {
   supabaseUrl?: string;
@@ -22,8 +25,9 @@ export const hasSupabase = Boolean(url && key);
 
 export const supabase = createClient(url, key, {
   auth: {
-    persistSession: false, // switched to AsyncStorage in the auth step
-    autoRefreshToken: false,
+    storage: AsyncStorage,
+    persistSession: true,
+    autoRefreshToken: true,
     detectSessionInUrl: false,
   },
 });

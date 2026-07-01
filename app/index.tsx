@@ -10,6 +10,7 @@ import {
   type QuestionBubblesHandle,
 } from "../src/components/QuestionBubbles";
 import { isComingSoon, type City } from "../src/data/cities";
+import { useAuth } from "../src/store/auth";
 import { useCity } from "../src/store/city";
 import { useT, useLang } from "../src/lib/i18n";
 import { useScaleSize } from "../src/lib/responsive";
@@ -29,6 +30,7 @@ const WELCOME_ROWS: City[][] = [
 export default function Welcome() {
   const router = useRouter();
   const { city, setCity } = useCity();
+  const { session } = useAuth();
   const insets = useSafeAreaInsets();
   const t = useT();
   const lang = useLang();
@@ -155,12 +157,16 @@ export default function Welcome() {
           ))}
         </View>
 
+        {/* If already signed in (persisted session), skip straight to the feed;
+            otherwise go to sign up / sign in. */}
         <Pressable
-          onPress={() => router.push("/register")}
+          onPress={() =>
+            session ? router.replace("/(tabs)/feed") : router.push("/register")
+          }
           className="mb-2 mt-auto flex-row items-center justify-between rounded-[18px] bg-night px-5 py-[18px]"
         >
           <Text className="font-hk-extrabold text-[18px] text-screen">
-            {t("Let's go", "Los geht's")}
+            {session ? t("Continue", "Weiter") : t("Let's go", "Los geht's")}
           </Text>
           <Text className="text-[18px] text-screen">→</Text>
         </Pressable>
