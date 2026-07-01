@@ -9,6 +9,7 @@ import {
 } from "react";
 import {
   ENTITLEMENT_ID,
+  LOG_LEVEL,
   Purchases,
   REVENUECAT_IOS_KEY,
   hasRevenueCat,
@@ -67,6 +68,12 @@ export function InsiderProvider({ children }: { children: ReactNode }) {
   // Configure RevenueCat once + subscribe to entitlement changes (native only).
   useEffect(() => {
     if (!hasRevenueCat) return;
+    try {
+      // Quiet the verbose DEBUG output — only warnings/errors from here on.
+      if (LOG_LEVEL) Purchases.setLogLevel(LOG_LEVEL.WARN);
+    } catch {
+      /* ignore */
+    }
     try {
       Purchases.configure({ apiKey: REVENUECAT_IOS_KEY });
     } catch {

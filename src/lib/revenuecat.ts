@@ -22,10 +22,14 @@ const isExpoGo = Constants.executionEnvironment === "storeClient";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 let Purchases: any = null;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+let LOG_LEVEL: any = null;
 if (!isExpoGo && REVENUECAT_IOS_KEY) {
   try {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
-    Purchases = require("react-native-purchases").default;
+    const mod = require("react-native-purchases");
+    Purchases = mod.default;
+    LOG_LEVEL = mod.LOG_LEVEL;
   } catch {
     Purchases = null;
   }
@@ -34,4 +38,4 @@ if (!isExpoGo && REVENUECAT_IOS_KEY) {
 /** True only in a dev/standalone build with the SDK key set. */
 export const hasRevenueCat = Boolean(Purchases && REVENUECAT_IOS_KEY);
 
-export { Purchases };
+export { Purchases, LOG_LEVEL };
