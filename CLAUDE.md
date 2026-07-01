@@ -151,7 +151,8 @@ src/
                           gemeinsam von Feed + Karte),
                           KeyboardDoneBar („Fertig"-Leiste über iOS-Tastatur),
                           SurpriseButton („Überrasch mich"; Sparkle + Press-Bounce),
-                          MiniMap (stilisierte Detail-Mini-Karte, SVG, tippbar),
+                          MiniMap (stilisierte Detail-Mini-Karte, SVG; Tap →
+                          Verso-Karte-Tab, auf den Spot zentriert),
                           DiagonalStrike (diagonaler Durchstrich für „kommt
                           bald"-Städte),
                           VersoLoader (Marken-Lade-Screen: weißer Hintergrund,
@@ -520,7 +521,17 @@ npm test               # Unit-Tests der reinen Logik (vitest, src/**)
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-07-01 · Karte: Marker-Tap zeigt wieder die Spot-Karte (kein Callout)
+### (dieser Commit) · 2026-07-01 · Spot-Detail „Auf Karte" → Verso-Karte statt native Maps
+- Der **Mini-Karten-Tap** im Spot-Detail (`MiniMap`) öffnet jetzt **Versos
+  eigenen Karte-Tab** statt der nativen Maps-App: `router.navigate("/karte",
+  { focus: spot.id })`.
+- **`karte.tsx`** liest den `focus`-Param (`useLocalSearchParams`): wechselt zur
+  passenden **Szene** des Spots, wählt ihn aus (Spot-Karte öffnet) und **zentriert
+  die echte Karte** darauf (neuer `centerOn`-Prop → `mapRef.animateToRegion`).
+- Die expliziten **Apple/Google-Maps-Buttons** im Detail (Adresse) bleiben als
+  native Deep-Links erhalten. Reines JS → Reload.
+
+### 68d6d23 · 2026-07-01 · Karte: Marker-Tap zeigt wieder die Spot-Karte (kein Callout)
 - **Fix:** react-native-maps zeigte beim Marker-Tap die native **Callout-Blase**
   (der „hässliche Text") statt unserer Spot-Karte. Ursache: `title` am Marker +
   unzuverlässiges `Marker.onPress` unter New Arch.

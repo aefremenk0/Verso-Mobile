@@ -244,6 +244,9 @@ interface CityMapProps {
    */
   topInset?: number;
   bottomInset?: number;
+  /** When set (from a "focus" navigation), the real map animates to this point
+   *  (the `key` makes repeated focuses on the same spot re-trigger). */
+  centerOn?: { latitude: number; longitude: number; key: number } | null;
 }
 
 // Once per session: on the first open of the map, show the double-tap gesture
@@ -257,8 +260,24 @@ export function CityMap({
   onClearSelection,
   topInset = 0,
   bottomInset = 0,
+  centerOn = null,
 }: CityMapProps) {
   const t = useT();
+  // Ref to the real map so a "focus" navigation can animate to a spot.
+  const mapRef = useRef<any>(null);
+  useEffect(() => {
+    if (centerOn && mapRef.current?.animateToRegion) {
+      mapRef.current.animateToRegion(
+        {
+          latitude: centerOn.latitude,
+          longitude: centerOn.longitude,
+          latitudeDelta: 0.02,
+          longitudeDelta: 0.02,
+        },
+        500,
+      );
+    }
+  }, [centerOn]);
   // Easter egg: double-tap on the empty map area -> TOGGLE: all pins pop open;
   // another double-tap hides them again. Both also reset the single selection,
   // so no selected pin/card stays "stuck".
@@ -313,6 +332,7 @@ export function CityMap({
     // Apple logo lifts above the bottom nav (bottom) — Apple requires it visible.
     return (
       <MapView
+        ref={mapRef}
         style={{ flex: 1 }}
         provider={RNMaps.PROVIDER_DEFAULT}
         initialRegion={{ ...center, latitudeDelta: 0.055, longitudeDelta: 0.055 }}

@@ -238,11 +238,17 @@ export default function SpotDetail() {
             </Text>
           </View>
 
-          {/* Mini map (stylized, Expo-Go-safe) — tapping opens Google Maps */}
+          {/* Mini map (stylized, Expo-Go-safe) — tapping opens Verso's own Map
+              tab, focused on this spot (not the native maps app). */}
           <View className="mt-3">
             <MiniMap
               spot={spot}
-              onPress={() => openGoogleMaps(`${spot.name} ${spot.address}`)}
+              onPress={() =>
+                router.navigate({
+                  pathname: "/karte",
+                  params: { focus: spot.id },
+                })
+              }
             />
           </View>
 

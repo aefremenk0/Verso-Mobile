@@ -1,4 +1,4 @@
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
 import { Pressable, Text, View } from "react-native";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
@@ -21,7 +21,7 @@ import {
 } from "../../src/lib/mapFilter";
 import { useLang, useT } from "../../src/lib/i18n";
 import { spotText } from "../../src/lib/localized";
-import { SCENE_CATEGORIES } from "../../src/lib/scene";
+import { SCENE_CATEGORIES, type Scene } from "../../src/lib/scene";
 import { useCity } from "../../src/store/city";
 import { useScene } from "../../src/store/scene";
 import { shadows } from "../../src/theme";
@@ -38,13 +38,37 @@ export default function Karte() {
   const lang = useLang();
   const insets = useSafeAreaInsets();
   const { city } = useCity();
-  const { scene } = useScene();
+  const { scene, setScene } = useScene();
+  // "focus" param: set when the user taps "On map" on a spot's detail page ->
+  // open this tab centered on that spot with its card open.
+  const { focus } = useLocalSearchParams<{ focus?: string }>();
 
   const [selected, setSelected] = useState<Spot | null>(null);
   const [filterOpen, setFilterOpen] = useState(false);
   const [filter, setFilter] = useState<MapFilter>(DEFAULT_FILTER);
   const [activeCategory, setActiveCategory] = useState<Category | null>(null);
   const [query, setQuery] = useState("");
+  // Coordinate the real map should animate to (from a "focus" navigation).
+  const [centerOn, setCenterOn] = useState<{
+    latitude: number;
+    longitude: number;
+    key: number;
+  } | null>(null);
+
+  // React to a "focus" spot: switch to its scene, select it, center the map.
+  useEffect(() => {
+    if (!focus) return;
+    const sp = SPOTS.find((s) => s.id === focus);
+    if (!sp) return;
+    const sc = (Object.keys(SCENE_CATEGORIES) as Scene[]).find((s) =>
+      SCENE_CATEGORIES[s].includes(sp.category),
+    );
+    if (sc && sc !== scene) setScene(sc);
+    setActiveCategory(null); // don't let the hotbar filter it out
+    setSelected(sp);
+    setCenterOn({ latitude: sp.lat, longitude: sp.lng, key: Date.now() });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [focus]);
 
   // Budget/rating/ambience set? (the category bar handles "type")
   const filterActive =
@@ -123,6 +147,7 @@ export default function Karte() {
           onClearSelection={() => setSelected(null)}
           topInset={catBarH + 6}
           bottomInset={8}
+          centerOn={centerOn}
         />
         <View
           onLayout={(e) => setCatBarH(e.nativeEvent.layout.height)}
