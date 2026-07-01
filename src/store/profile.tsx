@@ -4,6 +4,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from "react";
@@ -34,12 +35,20 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
   const [name, setName] = useState("");
   const [username, setUsername] = useState("");
   const [bio, setBio] = useState("");
+  // Values just written via save() — used so a concurrent login-fetch that
+  // reads the row *before* the write commits doesn't clobber them (registration
+  // race: the effect below fires the moment the user is set, while save() is
+  // still writing).
+  const justSaved = useRef<{ uid: string; fields: Partial<ProfileFields> } | null>(
+    null,
+  );
 
   // Load the profile row whenever the signed-in user changes.
   useEffect(() => {
     const uid = user?.id ?? null;
     if (!uid) {
       // Guest: fall back to the mock so the profile screen isn't empty.
+      justSaved.current = null;
       setName(MOCK_USER.name);
       setUsername(MOCK_USER.username);
       setBio(MOCK_USER.bio);
@@ -49,27 +58,38 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
     (async () => {
       const row = await fetchProfileRow(uid, ["name", "username", "bio"]);
       if (cancelled) return;
-      setName((row?.name as string) ?? "");
-      setUsername((row?.username as string) ?? "");
-      setBio((row?.bio as string) ?? "");
+      // Prefer a non-empty DB value; otherwise a value we just saved for this
+      // user (write may not have committed yet); otherwise empty.
+      const saved =
+        justSaved.current?.uid === uid ? justSaved.current.fields : undefined;
+      const pick = (col: keyof ProfileFields) =>
+        ((row?.[col] as string) || "") || (saved?.[col] ?? "") || "";
+      setName(pick("name"));
+      setUsername(pick("username"));
+      setBio(pick("bio"));
     })();
     return () => {
       cancelled = true;
     };
   }, [user?.id]);
 
-  const save = useCallback(async (fields: Partial<ProfileFields>) => {
-    // Optimistic local update.
-    if (fields.name !== undefined) setName(fields.name);
-    if (fields.username !== undefined) setUsername(fields.username);
-    if (fields.bio !== undefined) setBio(fields.bio);
-    if (!hasSupabase) return;
-    // Resolve the uid live (avoids a race with the auth state update).
-    const { data } = await supabase.auth.getUser();
-    const uid = data.user?.id;
-    if (!uid) return;
-    await patchProfile(uid, fields);
-  }, []);
+  const save = useCallback(
+    async (fields: Partial<ProfileFields>) => {
+      // Optimistic local update.
+      if (fields.name !== undefined) setName(fields.name);
+      if (fields.username !== undefined) setUsername(fields.username);
+      if (fields.bio !== undefined) setBio(fields.bio);
+      if (!hasSupabase) return;
+      // Resolve the uid live (avoids a race with the auth state update).
+      const { data } = await supabase.auth.getUser();
+      const uid = data.user?.id;
+      if (!uid) return;
+      // Remember what we wrote so a concurrent login-fetch can't clobber it.
+      justSaved.current = { uid, fields };
+      await patchProfile(uid, fields);
+    },
+    [],
+  );
 
   const value = useMemo<ProfileContextValue>(
     () => ({ name, username, bio, save }),
