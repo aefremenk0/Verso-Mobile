@@ -1,12 +1,13 @@
 // Expo app configuration as JS.
 //
-// The real map uses **expo-maps** (Apple Maps on iOS — no token needed; Google
-// Maps on Android). It only renders in a Dev Build / standalone app; in Expo Go
-// the Map screen shows the stylized fallback map (see src/components/CityMap.tsx).
+// The real map uses **react-native-maps** (Apple Maps on iOS via
+// PROVIDER_DEFAULT — no token needed; Google Maps on Android). It only renders
+// in a Dev Build / standalone app; in Expo Go the Map screen shows the stylized
+// fallback map (see src/components/CityMap.tsx).
 //
 // Android note: to show Google Maps tiles in a dev build you need a Google Maps
-// API key (set config.android.config.googleMaps.apiKey). iOS/Apple Maps needs no
-// key. Not required for the iOS pilot.
+// API key (android.config.googleMaps.apiKey). iOS/Apple Maps needs no key.
+// Not required for the iOS pilot.
 
 export default {
   expo: {
@@ -27,6 +28,11 @@ export default {
     ios: {
       supportsTablet: true,
       bundleIdentifier: "app.verso.mobile",
+      infoPlist: {
+        // Needed for the blue "you are here" dot + location button on the map.
+        NSLocationWhenInUseUsageDescription:
+          "Verso uses your location to show where you are on the map.",
+      },
     },
     android: {
       package: "app.verso.mobile",
@@ -35,25 +41,12 @@ export default {
         foregroundImage: "./assets/adaptive-icon.png",
         backgroundColor: "#1A1A1A",
       },
+      permissions: ["ACCESS_FINE_LOCATION", "ACCESS_COARSE_LOCATION"],
     },
+    plugins: ["expo-router", "expo-font", "expo-localization"],
     web: {
       bundler: "metro",
       output: "single",
     },
-    plugins: [
-      "expo-router",
-      "expo-font",
-      "expo-localization",
-      [
-        "expo-maps",
-        {
-          // Location permission strings (used only if we ever request the user's
-          // location; we currently don't, but the module sets these up).
-          requestLocationPermission: false,
-          locationPermission:
-            "Allow Verso to use your location to center the map.",
-        },
-      ],
-    ],
   },
 };

@@ -1,7 +1,7 @@
 import { useRouter } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
-import { Pressable, Text, View } from "react-native";
-import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
+import { Pressable, StyleSheet, Text, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { CategoryBar } from "../../src/components/CategoryBar";
 import { CityDropdown } from "../../src/components/CityDropdown";
 import { CityMap } from "../../src/components/CityMap";
@@ -85,40 +85,46 @@ export default function Karte() {
   const onSelectSpot = (s: Spot) =>
     setSelected((prev) => (prev?.id === s.id ? null : s));
 
+  // Full-width bottom field height (nav) -> mapPadding.bottom lifts the Apple
+  // logo above it. The floating top chrome height is measured -> mapPadding.top.
+  const navH = insets.bottom + 62;
+  const [chromeH, setChromeH] = useState(180);
+
   return (
-    <SafeAreaView className="flex-1 bg-screen" edges={["top"]}>
-      {/* Header: city on the left, scene on the right */}
-      <CityDropdown right={<SceneToggle />} />
-
-      {/* Search field + filter button (same as in the feed) */}
-      <View className="mt-3 flex-row items-center gap-2 px-6">
-        <View className="flex-1">
-          <SearchField
-            value={query}
-            onChangeText={setQuery}
-            placeholder={t("Search place, area or tag …", "Ort, Viertel oder Tag suchen …")}
-          />
-        </View>
-        <FilterButton active={filterActive} onPress={() => setFilterOpen(true)} />
-      </View>
-
-      {/* Map + floating, transparent category bar on top (you can see the map
-          through the bar). */}
-      <View className="mt-3 flex-1 overflow-hidden">
+    <View className="flex-1 bg-screen">
+      {/* Map fills the whole screen (full-bleed, open to the very top). Native
+          controls are kept clear of the chrome via mapPadding (see CityMap). */}
+      <View style={StyleSheet.absoluteFill}>
         <CityMap
           spots={spots}
           selectedId={card?.id}
           onSelect={onSelectSpot}
           onClearSelection={() => setSelected(null)}
-          // Native map insets (expo-maps only): clear the floating category bar
-          // on top and lift the Apple logo above the floating bottom nav.
-          topInset={58}
-          bottomInset={insets.bottom + 74}
+          topInset={chromeH}
+          bottomInset={navH}
         />
-        <View
-          pointerEvents="box-none"
-          style={{ position: "absolute", left: 0, right: 0, top: 6 }}
-        >
+      </View>
+
+      {/* Floating top chrome over the map: city header + search + category bar.
+          Measured height -> mapPadding.top so the location button drops below
+          the category pills. `box-none` lets map touches through the gaps. */}
+      <View
+        onLayout={(e) => setChromeH(e.nativeEvent.layout.height)}
+        pointerEvents="box-none"
+        style={{ position: "absolute", left: 0, right: 0, top: 0, paddingTop: insets.top }}
+      >
+        <CityDropdown right={<SceneToggle />} />
+        <View className="mt-3 flex-row items-center gap-2 px-6">
+          <View className="flex-1">
+            <SearchField
+              value={query}
+              onChangeText={setQuery}
+              placeholder={t("Search place, area or tag …", "Ort, Viertel oder Tag suchen …")}
+            />
+          </View>
+          <FilterButton active={filterActive} onPress={() => setFilterOpen(true)} />
+        </View>
+        <View className="mt-2">
           <CategoryBar active={activeCategory} onSelect={setActiveCategory} />
         </View>
       </View>
@@ -183,6 +189,6 @@ export default function Karte() {
 
       {/* "Done" bar above the keyboard (iOS) for the search field */}
       <KeyboardDoneBar />
-    </SafeAreaView>
+    </View>
   );
 }

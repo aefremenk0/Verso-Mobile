@@ -54,7 +54,7 @@ Expo **SDK 54**. Diese Versionen sind bewusst gepinnt — siehe Stolperfallen.
 | react-native-worklets | **0.5.1** (exakt) | von Reanimated 4 benötigt |
 | react-native-gesture-handler | ~2.28.0 | Swipe-Zeilen (Gespeichert), Expo-Go-ok |
 | react-native-svg | **15.12.1** (exakt) | Logos/Vektorgrafik, in Expo Go |
-| expo-maps | ~0.12.10 | echte Karte: Apple Maps (iOS)/Google (Android), **NUR Dev Build** |
+| react-native-maps | 1.20.1 | echte Karte: Apple Maps (iOS)/Google (Android), `mapPadding`, **NUR Dev Build** |
 | @expo-google-fonts/hanken-grotesk | ^0.4.x | |
 | expo-localization | ~17.0.9 | Gerätesprache (i18n-Default) |
 | expo-image, expo-font, expo-splash-screen | SDK-54-Stände | |
@@ -82,14 +82,19 @@ Expo **SDK 54**. Diese Versionen sind bewusst gepinnt — siehe Stolperfallen.
 5. **`className`-Typen** — kommen aus `nativewind-env.d.ts`
    (`/// <reference types="nativewind/types" />`). Nur EINE react-native-Kopie
    im Baum, sonst greift die Augmentation nicht (`npm ls react-native` prüfen).
-6. **`expo-maps` läuft NICHT in Expo Go.** `src/components/CityMap.tsx` lädt
-   expo-maps per `require` nur außerhalb Expo Go (`Constants.executionEnvironment`)
+6. **`react-native-maps` läuft NICHT in Expo Go.** `src/components/CityMap.tsx`
+   lädt es per `require` nur außerhalb Expo Go (`Constants.executionEnvironment`)
    — sonst stilisierte Fallback-Karte. Echte Karte nur im **Dev Build**:
-   **Apple Maps (iOS) braucht KEINEN Token**; Android (Google Maps) braucht einen
-   Google-Maps-API-Key (`android.config.googleMaps.apiKey`). **expo-maps rendert
-   NUR native Marker** (kein Custom-RN-Pin) → die animierten Gelb-Oval-Pins +
-   Doppeltipp-Easter-Egg gibt es nur auf der Fallback-Karte. `onMarkerClick` = iOS 18+.
-7. **Config liegt in `app.config.js`** (nicht `app.json`); `expo-maps` als Plugin.
+   **Apple Maps (iOS, `PROVIDER_DEFAULT`) braucht KEINEN Token**; Android (Google)
+   braucht einen Google-Maps-API-Key (`android.config.googleMaps.apiKey`).
+   **`mapPadding`** rückt die nativen Controls (Positions-Button oben,
+   Apple-Logo unten) ein, während die Karte full-bleed bleibt — genau dafür der
+   Lib-Wechsel weg von expo-maps (das hatte kein Inset-API). Marker via
+   `<Marker pinColor>`; eigene Marker-Views wären möglich (Roadmap: Gelb-Ovale).
+   Die animierten Gelb-Oval-Pins + Doppeltipp-Egg gibt es weiter nur auf der
+   Fallback-Karte.
+7. **Config liegt in `app.config.js`** (nicht `app.json`); iOS-Location-Permission
+   (`NSLocationWhenInUseUsageDescription`) für `showsUserLocation`.
 8. **`react-native-gesture-handler`** braucht zwingend `import
    "react-native-gesture-handler"` als ERSTE Zeile in `app/_layout.tsx` und einen
    `<GestureHandlerRootView style={{flex:1}}>` ganz außen — sonst reagieren die
@@ -135,7 +140,8 @@ src/
                           QuestionBubbles (aufsteigende Bubbles, konfig. Glyph),
                           SpotActionMenu (Long-Press-Kreis-Menü: Merken/Teilen),
                           SceneToggle (Feiern/Essen oben rechts),
-                          CityMap (expo-maps: Apple/Google + Expo-Go-Fallback),
+                          CityMap (react-native-maps: Apple/Google, full-bleed
+                          + mapPadding; Expo-Go-Fallback),
                           MapFilterSheet (Filter-Panel; `showArt`-Prop —
                           im Feed aus, da Hotbar die Art macht),
                           SearchField (Such-Pille mit SVG-Lupe + Clear),
@@ -171,7 +177,7 @@ src/
                           Settings-Toggle schaltet zur Laufzeit  (in-memory)
   store/scene.tsx         aktuelle Szene (Feiern vs. Essen), app-weit
 
-app.config.js             Expo-Config (ersetzt app.json; expo-maps-Plugin)
+app.config.js             Expo-Config (ersetzt app.json; iOS-Location-Permission)
   data/                   types.ts, spots.ts (Mock-Orte — Pilot: nur München),
                           cities.ts (CITIES = alle; LIVE_CITIES/isComingSoon —
                           Pilot: nur München; NEIGHBORHOODS nur München),
@@ -514,7 +520,28 @@ npm test               # Unit-Tests der reinen Logik (vitest, src/**)
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-07-01 · App-Icon + Apple-Maps-Controls einrücken
+### (dieser Commit) · 2026-07-01 · Karte full-bleed (react-native-maps + mapPadding) + Nav als Feld
+- **Karten-Lib gewechselt: expo-maps → `react-native-maps` (1.20.1)** — nur so
+  geht **full-bleed Karte + verschiebbare native Controls**: `mapPadding` rückt
+  den **Positions-Button** unter die schwebenden Kategorie-Pills (oben) und das
+  **Apple-Logo** über die Bottom-Nav (unten), während die Kacheln bis ganz oben
+  durchlaufen. Apple Maps via `PROVIDER_DEFAULT` (kein Token). `showsUserLocation`
+  + `showsMyLocationButton` (iOS-Location-Permission in `app.config.js`).
+- **`karte.tsx` neu aufgebaut:** Karte liegt **absolut über den ganzen Screen**
+  (bis unter die Statusbar); Stadt-Kopf + Suche + Kategorie-Leiste **schweben**
+  darüber (`box-none`), Höhe wird gemessen → `mapPadding.top`. `mapPadding.bottom`
+  = Nav-Höhe (`insets.bottom + 62`).
+- **Bottom-Nav von Insel → durchgehendes Feld** (`BottomNav`): volle Breite,
+  bündig unten, Hairline-Top-Border, Safe-Area unten; kein `mx-4`/Rundung mehr.
+  Gilt app-weit.
+- **`SceneToggle` entschlackt:** Nicht-Insider sehen nur Feiern/Essen + ein
+  einzelnes ⭐-Chip (öffnet Insider-Upsell); Insider sehen alle vier Szenen
+  (kein überlappendes Schloss-Badge mehr). Guard: wird die Vorschau beendet,
+  fällt eine Insider-Szene auf „essen" zurück.
+- expo-maps deinstalliert. tsc sauber, 18/18 vitest, iOS-Bundle baut.
+  **→ braucht nativen Rebuild** (`npx expo run:ios`), react-native-maps ist nativ.
+
+### a29a6b2 · 2026-07-01 · App-Icon + Apple-Maps-Controls einrücken
 - **App-Icon** ergänzt (Prebuild-Warnung „No icon" behoben): `assets/icon.png`
   (1024, **deckend** dunkel, gelbes kursives „v.", KEINE runden Ecken — iOS
   maskiert selbst) + `assets/adaptive-icon.png` (Android-Foreground, transparent,

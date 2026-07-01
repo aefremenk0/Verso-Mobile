@@ -1,6 +1,6 @@
 import Constants, { ExecutionEnvironment } from "expo-constants";
 import { useEffect, useRef, useState } from "react";
-import { Platform, Pressable, Text, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 import Animated, {
   Easing,
   useAnimatedStyle,
@@ -21,27 +21,25 @@ import { shadows } from "../theme";
 
 // Background map for the Map screen.
 //
-// - In the **Dev Build** the real native map from **expo-maps** is rendered:
-//   **Apple Maps on iOS** (no token needed), Google Maps on Android. Markers
-//   sit at the spots' coordinates, tinted per category; tapping a marker
-//   selects it -> the screen shows the spot card.
+// - In the **Dev Build** the real native map from **react-native-maps** is
+//   rendered: **Apple Maps on iOS** (PROVIDER_DEFAULT, no token needed), Google
+//   Maps on Android. Markers sit at the spots' coordinates, tinted per category.
+//   Full-bleed tiles; `mapPadding` keeps the native controls clear of our
+//   floating chrome (location button below the pills, Apple logo above the nav).
 // - In **Expo Go** (where native modules are missing) a stylized fallback map
 //   is shown automatically, so nothing crashes. The playful custom pin labels
 //   + double-tap easter egg live on this fallback.
-//
-// Note: expo-maps renders declarative NATIVE markers (no custom RN pin views),
-// so the animated yellow-oval pins only appear on the fallback map.
 
 const isExpoGo =
   Constants.executionEnvironment === ExecutionEnvironment.StoreClient;
 
-// Load expo-maps only outside Expo Go (its native view crashes in Expo Go).
-let ExpoMaps: any = null;
+// Load react-native-maps only outside Expo Go (native view crashes in Expo Go).
+let RNMaps: any = null;
 if (!isExpoGo) {
   try {
-    ExpoMaps = require("expo-maps");
+    RNMaps = require("react-native-maps");
   } catch {
-    ExpoMaps = null;
+    RNMaps = null;
   }
 }
 
@@ -285,7 +283,7 @@ export function CityMap({
   const hintStyle = useAnimatedStyle(() => ({ opacity: hintOpacity.value }));
 
   useEffect(() => {
-    if (ExpoMaps || demoShown) return;
+    if (RNMaps || demoShown) return;
     if (spots.length === 0) return; // nothing to show
     demoShown = true;
 
@@ -307,39 +305,33 @@ export function CityMap({
   }, []);
 
   // ── Real native map: Apple Maps (iOS) / Google Maps (Android), Dev Build ──
-  if (ExpoMaps) {
+  if (RNMaps) {
+    const MapView = RNMaps.default;
+    const Marker = RNMaps.Marker;
     const center = cityCenter(spots);
-    // Declarative native markers: coordinates + title + category tint. Tapping
-    // one selects it (onMarkerClick needs iOS 18+); the screen shows the card.
-    const markers = spots.map((s) => ({
-      id: s.id,
-      coordinates: { latitude: s.lat, longitude: s.lng },
-      title: spotText(s, lang).name,
-      tintColor: PIN_COLORS[s.category].dot,
-    }));
-    const cameraPosition = { coordinates: center, zoom: 12.5 };
-    const onMarkerClick = (marker: { id?: string }) => {
-      const s = spots.find((x) => x.id === marker.id);
-      if (s) onSelect(s);
-    };
-    const onMapClick = () => onClearSelection?.();
-
-    const MapView =
-      Platform.OS === "ios" ? ExpoMaps.AppleMaps.View : ExpoMaps.GoogleMaps.View;
-    // Inset the frame so the native controls clear our floating chrome: the
-    // location button sits below the category bar (top) and the Apple logo above
-    // the bottom nav (bottom). Background behind the insets stays cream.
+    // Full-bleed tiles; `mapPadding` insets ONLY the native controls: the
+    // location button drops below the floating category pills (top) and the
+    // Apple logo lifts above the bottom nav (bottom) — Apple requires it visible.
     return (
-      <View className="flex-1 bg-screen">
-        <MapView
-          style={{ flex: 1, marginTop: topInset, marginBottom: bottomInset }}
-          cameraPosition={cameraPosition}
-          markers={markers}
-          onMarkerClick={onMarkerClick}
-          onMapClick={onMapClick}
-          uiSettings={{ scaleBarEnabled: false }}
-        />
-      </View>
+      <MapView
+        style={{ flex: 1 }}
+        provider={RNMaps.PROVIDER_DEFAULT}
+        initialRegion={{ ...center, latitudeDelta: 0.055, longitudeDelta: 0.055 }}
+        mapPadding={{ top: topInset, right: 0, bottom: bottomInset, left: 0 }}
+        showsUserLocation
+        showsMyLocationButton
+        onPress={() => onClearSelection?.()}
+      >
+        {spots.map((s) => (
+          <Marker
+            key={s.id}
+            coordinate={{ latitude: s.lat, longitude: s.lng }}
+            title={spotText(s, lang).name}
+            pinColor={PIN_COLORS[s.category].dot}
+            onPress={() => onSelect(s)}
+          />
+        ))}
+      </MapView>
     );
   }
 

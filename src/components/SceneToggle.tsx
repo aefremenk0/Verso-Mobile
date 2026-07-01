@@ -1,21 +1,27 @@
 import { useRouter } from "expo-router";
+import { useEffect } from "react";
 import { Text, View } from "react-native";
 import { tapSelection } from "../lib/haptics";
 import { useT } from "../lib/i18n";
-import { isInsiderScene, type Scene } from "../lib/scene";
+import type { Scene } from "../lib/scene";
 import { useInsider } from "../store/insider";
 import { useScene } from "../store/scene";
 import { AnimatedChip } from "./AnimatedChip";
 
-// Scene toggle in the top right. Free: going out (🎉) / dining (🍴). Insider
-// only: sport (🏃) / live events (🎫) — locked with a 🔒 until the user is an
-// Insider; tapping a locked scene opens the Insider upsell instead of switching.
+// Scene toggle in the top right.
+// - Everyone sees the two free scenes: going out (🎉) / dining (🍴).
+// - Non-Insiders additionally see ONE ⭐ chip -> opens the Insider upsell.
+// - Insiders instead see the two extra scenes inline: sport (🏃) / events (🎫).
+// This keeps the bar clean (no crammed lock badges) while still teasing Insider.
 
-const SEGMENTS: { scene: Scene; icon: string; en: string; de: string }[] = [
+const FREE: { scene: Scene; icon: string; en: string; de: string }[] = [
   { scene: "feiern", icon: "🎉", en: "Show going out", de: "Ausgehen anzeigen" },
   { scene: "essen", icon: "🍴", en: "Show dining", de: "Essen anzeigen" },
-  { scene: "sport", icon: "🏃", en: "Show sport (Insider)", de: "Sport anzeigen (Insider)" },
-  { scene: "events", icon: "🎫", en: "Show live events (Insider)", de: "Live Events anzeigen (Insider)" },
+];
+
+const INSIDER: { scene: Scene; icon: string; en: string; de: string }[] = [
+  { scene: "sport", icon: "🏃", en: "Show sport", de: "Sport anzeigen" },
+  { scene: "events", icon: "🎫", en: "Show live events", de: "Live Events anzeigen" },
 ];
 
 export function SceneToggle() {
@@ -24,47 +30,48 @@ export function SceneToggle() {
   const router = useRouter();
   const t = useT();
 
-  const onPress = (s: Scene) => {
-    if (isInsiderScene(s) && !isInsider) {
-      router.push("/insider"); // premium upsell instead of switching
-      return;
-    }
-    if (s !== scene) tapSelection(); // feedback only on a real change
+  // If the Insider preview is turned off while on an Insider-only scene, fall
+  // back to a free scene so the view isn't stuck on hidden categories.
+  useEffect(() => {
+    if (!isInsider && (scene === "sport" || scene === "events")) setScene("essen");
+  }, [isInsider, scene, setScene]);
+
+  const switchTo = (s: Scene) => {
+    if (s !== scene) tapSelection();
     setScene(s);
   };
 
+  const segments = isInsider ? [...FREE, ...INSIDER] : FREE;
+
   return (
     <View className="flex-row rounded-pill bg-chip p-1">
-      {SEGMENTS.map((seg) => {
-        const locked = isInsiderScene(seg.scene) && !isInsider;
-        return (
-          <View key={seg.scene}>
-            <AnimatedChip
-              active={scene === seg.scene}
-              onPress={() => onPress(seg.scene)}
-              activeBg="#FFE500"
-              inactiveBg="rgba(255,229,0,0)"
-              style={{ borderRadius: 999, paddingHorizontal: 10, paddingVertical: 6 }}
-              accessibilityLabel={t(seg.en, seg.de)}
-            >
-              <Text
-                className="text-[15px]"
-                style={locked ? { opacity: 0.4 } : undefined}
-              >
-                {seg.icon}
-              </Text>
-            </AnimatedChip>
-            {locked ? (
-              <Text
-                style={{ position: "absolute", right: -1, top: -3, fontSize: 10 }}
-                pointerEvents="none"
-              >
-                🔒
-              </Text>
-            ) : null}
-          </View>
-        );
-      })}
+      {segments.map((seg) => (
+        <AnimatedChip
+          key={seg.scene}
+          active={scene === seg.scene}
+          onPress={() => switchTo(seg.scene)}
+          activeBg="#FFE500"
+          inactiveBg="rgba(255,229,0,0)"
+          style={{ borderRadius: 999, paddingHorizontal: 11, paddingVertical: 6 }}
+          accessibilityLabel={t(seg.en, seg.de)}
+        >
+          <Text className="text-[15px]">{seg.icon}</Text>
+        </AnimatedChip>
+      ))}
+
+      {/* Non-Insiders: a single ⭐ chip that opens the Insider upsell. */}
+      {!isInsider ? (
+        <AnimatedChip
+          active={false}
+          onPress={() => router.push("/insider")}
+          activeBg="#FFE500"
+          inactiveBg="rgba(255,229,0,0)"
+          style={{ borderRadius: 999, paddingHorizontal: 11, paddingVertical: 6 }}
+          accessibilityLabel={t("Verso Insider", "Verso Insider")}
+        >
+          <Text className="text-[15px]">⭐</Text>
+        </AnimatedChip>
+      ) : null}
     </View>
   );
 }

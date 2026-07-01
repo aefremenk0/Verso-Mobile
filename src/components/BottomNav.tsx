@@ -24,6 +24,7 @@ import { InitialsAvatar } from "./InitialsAvatar";
 const TABS = ["feed", "viertel", "karte", "profil"] as const;
 
 const PADDING = 7;
+const HPAD = 16; // horizontal side padding of the full-width field
 const BAR_HEIGHT = 62;
 const PILL_HEIGHT = 44;
 
@@ -53,7 +54,7 @@ export function BottomNav({ state, navigation }: BottomNavProps) {
   const showTipp = !abgeholt;
   const cells = showTipp ? 5 : 4;
 
-  const inner = Math.max(0, barWidth - PADDING * 2);
+  const inner = Math.max(0, barWidth - HPAD * 2);
   const cellW = inner / cells;
   const pillW = cellW * 0.75; // 75% of the cell width
 
@@ -87,39 +88,41 @@ export function BottomNav({ state, navigation }: BottomNavProps) {
       style={{ position: "absolute", left: 0, right: 0, bottom: 0 }}
       pointerEvents="box-none"
     >
+      {/* Full-width bottom field (flush to the edges, hairline top border), with
+          the home-indicator safe area below the row. */}
       <View
-        onLayout={onLayout}
-        className="mx-4 flex-row items-center rounded-card border border-black/10 bg-surface"
+        className="border-t border-black/10 bg-surface"
         style={[
-          {
-            height: BAR_HEIGHT,
-            padding: PADDING,
-            marginBottom: insets.bottom > 0 ? insets.bottom : 14,
-          },
+          { paddingBottom: insets.bottom > 0 ? insets.bottom : 12 },
           shadows.nav,
         ]}
       >
-        {/* Sliding yellow active pill (behind the labels) */}
-        {cellW > 0 ? (
-          <Animated.View
-            pointerEvents="none"
-            style={[
-              {
-                position: "absolute",
-                left: PADDING,
-                top: (BAR_HEIGHT - PILL_HEIGHT) / 2,
-                width: pillW,
-                height: PILL_HEIGHT,
-                borderRadius: 17,
-                backgroundColor: "#FFE500",
-              },
-              pillStyle,
-            ]}
-          />
-        ) : null}
+        <View
+          onLayout={onLayout}
+          className="flex-row items-center"
+          style={{ height: BAR_HEIGHT, paddingHorizontal: HPAD }}
+        >
+          {/* Sliding yellow active pill (behind the labels) */}
+          {cellW > 0 ? (
+            <Animated.View
+              pointerEvents="none"
+              style={[
+                {
+                  position: "absolute",
+                  left: HPAD,
+                  top: (BAR_HEIGHT - PILL_HEIGHT) / 2,
+                  width: pillW,
+                  height: PILL_HEIGHT,
+                  borderRadius: 17,
+                  backgroundColor: "#FFE500",
+                },
+                pillStyle,
+              ]}
+            />
+          ) : null}
 
-        {/* Four tabs — "profil" as the initials icon, otherwise a text label. */}
-        {TABS.map((name) => {
+          {/* Four tabs — "profil" as the initials icon, otherwise a text label. */}
+          {TABS.map((name) => {
           const focused = activeName === name;
           return (
             <Pressable
@@ -142,12 +145,13 @@ export function BottomNav({ state, navigation }: BottomNavProps) {
           );
         })}
 
-        {/* "?" cell: only while this week's tip has not been collected */}
-        {showTipp ? (
-          <View className="flex-1 items-center justify-center">
-            <GeheimtippButton onPress={() => router.push("/geheimtipp")} />
-          </View>
-        ) : null}
+          {/* "?" cell: only while this week's tip has not been collected */}
+          {showTipp ? (
+            <View className="flex-1 items-center justify-center">
+              <GeheimtippButton onPress={() => router.push("/geheimtipp")} />
+            </View>
+          ) : null}
+        </View>
       </View>
     </View>
   );
