@@ -259,7 +259,6 @@ export function CityMap({
   bottomInset = 0,
 }: CityMapProps) {
   const t = useT();
-  const lang = useLang();
   // Easter egg: double-tap on the empty map area -> TOGGLE: all pins pop open;
   // another double-tap hides them again. Both also reset the single selection,
   // so no selected pin/card stays "stuck".
@@ -320,15 +319,20 @@ export function CityMap({
         mapPadding={{ top: topInset, right: 0, bottom: bottomInset, left: 0 }}
         showsUserLocation
         showsMyLocationButton
+        // Marker tap -> select via the map-level event (reliable on New Arch);
+        // NO `title` on the markers, so no native callout ("ugly text") appears.
+        onMarkerPress={(e: { nativeEvent: { id?: string } }) => {
+          const s = spots.find((x) => x.id === e.nativeEvent.id);
+          if (s) onSelect(s);
+        }}
         onPress={() => onClearSelection?.()}
       >
         {spots.map((s) => (
           <Marker
             key={s.id}
+            identifier={s.id}
             coordinate={{ latitude: s.lat, longitude: s.lng }}
-            title={spotText(s, lang).name}
             pinColor={PIN_COLORS[s.category].dot}
-            onPress={() => onSelect(s)}
           />
         ))}
       </MapView>

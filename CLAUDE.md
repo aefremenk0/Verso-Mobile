@@ -520,7 +520,15 @@ npm test               # Unit-Tests der reinen Logik (vitest, src/**)
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-07-01 · Karte: weißes Kopf-Feld + Logo/„+" bündig über der Nav
+### (dieser Commit) · 2026-07-01 · Karte: Marker-Tap zeigt wieder die Spot-Karte (kein Callout)
+- **Fix:** react-native-maps zeigte beim Marker-Tap die native **Callout-Blase**
+  (der „hässliche Text") statt unserer Spot-Karte. Ursache: `title` am Marker +
+  unzuverlässiges `Marker.onPress` unter New Arch.
+- **Lösung:** `title` entfernt (keine Callout-Blase), Auswahl jetzt über das
+  Map-Level-Event **`onMarkerPress`** (Marker mit `identifier={spot.id}`) →
+  `onSelect` → unsere schwebende Spot-Karte erscheint wieder. Reines JS → Reload.
+
+### a526566 · 2026-07-01 · Karte: weißes Kopf-Feld + Logo/„+" bündig über der Nav
 - **Kein Full-bleed-über-alles mehr:** Stadt-Kopf + Suche/Filter sitzen jetzt in
   einem **soliden weißen Feld** oben (mit Hairline-Border unten); nur die
   **Kategorie-Pills schweben** über der Karte. (Wunsch: „München + Filter im
