@@ -199,11 +199,15 @@ app.config.js             Expo-Config (ersetzt app.json; iOS-Location-Permission
                           Pilot: nur München; NEIGHBORHOODS nur München),
                           categories.ts,
                           user.ts  (kein Backend; GEHEIMTIPP_BY_CITY nur München)
-  store/                  city.tsx, saved.tsx, geheimtipp.tsx,
-                          interests.tsx (Onboarding-Vibes, max 3),
+  store/                  city.tsx (in-memory), saved.tsx, geheimtipp.tsx,
+                          interests.tsx (Onboarding-Vibes, max 3) — die drei
+                          sind pro Nutzer PERSISTENT (Supabase profiles +
+                          AsyncStorage via usePersistedList), Gast = Mock;
                           insider.tsx (Verso-Insider-Flag, Default aus;
-                          schaltet Sport-/Live-Events-Szenen frei)  (React-
-                          Context, alles in-memory)
+                          schaltet Sport-/Live-Events-Szenen frei; in-memory)
+  store/usePersistedList.ts  Hook: String-Liste ↔ AsyncStorage + profiles-Spalte
+  lib/profile.ts          Persistenz-Helfer (loadLocal/saveLocal/fetch/patch,
+                          fail-soft)
   lib/maps.ts             Deep-Links Apple/Google Maps
   theme.ts                Design-Tokens als JS (Fonts, Farben, Schatten)
 
@@ -541,10 +545,10 @@ Gespeichert, Profil, Einstellungen, Geheimtipp) + Legal + Ort-vorschlagen.
 ### 🔴 Größer (strategisch / Architektur)
 > **Alle drei Punkte → geplant via Supabase + RevenueCat** (siehe Abschnitt
 > „Geplante Integrationen").
-- **⚠️⚠️ Persistenz fehlt** — *wichtigster Punkt.* Alle Stores (`saved`, `scene`,
-  `city`, `geheimtipp`) sind rein in-memory → App schließen = gemerkte Orte,
-  abgeholter Tipp, gewählte Stadt sind weg. Lösung: **Supabase** (+ `AsyncStorage`
-  als Offline-Cache) hinter die Stores. Riesiger gefühlter Unterschied.
+- (erledigt) ~~**⚠️⚠️ Persistenz fehlt**~~ — `saved`, `interests` und
+  `geheimtipp` sind jetzt **pro Nutzer persistent** (Supabase `profiles` +
+  `AsyncStorage` via `usePersistedList`); überleben App-Neustarts. `scene`/`city`
+  bleiben bewusst in-memory (Session-Zustand, kein Mehrwert in der DB).
 - **⚠️ Kein Backend / Daten nur als Mock**: Orte stecken im App-Bundle →
   Aktualisieren nur per App-Store-Update. Lösung: **Supabase**-Tabellen
   (CSV-Vorlagen in `data-collection/` als Import).
@@ -599,7 +603,28 @@ npm test               # Unit-Tests der reinen Logik (vitest, src/**)
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-07-01 · Echte Supabase-Auth (E-Mail + Passwort, Session persistent)
+### (dieser Commit) · 2026-07-01 · Persistenz: saved/interests/geheimtipp in die DB (+ Demo-Login)
+- **Stores sind nicht mehr in-memory:** `saved`, `interests` und `geheimtipp`
+  werden jetzt **pro angemeldetem Nutzer persistiert** — Supabase `profiles`
+  (Spalten `saved_spot_ids`, `interests`, `geheimtipp_abgeholt`) als Quelle der
+  Wahrheit + **AsyncStorage** als Offline-Cache. Gemerkte Orte, Vibes und der
+  abgeholte Wochentipp **überleben App-Neustarts** und folgen dem Konto.
+- **Neuer Helfer `src/lib/profile.ts`** (loadLocal/saveLocal/fetchProfileColumn/
+  patchProfileColumn, alle fail-soft) + **Hook `src/store/usePersistedList.ts`**:
+  hydriert erst aus dem lokalen Cache (sofort), dann aus der DB; schreibt jede
+  Änderung in beide. **Gast (nicht eingeloggt) = in-memory Mock** wie bisher.
+  Die drei Stores nutzen den Hook (geheimtipp speichert die Liste der bereits
+  abgeholten Städte statt eines Records).
+- **Migration `0003_profiles_geheimtipp.sql`**: Spalte `geheimtipp_abgeholt
+  text[]` auf `profiles`. **Setup:** nach 0001/0002 einmal ausführen.
+- **Demo-Login** in `register.tsx` („Als Demo-Nutzer einloggen") meldet mit
+  `demo@verso.app` / `versodemo` an (legt das Konto beim ersten Mal an, falls
+  E-Mail-Bestätigung in Supabase aus ist) — zum schnellen Testen.
+- tsc sauber, 18/18 vitest, iOS-Bundle baut. Reines JS → **läuft in Expo Go**.
+  **Nächster Schritt:** RevenueCat (Insider-Entitlement + Paywall) — braucht
+  Dev Build.
+
+### 13988f8 · 2026-07-01 · Echte Supabase-Auth (E-Mail + Passwort, Session persistent)
 - **Login ist jetzt echt** statt Mock: `register.tsx` „Konto erstellen"/
   „Anmelden" laufen über **Supabase Auth (E-Mail + Passwort)**. Neues
   **Passwort-Feld** (min. 6 Zeichen bei Registrierung), Fehler-/Ladezustand,

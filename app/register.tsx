@@ -25,6 +25,11 @@ import { useT, useLang } from "../src/lib/i18n";
 // Email + password go through real Supabase Auth (src/store/auth). Apple/Google
 // stay UI-only placeholders (guest entry). Every success leads to the feed.
 
+// Fixed demo account for quick testing. The button below signs in with it (and
+// creates it on first use if email confirmation is turned off in Supabase).
+const DEMO_EMAIL = "demo@verso.app";
+const DEMO_PASSWORD = "versodemo";
+
 export default function Register() {
   const router = useRouter();
   const [mode, setMode] = useState<"register" | "login">("register");
@@ -64,6 +69,25 @@ export default function Register() {
     setBusy(false);
     if (err) {
       setError(err);
+      return;
+    }
+    enter();
+  };
+
+  // Quick demo login: sign in with the fixed demo account; if it doesn't exist
+  // yet, create it once and sign in (works when email confirmation is off).
+  const demoLogin = async () => {
+    if (busy) return;
+    setError(null);
+    setBusy(true);
+    let res = await signIn(DEMO_EMAIL, DEMO_PASSWORD);
+    if (res.error) {
+      const up = await signUp(DEMO_EMAIL, DEMO_PASSWORD);
+      res = up.error ? up : await signIn(DEMO_EMAIL, DEMO_PASSWORD);
+    }
+    setBusy(false);
+    if (res.error) {
+      setError(res.error);
       return;
     }
     enter();
@@ -258,6 +282,17 @@ export default function Register() {
             onPress={submit}
           />
         </View>
+
+        {/* Quick demo login for testing (demo@verso.app) */}
+        <Pressable
+          onPress={demoLogin}
+          disabled={busy}
+          className="mt-3 items-center py-2"
+        >
+          <Text className="font-hk-semibold text-[13px] text-ink-3 underline">
+            {t("Log in as demo user", "Als Demo-Nutzer einloggen")}
+          </Text>
+        </Pressable>
 
         <Text className="mt-6 text-center font-hk-medium text-[12px] leading-[18px] text-ink-3">
           {t("By signing up you accept our", "Mit der Registrierung akzeptierst du")}{" "}

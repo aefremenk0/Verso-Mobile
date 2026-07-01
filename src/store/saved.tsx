@@ -3,14 +3,17 @@ import {
   useCallback,
   useContext,
   useMemo,
-  useState,
   type ReactNode,
 } from "react";
 import { MOCK_USER } from "../data/user";
+import { usePersistedList } from "./usePersistedList";
 
-// Stores the saved spots in memory (in-memory).
-// In the MVP deliberately NO persistence/DB – just a React context so that
-// "Save" in the detail screen and the Saved list share the same state.
+// Saved spots. Persisted per signed-in user (Supabase `profiles.saved_spot_ids`
+// + AsyncStorage cache) via usePersistedList, so the list survives app restarts
+// and follows the account. Guest = in-memory mock (MOCK_USER.savedSpotIds).
+
+// Stable guest fallback (module constant so the persist hook's deps stay stable).
+const GUEST_SAVED = MOCK_USER.savedSpotIds;
 
 interface SavedContextValue {
   savedIds: string[];
@@ -23,15 +26,21 @@ interface SavedContextValue {
 const SavedContext = createContext<SavedContextValue | null>(null);
 
 export function SavedProvider({ children }: { children: ReactNode }) {
-  const [savedIds, setSavedIds] = useState<string[]>(MOCK_USER.savedSpotIds);
+  const [savedIds, setSavedIds, resetToFallback] = usePersistedList(
+    "saved_spot_ids",
+    GUEST_SAVED,
+  );
 
-  const toggle = useCallback((id: string) => {
-    setSavedIds((prev) =>
-      prev.includes(id) ? prev.filter((x) => x !== id) : [id, ...prev],
-    );
-  }, []);
+  const toggle = useCallback(
+    (id: string) => {
+      setSavedIds((prev) =>
+        prev.includes(id) ? prev.filter((x) => x !== id) : [id, ...prev],
+      );
+    },
+    [setSavedIds],
+  );
 
-  const reset = useCallback(() => setSavedIds(MOCK_USER.savedSpotIds), []);
+  const reset = useCallback(() => resetToFallback(), [resetToFallback]);
 
   const value = useMemo<SavedContextValue>(
     () => ({
