@@ -49,20 +49,28 @@ fi
 
 AUTH=(-H "apikey: $KEY" -H "Authorization: Bearer $TOKEN")
 
-echo "== Zyklus 3: profiles-Zeile automatisch angelegt (Trigger 0002)? =="
+echo "== Zyklus 3: profiles lesbar (Trigger-Zeile, falls vorhanden)? =="
 ROW=$(curl -sS "${AUTH[@]}" "$URL/rest/v1/profiles?select=id,saved_spot_ids,interests,geheimtipp_abgeholt")
 if printf '%s' "$ROW" | grep -q "$USERID"; then
-  pass "profiles-Zeile existiert + alle Spalten lesbar"
+  pass "profiles-Zeile existiert bereits (Trigger hat gefeuert)"
 else
-  fail "keine profiles-Zeile / Spalte fehlt: $(printf '%s' "$ROW" | head -c 200)"
-  echo "     Tipp: 0002_profiles_trigger.sql und 0003_profiles_geheimtipp.sql ausfuehren."
+  echo "  ℹ️  noch keine Zeile fuer diesen User — wird in Zyklus 4 per upsert angelegt (wie in der App)."
 fi
 
-echo "== Zyklus 4: Persistenz-Roundtrip (saved_spot_ids schreiben + zuruecklesen) =="
-curl -sS -o /dev/null "${AUTH[@]}" -H "Content-Type: application/json" -H "Prefer: return=minimal" \
-  -X PATCH "$URL/rest/v1/profiles?id=eq.$USERID" -d '{"saved_spot_ids":["m-01","m-02"]}'
-BACK=$(curl -sS "${AUTH[@]}" "$URL/rest/v1/profiles?id=eq.$USERID&select=saved_spot_ids")
-if printf '%s' "$BACK" | grep -q "m-01"; then pass "geschrieben + zurueckgelesen: $BACK"; else fail "Roundtrip fehlgeschlagen: $BACK"; fi
+echo "== Zyklus 4: Persistenz-Roundtrip (upsert wie die App: schreiben + zuruecklesen) =="
+# Genau wie patchProfileColumn in der App: POST mit resolution=merge-duplicates
+# legt die Zeile an, falls sie fehlt, oder aktualisiert sie sonst.
+UP=$(curl -sS "${AUTH[@]}" -H "Content-Type: application/json" \
+  -H "Prefer: resolution=merge-duplicates,return=representation" \
+  -X POST "$URL/rest/v1/profiles" \
+  -d "{\"id\":\"$USERID\",\"saved_spot_ids\":[\"m-01\",\"m-02\"]}")
+BACK=$(curl -sS "${AUTH[@]}" "$URL/rest/v1/profiles?id=eq.$USERID&select=saved_spot_ids,interests,geheimtipp_abgeholt")
+if printf '%s' "$BACK" | grep -q "m-01"; then
+  pass "geschrieben + zurueckgelesen: $BACK"
+else
+  fail "Roundtrip fehlgeschlagen. upsert-Antwort: $(printf '%s' "$UP" | head -c 200) / read: $BACK"
+fi
+# wieder aufraeumen
 curl -sS -o /dev/null "${AUTH[@]}" -H "Content-Type: application/json" -H "Prefer: return=minimal" \
   -X PATCH "$URL/rest/v1/profiles?id=eq.$USERID" -d '{"saved_spot_ids":[]}'
 
