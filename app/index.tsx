@@ -1,5 +1,5 @@
 import { useRouter } from "expo-router";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { Pressable, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { StripeTexture } from "../src/components/StripeTexture";
@@ -30,8 +30,15 @@ const WELCOME_ROWS: City[][] = [
 export default function Welcome() {
   const router = useRouter();
   const { city, setCity } = useCity();
-  const { session } = useAuth();
+  const { session, loading } = useAuth();
   const insets = useSafeAreaInsets();
+
+  // Already signed in (persisted session)? Skip the Welcome screen entirely and
+  // go straight to the feed. This runs beneath the launch loader overlay, so the
+  // brown Welcome stage never flashes for returning users.
+  useEffect(() => {
+    if (!loading && session) router.replace("/(tabs)/feed");
+  }, [loading, session, router]);
   const t = useT();
   const lang = useLang();
   const scale = useScaleSize();
