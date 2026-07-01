@@ -1,7 +1,7 @@
 import { useRouter } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Pressable, Text, View } from "react-native";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { CategoryBar } from "../../src/components/CategoryBar";
 import { CityDropdown } from "../../src/components/CityDropdown";
 import { CityMap } from "../../src/components/CityMap";
@@ -85,36 +85,19 @@ export default function Karte() {
   const onSelectSpot = (s: Spot) =>
     setSelected((prev) => (prev?.id === s.id ? null : s));
 
-  // Full-width bottom field height (nav) -> mapPadding.bottom lifts the Apple
-  // logo above it. The floating top chrome height is measured -> mapPadding.top.
+  // Bottom nav field height. The map area ends exactly at the nav's top edge
+  // (marginBottom), so the Apple logo (pinned to the map frame bottom) sits
+  // right above the nav. The category bar height is measured -> mapPadding.top.
   const navH = insets.bottom + 62;
-  const [chromeH, setChromeH] = useState(180);
+  const [catBarH, setCatBarH] = useState(52);
 
   return (
-    <View className="flex-1 bg-screen">
-      {/* Map fills the whole screen (full-bleed, open to the very top). Native
-          controls are kept clear of the chrome via mapPadding (see CityMap). */}
-      <View style={StyleSheet.absoluteFill}>
-        <CityMap
-          spots={spots}
-          selectedId={card?.id}
-          onSelect={onSelectSpot}
-          onClearSelection={() => setSelected(null)}
-          topInset={chromeH}
-          bottomInset={navH}
-        />
-      </View>
-
-      {/* Floating top chrome over the map: city header + search + category bar.
-          Measured height -> mapPadding.top so the location button drops below
-          the category pills. `box-none` lets map touches through the gaps. */}
-      <View
-        onLayout={(e) => setChromeH(e.nativeEvent.layout.height)}
-        pointerEvents="box-none"
-        style={{ position: "absolute", left: 0, right: 0, top: 0, paddingTop: insets.top }}
-      >
+    <SafeAreaView className="flex-1 bg-screen" edges={["top"]}>
+      {/* White field: city header + search/filter sit on solid background,
+          above the map (not floating over it). */}
+      <View className="border-b border-black/5">
         <CityDropdown right={<SceneToggle />} />
-        <View className="mt-3 flex-row items-center gap-2 px-6">
+        <View className="mt-3 flex-row items-center gap-2 px-6 pb-3">
           <View className="flex-1">
             <SearchField
               value={query}
@@ -124,18 +107,39 @@ export default function Karte() {
           </View>
           <FilterButton active={filterActive} onPress={() => setFilterOpen(true)} />
         </View>
-        <View className="mt-2">
+      </View>
+
+      {/* Map area — ends at the bottom nav's top edge (marginBottom). Only the
+          category pills float over the map; the Apple logo + location button are
+          kept clear via mapPadding (top = pills height, bottom = small gap). */}
+      <View
+        className="flex-1 overflow-hidden"
+        style={{ marginBottom: navH }}
+      >
+        <CityMap
+          spots={spots}
+          selectedId={card?.id}
+          onSelect={onSelectSpot}
+          onClearSelection={() => setSelected(null)}
+          topInset={catBarH + 6}
+          bottomInset={8}
+        />
+        <View
+          onLayout={(e) => setCatBarH(e.nativeEvent.layout.height)}
+          pointerEvents="box-none"
+          style={{ position: "absolute", left: 0, right: 0, top: 6 }}
+        >
           <CategoryBar active={activeCategory} onSelect={setActiveCategory} />
         </View>
       </View>
 
-      {/* Spot card: appears only once a pin has been tapped.
-          Sits above the floating nav (safe area + nav height). */}
+      {/* Spot card: appears only once a pin has been tapped. Sits just above
+          the bottom nav field. */}
       {card ? (
         <Pressable
           onPress={() => router.push(`/spot/${card.id}`)}
           className="absolute left-4 right-4 flex-row items-center gap-3.5 rounded-card bg-surface p-3.5"
-          style={[{ bottom: insets.bottom + 92 }, shadows.card]}
+          style={[{ bottom: navH + 12 }, shadows.card]}
         >
           <ImagePlaceholder tone={card.tone} height={66} radius={18} style={{ width: 66 }} />
           <View className="flex-1">
@@ -165,7 +169,7 @@ export default function Karte() {
           onPress={() => router.push("/ort-vorschlagen")}
           accessibilityLabel={t("Submit a place", "Ort vorschlagen")}
           className="absolute h-14 w-14 items-center justify-center rounded-pill bg-accent"
-          style={[{ bottom: insets.bottom + 92, right: 16 }, shadows.card]}
+          style={[{ bottom: navH + 12, right: 16 }, shadows.card]}
         >
           <Text
             className="font-hk-bold text-accent-ink"
@@ -189,6 +193,6 @@ export default function Karte() {
 
       {/* "Done" bar above the keyboard (iOS) for the search field */}
       <KeyboardDoneBar />
-    </View>
+    </SafeAreaView>
   );
 }

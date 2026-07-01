@@ -520,7 +520,21 @@ npm test               # Unit-Tests der reinen Logik (vitest, src/**)
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-07-01 · Karte full-bleed (react-native-maps + mapPadding) + Nav als Feld
+### (dieser Commit) · 2026-07-01 · Karte: weißes Kopf-Feld + Logo/„+" bündig über der Nav
+- **Kein Full-bleed-über-alles mehr:** Stadt-Kopf + Suche/Filter sitzen jetzt in
+  einem **soliden weißen Feld** oben (mit Hairline-Border unten); nur die
+  **Kategorie-Pills schweben** über der Karte. (Wunsch: „München + Filter im
+  weißen Feld, nur die Karten auf der Map".)
+- **Karten-Fläche endet bündig an der Nav-Oberkante** (`marginBottom = navH`) →
+  das **Apple-Logo** (am Map-Frame-Boden) sitzt jetzt **direkt über der Hotbar**;
+  `mapPadding.bottom` nur noch 8 (kleiner Abstand). `mapPadding.top` =
+  gemessene Kategorie-Leisten-Höhe → Positions-Button unter den Pills.
+- **„+"-FAB und Spot-Karte** auf `navH + 12` gesetzt → **unmittelbar über der
+  Nav** (vorher schwebten sie zu hoch).
+- Reines JS/Layout → **Reload reicht** (kein nativer Rebuild). tsc sauber,
+  18/18 vitest, iOS-Bundle baut.
+
+### 6b04f9b · 2026-07-01 · Karte full-bleed (react-native-maps + mapPadding) + Nav als Feld
 - **Karten-Lib gewechselt: expo-maps → `react-native-maps` (1.20.1)** — nur so
   geht **full-bleed Karte + verschiebbare native Controls**: `mapPadding` rückt
   den **Positions-Button** unter die schwebenden Kategorie-Pills (oben) und das
