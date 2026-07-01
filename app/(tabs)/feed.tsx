@@ -1,6 +1,12 @@
 import { useRouter } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
 import { FlatList, Text, View } from "react-native";
+import Animated, {
+  Easing,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { CategoryBar } from "../../src/components/CategoryBar";
 import { CityDropdown } from "../../src/components/CityDropdown";
@@ -43,6 +49,21 @@ export default function Feed() {
   // On scene change reset the category selection (otherwise it might show a
   // category from the other scene -> empty).
   useEffect(() => setActiveCategory(null), [scene]);
+
+  // Gentle fade + rise of the list whenever the scene or category changes, so
+  // the places don't just pop in abruptly.
+  const listAnim = useSharedValue(1);
+  useEffect(() => {
+    listAnim.value = 0;
+    listAnim.value = withTiming(1, {
+      duration: 320,
+      easing: Easing.out(Easing.cubic),
+    });
+  }, [scene, activeCategory, listAnim]);
+  const listStyle = useAnimatedStyle(() => ({
+    opacity: listAnim.value,
+    transform: [{ translateY: (1 - listAnim.value) * 12 }],
+  }));
 
   // Are budget/rating/ambience set differently from the default? (type = hotbar)
   const filterActive =
@@ -120,8 +141,10 @@ export default function Feed() {
       </View>
 
       {/* List + floating category bar. The bar sits transparently ABOVE the
-          list -> cards scroll visibly behind it. */}
+          list -> cards scroll visibly behind it. The list fades + rises on
+          scene/category change (listStyle). */}
       <View className="mt-2 flex-1">
+        <Animated.View style={[{ flex: 1 }, listStyle]}>
         <FlatList
           data={personalizedSpots}
           keyExtractor={(s) => s.id}
@@ -166,6 +189,7 @@ export default function Feed() {
             </Text>
           }
         />
+        </Animated.View>
 
         {/* Floating, transparent category bar (cards scroll behind it) */}
         <View
