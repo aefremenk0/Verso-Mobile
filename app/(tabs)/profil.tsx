@@ -11,6 +11,7 @@ import { useGeheimtipp } from "../../src/store/geheimtipp";
 import { useSaved } from "../../src/store/saved";
 import { openExternal } from "../../src/lib/maps";
 import { useLang, useT } from "../../src/lib/i18n";
+import { initialsFromName } from "../../src/lib/initials";
 import { spotText } from "../../src/lib/localized";
 
 // Screen 07 — Profile.
@@ -58,14 +59,7 @@ export default function Profil() {
   const { savedIds } = useSaved();
   const { neighborhoods, getSpotById } = useCatalog();
   const { name, username } = useProfile();
-  // Initials from the name (first letters of up to two words) for the avatar.
-  const initials =
-    name
-      .trim()
-      .split(/\s+/)
-      .slice(0, 2)
-      .map((w) => w[0]?.toUpperCase() ?? "")
-      .join("") || "?";
+  const initials = initialsFromName(name);
 
   // Hidden gem of the currently selected city (city-dependent store).
   const { spotId } = useGeheimtipp();
@@ -112,10 +106,13 @@ export default function Profil() {
             <Text className="font-hk-extrabold text-title-sm text-ink" numberOfLines={1}>
               {name}
             </Text>
-            {username ? (
-              <Text className="font-hk-medium text-[13px] text-ink-3">{username}</Text>
-            ) : null}
-            <MysticBadge />
+            {/* Badge + username on one line */}
+            <View className="flex-row items-center gap-2">
+              <MysticBadge />
+              {username ? (
+                <Text className="font-hk-medium text-[13px] text-ink-3">{username}</Text>
+              ) : null}
+            </View>
           </View>
         </View>
 

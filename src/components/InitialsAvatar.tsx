@@ -1,13 +1,6 @@
 import { Text, View } from "react-native";
-import { MOCK_USER } from "../data/user";
-
-// Initials from the name, e.g. "Lena Hofer" -> "LH".
-export const INITIALS = MOCK_USER.name
-  .split(" ")
-  .map((w) => w[0])
-  .join("")
-  .slice(0, 2)
-  .toUpperCase();
+import { initialsFromName } from "../lib/initials";
+import { useProfile } from "../store/profile";
 
 interface InitialsAvatarProps {
   size?: number; // diameter of the circle
@@ -15,13 +8,14 @@ interface InitialsAvatarProps {
   focused?: boolean; // in the nav: active tab -> text on yellow
 }
 
-// Round avatar with the user's initials.
+// Round avatar with the signed-in user's initials (from their profile name).
 // One source for two spots: feed header (large) and bottom nav (small).
 export function InitialsAvatar({
   size = 38,
   textSize = 13,
   focused = false,
 }: InitialsAvatarProps) {
+  const { name } = useProfile();
   return (
     <View
       className="items-center justify-center rounded-pill"
@@ -36,7 +30,7 @@ export function InitialsAvatar({
         className={`font-hk-extrabold ${focused ? "text-accent-ink" : "text-ink"}`}
         style={{ fontSize: textSize }}
       >
-        {INITIALS}
+        {initialsFromName(name)}
       </Text>
     </View>
   );

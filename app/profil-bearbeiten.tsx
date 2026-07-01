@@ -7,17 +7,12 @@ import {
   KEYBOARD_DONE_ID,
 } from "../src/components/KeyboardDoneBar";
 import { StripeTexture } from "../src/components/StripeTexture";
-import { MOCK_USER } from "../src/data/user";
+import { initialsFromName } from "../src/lib/initials";
 import { useT } from "../src/lib/i18n";
+import { useProfile } from "../src/store/profile";
 
-// Screen 07c — Edit profile (UI only, no real saving in the MVP).
-
-const INITIALS = MOCK_USER.name
-  .split(" ")
-  .map((w) => w[0])
-  .join("")
-  .slice(0, 2)
-  .toUpperCase();
+// Screen 07c — Edit profile. Prefilled from the user's profile; Save upserts
+// name/username/bio back to Supabase (via useProfile).
 
 // Labeled input field in the Verso style.
 function Field({
@@ -56,9 +51,22 @@ function Field({
 export default function ProfilBearbeiten() {
   const router = useRouter();
   const t = useT();
-  const [name, setName] = useState(MOCK_USER.name);
-  const [username, setUsername] = useState(MOCK_USER.username);
-  const [bio, setBio] = useState(MOCK_USER.bio);
+  const profile = useProfile();
+  const [name, setName] = useState(profile.name);
+  const [username, setUsername] = useState(profile.username);
+  const [bio, setBio] = useState(profile.bio);
+  const INITIALS = initialsFromName(name);
+
+  const onSave = async () => {
+    // Normalize the username to a @handle (unless left empty).
+    const handle = username.trim().replace(/^@+/, "").replace(/\s+/g, "").toLowerCase();
+    await profile.save({
+      name: name.trim(),
+      username: handle ? `@${handle}` : "",
+      bio: bio.trim(),
+    });
+    router.back();
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-screen" edges={["top", "bottom"]}>
@@ -109,7 +117,7 @@ export default function ProfilBearbeiten() {
         {/* Save (at the bottom) */}
         <View className="flex-1" />
         <Pressable
-          onPress={() => router.back()}
+          onPress={onSave}
           className="mt-8 items-center rounded-[16px] bg-accent py-4"
         >
           <Text className="font-hk-extrabold text-[17px] text-accent-ink">{t("Save", "Speichern")}</Text>
