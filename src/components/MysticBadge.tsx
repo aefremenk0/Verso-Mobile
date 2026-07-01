@@ -51,37 +51,35 @@ export function MysticBadge() {
   }));
 
   if (isInsider) {
+    // Already an Insider -> the badge is a pure status indicator (no tap, so the
+    // "???" upsell/paywall screen no longer opens).
     return (
-      <Pressable onPress={() => router.push("/insider")} hitSlop={8}>
-        <View
-          style={{
-            marginTop: 4,
-            alignSelf: "flex-start",
-            flexDirection: "row",
-            alignItems: "center",
-            borderRadius: 999,
-            backgroundColor: "#F4C430", // gold
-            paddingHorizontal: 12,
-            paddingVertical: 4,
-            borderWidth: 1.5,
-            borderColor: "#FFE9A8",
-            // soft golden glow
-            shadowColor: "#F4C430",
-            shadowOpacity: 0.6,
-            shadowRadius: 8,
-            shadowOffset: { width: 0, height: 0 },
-          }}
-        >
-          <Animated.Text
-            style={[{ fontSize: 11, color: "#1A1A1A" }, sparkleStyle]}
-          >
-            ✦{" "}
-          </Animated.Text>
-          <Text className="font-hk-bold text-[11px] tracking-[2px] text-night">
-            {t("VERSO INSIDER", "VERSO INSIDER")}
-          </Text>
-        </View>
-      </Pressable>
+      <View
+        style={{
+          marginTop: 4,
+          alignSelf: "flex-start",
+          flexDirection: "row",
+          alignItems: "center",
+          borderRadius: 999,
+          backgroundColor: "#F4C430", // gold
+          paddingHorizontal: 12,
+          paddingVertical: 4,
+          borderWidth: 1.5,
+          borderColor: "#FFE9A8",
+          // soft golden glow
+          shadowColor: "#F4C430",
+          shadowOpacity: 0.6,
+          shadowRadius: 8,
+          shadowOffset: { width: 0, height: 0 },
+        }}
+      >
+        <Animated.Text style={[{ fontSize: 11, color: "#1A1A1A" }, sparkleStyle]}>
+          ✦{" "}
+        </Animated.Text>
+        <Text className="font-hk-bold text-[11px] tracking-[2px] text-night">
+          {t("VERSO INSIDER", "VERSO INSIDER")}
+        </Text>
+      </View>
     );
   }
 
