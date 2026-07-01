@@ -18,7 +18,8 @@ jget() { node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{try{co
 
 echo "== Zyklus 1: Katalog-Tabellen lesbar? =="
 for T in spots neighborhoods geheimtipp_by_city; do
-  RESP=$(curl -sS -w $'\n%{http_code}' "${H_KEY[@]}" "$URL/rest/v1/$T?select=id")
+  # "city" existiert in allen drei Tabellen (neighborhoods/geheimtipp haben kein id)
+  RESP=$(curl -sS -w $'\n%{http_code}' "${H_KEY[@]}" "$URL/rest/v1/$T?select=city")
   CODE=$(echo "$RESP" | tail -n1)
   BODY=$(echo "$RESP" | sed '$d')
   N=$(printf '%s' "$BODY" | jlen)
