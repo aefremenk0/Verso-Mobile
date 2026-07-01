@@ -611,7 +611,31 @@ npm test               # Unit-Tests der reinen Logik (vitest, src/**)
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-07-01 · Name/Username bei Registrierung + Google/Apple-Login + goldenes Insider-Banner
+### (dieser Commit) · 2026-07-01 · Fix-Runde: Profil echt, Insider-Kauf, Karten-Animationen
+- **Echte Initialen überall:** neuer `src/lib/initials.ts` (`initialsFromName`);
+  `InitialsAvatar` (Bottom-Nav/Feed) + `profil-bearbeiten` nutzen jetzt den echten
+  Profilnamen statt Mock „LH"/„Lena Hofer". **Profil bearbeiten** ist prefilled
+  aus `useProfile` und **speichert** name/username/bio (upsert).
+- **Profil-Kopf:** `@username` sitzt jetzt in einer Zeile **neben** dem
+  ???/Insider-Badge (statt darüber).
+- **Name/Username-Race gefixt:** der Login-Fetch im `ProfileProvider` überschrieb
+  den gerade gespeicherten Namen mit einer leeren DB-Antwort → `justSaved`-Ref
+  hält den frischen Wert (Name bleibt nach Registrierung sichtbar).
+- **Insider-Kauf erkennt jetzt korrekt:** `activeEntitlement` prüft nicht nur das
+  benannte Entitlement `insider`, sondern auch **irgendein aktives Entitlement /
+  Abo / Kauf** → ein Test-Kauf schaltet Insider frei (Szenen + goldenes Banner),
+  auch wenn im Dashboard noch kein Entitlement gemappt ist. **Sauberer:** im
+  RevenueCat-Dashboard ein Entitlement `insider` anlegen und die Produkte
+  (yearly/monthly) daran hängen.
+- **Insider testbar ohne Produkt:** solange keine Offering existiert, zeigt
+  `app/insider.tsx` wieder den Mock-Vorschau-Schalter (statt leerer Paywall).
+- **RevenueCat-Logs** auf WARN gedrosselt (kein DEBUG-Spam beim Start).
+- **Karten-Animationen:** die Spot-Karte poppt federnd hoch (rise+scale+fade,
+  re-poppt beim Pin-Wechsel); bei Auswahl **zentriert/zoomt die echte Karte sanft
+  auf den Pin** (`animateToRegion`); auf der Fallback-Karte **hüpft der Punkt**.
+- tsc sauber, 18/18 vitest, iOS-Bundle baut.
+
+### 5cbe7e4 · 2026-07-01 · Name/Username bei Registrierung + Google/Apple-Login + goldenes Insider-Banner
 - **Name & Username bei der Registrierung:** `register.tsx` hat im Registrier-
   Modus neue Felder **Name** (Pflicht) und **@username** (optional, wird zu einem
   Handle normalisiert). Beim Sign-up werden sie in `profiles` (`name`/`username`)
