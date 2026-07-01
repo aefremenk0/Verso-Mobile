@@ -633,6 +633,16 @@ npm test               # Unit-Tests der reinen Logik (vitest, src/**)
 - **Karten-Animationen:** die Spot-Karte poppt federnd hoch (rise+scale+fade,
   re-poppt beim Pin-Wechsel); bei Auswahl **zentriert/zoomt die echte Karte sanft
   auf den Pin** (`animateToRegion`); auf der Fallback-Karte **hüpft der Punkt**.
+- **Goldenes Insider-Oval nicht mehr antippbar** (öffnet nicht mehr den ???-Screen;
+  reiner Status). **„???" (kein Insider)** bleibt tappbar → Upsell.
+- **Welcome übersprungen bei bestehender Session:** eingeloggte Nutzer landen nach
+  dem Lade-Screen direkt im Feed (Redirect unter dem Loader, kein Welcome-Flash).
+- **Feed-Übergang:** die Liste fadet + steigt leicht auf beim Szenen-/Kategorie-
+  Wechsel (statt hart zu erscheinen).
+- **Verbundene Konten** (`app/verbundene-konten.tsx`, neu): OpenTable · oeticket ·
+  Apple · Google zum Verknüpfen (Mock; Apple/Google vor-verbunden je nach Login-
+  Provider). In Einstellungen ersetzt „Verbundene Konten" die alte E-Mail-Zeile;
+  die **E-Mail steht jetzt (read-only) im „Profil bearbeiten"-Screen**.
 - tsc sauber, 18/18 vitest, iOS-Bundle baut.
 
 ### 5cbe7e4 · 2026-07-01 · Name/Username bei Registrierung + Google/Apple-Login + goldenes Insider-Banner

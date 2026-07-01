@@ -88,6 +88,7 @@ export default function RootLayout() {
             />
             <Stack.Screen name="profil-bearbeiten" />
             <Stack.Screen name="passwort-aendern" />
+            <Stack.Screen name="verbundene-konten" />
             <Stack.Screen name="bezirk/[name]" />
           </Stack>
           </InterestsProvider>
