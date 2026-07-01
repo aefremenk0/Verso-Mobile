@@ -54,7 +54,7 @@ Expo **SDK 54**. Diese Versionen sind bewusst gepinnt — siehe Stolperfallen.
 | react-native-worklets | **0.5.1** (exakt) | von Reanimated 4 benötigt |
 | react-native-gesture-handler | ~2.28.0 | Swipe-Zeilen (Gespeichert), Expo-Go-ok |
 | react-native-svg | **15.12.1** (exakt) | Logos/Vektorgrafik, in Expo Go |
-| @rnmapbox/maps | ^10.3.1 | echte Karte, **NUR Dev Build** (nicht Expo Go) |
+| expo-maps | ~0.12.10 | echte Karte: Apple Maps (iOS)/Google (Android), **NUR Dev Build** |
 | @expo-google-fonts/hanken-grotesk | ^0.4.x | |
 | expo-localization | ~17.0.9 | Gerätesprache (i18n-Default) |
 | expo-image, expo-font, expo-splash-screen | SDK-54-Stände | |
@@ -82,14 +82,14 @@ Expo **SDK 54**. Diese Versionen sind bewusst gepinnt — siehe Stolperfallen.
 5. **`className`-Typen** — kommen aus `nativewind-env.d.ts`
    (`/// <reference types="nativewind/types" />`). Nur EINE react-native-Kopie
    im Baum, sonst greift die Augmentation nicht (`npm ls react-native` prüfen).
-6. **Mapbox (`@rnmapbox/maps`) läuft NICHT in Expo Go.** `src/components/CityMap.tsx`
-   lädt Mapbox per `require` nur, wenn (a) NICHT Expo Go
-   (`Constants.executionEnvironment`) und (b) `EXPO_PUBLIC_MAPBOX_TOKEN` gesetzt
-   ist — sonst stilisierte Fallback-Karte. Für die echte Karte braucht es einen
-   **Dev Build** + zwei Tokens: `MAPBOX_DOWNLOAD_TOKEN` (sk.*, Build-Zeit, in
-   `app.config.js`) und `EXPO_PUBLIC_MAPBOX_TOKEN` (pk.*, Laufzeit).
-7. **Config liegt in `app.config.js`** (nicht mehr `app.json`), damit der
-   geheime Mapbox-Token aus der Umgebung kommt.
+6. **`expo-maps` läuft NICHT in Expo Go.** `src/components/CityMap.tsx` lädt
+   expo-maps per `require` nur außerhalb Expo Go (`Constants.executionEnvironment`)
+   — sonst stilisierte Fallback-Karte. Echte Karte nur im **Dev Build**:
+   **Apple Maps (iOS) braucht KEINEN Token**; Android (Google Maps) braucht einen
+   Google-Maps-API-Key (`android.config.googleMaps.apiKey`). **expo-maps rendert
+   NUR native Marker** (kein Custom-RN-Pin) → die animierten Gelb-Oval-Pins +
+   Doppeltipp-Easter-Egg gibt es nur auf der Fallback-Karte. `onMarkerClick` = iOS 18+.
+7. **Config liegt in `app.config.js`** (nicht `app.json`); `expo-maps` als Plugin.
 8. **`react-native-gesture-handler`** braucht zwingend `import
    "react-native-gesture-handler"` als ERSTE Zeile in `app/_layout.tsx` und einen
    `<GestureHandlerRootView style={{flex:1}}>` ganz außen — sonst reagieren die
@@ -135,7 +135,7 @@ src/
                           QuestionBubbles (aufsteigende Bubbles, konfig. Glyph),
                           SpotActionMenu (Long-Press-Kreis-Menü: Merken/Teilen),
                           SceneToggle (Feiern/Essen oben rechts),
-                          CityMap (Mapbox + Expo-Go-Fallback),
+                          CityMap (expo-maps: Apple/Google + Expo-Go-Fallback),
                           MapFilterSheet (Filter-Panel; `showArt`-Prop —
                           im Feed aus, da Hotbar die Art macht),
                           SearchField (Such-Pille mit SVG-Lupe + Clear),
@@ -171,7 +171,7 @@ src/
                           Settings-Toggle schaltet zur Laufzeit  (in-memory)
   store/scene.tsx         aktuelle Szene (Feiern vs. Essen), app-weit
 
-app.config.js             Expo-Config (ersetzt app.json; Mapbox-Token via Env)
+app.config.js             Expo-Config (ersetzt app.json; expo-maps-Plugin)
   data/                   types.ts, spots.ts (Mock-Orte — Pilot: nur München),
                           cities.ts (CITIES = alle; LIVE_CITIES/isComingSoon —
                           Pilot: nur München; NEIGHBORHOODS nur München),
@@ -412,8 +412,9 @@ Gespeichert, Profil, Einstellungen, Geheimtipp). Karte-Tab = Platzhalter.
 
 ## Nächste Schritte (Phase 2 — erst nach Abnahme)
 
-- Echte **Kartenansicht** mit `react-native-maps` (→ Dev Build, nicht Expo Go):
-  Liste/Karte-Toggle, custom Map-Style, gelbe Pins.
+- (erledigt) ~~Echte **Kartenansicht**~~ — via **`expo-maps`** (Apple Maps iOS /
+  Google Android) im Dev Build; native Marker mit Kategorie-Tint. Offen: Android
+  Google-Maps-API-Key, ggf. custom Map-Style, echten Dev Build testen.
 - **Karte-Filter-Sheet**: Art / Budget / Bewertung / Ambiente (Ambiente als
   Multi-Select, ODER innerhalb / UND zwischen Gruppen).
 - (erledigt) ~~Profil bearbeiten & Passwort ändern~~ — UI-Screens stehen.
@@ -513,7 +514,21 @@ npm test               # Unit-Tests der reinen Logik (vitest, src/**)
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-06-30 · Kategorie-Icons + Karte „+"-Ort-vorschlagen
+### (dieser Commit) · 2026-07-01 · Echte Karte auf Apple Maps (expo-maps) statt Mapbox
+- **Mapbox → `expo-maps` (~0.12.10):** die echte Karte ist jetzt **Apple Maps
+  auf iOS** (kein Token nötig), Google Maps auf Android. `@rnmapbox/maps`
+  deinstalliert, Mapbox-Plugin + `MAPBOX_*`-Tokens aus `app.config.js` raus,
+  `expo-maps`-Plugin ergänzt.
+- **`CityMap.tsx`**: „echte Karte"-Zweig nutzt `ExpoMaps.AppleMaps.View`
+  (iOS) / `GoogleMaps.View` (Android) mit **deklarativen nativen Markern**
+  (Koordinaten + Titel + Kategorie-Tint). Marker-Tap → `onSelect` → Spot-Karte.
+  Weiterhin nur im **Dev Build** (Expo Go = stilisierte Fallback-Karte).
+- **Trade-off:** expo-maps rendert nur native Marker → die animierten
+  Gelb-Oval-Pins + Doppeltipp-Easter-Egg gibt es **nur noch auf der Fallback-
+  Karte**. `onMarkerClick` braucht iOS 18+.
+- tsc sauber, 18/18 vitest, iOS-Bundle baut (kleiner ohne Mapbox).
+
+### b23edfd · 2026-06-30 · Kategorie-Icons + Karte „+"-Ort-vorschlagen
 - **Kategorie-Pills haben jetzt ein kleines Icon links** vom Namen
   (`CATEGORY_ICON` in `categories.ts`; `categoryFilters()` stellt es dem Label
   voran). Greift überall (Feed, Karte, Gespeichert, Bezirk) via `sceneFilters`.

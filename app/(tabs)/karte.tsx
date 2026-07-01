@@ -27,7 +27,8 @@ import { useScene } from "../../src/store/scene";
 import { shadows } from "../../src/theme";
 
 // Screen 04 — Map view.
-// Map (Mapbox in the dev build, otherwise stylized). Pins are tappable -> only
+// Map (Apple/Google Maps via expo-maps in the dev build, otherwise stylized).
+// Pins are tappable -> only
 // then does the small spot card appear. FILTER opens the filter sheet whose
 // selection filters pins AND the count immediately.
 

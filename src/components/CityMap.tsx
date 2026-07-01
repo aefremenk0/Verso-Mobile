@@ -1,6 +1,6 @@
 import Constants, { ExecutionEnvironment } from "expo-constants";
 import { useEffect, useRef, useState } from "react";
-import { Pressable, Text, View } from "react-native";
+import { Platform, Pressable, Text, View } from "react-native";
 import Animated, {
   Easing,
   useAnimatedStyle,
@@ -21,36 +21,36 @@ import { shadows } from "../theme";
 
 // Background map for the Map screen.
 //
-// - In the **Dev Build** (with a Mapbox token) the real **@rnmapbox/maps** map
-//   is rendered, with markers at the spots' actual coordinates.
-// - In **Expo Go** (where native modules are missing) a stylized map is shown
-//   automatically as a fallback, so nothing crashes.
+// - In the **Dev Build** the real native map from **expo-maps** is rendered:
+//   **Apple Maps on iOS** (no token needed), Google Maps on Android. Markers
+//   sit at the spots' coordinates, tinted per category; tapping a marker
+//   selects it -> the screen shows the spot card.
+// - In **Expo Go** (where native modules are missing) a stylized fallback map
+//   is shown automatically, so nothing crashes. The playful custom pin labels
+//   + double-tap easter egg live on this fallback.
 //
-// The real token comes from the environment variable EXPO_PUBLIC_MAPBOX_TOKEN
-// (public pk.* token). If it is missing or the app runs in Expo Go, the
-// fallback kicks in.
+// Note: expo-maps renders declarative NATIVE markers (no custom RN pin views),
+// so the animated yellow-oval pins only appear on the fallback map.
 
 const isExpoGo =
   Constants.executionEnvironment === ExecutionEnvironment.StoreClient;
-const MAPBOX_TOKEN = process.env.EXPO_PUBLIC_MAPBOX_TOKEN;
 
-// Only load Mapbox outside Expo Go and only with a token (otherwise it crashes).
-let Mapbox: any = null;
-if (!isExpoGo && MAPBOX_TOKEN) {
+// Load expo-maps only outside Expo Go (its native view crashes in Expo Go).
+let ExpoMaps: any = null;
+if (!isExpoGo) {
   try {
-    Mapbox = require("@rnmapbox/maps").default;
-    Mapbox.setAccessToken(MAPBOX_TOKEN);
+    ExpoMaps = require("expo-maps");
   } catch {
-    Mapbox = null;
+    ExpoMaps = null;
   }
 }
 
-// Center from the city's spots (centroid); fallback: Vienna.
-function cityCenter(spots: Spot[]): [number, number] {
-  if (spots.length === 0) return [16.3738, 48.2082];
+// Center from the city's spots (centroid); fallback: Munich.
+function cityCenter(spots: Spot[]): { latitude: number; longitude: number } {
+  if (spots.length === 0) return { latitude: 48.1372, longitude: 11.5755 };
   const lng = spots.reduce((a, s) => a + s.lng, 0) / spots.length;
   const lat = spots.reduce((a, s) => a + s.lat, 0) / spots.length;
-  return [lng, lat];
+  return { latitude: lat, longitude: lng };
 }
 
 // Pin content: dot + (when active) yellow label.
@@ -249,6 +249,7 @@ export function CityMap({
   onClearSelection,
 }: CityMapProps) {
   const t = useT();
+  const lang = useLang();
   // Easter egg: double-tap on the empty map area -> TOGGLE: all pins pop open;
   // another double-tap hides them again. Both also reset the single selection,
   // so no selected pin/card stays "stuck".
@@ -272,7 +273,7 @@ export function CityMap({
   const hintStyle = useAnimatedStyle(() => ({ opacity: hintOpacity.value }));
 
   useEffect(() => {
-    if (Mapbox || demoShown) return;
+    if (ExpoMaps || demoShown) return;
     if (spots.length === 0) return; // nothing to show
     demoShown = true;
 
@@ -293,38 +294,34 @@ export function CityMap({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // ── Real Mapbox map (Dev Build with token) ──
-  if (Mapbox) {
+  // ── Real native map: Apple Maps (iOS) / Google Maps (Android), Dev Build ──
+  if (ExpoMaps) {
     const center = cityCenter(spots);
+    // Declarative native markers: coordinates + title + category tint. Tapping
+    // one selects it (onMarkerClick needs iOS 18+); the screen shows the card.
+    const markers = spots.map((s) => ({
+      id: s.id,
+      coordinates: { latitude: s.lat, longitude: s.lng },
+      title: spotText(s, lang).name,
+      tintColor: PIN_COLORS[s.category].dot,
+    }));
+    const cameraPosition = { coordinates: center, zoom: 12.5 };
+    const onMarkerClick = (marker: { id?: string }) => {
+      const s = spots.find((x) => x.id === marker.id);
+      if (s) onSelect(s);
+    };
+    const onMapClick = () => onClearSelection?.();
+
+    const MapView =
+      Platform.OS === "ios" ? ExpoMaps.AppleMaps.View : ExpoMaps.GoogleMaps.View;
     return (
-      <Mapbox.MapView
+      <MapView
         style={{ flex: 1 }}
-        styleURL={Mapbox.StyleURL?.Light}
-        logoEnabled={false}
-        attributionEnabled={false}
-        scaleBarEnabled={false}
-      >
-        <Mapbox.Camera
-          centerCoordinate={center}
-          zoomLevel={12.5}
-          animationDuration={0}
-        />
-        {spots.map((spot) => (
-          <Mapbox.MarkerView
-            key={spot.id}
-            id={spot.id}
-            coordinate={[spot.lng, spot.lat]}
-            anchor={{ x: 0.5, y: 1 }}
-          >
-            <Pin
-              spot={spot}
-              active={spot.id === selectedId}
-              popAll={popAll}
-              onPress={() => onSelect(spot)}
-            />
-          </Mapbox.MarkerView>
-        ))}
-      </Mapbox.MapView>
+        cameraPosition={cameraPosition}
+        markers={markers}
+        onMarkerClick={onMarkerClick}
+        onMapClick={onMapClick}
+      />
     );
   }
 

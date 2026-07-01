@@ -5,8 +5,8 @@ import { useT } from "../lib/i18n";
 import { PIN_COLORS } from "../lib/pinColors";
 
 // Lightweight, stylized mini-map for the spot detail page (Expo-Go-safe, no
-// Mapbox). Purely decorative: muted background + hinted "streets" + a pin in
-// the category color. Tapping opens the real map (deep link).
+// native map module). Purely decorative: muted background + hinted "streets" +
+// a pin in the category color. Tapping opens the real maps app (deep link).
 
 export function MiniMap({ spot, onPress }: { spot: Spot; onPress: () => void }) {
   const col = PIN_COLORS[spot.category];

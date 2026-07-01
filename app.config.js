@@ -1,12 +1,12 @@
-// Expo-App-Konfiguration als JS, damit der (geheime) Mapbox-Download-Token
-// aus einer Umgebungsvariable kommt und NICHT im Repo landet.
+// Expo app configuration as JS.
 //
-// Vor einem Dev Build setzen:
-//   MAPBOX_DOWNLOAD_TOKEN=sk....   (geheimer Download-Token, nur Build-Zeit)
-//   EXPO_PUBLIC_MAPBOX_TOKEN=pk.... (öffentlicher Token, zur Laufzeit der App)
+// The real map uses **expo-maps** (Apple Maps on iOS — no token needed; Google
+// Maps on Android). It only renders in a Dev Build / standalone app; in Expo Go
+// the Map screen shows the stylized fallback map (see src/components/CityMap.tsx).
 //
-// Ohne Token / in Expo Go zeigt der Karte-Screen die stilisierte Fallback-Karte.
-const MAPBOX_DOWNLOAD_TOKEN = process.env.MAPBOX_DOWNLOAD_TOKEN || "";
+// Android note: to show Google Maps tiles in a dev build you need a Google Maps
+// API key (set config.android.config.googleMaps.apiKey). iOS/Apple Maps needs no
+// key. Not required for the iOS pilot.
 
 export default {
   expo: {
@@ -40,10 +40,13 @@ export default {
       "expo-font",
       "expo-localization",
       [
-        "@rnmapbox/maps",
+        "expo-maps",
         {
-          // Geheimer Download-Token (nur fürs native Bauen, aus der Umgebung).
-          RNMapboxMapsDownloadToken: MAPBOX_DOWNLOAD_TOKEN,
+          // Location permission strings (used only if we ever request the user's
+          // location; we currently don't, but the module sets these up).
+          requestLocationPermission: false,
+          locationPermission:
+            "Allow Verso to use your location to center the map.",
         },
       ],
     ],
