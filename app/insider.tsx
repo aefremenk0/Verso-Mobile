@@ -19,16 +19,24 @@ import { useInsider, type InsiderPackage } from "../src/store/insider";
 
 const GOLD = "#F4C430";
 
-// Format an amount in the product's currency (fallback: 2 decimals + code).
-function fmtMoney(amount: number, currency: string): string {
+// Prices are shown in EUR (the App Store storefront currency for the target
+// market). The RevenueCat test store can report USD, so we format the numeric
+// amount as EUR ourselves rather than using the store's localized string.
+function fmtMoney(amount: number): string {
   try {
     return new Intl.NumberFormat(undefined, {
       style: "currency",
-      currency,
+      currency: "EUR",
     }).format(amount);
   } catch {
-    return `${amount.toFixed(2)} ${currency}`;
+    return `${amount.toFixed(2)} €`;
   }
+}
+
+// The price to show for a package: EUR-formatted numeric price, with the store's
+// localized string as a fallback if we don't have a numeric price.
+function priceText(price: number, priceString: string): string {
+  return price > 0 ? fmtMoney(price) : priceString;
 }
 
 export default function Insider() {
@@ -230,12 +238,10 @@ export default function Insider() {
               </Text>
               {selected ? (
                 <Text className="mt-0.5 font-hk-medium text-[12px] text-night/70">
-                  {selected.hasTrial
-                    ? t(
-                        `then ${selected.priceString}`,
-                        `danach ${selected.priceString}`,
-                      )
-                    : selected.priceString}
+                  {(() => {
+                    const p = priceText(selected.price, selected.priceString);
+                    return selected.hasTrial ? t(`then ${p}`, `danach ${p}`) : p;
+                  })()}
                 </Text>
               ) : null}
             </Pressable>
@@ -341,7 +347,7 @@ function PlanCard({
 
       <View className="mt-1 flex-row items-baseline">
         <Text className="font-hk-extrabold text-[20px] text-screen">
-          {pkg.priceString}
+          {priceText(pkg.price, pkg.priceString)}
         </Text>
         <Text className="ml-1 font-hk-medium text-[13px] text-screen/55">
           {suffix}
@@ -350,7 +356,7 @@ function PlanCard({
 
       {perMonth > 0 ? (
         <Text className="mt-0.5 font-hk-medium text-[12px] text-screen/50">
-          ≈ {fmtMoney(perMonth, pkg.currencyCode)} {t("/ month", "/ Monat")}
+          ≈ {fmtMoney(perMonth)} {t("/ month", "/ Monat")}
         </Text>
       ) : null}
 
