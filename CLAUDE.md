@@ -59,6 +59,12 @@ Expo **SDK 54**. Diese Versionen sind bewusst gepinnt — siehe Stolperfallen.
 | react-native-purchases | **10.4.0** (exakt) | RevenueCat (Insider-Abo), natives Modul, **NUR Dev Build** |
 | @supabase/supabase-js | 2.x | Backend/Auth/DB (Expo-Go-fest) |
 | @react-native-async-storage/async-storage | 2.2.0 | Session + Offline-Cache |
+| expo-web-browser | ~15.0.x | OAuth-Browserflow (Google/Apple), Expo-Go-fest |
+| expo-notifications | ~0.32.17 | Push + lokale Benachrichtigungen |
+| expo-device | ~8.0.10 | echtes Gerät? (Push-Token) |
+| expo-image-picker | ~17.0.11 | Avatar wählen |
+| base64-arraybuffer | ^1.0.2 | Avatar-Upload (base64→ArrayBuffer) |
+| expo-alternate-app-icons | ^8.0.0 | iOS Alternate Icons (Insider), **NUR Dev Build** |
 | @expo-google-fonts/hanken-grotesk | ^0.4.x | |
 | expo-localization | ~17.0.9 | Gerätesprache (i18n-Default) |
 | expo-image, expo-font, expo-splash-screen | SDK-54-Stände | |
@@ -222,7 +228,12 @@ app.config.js             Expo-Config (ersetzt app.json; iOS-Location-Permission
                           fail-soft)
   lib/revenuecat.ts       RevenueCat-Wrapper (hasRevenueCat-Flag; Key aus extra;
                           require-Guard → Expo-Go-fest, nativ nur im Dev Build)
+  lib/appIcon.ts          iOS Alternate Icons (setIcon/currentIcon, Expo-Go-fest)
+  lib/suggestions.ts      „Ort vorschlagen" → spot_suggestions (fail-soft)
+  lib/initials.ts         initialsFromName (Avatar-Initialen, RN-frei)
   lib/maps.ts             Deep-Links Apple/Google Maps
+  store/appearance.tsx    Dark Mode (Insider-only): pref (AsyncStorage), isDark,
+                          DARK_VARS; ThemedApp in _layout setzt vars() am Root
   theme.ts                Design-Tokens als JS (Fonts, Farben, Schatten)
 
 tailwind.config.js        Zentrale Design-Tokens (Farben, Radien, Schriften)
@@ -242,13 +253,20 @@ Stack-Screens darüber. `geheimtipp` ist ein modaler Screen. **Abmelden**
   `tailwind.config.js` (`bg-screen`, `bg-accent`, `text-ink`, `rounded-card`,
   `font-hk-extrabold-italic` usw.). Schatten als JS-Objekt aus
   `src/theme.ts` (RN-Schatten sind über className unzuverlässig).
+- **Theme/Dark Mode:** die Flächen-/Text-Tokens `screen`/`surface`/`chip`/`ink`/
+  `ink-2`/`ink-3` sind **theme-fähig** (`rgb(var(--c-*) / <alpha-value>)`,
+  Light-Default in `global.css`, Dark via `vars(DARK_VARS)` am Root in
+  `_layout.tsx`). Für neue Flächen/Texte **diese Tokens** nutzen, nicht Inline-Hex —
+  sonst flippen sie im Dark Mode nicht. `accent`/`night` sind bewusst fix.
 - **Schrift:** jeder Hanken-Schnitt ist eine eigene `font-hk-*`-Klasse
   (RN hat pro Gewicht eine Datei). Wortmarke = `font-hk-extrabold-italic`.
 - **Animationen:** ausschließlich `react-native-reanimated`
   (`useSharedValue` + `withTiming`/`withRepeat`/`withSpring`). Niemals
   CSS-`@keyframes` aus dem Mockup übernehmen — nur als Referenz lesen
   (`verso-spin` 9s, `verso-load` 1.3s, `verso-throb` 1.5s, `verso-pulse`).
-- **Daten:** alles Mock in `src/data/`. Kein Login/Backend/DB im MVP.
+- **Daten:** Mock in `src/data/` als Fallback, aber **live über Supabase**
+  (`CatalogProvider`/`useCatalog`). Screens lesen NUR über die Stores, nie direkt
+  aus `src/data/*`. Login/Backend/Persistenz sind echt (Supabase).
 - **Kommentare auf Englisch**, knapp, erklären *warum*.
 - **App-UI zweisprachig (EN/DE)** seit 2026-06-30 — neue sichtbare Texte IMMER
   über `t("EN","DE")` (siehe Abschnitt „Mehrsprachigkeit (i18n)"); Daten-Texte
@@ -493,32 +511,48 @@ gedimmt + **diagonal durchgestrichen** (`DiagonalStrike`), nicht auswählbar
 (`pointerEvents="none"`). Mock-Daten der anderen Städte wurden **gelöscht**
 (Spots, Viertel, Geheimtipps) — nur München bleibt. Default-Stadt = München.
 
-**Phase 1 (MVP) — fertig**, läuft in Expo Go. Alle Screens 01–08
-(Welcome, Registrierung, Feed, Spot-/Event-Detail, Stadt-Übersicht,
-Gespeichert, Profil, Einstellungen, Geheimtipp) + Legal + Ort-vorschlagen.
+**Phase 1 (MVP) — fertig**, läuft in Expo Go. Alle Screens (Welcome,
+Registrierung, Feed, Spot-/Event-Detail, Stadt-Übersicht, Gespeichert, Profil,
+Einstellungen, Geheimtipp) + Legal + Ort-vorschlagen + App-Icon-Picker.
 
-**Seitdem dazugekommen** (alles gepusht):
-- **Zweisprachig EN/DE** (i18n) mit Sprach-Toggle im Account; englische
-  Städte-Anzeigenamen (kanonischer Wert bleibt „München").
-- **Echte Karte = Apple Maps** (`react-native-maps`, Dev Build): full-bleed,
-  Stadt-Kopf/Suche im weißen Feld, Kategorie-Pills schweben, `mapPadding` hält
-  Positions-Button/Apple-Logo frei; Marker-Tap → Spot-Karte; „Auf Karte" im
-  Detail zentriert die Verso-Karte. In Expo Go weiterhin Fallback-Karte.
-- **Bottom-Nav = durchgehendes Feld** (keine Insel mehr), app-weit.
-- **Kategorien erweitert** (Essen/Feiern/Sport/Live Events) mit Icons in den
-  Pills; **Insider-Szenen** (Sport, Live Events) hinter Insider-Flag + Mock-
-  Vorschau; Marken-App-Icon gesetzt.
-- Der **Dev Build** ist nötig, um Apple Maps zu sehen (`npx expo run:ios`);
-  reine JS/Layout-Änderungen brauchen nur Reload.
+**Backend + Premium sind verbunden** (Supabase LIVE bestätigt, RevenueCat verdrahtet):
+- **Supabase = Backend/Auth/DB.** Katalog (spots/neighborhoods/geheimtipp) wird
+  über `CatalogProvider` aus der DB geladen (Mock-Fallback). **Auth** echt:
+  E-Mail+Passwort **und Google/Apple** (OAuth-Browserflow, PKCE) — Provider
+  müssen noch in Supabase konfiguriert werden. **Session persistent** (AsyncStorage).
+  **Persistenz:** `saved`/`interests`/`geheimtipp` + Profil (name/username/bio/
+  avatar_url) + Notify-Prefs liegen pro Nutzer in `profiles`.
+  Migrationen `0001`–`0006` (Schema/RLS, Trigger, geheimtipp, notify+push_token,
+  avatars-Bucket, spot_suggestions+delete_user). Backend per `scripts/check-backend.sh`
+  live geprüft (Katalog/Auth/Trigger/Persistenz/RLS grün).
+- **RevenueCat = Insider-Abo.** `useInsider` spiegelt das Entitlement **`insider`**
+  (Dev Build); `app/insider.tsx` = echte **Paywall** (Jahres-/Monatsplan, „Bester
+  Wert" + Ersparnis, Trial, **Preise in EUR**). Expo Go / ohne Produkte → Mock-Vorschau.
+- **Insider-Features:** Sport-/Live-Events-Szenen, **„Überrasch mich"** (nur Insider),
+  **Dark Mode**, **wählbare App-Icons** (Gold/Invers, iOS), goldenes „✦ VERSO
+  INSIDER"-Banner. Alle über denselben Flag.
+- **Echte Karte = Apple Maps** (`react-native-maps`, Dev Build); Expo Go = Fallback.
+  Spot-Karte poppt, Karte zentriert auf den Pin.
+- **Push-Benachrichtigungen** (`expo-notifications`): 3 Toggles echt; wöchentliche
+  lokale Geheimtipp-Erinnerung; Push-Token in `profiles.push_token`.
+- **Avatar-Upload** (Supabase Storage), **Ort vorschlagen** → DB, **Passwort
+  ändern/zurücksetzen**, **Konto löschen** (DSGVO) — alle echt.
+- **Zweisprachig EN/DE**, Haptik, Reduce-Motion, a11y, Easter Eggs.
 
-## Nächste Schritte (Phase 2 — erst nach Abnahme)
+**Nötig, damit alles live läuft (Setup, kein Code):**
+- Supabase-Migrationen `0001`–`0006` ausführen; **„Confirm email" AUS**.
+- **Google/Apple-Provider** in Supabase aktivieren + Redirect-URL (`verso://auth-callback`).
+- RevenueCat: Entitlement **`insider`** + Offering (yearly/monthly) anlegen.
 
-- (erledigt) ~~Echte **Kartenansicht**~~ — via **`expo-maps`** (Apple Maps iOS /
-  Google Android) im Dev Build; native Marker mit Kategorie-Tint. Offen: Android
-  Google-Maps-API-Key, ggf. custom Map-Style, echten Dev Build testen.
-- **Karte-Filter-Sheet**: Art / Budget / Bewertung / Ambiente (Ambiente als
-  Multi-Select, ODER innerhalb / UND zwischen Gruppen).
-- (erledigt) ~~Profil bearbeiten & Passwort ändern~~ — UI-Screens stehen.
+## Nächste Schritte
+
+- **Launch-Blocker:** Google/Apple-OAuth konfigurieren; **verso.app-Website**
+  (Datenschutz/Impressum/Support-URL — Pflicht); TestFlight-Build.
+- **Inhalte:** echte Spot-Bilder (Supabase Storage + `image_url`), mehr Spots/Städte.
+- **Premium serverseitig:** RevenueCat-Webhook → Supabase (Insider-Status), 
+  Insider-only Spots („verborgene Ebene").
+- **Dark-Mode-Feinschliff:** harte `border-black/x`-Hairlines + Inline-Hex-Ränder
+  auf ein theme-fähiges „line"-Token umstellen.
 
 ---
 
@@ -617,7 +651,13 @@ npm test               # Unit-Tests der reinen Logik (vitest, src/**)
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-07-02 · Dark-Mode als Insider-Feature (theme-fähige Tokens)
+### (dieser Commit) · 2026-07-02 · CLAUDE.md überarbeitet (Stand: Backend live, Premium, Dark Mode)
+- Tech-Stack, „Aktueller Stand", Architektur (neue Stores/Libs) und Konventionen
+  (theme-fähige Tokens) auf den aktuellen Stand gebracht; Setup-Schritte für den
+  Live-Betrieb (Supabase-Migrationen, OAuth-Provider, RevenueCat-Entitlement)
+  festgehalten. Kein Code, nur Doku.
+
+### ac775e2 · 2026-07-02 · Dark-Mode als Insider-Feature (theme-fähige Tokens)
 - **Dark Mode** — nur für Insider. Umschalter in Einstellungen → „Dunkelmodus" (✦);
   Nicht-Insider tippen → Insider-Seite. Präferenz persistent (AsyncStorage),
   wirkt nur solange Insider aktiv (`src/store/appearance.tsx`).
@@ -631,7 +671,7 @@ npm test               # Unit-Tests der reinen Logik (vitest, src/**)
   unsichtbar) — Feinschliff-Backlog. `npx expo run:ios` reicht (reines JS).
 - tsc sauber, 18/18 vitest, iOS-Bundle baut.
 
-### (früherer Commit) · 2026-07-02 · App-Icon-Varianten (Weiß/Schwarz Standard, Gold/Invers = Insider) + Euro-Preise
+### ce66854 · 2026-07-02 · App-Icon-Varianten (Weiß/Schwarz Standard, Gold/Invers = Insider) + Euro-Preise
 - **Neues Standard-App-Icon: Weiß/Schwarz** (`assets/icon.png` + `adaptive-icon.png`
   neu gerendert, aus dem „v." per PIL-Maske umgefärbt).
 - **Insider-Extra: wählbare App-Icons** (iOS Alternate Icons via
@@ -661,7 +701,7 @@ npm test               # Unit-Tests der reinen Logik (vitest, src/**)
 - **Migration `0006_suggestions_and_delete.sql`** (Tabelle + `delete_user`-Function).
 - tsc sauber, 18/18 vitest, iOS-Bundle baut.
 
-### 6b16109 · 2026-07-02 · Push-Benachrichtigungen + Avatar-Upload
+### cf91363 · 2026-07-02 · Push-Benachrichtigungen + Avatar-Upload
 - **Push-Benachrichtigungen echt** (`expo-notifications` + `expo-device`): die drei
   Schalter in den Einstellungen (Geheimtipp · neue Spots · Events) funktionieren.
   - `src/lib/notifications.ts`: Handler, Permission-Anfrage, Expo-Push-Token
