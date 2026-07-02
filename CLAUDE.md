@@ -212,6 +212,12 @@ app.config.js             Expo-Config (ersetzt app.json; iOS-Location-Permission
                           „insider" im Dev Build, sonst Mock-Vorschau; schaltet
                           Sport-/Live-Events-Szenen frei; purchase/restore)
   store/usePersistedList.ts  Hook: String-Liste ↔ AsyncStorage + profiles-Spalte
+  store/notifications.tsx Push-Prefs (Geheimtipp/Spots/Events) pro Nutzer
+                          (profiles.notify); Permission + Push-Token; lokale
+                          Wochen-Erinnerung
+  lib/notifications.ts    expo-notifications-Wrapper (Handler/Permission/Token/
+                          lokale Schedule, Expo-Go-fest)
+  lib/avatar.ts           Bild wählen + Upload in Supabase Storage (avatars-Bucket)
   lib/profile.ts          Persistenz-Helfer (loadLocal/saveLocal/fetch/patch,
                           fail-soft)
   lib/revenuecat.ts       RevenueCat-Wrapper (hasRevenueCat-Flag; Key aus extra;
@@ -611,7 +617,26 @@ npm test               # Unit-Tests der reinen Logik (vitest, src/**)
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-07-01 · Fix-Runde: Profil echt, Insider-Kauf, Karten-Animationen
+### (dieser Commit) · 2026-07-02 · Push-Benachrichtigungen + Avatar-Upload
+- **Push-Benachrichtigungen echt** (`expo-notifications` + `expo-device`): die drei
+  Schalter in den Einstellungen (Geheimtipp · neue Spots · Events) funktionieren.
+  - `src/lib/notifications.ts`: Handler, Permission-Anfrage, Expo-Push-Token
+    (Expo-Go/Simulator-fest), **wöchentliche lokale Geheimtipp-Erinnerung** (Mo 9:00,
+    kein Server nötig).
+  - `src/store/notifications.tsx`: Prefs **persistent pro Nutzer** (`profiles.notify`);
+    beim Aktivieren Permission + **Push-Token** speichern (`profiles.push_token`) für
+    späteren Server-Versand (neue Spots/Events).
+  - Migration `0004_profiles_notify.sql` + `expo-notifications`-Plugin in app.config.
+- **Avatar-Upload** (`expo-image-picker` + Supabase Storage): „Foto ändern" in
+  `profil-bearbeiten` wählt ein Bild, lädt es in den **öffentlichen `avatars`-Bucket**
+  (`<uid>/avatar.jpg`) und speichert `profiles.avatar_url`. `src/lib/avatar.ts`
+  (base64→ArrayBuffer). Avatar erscheint in **Bottom-Nav, Feed-Kopf, Profil,
+  Profil bearbeiten** (sonst Initialen). Migration `0005_avatars.sql` (Spalte +
+  Bucket + Storage-RLS). iOS-Foto-Permission ergänzt.
+- **Setup:** in Supabase Migrationen `0004` und `0005` ausführen.
+- tsc sauber, 18/18 vitest, iOS-Bundle baut.
+
+### a3d… · 2026-07-01 · Fix-Runde: Profil echt, Insider-Kauf, Karten-Animationen
 - **Echte Initialen überall:** neuer `src/lib/initials.ts` (`initialsFromName`);
   `InitialsAvatar` (Bottom-Nav/Feed) + `profil-bearbeiten` nutzen jetzt den echten
   Profilnamen statt Mock „LH"/„Lena Hofer". **Profil bearbeiten** ist prefilled

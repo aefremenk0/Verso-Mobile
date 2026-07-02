@@ -1,4 +1,5 @@
 import { useRouter } from "expo-router";
+import { Image } from "expo-image";
 import { Pressable, ScrollView, Share, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Arrow } from "../../src/components/Arrow";
@@ -58,7 +59,7 @@ export default function Profil() {
   const lang = useLang();
   const { savedIds } = useSaved();
   const { neighborhoods, getSpotById } = useCatalog();
-  const { name, username } = useProfile();
+  const { name, username, avatarUrl } = useProfile();
   const initials = initialsFromName(name);
 
   // Hidden gem of the currently selected city (city-dependent store).
@@ -99,8 +100,12 @@ export default function Profil() {
 
         {/* Header: avatar + name + username */}
         <View className="mt-3 flex-row items-center">
-          <View className="h-14 w-14 items-center justify-center rounded-pill bg-night">
-            <Text className="font-hk-extrabold text-[18px] text-white">{initials}</Text>
+          <View className="h-14 w-14 items-center justify-center overflow-hidden rounded-pill bg-night">
+            {avatarUrl ? (
+              <Image source={{ uri: avatarUrl }} style={{ width: 56, height: 56 }} contentFit="cover" />
+            ) : (
+              <Text className="font-hk-extrabold text-[18px] text-white">{initials}</Text>
+            )}
           </View>
           <View className="ml-4 flex-1">
             <Text className="font-hk-extrabold text-title-sm text-ink" numberOfLines={1}>

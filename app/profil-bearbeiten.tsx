@@ -1,4 +1,5 @@
 import { useRouter } from "expo-router";
+import { Image } from "expo-image";
 import { useState } from "react";
 import { Pressable, ScrollView, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -7,8 +8,10 @@ import {
   KEYBOARD_DONE_ID,
 } from "../src/components/KeyboardDoneBar";
 import { StripeTexture } from "../src/components/StripeTexture";
+import { pickAndUploadAvatar } from "../src/lib/avatar";
 import { initialsFromName } from "../src/lib/initials";
 import { useT } from "../src/lib/i18n";
+import { supabase, hasSupabase } from "../src/lib/supabase";
 import { useProfile } from "../src/store/profile";
 
 // Screen 07c — Edit profile. Prefilled from the user's profile; Save upserts
@@ -55,7 +58,22 @@ export default function ProfilBearbeiten() {
   const [name, setName] = useState(profile.name);
   const [username, setUsername] = useState(profile.username);
   const [bio, setBio] = useState(profile.bio);
+  const [uploading, setUploading] = useState(false);
   const INITIALS = initialsFromName(name);
+
+  // Pick a photo, upload it to Storage, store the URL on the profile.
+  const changePhoto = async () => {
+    if (uploading) return;
+    setUploading(true);
+    let uid = "guest";
+    if (hasSupabase) {
+      const { data } = await supabase.auth.getUser();
+      uid = data.user?.id ?? "guest";
+    }
+    const url = await pickAndUploadAvatar(uid);
+    setUploading(false);
+    if (url) await profile.saveAvatar(url);
+  };
 
   const onSave = async () => {
     // Normalize the username to a @handle (unless left empty).
@@ -88,12 +106,22 @@ export default function ProfilBearbeiten() {
       >
         {/* Avatar with change-photo */}
         <View className="mb-5 items-center">
-          <View className="h-[84px] w-[84px]">
+          <Pressable onPress={changePhoto} className="h-[84px] w-[84px]">
             <View className="h-[84px] w-[84px] items-center justify-center overflow-hidden rounded-pill bg-night-2">
-              <StripeTexture />
-              <Text className="font-hk-extrabold-italic text-[26px] text-screen">
-                {INITIALS}
-              </Text>
+              {profile.avatarUrl ? (
+                <Image
+                  source={{ uri: profile.avatarUrl }}
+                  style={{ width: 84, height: 84 }}
+                  contentFit="cover"
+                />
+              ) : (
+                <>
+                  <StripeTexture />
+                  <Text className="font-hk-extrabold-italic text-[26px] text-screen">
+                    {INITIALS}
+                  </Text>
+                </>
+              )}
             </View>
             <View
               className="absolute -bottom-0.5 -right-0.5 h-[30px] w-[30px] items-center justify-center rounded-pill bg-accent"
@@ -101,10 +129,14 @@ export default function ProfilBearbeiten() {
             >
               <Text className="text-[13px] text-accent-ink">✎</Text>
             </View>
-          </View>
-          <Text className="mt-2.5 font-hk-semibold text-[12px] text-ink underline">
-            {t("Change photo", "Foto ändern")}
-          </Text>
+          </Pressable>
+          <Pressable onPress={changePhoto} disabled={uploading}>
+            <Text className="mt-2.5 font-hk-semibold text-[12px] text-ink underline">
+              {uploading
+                ? t("Uploading …", "Wird hochgeladen …")
+                : t("Change photo", "Foto ändern")}
+            </Text>
+          </Pressable>
         </View>
 
         {/* Fields */}

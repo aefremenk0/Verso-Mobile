@@ -24,8 +24,12 @@ interface ProfileFields {
 }
 
 interface ProfileContextValue extends ProfileFields {
+  /** Public URL of the user's avatar image ("" if none). */
+  avatarUrl: string;
   /** Save (upsert) profile fields for the current user. */
   save: (fields: Partial<ProfileFields>) => Promise<void>;
+  /** Store a freshly uploaded avatar URL on the profile. */
+  saveAvatar: (url: string) => Promise<void>;
 }
 
 const ProfileContext = createContext<ProfileContextValue | null>(null);
@@ -35,6 +39,7 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
   const [name, setName] = useState("");
   const [username, setUsername] = useState("");
   const [bio, setBio] = useState("");
+  const [avatarUrl, setAvatarUrl] = useState("");
   // Values just written via save() — used so a concurrent login-fetch that
   // reads the row *before* the write commits doesn't clobber them (registration
   // race: the effect below fires the moment the user is set, while save() is
@@ -52,11 +57,17 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
       setName(MOCK_USER.name);
       setUsername(MOCK_USER.username);
       setBio(MOCK_USER.bio);
+      setAvatarUrl("");
       return;
     }
     let cancelled = false;
     (async () => {
-      const row = await fetchProfileRow(uid, ["name", "username", "bio"]);
+      const row = await fetchProfileRow(uid, [
+        "name",
+        "username",
+        "bio",
+        "avatar_url",
+      ]);
       if (cancelled) return;
       // Prefer a non-empty DB value; otherwise a value we just saved for this
       // user (write may not have committed yet); otherwise empty.
@@ -67,6 +78,7 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
       setName(pick("name"));
       setUsername(pick("username"));
       setBio(pick("bio"));
+      setAvatarUrl((row?.avatar_url as string) || "");
     })();
     return () => {
       cancelled = true;
@@ -91,9 +103,18 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
     [],
   );
 
+  const saveAvatar = useCallback(async (url: string) => {
+    setAvatarUrl(url);
+    if (!hasSupabase) return;
+    const { data } = await supabase.auth.getUser();
+    const uid = data.user?.id;
+    if (!uid) return;
+    await patchProfile(uid, { avatar_url: url });
+  }, []);
+
   const value = useMemo<ProfileContextValue>(
-    () => ({ name, username, bio, save }),
-    [name, username, bio, save],
+    () => ({ name, username, bio, avatarUrl, save, saveAvatar }),
+    [name, username, bio, avatarUrl, save, saveAvatar],
   );
 
   return (
