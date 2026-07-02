@@ -25,6 +25,7 @@ import { DEFAULT_FILTER, matchesFilter, type MapFilter } from "../../src/lib/map
 import { SCENE_CATEGORIES } from "../../src/lib/scene";
 import { useCatalog } from "../../src/store/catalog";
 import { useCity } from "../../src/store/city";
+import { useInsider } from "../../src/store/insider";
 import { useInterests } from "../../src/store/interests";
 import { useScene } from "../../src/store/scene";
 
@@ -38,6 +39,7 @@ export default function Feed() {
   const { spots: SPOTS } = useCatalog();
   const { city } = useCity();
   const { scene } = useScene();
+  const { isInsider } = useInsider();
   const { interests } = useInterests();
   const [activeCategory, setActiveCategory] = useState<Category | null>(null);
   const [query, setQuery] = useState("");
@@ -160,8 +162,8 @@ export default function Feed() {
           }}
           ListHeaderComponent={
             <View>
-              {/* "Surprise me" — random place (fits the hidden-gem core) */}
-              {surprisePool.length > 0 ? (
+              {/* "Surprise me" — Insider-only (random place, fits the core) */}
+              {isInsider && surprisePool.length > 0 ? (
                 <View className="mb-4">
                   <SurpriseButton onPress={onSurprise} />
                 </View>
