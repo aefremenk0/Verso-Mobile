@@ -17,6 +17,7 @@ import { LanguageProvider } from "../src/store/language";
 import { GeheimtippProvider } from "../src/store/geheimtipp";
 import { InsiderProvider } from "../src/store/insider";
 import { InterestsProvider } from "../src/store/interests";
+import { NotificationsProvider } from "../src/store/notifications";
 import { SavedProvider } from "../src/store/saved";
 import { SceneProvider } from "../src/store/scene";
 import { colors, fontMap } from "../src/theme";
@@ -52,6 +53,7 @@ export default function RootLayout() {
           <GeheimtippProvider>
           <InsiderProvider>
           <InterestsProvider>
+          <NotificationsProvider>
           <StatusBar style="dark" />
           <Stack
             screenOptions={{
@@ -90,6 +92,7 @@ export default function RootLayout() {
             <Stack.Screen name="passwort-aendern" />
             <Stack.Screen name="bezirk/[name]" />
           </Stack>
+          </NotificationsProvider>
           </InterestsProvider>
           </InsiderProvider>
           </GeheimtippProvider>

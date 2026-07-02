@@ -12,7 +12,8 @@ import { hasSupabase, supabase } from "./supabase";
 export type ProfileColumn =
   | "saved_spot_ids"
   | "interests"
-  | "geheimtipp_abgeholt";
+  | "geheimtipp_abgeholt"
+  | "notify";
 
 export async function loadLocal(key: string): Promise<string[] | null> {
   try {

@@ -1,5 +1,5 @@
 import { useRouter } from "expo-router";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import Animated, {
   interpolateColor,
@@ -15,6 +15,7 @@ import { useAuth } from "../src/store/auth";
 import { useGeheimtipp } from "../src/store/geheimtipp";
 import { useInsider } from "../src/store/insider";
 import { useInterests } from "../src/store/interests";
+import { useNotifications } from "../src/store/notifications";
 import { useSaved } from "../src/store/saved";
 import { useScene } from "../src/store/scene";
 
@@ -119,10 +120,7 @@ export default function Settings() {
   const insider = useInsider();
   const { setScene } = useScene();
   const { user, signOut } = useAuth();
-
-  const [tippN, setTippN] = useState(true);
-  const [spotsN, setSpotsN] = useState(true);
-  const [eventsN, setEventsN] = useState(false);
+  const notif = useNotifications();
 
   const abmelden = () => {
     // End the Supabase session (persisted in AsyncStorage) …
@@ -198,19 +196,34 @@ export default function Settings() {
             <Text className="font-hk-extrabold text-[15px] text-ink">
               {t("Hidden gem of the week", "Geheimtipp der Woche")}
             </Text>
-            <Toggle value={tippN} onChange={() => setTippN((v) => !v)} />
+            <Toggle
+              value={notif.isEnabled("geheimtipp")}
+              onChange={() =>
+                notif.setEnabled("geheimtipp", !notif.isEnabled("geheimtipp"))
+              }
+            />
           </View>
           <View className="flex-row items-center justify-between border-b border-black/5 px-4 py-[17px]">
             <Text className="font-hk-extrabold text-[15px] text-ink">
               {t("New spots nearby", "Neue Spots in der Nähe")}
             </Text>
-            <Toggle value={spotsN} onChange={() => setSpotsN((v) => !v)} />
+            <Toggle
+              value={notif.isEnabled("spots")}
+              onChange={() =>
+                notif.setEnabled("spots", !notif.isEnabled("spots"))
+              }
+            />
           </View>
           <View className="flex-row items-center justify-between px-4 py-[17px]">
             <Text className="font-hk-extrabold text-[15px] text-ink">
               {t("Events & dates", "Events & Termine")}
             </Text>
-            <Toggle value={eventsN} onChange={() => setEventsN((v) => !v)} />
+            <Toggle
+              value={notif.isEnabled("events")}
+              onChange={() =>
+                notif.setEnabled("events", !notif.isEnabled("events"))
+              }
+            />
           </View>
         </View>
 

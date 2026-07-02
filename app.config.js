@@ -46,7 +46,13 @@ export default {
       },
       permissions: ["ACCESS_FINE_LOCATION", "ACCESS_COARSE_LOCATION"],
     },
-    plugins: ["expo-router", "expo-font", "expo-localization"],
+    plugins: [
+      "expo-router",
+      "expo-font",
+      "expo-localization",
+      // Push / local notifications. Android accent color = brand yellow.
+      ["expo-notifications", { color: "#FFE500" }],
+    ],
     web: {
       bundler: "metro",
       output: "single",
