@@ -9,17 +9,18 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // Flächen
-        screen: "#F7F4EF", // App-/Screen-Hintergrund (warmes Off-White)
-        surface: "#FFFFFF", // Karten / Sheets
-        chip: "#EDE9E1", // Toggle-/Chip-Flächen (inaktiv)
-        // Akzent
+        // Flächen — theme-fähig über CSS-Variablen (Light-Default in global.css,
+        // Dark via vars() zur Laufzeit). <alpha-value> für /xx-Opazität.
+        screen: "rgb(var(--c-screen) / <alpha-value>)", // App-Hintergrund
+        surface: "rgb(var(--c-surface) / <alpha-value>)", // Karten / Sheets
+        chip: "rgb(var(--c-chip) / <alpha-value>)", // Toggle-/Chip-Flächen
+        // Akzent (in beiden Modi gleich)
         accent: "#FFE500", // Signalgelb
         "accent-ink": "#1A1A1A", // Text auf Gelb
-        // Text
-        ink: "#1A1A1A", // primär
-        "ink-2": "#6E6A63", // sekundär
-        "ink-3": "#8A857C", // tertiär / Labels (Caps)
+        // Text — theme-fähig
+        ink: "rgb(var(--c-ink) / <alpha-value>)", // primär
+        "ink-2": "rgb(var(--c-ink-2) / <alpha-value>)", // sekundär
+        "ink-3": "rgb(var(--c-ink-3) / <alpha-value>)", // tertiär / Labels
         // Dunkle Bühnen (Welcome, Geheimtipp-Lade, dunkle Heros)
         night: "#1A1A1A",
         "night-2": "#231F1A", // dunkler Bild-Platzhalter (Start)

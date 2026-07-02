@@ -11,6 +11,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { LanguageToggle } from "../src/components/LanguageToggle";
 import { tapSelection } from "../src/lib/haptics";
 import { useT } from "../src/lib/i18n";
+import { useAppearance } from "../src/store/appearance";
 import { useAuth } from "../src/store/auth";
 import { useGeheimtipp } from "../src/store/geheimtipp";
 import { useInsider } from "../src/store/insider";
@@ -121,6 +122,7 @@ export default function Settings() {
   const { setScene } = useScene();
   const { user, signOut, deleteAccount } = useAuth();
   const notif = useNotifications();
+  const appearance = useAppearance();
 
   const resetStores = () => {
     geheimtipp.reset();
@@ -273,10 +275,27 @@ export default function Settings() {
             value="✦"
             onPress={() => router.push("/app-icon")}
           />
-          <NavRow
-            label={t("Appearance", "Erscheinungsbild")}
-            value={t("Light", "Hell")}
-          />
+          {/* Dark mode — an Insider perk. Non-Insiders tapping it get the upsell. */}
+          <View className="flex-row items-center justify-between border-b border-black/5 px-4 py-3">
+            <View className="flex-row items-center">
+              <Text className="font-hk-extrabold text-[15px] text-ink">
+                {t("Dark mode", "Dunkelmodus")}
+              </Text>
+              <Text className="ml-2 text-[12px]" style={{ color: "#F4C430" }}>
+                ✦
+              </Text>
+            </View>
+            <Toggle
+              value={appearance.isDark}
+              onChange={() => {
+                if (appearance.canDark) {
+                  appearance.setPref(appearance.pref === "dark" ? "light" : "dark");
+                } else {
+                  router.push("/insider");
+                }
+              }}
+            />
+          </View>
           <NavRow
             label={t("Legal & help", "Rechtliches & Hilfe")}
             last

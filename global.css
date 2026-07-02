@@ -1,3 +1,18 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Theme tokens as CSS variables (space-separated RGB channels so Tailwind's
+   <alpha-value> works). These are the LIGHT defaults; dark values are applied at
+   runtime via `vars()` on the root (see src/store/appearance + _layout). Having
+   them here guarantees the variables always resolve even before the provider. */
+@layer base {
+  :root {
+    --c-screen: 247 244 239;
+    --c-surface: 255 255 255;
+    --c-chip: 237 233 225;
+    --c-ink: 26 26 26;
+    --c-ink-2: 110 106 99;
+    --c-ink-3: 138 133 124;
+  }
+}

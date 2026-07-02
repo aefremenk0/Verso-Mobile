@@ -617,7 +617,21 @@ npm test               # Unit-Tests der reinen Logik (vitest, src/**)
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-07-02 · App-Icon-Varianten (Weiß/Schwarz Standard, Gold/Invers = Insider) + Euro-Preise
+### (dieser Commit) · 2026-07-02 · Dark-Mode als Insider-Feature (theme-fähige Tokens)
+- **Dark Mode** — nur für Insider. Umschalter in Einstellungen → „Dunkelmodus" (✦);
+  Nicht-Insider tippen → Insider-Seite. Präferenz persistent (AsyncStorage),
+  wirkt nur solange Insider aktiv (`src/store/appearance.tsx`).
+- **Theme-fähige Farbtokens** via CSS-Variablen: `screen/surface/chip/ink/ink-2/
+  ink-3` sind jetzt `rgb(var(--c-*) / <alpha-value>)` (Light-Defaults in
+  `global.css`, Dark via `vars(DARK_VARS)` am Root in `app/_layout.tsx` →
+  `ThemedApp`). StatusBar flippt mit. `accent`/`night` bleiben fix (in beiden ok).
+- **Coverage:** die token-basierten Klassen (`bg-screen`, `bg-surface`,
+  `text-ink…`) flippen automatisch. **Noch nicht** umgestellt: harte
+  `border-black/x`-Hairlines und einzelne Inline-Hex-Ränder (auf Dunkel dezent
+  unsichtbar) — Feinschliff-Backlog. `npx expo run:ios` reicht (reines JS).
+- tsc sauber, 18/18 vitest, iOS-Bundle baut.
+
+### (früherer Commit) · 2026-07-02 · App-Icon-Varianten (Weiß/Schwarz Standard, Gold/Invers = Insider) + Euro-Preise
 - **Neues Standard-App-Icon: Weiß/Schwarz** (`assets/icon.png` + `adaptive-icon.png`
   neu gerendert, aus dem „v." per PIL-Maske umgefärbt).
 - **Insider-Extra: wählbare App-Icons** (iOS Alternate Icons via

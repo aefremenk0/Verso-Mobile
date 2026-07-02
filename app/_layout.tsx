@@ -5,10 +5,17 @@ import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
+import { View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { vars } from "nativewind";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { VersoLoader } from "../src/components/VersoLoader";
+import {
+  AppearanceProvider,
+  DARK_VARS,
+  useAppearance,
+} from "../src/store/appearance";
 import { AuthProvider } from "../src/store/auth";
 import { CatalogProvider } from "../src/store/catalog";
 import { CityProvider } from "../src/store/city";
@@ -20,10 +27,26 @@ import { InterestsProvider } from "../src/store/interests";
 import { NotificationsProvider } from "../src/store/notifications";
 import { SavedProvider } from "../src/store/saved";
 import { SceneProvider } from "../src/store/scene";
-import { colors, fontMap } from "../src/theme";
+import { fontMap } from "../src/theme";
 
 // Only hide the splash once the fonts have loaded (prevents flicker).
 SplashScreen.preventAutoHideAsync();
+
+// Root wrapper that applies the theme: in dark mode it sets the dark CSS
+// variables via vars() (which cascade to every themed token) and flips the
+// status bar. bg-screen itself is themed, so the whole app follows.
+function ThemedApp({ children }: { children: ReactNode }) {
+  const { isDark } = useAppearance();
+  return (
+    <View
+      className="flex-1 bg-screen"
+      style={isDark ? vars(DARK_VARS) : undefined}
+    >
+      <StatusBar style={isDark ? "light" : "dark"} />
+      {children}
+    </View>
+  );
+}
 
 export default function RootLayout() {
   const [fontsLoaded, fontError] = useFonts(fontMap);
@@ -54,11 +77,14 @@ export default function RootLayout() {
           <InsiderProvider>
           <InterestsProvider>
           <NotificationsProvider>
-          <StatusBar style="dark" />
+          <AppearanceProvider>
+          <ThemedApp>
           <Stack
             screenOptions={{
               headerShown: false,
-              contentStyle: { backgroundColor: colors.screen },
+              // Transparent -> the themed root View's bg-screen shows through
+              // (so dark mode applies during transitions too).
+              contentStyle: { backgroundColor: "transparent" },
               // Horizontal slide: a new screen comes in from the right
               // (content moves left), Back slides out to the right.
               animation: "slide_from_right",
@@ -93,6 +119,8 @@ export default function RootLayout() {
             <Stack.Screen name="app-icon" />
             <Stack.Screen name="bezirk/[name]" />
           </Stack>
+          </ThemedApp>
+          </AppearanceProvider>
           </NotificationsProvider>
           </InterestsProvider>
           </InsiderProvider>
