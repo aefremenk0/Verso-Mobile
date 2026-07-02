@@ -617,7 +617,21 @@ npm test               # Unit-Tests der reinen Logik (vitest, src/**)
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-07-02 · Insider-Paywall neu + Funktionslücken (Vorschlag/Passwort/Konto)
+### (dieser Commit) · 2026-07-02 · App-Icon-Varianten (Weiß/Schwarz Standard, Gold/Invers = Insider) + Euro-Preise
+- **Neues Standard-App-Icon: Weiß/Schwarz** (`assets/icon.png` + `adaptive-icon.png`
+  neu gerendert, aus dem „v." per PIL-Maske umgefärbt).
+- **Insider-Extra: wählbare App-Icons** (iOS Alternate Icons via
+  `expo-alternate-app-icons`): **Gold** (Gelb/Schwarz) + **Invers** (Schwarz/Gelb),
+  Assets `assets/icon-gold.png`/`icon-inverse.png`. Neuer Screen `app/app-icon.tsx`
+  (aus Einstellungen → „App-Icon"): Default für alle, Farb-Icons nur für Insider
+  (sonst → Insider-Seite). `src/lib/appIcon.ts` (Expo-Go-fest, iOS-only).
+  **→ braucht Dev Build** (natives Modul + Prebuild).
+- **Preise in Euro:** Paywall formatiert die Beträge fest als **EUR** (Test-Store
+  kann USD melden) statt der Store-`priceString`.
+- **„Überrasch mich" nur für Insider** (Feed-Button ausgeblendet ohne Abo).
+- tsc sauber, 18/18 vitest, iOS-Bundle baut.
+
+### 77db2db · 2026-07-02 · Insider-Paywall neu + Funktionslücken (Vorschlag/Passwort/Konto)
 - **Insider-Screen neu gestaltet** (`app/insider.tsx`): dunkle Bühne, Gold-Badge
   (Shimmer), Vorteils-Liste, **wählbare Plan-Karten** (Jährlich = „Bester Wert" +
   Ersparnis-% + Preis/Monat, Monatlich), Trial-Hinweis, gold CTA + „Käufe

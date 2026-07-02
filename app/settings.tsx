@@ -269,6 +269,11 @@ export default function Settings() {
             <LanguageToggle />
           </View>
           <NavRow
+            label={t("App icon", "App-Icon")}
+            value="✦"
+            onPress={() => router.push("/app-icon")}
+          />
+          <NavRow
             label={t("Appearance", "Erscheinungsbild")}
             value={t("Light", "Hell")}
           />

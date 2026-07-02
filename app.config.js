@@ -55,6 +55,15 @@ export default {
       "expo-localization",
       // Push / local notifications. Android accent color = brand yellow.
       ["expo-notifications", { color: "#FFE500" }],
+      // Alternate app icons (iOS) — the two color variants are an Insider perk.
+      // The default icon (white "v." on dark) stays the main `icon` above.
+      [
+        "expo-alternate-app-icons",
+        [
+          { name: "Gold", ios: "./assets/icon-gold.png" },
+          { name: "Inverse", ios: "./assets/icon-inverse.png" },
+        ],
+      ],
     ],
     web: {
       bundler: "metro",
