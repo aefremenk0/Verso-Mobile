@@ -1,6 +1,7 @@
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import {
+  Alert,
   Pressable,
   ScrollView,
   Text,
@@ -42,7 +43,7 @@ export default function Register() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { interests, toggle, max } = useInterests();
-  const { signUp, signIn, signInWithProvider } = useAuth();
+  const { signUp, signIn, signInWithProvider, resetPassword } = useAuth();
   const { save: saveProfile } = useProfile();
   const t = useT();
   const lang = useLang();
@@ -96,6 +97,30 @@ export default function Register() {
     }
     setBusy(false);
     enter();
+  };
+
+  // Send a password-reset email to the entered address.
+  const forgot = async () => {
+    const mail = email.trim();
+    if (!mail) {
+      setError(
+        t("Enter your email first.", "Gib zuerst deine E-Mail-Adresse ein."),
+      );
+      return;
+    }
+    setError(null);
+    const { error: err } = await resetPassword(mail);
+    if (err) {
+      setError(err);
+      return;
+    }
+    Alert.alert(
+      t("Check your email", "E-Mail prüfen"),
+      t(
+        "We sent a password-reset link to your address.",
+        "Wir haben dir einen Reset-Link an deine Adresse geschickt.",
+      ),
+    );
   };
 
   // Google / Apple via the system browser (Supabase OAuth).
@@ -356,6 +381,15 @@ export default function Register() {
             onPress={submit}
           />
         </View>
+
+        {/* Forgot password (sign-in mode) */}
+        {mode === "login" ? (
+          <Pressable onPress={forgot} disabled={busy} className="mt-3 items-center py-1">
+            <Text className="font-hk-semibold text-[13px] text-ink-2 underline">
+              {t("Forgot password?", "Passwort vergessen?")}
+            </Text>
+          </Pressable>
+        ) : null}
 
         {/* Quick demo login for testing (demo@verso.app) */}
         <Pressable

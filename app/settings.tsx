@@ -1,6 +1,6 @@
 import { useRouter } from "expo-router";
 import { useEffect } from "react";
-import { Pressable, ScrollView, Text, View } from "react-native";
+import { Alert, Pressable, ScrollView, Text, View } from "react-native";
 import Animated, {
   interpolateColor,
   useAnimatedStyle,
@@ -119,20 +119,47 @@ export default function Settings() {
   const interests = useInterests();
   const insider = useInsider();
   const { setScene } = useScene();
-  const { user, signOut } = useAuth();
+  const { user, signOut, deleteAccount } = useAuth();
   const notif = useNotifications();
 
-  const abmelden = () => {
-    // End the Supabase session (persisted in AsyncStorage) …
-    signOut();
-    // … and reset the in-memory stores: hidden gem fresh again, saved list back
-    // to start, clear the selected vibes/interests + Insider preview.
+  const resetStores = () => {
     geheimtipp.reset();
     saved.reset();
     interests.reset();
     insider.reset(); // drop Insider preview
     setScene("essen"); // leave any Insider-only scene
+  };
+
+  const abmelden = () => {
+    signOut(); // end the Supabase session (persisted in AsyncStorage)
+    resetStores();
     router.replace("/");
+  };
+
+  const kontoLoeschen = () => {
+    Alert.alert(
+      t("Delete account?", "Konto löschen?"),
+      t(
+        "This permanently deletes your account and data. This can't be undone.",
+        "Das löscht dein Konto und deine Daten dauerhaft. Nicht rückgängig zu machen.",
+      ),
+      [
+        { text: t("Cancel", "Abbrechen"), style: "cancel" },
+        {
+          text: t("Delete", "Löschen"),
+          style: "destructive",
+          onPress: async () => {
+            const { error } = await deleteAccount();
+            if (error) {
+              Alert.alert(t("Couldn't delete", "Löschen fehlgeschlagen"), error);
+              return;
+            }
+            resetStores();
+            router.replace("/");
+          },
+        },
+      ],
+    );
   };
 
   return (
@@ -265,9 +292,11 @@ export default function Settings() {
               {t("Log out", "Abmelden")}
             </Text>
           </Pressable>
-          <Text className="mt-3 font-hk-semibold text-[11px] text-ink/40">
-            {t("Delete account", "Konto löschen")}
-          </Text>
+          <Pressable onPress={kontoLoeschen} hitSlop={8} className="mt-3 py-1">
+            <Text className="font-hk-semibold text-[11px] text-[#C0392B]">
+              {t("Delete account", "Konto löschen")}
+            </Text>
+          </Pressable>
         </View>
       </ScrollView>
     </SafeAreaView>

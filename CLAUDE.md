@@ -617,7 +617,23 @@ npm test               # Unit-Tests der reinen Logik (vitest, src/**)
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-07-02 · Push-Benachrichtigungen + Avatar-Upload
+### (dieser Commit) · 2026-07-02 · Insider-Paywall neu + Funktionslücken (Vorschlag/Passwort/Konto)
+- **Insider-Screen neu gestaltet** (`app/insider.tsx`): dunkle Bühne, Gold-Badge
+  (Shimmer), Vorteils-Liste, **wählbare Plan-Karten** (Jährlich = „Bester Wert" +
+  Ersparnis-% + Preis/Monat, Monatlich), Trial-Hinweis, gold CTA + „Käufe
+  wiederherstellen" + Auto-Renew-Hinweis. `InsiderPackage` um `packageType/price/
+  currencyCode/hasTrial` erweitert. Mock-Vorschau bleibt für Expo Go / ohne Produkte.
+- **„Ort vorschlagen" schreibt jetzt in die DB** (`spot_suggestions`) statt Mock —
+  `src/lib/suggestions.ts` (fail-soft), Screen mit Lade-/Danke-Zustand.
+- **Passwort-Reset + ändern:** `auth` bekommt `resetPassword`/`updatePassword`/
+  `deleteAccount`. `passwort-aendern` aktualisiert echt + „Passwort vergessen?"
+  schickt Reset-Mail; auch im Login (`register`) „Passwort vergessen?".
+- **Konto löschen** (DSGVO): `settings` → Bestätigungs-Dialog → `delete_user()`-
+  RPC (löscht Auth-User, profiles cascaden) → Session weg → Welcome.
+- **Migration `0006_suggestions_and_delete.sql`** (Tabelle + `delete_user`-Function).
+- tsc sauber, 18/18 vitest, iOS-Bundle baut.
+
+### 6b16109 · 2026-07-02 · Push-Benachrichtigungen + Avatar-Upload
 - **Push-Benachrichtigungen echt** (`expo-notifications` + `expo-device`): die drei
   Schalter in den Einstellungen (Geheimtipp · neue Spots · Events) funktionieren.
   - `src/lib/notifications.ts`: Handler, Permission-Anfrage, Expo-Push-Token

@@ -7,8 +7,10 @@ import {
   KEYBOARD_DONE_ID,
 } from "../src/components/KeyboardDoneBar";
 import { useT } from "../src/lib/i18n";
+import { useAuth } from "../src/store/auth";
 
-// Screen 07d — Change password (UI only, no real logic in the MVP).
+// Screen 07d — Change password. Updates the signed-in user's password via
+// Supabase; "Forgot password?" sends a reset email.
 
 // Password input field, optionally with a "show" toggle.
 function PwField({
@@ -57,9 +59,74 @@ function PwField({
 export default function PasswortAendern() {
   const router = useRouter();
   const t = useT();
+  const { user, updatePassword, resetPassword } = useAuth();
   const [current, setCurrent] = useState("");
   const [next, setNext] = useState("");
   const [confirm, setConfirm] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
+
+  const onUpdate = async () => {
+    if (busy) return;
+    setMsg(null);
+    if (next.length < 6) {
+      setMsg({
+        ok: false,
+        text: t(
+          "Password needs at least 6 characters.",
+          "Das Passwort braucht mindestens 6 Zeichen.",
+        ),
+      });
+      return;
+    }
+    if (next !== confirm) {
+      setMsg({
+        ok: false,
+        text: t("Passwords don't match.", "Passwörter stimmen nicht überein."),
+      });
+      return;
+    }
+    setBusy(true);
+    const { error } = await updatePassword(next);
+    setBusy(false);
+    if (error) {
+      setMsg({ ok: false, text: error });
+      return;
+    }
+    setMsg({
+      ok: true,
+      text: t("Password updated.", "Passwort aktualisiert."),
+    });
+    setCurrent("");
+    setNext("");
+    setConfirm("");
+  };
+
+  const onForgot = async () => {
+    if (busy) return;
+    setMsg(null);
+    if (!user?.email) {
+      setMsg({
+        ok: false,
+        text: t("No email on this account.", "Keine E-Mail für dieses Konto."),
+      });
+      return;
+    }
+    setBusy(true);
+    const { error } = await resetPassword(user.email);
+    setBusy(false);
+    setMsg(
+      error
+        ? { ok: false, text: error }
+        : {
+            ok: true,
+            text: t(
+              "Reset link sent to your email.",
+              "Reset-Link an deine E-Mail gesendet.",
+            ),
+          },
+    );
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-screen" edges={["top", "bottom"]}>
@@ -104,18 +171,33 @@ export default function PasswortAendern() {
             "Mindestens 8 Zeichen, davon eine Zahl und ein Sonderzeichen.",
           )}
         </Text>
-        <Text className="mt-4 self-start font-hk-semibold text-[12px] text-ink underline">
-          {t("Forgot password?", "Passwort vergessen?")}
-        </Text>
+        <Pressable onPress={onForgot} disabled={busy} className="mt-4 self-start">
+          <Text className="font-hk-semibold text-[12px] text-ink underline">
+            {t("Forgot password?", "Passwort vergessen?")}
+          </Text>
+        </Pressable>
+
+        {msg ? (
+          <Text
+            className="mt-3 font-hk-medium text-[13px] leading-[18px]"
+            style={{ color: msg.ok ? "#1E9E54" : "#C0392B" }}
+          >
+            {msg.text}
+          </Text>
+        ) : null}
 
         {/* Update (at the bottom) */}
         <View className="flex-1" />
         <Pressable
-          onPress={() => router.back()}
+          onPress={onUpdate}
+          disabled={busy}
           className="mt-8 items-center rounded-[16px] bg-accent py-4"
+          style={{ opacity: busy ? 0.7 : 1 }}
         >
           <Text className="font-hk-extrabold text-[17px] text-accent-ink">
-            {t("Update password", "Passwort aktualisieren")}
+            {busy
+              ? t("Please wait …", "Bitte warten …")
+              : t("Update password", "Passwort aktualisieren")}
           </Text>
         </Pressable>
       </ScrollView>

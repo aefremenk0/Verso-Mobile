@@ -37,6 +37,12 @@ interface AuthContextValue {
   /** Sign in via an OAuth provider (Google/Apple) through the system browser. */
   signInWithProvider: (provider: OAuthProvider) => Promise<AuthResult>;
   signOut: () => Promise<void>;
+  /** Send a password-reset email. */
+  resetPassword: (email: string) => Promise<AuthResult>;
+  /** Change the signed-in user's password. */
+  updatePassword: (newPassword: string) => Promise<AuthResult>;
+  /** Permanently delete the signed-in user's account (+ their data). */
+  deleteAccount: () => Promise<AuthResult>;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -116,6 +122,33 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       signOut: async () => {
         if (!hasSupabase) return;
         await supabase.auth.signOut();
+      },
+      resetPassword: async (email) => {
+        if (!hasSupabase) return { error: "Auth not configured" };
+        const redirectTo = Linking.createURL("auth-callback");
+        const { error } = await supabase.auth.resetPasswordForEmail(
+          email.trim(),
+          { redirectTo },
+        );
+        return { error: error?.message ?? null };
+      },
+      updatePassword: async (newPassword) => {
+        if (!hasSupabase) return { error: "Auth not configured" };
+        const { error } = await supabase.auth.updateUser({
+          password: newPassword,
+        });
+        return { error: error?.message ?? null };
+      },
+      deleteAccount: async () => {
+        if (!hasSupabase) return { error: null };
+        try {
+          const { error } = await supabase.rpc("delete_user");
+          if (error) return { error: error.message };
+          await supabase.auth.signOut();
+          return { error: null };
+        } catch (e) {
+          return { error: e instanceof Error ? e.message : "Delete failed" };
+        }
       },
     }),
     [session, loading],

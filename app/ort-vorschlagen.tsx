@@ -8,9 +8,11 @@ import { categoryFilters } from "../src/data/categories";
 import type { Category } from "../src/data/types";
 import { useLang, useT } from "../src/lib/i18n";
 import { PIN_COLORS } from "../src/lib/pinColors";
+import { submitSpotSuggestion } from "../src/lib/suggestions";
+import { useCity } from "../src/store/city";
 
-// Submit a place for review (mock). Opened from the "+" on the map. No backend
-// in the MVP — submitting shows a thank-you state. Bilingual.
+// Submit a place for editorial review. Opened from the "+" on the map. Writes to
+// the `spot_suggestions` table (fail-soft) and shows a thank-you state. Bilingual.
 
 function FieldLabel({ children }: { children: React.ReactNode }) {
   return (
@@ -24,14 +26,24 @@ export default function OrtVorschlagen() {
   const router = useRouter();
   const t = useT();
   const lang = useLang();
+  const { city } = useCity();
 
   const [name, setName] = useState("");
   const [category, setCategory] = useState<Category | null>(null);
   const [area, setArea] = useState("");
   const [note, setNote] = useState("");
   const [sent, setSent] = useState(false);
+  const [busy, setBusy] = useState(false);
 
-  const canSubmit = name.trim().length > 0;
+  const canSubmit = name.trim().length > 0 && !busy;
+
+  const onSubmit = async () => {
+    if (!canSubmit) return;
+    setBusy(true);
+    await submitSpotSuggestion({ name, category, area, note, city });
+    setBusy(false);
+    setSent(true);
+  };
   // Category pills (all categories, with their leading icon); single-select.
   const cats = categoryFilters(lang).filter((f) => f.key !== null);
 
@@ -170,21 +182,17 @@ export default function OrtVorschlagen() {
         </View>
 
         <Pressable
-          onPress={() => canSubmit && setSent(true)}
+          onPress={onSubmit}
           disabled={!canSubmit}
           className="mt-7 items-center rounded-[18px] py-4"
           style={{ backgroundColor: canSubmit ? "#1A1A1A" : "rgba(26,26,26,0.25)" }}
         >
           <Text className="font-hk-extrabold text-[16px] text-screen">
-            {t("Send to editors", "An die Redaktion senden")}
+            {busy
+              ? t("Sending …", "Wird gesendet …")
+              : t("Send to editors", "An die Redaktion senden")}
           </Text>
         </Pressable>
-        <Text className="mt-3 text-center font-hk-medium text-[11px] text-ink/40">
-          {t(
-            "Mock submission — no data leaves your device in the MVP.",
-            "Mock-Einreichung — im MVP verlässt nichts dein Gerät.",
-          )}
-        </Text>
       </ScrollView>
 
       <KeyboardDoneBar />
