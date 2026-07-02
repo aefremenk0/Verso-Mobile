@@ -1,6 +1,6 @@
 import { useRouter } from "expo-router";
-import { useEffect, useState } from "react";
-import { Pressable, Text, View } from "react-native";
+import { useEffect, useMemo, useState } from "react";
+import { Pressable, ScrollView, Text, View } from "react-native";
 import Animated, {
   Easing,
   useAnimatedStyle,
@@ -9,15 +9,27 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Svg, { Path } from "react-native-svg";
 import { useT } from "../src/lib/i18n";
-import { useInsider } from "../src/store/insider";
+import { useInsider, type InsiderPackage } from "../src/store/insider";
 
-// Modal "Verso Insider" notice — same pop-up style as the hidden gem
-// loading screen (dark, a spinning squiggle around the symbol). Says the feature
-// isn't available yet and leads back to the profile.
-//
-// Opened by the "???" badge in the profile header (`MysticBadge`).
+// "Verso Insider" — upsell + paywall (modal). Dark stage with gold accents.
+// Shows the value, then the yearly/monthly plans (yearly anchored as best value
+// with a savings badge). Real purchase via RevenueCat in a dev build; in Expo Go
+// / without configured products it falls back to the mock preview toggle.
+
+const GOLD = "#F4C430";
+
+// Format an amount in the product's currency (fallback: 2 decimals + code).
+function fmtMoney(amount: number, currency: string): string {
+  try {
+    return new Intl.NumberFormat(undefined, {
+      style: "currency",
+      currency,
+    }).format(amount);
+  } catch {
+    return `${amount.toFixed(2)} ${currency}`;
+  }
+}
 
 export default function Insider() {
   const router = useRouter();
@@ -31,186 +43,322 @@ export default function Insider() {
     purchase,
     restore,
   } = useInsider();
-  const [error, setError] = useState<string | null>(null);
-  const spin = useSharedValue(0); // spinning squiggle 0..360
 
-  const onBuy = async (pkgId: string) => {
+  const showPaywall = hasPaywall && packages.length > 0;
+
+  // Identify plans; default-select the yearly (best value).
+  const annual = packages.find((p) => p.packageType === "ANNUAL");
+  const monthly = packages.find((p) => p.packageType === "MONTHLY");
+  const [selectedId, setSelectedId] = useState<string>("");
+  useEffect(() => {
+    if (!selectedId && packages.length)
+      setSelectedId((annual ?? packages[0]).id);
+  }, [packages, annual, selectedId]);
+  const selected =
+    packages.find((p) => p.id === selectedId) ?? annual ?? packages[0];
+
+  // Savings % of the yearly vs 12× monthly.
+  const savingsPct = useMemo(() => {
+    if (!annual || !monthly || monthly.price <= 0) return 0;
+    return Math.round((1 - annual.price / 12 / monthly.price) * 100);
+  }, [annual, monthly]);
+
+  const [error, setError] = useState<string | null>(null);
+
+  // Shimmering gold sparkle on the badge.
+  const shimmer = useSharedValue(0);
+  useEffect(() => {
+    shimmer.value = withRepeat(
+      withTiming(1, { duration: 1600, easing: Easing.inOut(Easing.ease) }),
+      -1,
+      true,
+    );
+  }, [shimmer]);
+  const sparkleStyle = useAnimatedStyle(() => ({
+    opacity: 0.5 + shimmer.value * 0.5,
+  }));
+
+  const onBuy = async () => {
+    if (!selected) return;
     setError(null);
-    const { error: err } = await purchase(pkgId);
+    const { error: err } = await purchase(selected.id);
     if (err) {
       setError(err);
       return;
     }
     router.back();
   };
-
   const onRestore = async () => {
     setError(null);
     const { error: err } = await restore();
     if (err) setError(err);
   };
 
-  useEffect(() => {
-    // Endless rotation like the hidden gem loading ring (~9s, linear).
-    spin.value = withRepeat(
-      withTiming(360, { duration: 9000, easing: Easing.linear }),
-      -1,
-    );
-  }, [spin]);
-
-  const ringStyle = useAnimatedStyle(() => ({
-    transform: [{ rotate: `${spin.value}deg` }],
-  }));
+  const BENEFITS = [
+    t("Sport & Live Events scenes", "Sport- & Live-Events-Szenen"),
+    t("Early access to small events", "Früher Zugang zu kleinen Events"),
+    t("Hidden places, Insiders only", "Verborgene Orte, nur für Insider"),
+    t("Unlimited weekly gems", "Unbegrenzte Geheimtipps"),
+    t("New cities first", "Neue Städte zuerst"),
+  ];
 
   return (
     <SafeAreaView className="flex-1 bg-night" edges={["top", "bottom"]}>
-      {/* Close (back to the profile) */}
+      {/* Close */}
       <View className="flex-row justify-end px-6 pt-3">
         <Pressable
           onPress={() => router.back()}
+          accessibilityLabel={t("Close", "Schließen")}
           className="h-[42px] w-[42px] items-center justify-center rounded-pill"
-          style={{ borderWidth: 1, borderColor: "rgba(247,244,239,0.25)" }}
+          style={{ borderWidth: 1, borderColor: "rgba(247,244,239,0.22)" }}
         >
           <Text className="font-hk-extrabold text-[16px] text-screen">✕</Text>
         </Pressable>
       </View>
 
-      <View className="flex-1 items-center justify-center px-8">
-        {/* "???" with a spinning, wavy outline (squiggle like in the nav) */}
-        <View className="h-[150px] w-[150px] items-center justify-center">
-          <Animated.View
-            style={[{ position: "absolute", width: 150, height: 150 }, ringStyle]}
+      <ScrollView
+        contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 16 }}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Gold badge */}
+        <View className="mt-2 flex-row">
+          <View
+            className="flex-row items-center rounded-pill px-3.5 py-1.5"
+            style={{
+              backgroundColor: "rgba(244,196,48,0.14)",
+              borderWidth: 1,
+              borderColor: "rgba(244,196,48,0.5)",
+            }}
           >
-            <Svg viewBox="0 0 56 56" width={150} height={150}>
-              <Path
-                d="M27 8 C40 4 52 15 49 27 C52 41 38 52 26 49 C13 52 5 38 8 26 C4 14 16 5 31 9"
-                stroke="#FFE500"
-                strokeWidth={1.6}
-                strokeLinecap="round"
-                fill="none"
-              />
-            </Svg>
-          </Animated.View>
-          <Text className="font-hk-extrabold text-[38px] text-accent">???</Text>
+            <Animated.Text style={[{ fontSize: 12, color: GOLD }, sparkleStyle]}>
+              ✦{" "}
+            </Animated.Text>
+            <Text
+              className="font-hk-bold text-[11px] tracking-[2px]"
+              style={{ color: GOLD }}
+            >
+              VERSO INSIDER
+            </Text>
+          </View>
         </View>
 
-        <Text className="mt-9 font-hk-semibold text-[11px] tracking-[2px] text-screen/55">
-          VERSO INSIDER
+        {/* Headline */}
+        <Text className="mt-5 font-hk-extrabold-italic text-[34px] leading-[38px] text-screen">
+          {t("Lift the curtain.", "Lüfte den Vorhang.")}
         </Text>
-        <Text className="mt-3 text-center font-hk-extrabold-italic text-[22px] leading-[29px] text-screen">
-          {t("Still under wraps …", "Noch im Verborgenen …")}
-        </Text>
-        <Text className="mt-4 max-w-[300px] text-center font-hk-medium text-[14px] leading-[20px] text-screen/60">
+        <Text className="mt-3 font-hk-medium text-[15px] leading-[21px] text-screen/65">
           {t(
-            "Sport and Live Events are Insider features — the scenes top right with the 🔒. Turn on the preview to try them out.",
-            "Sport und Live Events sind Insider-Features — die Szenen oben rechts mit dem 🔒. Aktiviere die Vorschau, um sie auszuprobieren.",
+            "Free stays generous. Insider opens the doors others don't get through.",
+            "Free bleibt großzügig. Insider öffnet die Türen, durch die andere nicht kommen.",
           )}
         </Text>
-        {!hasPaywall ? (
-          <Text className="mt-3 text-center font-hk-medium text-[11px] text-screen/35">
+
+        {/* Benefits */}
+        <View className="mt-6 gap-3">
+          {BENEFITS.map((b) => (
+            <View key={b} className="flex-row items-center">
+              <View
+                className="mr-3 h-[22px] w-[22px] items-center justify-center rounded-pill"
+                style={{ backgroundColor: "rgba(244,196,48,0.16)" }}
+              >
+                <Text style={{ color: GOLD, fontSize: 12 }}>✦</Text>
+              </View>
+              <Text className="flex-1 font-hk-semibold text-[15px] text-screen">
+                {b}
+              </Text>
+            </View>
+          ))}
+        </View>
+
+        {/* Plans */}
+        {showPaywall ? (
+          <View className="mt-7 gap-3">
+            {packages.map((p) => (
+              <PlanCard
+                key={p.id}
+                pkg={p}
+                selected={selected?.id === p.id}
+                bestValue={p.packageType === "ANNUAL"}
+                savingsPct={p.packageType === "ANNUAL" ? savingsPct : 0}
+                onPress={() => setSelectedId(p.id)}
+                t={t}
+              />
+            ))}
+          </View>
+        ) : (
+          <Text className="mt-7 text-center font-hk-medium text-[12px] text-screen/40">
             {t(
-              "Preview is a mock — real purchases need a dev build.",
-              "Vorschau ist ein Mock — echte Käufe brauchen einen Dev Build.",
+              "Preview is a mock — real plans need a dev build with products.",
+              "Vorschau ist ein Mock — echte Pläne brauchen einen Dev Build mit Produkten.",
             )}
           </Text>
-        ) : null}
+        )}
+
         {error ? (
-          <Text className="mt-3 text-center font-hk-medium text-[12px] text-[#FF8A7A]">
+          <Text className="mt-4 text-center font-hk-medium text-[12px] text-[#FF8A7A]">
             {error}
           </Text>
         ) : null}
-      </View>
+      </ScrollView>
 
-      {/* Action area */}
-      <View className="px-6 pb-8">
-        {hasPaywall && packages.length > 0 ? (
-          // ── Real paywall (dev build with RevenueCat) ──
-          isInsider ? (
+      {/* Sticky action area */}
+      <View className="px-6 pb-6 pt-2">
+        {isInsider ? (
+          <Pressable
+            onPress={() => router.back()}
+            className="flex-row items-center justify-center rounded-[18px] py-4"
+            style={{ backgroundColor: GOLD }}
+          >
+            <Text className="font-hk-extrabold text-[16px] text-night">
+              {t("You're an Insider ✓", "Du bist Insider ✓")}
+            </Text>
+          </Pressable>
+        ) : showPaywall ? (
+          <>
             <Pressable
-              onPress={() => router.back()}
-              className="flex-row items-center justify-between rounded-[18px] bg-accent px-5 py-4"
+              onPress={onBuy}
+              disabled={loading || !selected}
+              className="items-center rounded-[18px] py-4"
+              style={{ backgroundColor: GOLD, opacity: loading ? 0.7 : 1 }}
             >
-              <Text className="font-hk-extrabold text-[17px] text-accent-ink">
-                {t("You're an Insider ✓", "Du bist Insider ✓")}
+              <Text className="font-hk-extrabold text-[16px] text-night">
+                {loading
+                  ? t("Please wait …", "Bitte warten …")
+                  : selected?.hasTrial
+                    ? t("Start free trial", "Kostenlos testen")
+                    : t("Become an Insider", "Insider werden")}
               </Text>
-              <View className="h-[34px] w-[34px] items-center justify-center rounded-pill bg-night">
-                <Text className="font-hk-bold text-[16px] text-accent">→</Text>
-              </View>
+              {selected ? (
+                <Text className="mt-0.5 font-hk-medium text-[12px] text-night/70">
+                  {selected.hasTrial
+                    ? t(
+                        `then ${selected.priceString}`,
+                        `danach ${selected.priceString}`,
+                      )
+                    : selected.priceString}
+                </Text>
+              ) : null}
             </Pressable>
-          ) : (
-            <>
-              {packages.length > 0 ? (
-                packages.map((p) => (
-                  <Pressable
-                    key={p.id}
-                    disabled={loading}
-                    onPress={() => onBuy(p.id)}
-                    className="mb-2.5 flex-row items-center justify-between rounded-[18px] bg-accent px-5 py-4"
-                  >
-                    <Text className="font-hk-extrabold text-[16px] text-accent-ink">
-                      {loading
-                        ? t("Please wait …", "Bitte warten …")
-                        : t("Become an Insider", "Insider werden")}
-                    </Text>
-                    <Text className="font-hk-bold text-[15px] text-accent-ink">
-                      {p.priceString}
-                    </Text>
-                  </Pressable>
-                ))
-              ) : (
-                <Text className="mb-2 text-center font-hk-medium text-[13px] text-screen/50">
-                  {t(
-                    "No subscription configured yet (set up an offering in RevenueCat).",
-                    "Noch kein Abo konfiguriert (Offering in RevenueCat anlegen).",
-                  )}
-                </Text>
+            <Pressable onPress={onRestore} disabled={loading} className="mt-3 items-center py-1.5">
+              <Text className="font-hk-semibold text-[12px] text-screen/50">
+                {t("Restore purchases", "Käufe wiederherstellen")}
+              </Text>
+            </Pressable>
+            <Text className="mt-1 text-center font-hk-medium text-[10px] leading-[15px] text-screen/35">
+              {t(
+                "Auto-renews until cancelled. Manage in the App Store.",
+                "Verlängert sich automatisch bis zur Kündigung. Verwaltung im App Store.",
               )}
-              <Pressable
-                onPress={onRestore}
-                disabled={loading}
-                className="mt-1 items-center py-2"
-              >
-                <Text className="font-hk-semibold text-[12px] text-screen/50">
-                  {t("Restore purchases", "Käufe wiederherstellen")}
-                </Text>
-              </Pressable>
-            </>
-          )
+            </Text>
+          </>
         ) : (
-          // ── Mock preview (Expo Go / no SDK key) ──
+          // Mock preview (Expo Go / no products configured)
           <>
             <Pressable
               onPress={() => {
                 if (!isInsider) setInsider(true);
                 router.back();
               }}
-              className="flex-row items-center justify-between rounded-[18px] bg-accent px-5 py-4"
+              className="items-center rounded-[18px] py-4"
+              style={{ backgroundColor: GOLD }}
             >
-              <Text className="font-hk-extrabold text-[17px] text-accent-ink">
-                {isInsider
-                  ? t("Insider preview is on ✓", "Insider-Vorschau ist an ✓")
-                  : t("Turn on Insider preview", "Insider-Vorschau aktivieren")}
+              <Text className="font-hk-extrabold text-[16px] text-night">
+                {t("Turn on Insider preview", "Insider-Vorschau aktivieren")}
               </Text>
-              <View className="h-[34px] w-[34px] items-center justify-center rounded-pill bg-night">
-                <Text className="font-hk-bold text-[16px] text-accent">→</Text>
-              </View>
             </Pressable>
-            <Pressable
-              onPress={() => {
-                if (isInsider) setInsider(false);
-                else router.back();
-              }}
-              className="mt-3 items-center py-1"
-            >
+            <Pressable onPress={() => router.back()} className="mt-3 items-center py-1.5">
               <Text className="font-hk-semibold text-[12px] text-screen/50">
-                {isInsider
-                  ? t("Turn off preview", "Vorschau beenden")
-                  : t("Back to profile", "Zurück zum Profil")}
+                {t("Back to profile", "Zurück zum Profil")}
               </Text>
             </Pressable>
           </>
         )}
       </View>
     </SafeAreaView>
+  );
+}
+
+// One selectable plan card. Yellow ring + gold when selected; "best value" +
+// savings badge on the yearly; per-month equivalent for the yearly.
+function PlanCard({
+  pkg,
+  selected,
+  bestValue,
+  savingsPct,
+  onPress,
+  t,
+}: {
+  pkg: InsiderPackage;
+  selected: boolean;
+  bestValue: boolean;
+  savingsPct: number;
+  onPress: () => void;
+  t: (en: string, de: string) => string;
+}) {
+  const isAnnual = pkg.packageType === "ANNUAL";
+  const isMonthly = pkg.packageType === "MONTHLY";
+  const periodLabel = isAnnual
+    ? t("Yearly", "Jährlich")
+    : isMonthly
+      ? t("Monthly", "Monatlich")
+      : pkg.title;
+  const suffix = isAnnual
+    ? "/" + t("year", "Jahr")
+    : isMonthly
+      ? "/" + t("month", "Monat")
+      : "";
+  const perMonth = isAnnual && pkg.price > 0 ? pkg.price / 12 : 0;
+
+  return (
+    <Pressable
+      onPress={onPress}
+      className="rounded-card p-4"
+      style={{
+        backgroundColor: selected ? "rgba(244,196,48,0.12)" : "rgba(247,244,239,0.06)",
+        borderWidth: 1.5,
+        borderColor: selected ? GOLD : "rgba(247,244,239,0.14)",
+      }}
+    >
+      <View className="flex-row items-center justify-between">
+        <View className="flex-row items-center">
+          <Text className="font-hk-extrabold text-[17px] text-screen">
+            {periodLabel}
+          </Text>
+          {bestValue ? (
+            <View className="ml-2 rounded-pill px-2 py-0.5" style={{ backgroundColor: GOLD }}>
+              <Text className="font-hk-bold text-[9px] tracking-[1px] text-night">
+                {t("BEST VALUE", "BESTER WERT")}
+              </Text>
+            </View>
+          ) : null}
+        </View>
+        {savingsPct > 0 ? (
+          <Text className="font-hk-bold text-[12px]" style={{ color: GOLD }}>
+            {t(`Save ${savingsPct}%`, `–${savingsPct}%`)}
+          </Text>
+        ) : null}
+      </View>
+
+      <View className="mt-1 flex-row items-baseline">
+        <Text className="font-hk-extrabold text-[20px] text-screen">
+          {pkg.priceString}
+        </Text>
+        <Text className="ml-1 font-hk-medium text-[13px] text-screen/55">
+          {suffix}
+        </Text>
+      </View>
+
+      {perMonth > 0 ? (
+        <Text className="mt-0.5 font-hk-medium text-[12px] text-screen/50">
+          ≈ {fmtMoney(perMonth, pkg.currencyCode)} {t("/ month", "/ Monat")}
+        </Text>
+      ) : null}
+
+      {pkg.hasTrial ? (
+        <Text className="mt-1 font-hk-semibold text-[11px]" style={{ color: GOLD }}>
+          {t("Free trial included", "Gratis-Test inklusive")}
+        </Text>
+      ) : null}
+    </Pressable>
   );
 }

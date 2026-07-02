@@ -27,8 +27,13 @@ import { useAuth } from "./auth";
 
 export interface InsiderPackage {
   id: string;
-  priceString: string;
+  /** "ANNUAL" | "MONTHLY" | "LIFETIME" | … (from RevenueCat). */
+  packageType: string;
+  priceString: string; // localized, e.g. "49,99 €"
+  price: number; // numeric, for savings math
+  currencyCode: string; // e.g. "EUR"
   title: string;
+  hasTrial: boolean; // true if the product offers an intro/free-trial phase
 }
 
 interface InsiderContextValue {
@@ -59,10 +64,15 @@ function activeEntitlement(info: any): boolean {
 }
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function mapPackage(p: any): InsiderPackage {
+  const prod = p.product ?? {};
   return {
     id: p.identifier,
-    priceString: p.product?.priceString ?? "",
-    title: p.product?.title ?? p.identifier,
+    packageType: p.packageType ?? "",
+    priceString: prod.priceString ?? "",
+    price: typeof prod.price === "number" ? prod.price : 0,
+    currencyCode: prod.currencyCode ?? "EUR",
+    title: prod.title ?? p.identifier,
+    hasTrial: Boolean(prod.introPrice),
   };
 }
 
