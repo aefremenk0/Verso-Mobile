@@ -3,6 +3,8 @@ import { useEffect, useRef, useState } from "react";
 import { Pressable, Text, View } from "react-native";
 import Animated, {
   Easing,
+  FadeOut,
+  LinearTransition,
   useAnimatedStyle,
   useSharedValue,
   withDelay,
@@ -10,6 +12,7 @@ import Animated, {
   withSequence,
   withSpring,
   withTiming,
+  ZoomIn,
 } from "react-native-reanimated";
 import { isEventCategory } from "../data/categories";
 import type { Spot } from "../data/types";
@@ -410,9 +413,16 @@ export function CityMap({
         className="absolute inset-0"
       />
 
+      {/* Pins animate on category change instead of hard-swapping: a new pin
+          pops in (ZoomIn), a removed one fades out, and a pin that lands on a
+          different slot glides there (LinearTransition). Keyed by spot id so
+          React can tell which pin is which. */}
       {spots.slice(0, 5).map((spot, i) => (
-        <View
+        <Animated.View
           key={spot.id}
+          entering={ZoomIn.springify().damping(14).stiffness(170)}
+          exiting={FadeOut.duration(160)}
+          layout={LinearTransition.springify().damping(18).stiffness(160)}
           className="absolute items-center"
           style={{
             top: FALLBACK_POS[i].top as `${number}%`,
@@ -425,7 +435,7 @@ export function CityMap({
             popAll={popAll}
             onPress={() => onSelect(spot)}
           />
-        </View>
+        </Animated.View>
       ))}
 
       {/* Hint chip (B): explains the double-tap gesture, fades out. Deliberately
