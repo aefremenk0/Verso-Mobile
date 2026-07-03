@@ -127,8 +127,26 @@ export default function Legal() {
         <Section label={t("PRIVACY", "DATENSCHUTZ")}>
           <P>
             {t(
-              "Your trust is the product. In the MVP, Verso collects no personal data: no account sync, no tracking, no ads. Saved places and settings stay on your device. A full privacy policy follows before launch.",
-              "Dein Vertrauen ist das Produkt. Im MVP erfasst Verso keine personenbezogenen Daten: kein Konto-Sync, kein Tracking, keine Werbung. Gespeicherte Orte und Einstellungen bleiben auf deinem Gerät. Eine vollständige Datenschutzerklärung folgt vor dem Launch.",
+              "Your trust is the product — we never sell your data and there are no ads in the feed. To run your account, Verso processes: your email and login, your profile (name, username, bio, optional photo), your saved places, vibes and picked-up hidden gems, and — only if you allow it — anonymous, non-personal usage stats. Processors: Supabase (backend/auth), RevenueCat (Insider subscription), Apple/Google (login & payments). You can export or delete your account any time (Settings → Delete account).",
+              "Dein Vertrauen ist das Produkt — wir verkaufen deine Daten nie, und im Feed gibt es keine Werbung. Für dein Konto verarbeitet Verso: E-Mail und Login, dein Profil (Name, Username, Bio, optionales Foto), deine gespeicherten Orte, Vibes und abgeholten Geheimtipps und — nur mit deiner Zustimmung — anonyme, nicht-personenbezogene Nutzungsstatistiken. Auftragsverarbeiter: Supabase (Backend/Auth), RevenueCat (Insider-Abo), Apple/Google (Login & Zahlung). Du kannst dein Konto jederzeit exportieren oder löschen (Einstellungen → Konto löschen).",
+            )}
+          </P>
+          <View className="mt-2">
+            <P>
+              {t(
+                "This is a plain-language summary. The full, legally binding privacy policy (incl. legal bases, retention and your GDPR rights) is published at verso.app/privacy before launch.",
+                "Dies ist eine Zusammenfassung in einfacher Sprache. Die vollständige, rechtsverbindliche Datenschutzerklärung (inkl. Rechtsgrundlagen, Speicherfristen und deinen DSGVO-Rechten) wird vor dem Launch unter verso.app/datenschutz veröffentlicht.",
+              )}
+            </P>
+          </View>
+        </Section>
+
+        {/* AI TRANSPARENCY (EU AI Act, Art. 50) */}
+        <Section label={t("AI FEATURES", "KI-FUNKTIONEN")}>
+          <P>
+            {t(
+              "Verso uses (or will use) AI to help suggest places — for example when you share a TikTok or Instagram post to Verso, an assistant drafts a spot suggestion from it. AI-assisted content is marked as such, always reviewed before it goes live, and you can ignore or edit any suggestion. We tell you this in the spirit of the EU AI Act's transparency rules.",
+              "Verso nutzt (bzw. wird nutzen) KI, um Orte vorzuschlagen — etwa wenn du einen TikTok- oder Instagram-Beitrag an Verso teilst, entwirft ein Assistent daraus einen Ortsvorschlag. KI-gestützte Inhalte werden als solche gekennzeichnet, vor der Veröffentlichung immer geprüft, und du kannst jeden Vorschlag ignorieren oder bearbeiten. Wir weisen dich im Sinne der Transparenzpflichten der EU-KI-Verordnung darauf hin.",
             )}
           </P>
         </Section>
@@ -137,10 +155,28 @@ export default function Legal() {
         <Section label={t("TERMS OF USE", "NUTZUNGSBEDINGUNGEN")}>
           <P>
             {t(
-              "Verso is a curated discovery guide, not a booking platform. Recommendations are editorial and never paid for. Use the tips respectfully — the places are real, and so are the people who run them.",
-              "Verso ist ein kuratierter Entdeckungs-Guide, keine Buchungsplattform. Empfehlungen sind redaktionell und niemals bezahlt. Nutze die Tipps mit Respekt — die Orte sind echt, und die Menschen dahinter auch.",
+              "Verso is a curated discovery guide, not a booking platform. Recommendations are editorial and never paid for. When you suggest a place (or share a post to Verso), you confirm you may share that content and grant Verso a licence to use it for the guide; we may edit or decline suggestions. Use the tips respectfully — the places are real, and so are the people who run them. The full terms are published at verso.app/terms.",
+              "Verso ist ein kuratierter Entdeckungs-Guide, keine Buchungsplattform. Empfehlungen sind redaktionell und niemals bezahlt. Wenn du einen Ort vorschlägst (oder einen Beitrag an Verso teilst), bestätigst du, dass du diesen Inhalt teilen darfst, und räumst Verso eine Lizenz zur Nutzung im Guide ein; wir dürfen Vorschläge bearbeiten oder ablehnen. Nutze die Tipps mit Respekt — die Orte sind echt, und die Menschen dahinter auch. Die vollständigen Bedingungen findest du unter verso.app/agb.",
             )}
           </P>
+        </Section>
+
+        {/* SUBSCRIPTION & WITHDRAWAL (EU consumer law) */}
+        <Section label={t("SUBSCRIPTION & WITHDRAWAL", "ABO & WIDERRUF")}>
+          <P>
+            {t(
+              "Verso Insider is an auto-renewing subscription (monthly or yearly). The price and term are shown on the Insider page before you buy; payment is charged to your Apple ID and renews unless you cancel at least 24 h before the period ends. Manage or cancel any time in the App Store (Settings → Apple ID → Subscriptions).",
+              "Verso Insider ist ein automatisch verlängerndes Abo (monatlich oder jährlich). Preis und Laufzeit siehst du vor dem Kauf auf der Insider-Seite; die Zahlung läuft über deine Apple-ID und verlängert sich, sofern du nicht mindestens 24 Std. vor Ablauf kündigst. Verwalten/Kündigen jederzeit im App Store (Einstellungen → Apple-ID → Abonnements).",
+            )}
+          </P>
+          <View className="mt-2">
+            <P>
+              {t(
+                "Right of withdrawal: as a consumer you have a 14-day right to withdraw from a digital purchase. By starting the subscription and asking for immediate access, you agree that provision begins at once and acknowledge that your right of withdrawal lapses once the service has been fully provided. This is a placeholder notice — the binding withdrawal policy follows at verso.app/withdrawal.",
+                "Widerrufsbelehrung: Als Verbraucher:in hast du ein 14-tägiges Widerrufsrecht für digitale Käufe. Mit Beginn des Abos und dem Wunsch nach sofortigem Zugang stimmst du zu, dass die Ausführung sofort beginnt, und bestätigst, dass dein Widerrufsrecht mit vollständiger Erbringung der Leistung erlischt. Dies ist ein Platzhalter — die verbindliche Widerrufsbelehrung folgt unter verso.app/widerruf.",
+              )}
+            </P>
+          </View>
         </Section>
 
         {/* CONTACT */}

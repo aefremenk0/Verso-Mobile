@@ -289,6 +289,21 @@ export default function Insider() {
             </Pressable>
           </>
         )}
+
+        {/* Terms + Privacy links at the point of purchase (App Store requirement). */}
+        <View className="mt-3 flex-row items-center justify-center">
+          <Pressable onPress={() => router.push("/legal")} hitSlop={8}>
+            <Text className="font-hk-semibold text-[11px] text-screen/45 underline">
+              {t("Terms", "Nutzungsbedingungen")}
+            </Text>
+          </Pressable>
+          <Text className="mx-2 text-[11px] text-screen/30">·</Text>
+          <Pressable onPress={() => router.push("/legal")} hitSlop={8}>
+            <Text className="font-hk-semibold text-[11px] text-screen/45 underline">
+              {t("Privacy", "Datenschutz")}
+            </Text>
+          </Pressable>
+        </View>
       </View>
     </SafeAreaView>
   );
