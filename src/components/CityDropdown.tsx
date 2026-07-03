@@ -10,6 +10,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { isComingSoon } from "../data/cities";
 import { useT, useLang } from "../lib/i18n";
+import { MAX_CHROME_SCALE } from "../lib/fontScale";
 import { cityLabel } from "../lib/lang";
 import { useCity } from "../store/city";
 import { DiagonalStrike } from "./DiagonalStrike";
@@ -57,6 +58,7 @@ function CityName({ city }: { city: string }) {
       <Animated.Text
         className="font-hk-extrabold text-title-md text-ink"
         numberOfLines={1}
+        maxFontSizeMultiplier={MAX_CHROME_SCALE}
         style={incomingStyle}
       >
         {display}

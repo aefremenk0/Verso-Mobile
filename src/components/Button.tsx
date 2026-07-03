@@ -1,4 +1,5 @@
 import { Pressable, Text, View } from "react-native";
+import { MAX_CHROME_SCALE } from "../lib/fontScale";
 
 // Reusable button in the three mockup variants.
 //  - "accent": yellow (primary CTA, e.g. "Create account", "Reserve a table")
@@ -45,13 +46,24 @@ export function Button({
           style={{ opacity: pressed ? 0.85 : 1 }}
         >
           {leading ? (
-            <Text className={`mr-2 font-hk-bold text-[16px] ${s.text}`}>{leading}</Text>
+            <Text
+              maxFontSizeMultiplier={MAX_CHROME_SCALE}
+              className={`mr-2 font-hk-bold text-[16px] ${s.text}`}
+            >
+              {leading}
+            </Text>
           ) : null}
 
           <View className="flex-1 items-center">
-            <Text className={`font-hk-bold text-[16px] ${s.text}`}>{label}</Text>
+            <Text
+              maxFontSizeMultiplier={MAX_CHROME_SCALE}
+              className={`font-hk-bold text-[16px] ${s.text}`}
+            >
+              {label}
+            </Text>
             {subtitle ? (
               <Text
+                maxFontSizeMultiplier={MAX_CHROME_SCALE}
                 className={`mt-0.5 font-hk-semibold text-[10px] tracking-[1px] ${s.text} opacity-60`}
               >
                 {subtitle.toUpperCase()}
@@ -60,7 +72,10 @@ export function Button({
           </View>
 
           {trailingGlyph ? (
-            <Text className={`ml-2 font-hk-bold text-[18px] ${s.text}`}>
+            <Text
+              maxFontSizeMultiplier={MAX_CHROME_SCALE}
+              className={`ml-2 font-hk-bold text-[18px] ${s.text}`}
+            >
               {trailingGlyph}
             </Text>
           ) : (

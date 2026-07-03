@@ -1,6 +1,7 @@
 import { Pressable, Text, TextInput, View } from "react-native";
 import Svg, { Circle, Line } from "react-native-svg";
 import { useT } from "../lib/i18n";
+import { MAX_CHROME_SCALE } from "../lib/fontScale";
 import { KEYBOARD_DONE_ID } from "./KeyboardDoneBar";
 
 // Slim search field in the Verso style (pill, soft shape). Reusable —
@@ -46,6 +47,7 @@ export function SearchField({
         onChangeText={onChangeText}
         placeholder={ph}
         placeholderTextColor="#8A857C"
+        maxFontSizeMultiplier={MAX_CHROME_SCALE}
         className="ml-2.5 flex-1 font-hk-medium text-[15px] text-ink"
         returnKeyType="search"
         autoCorrect={false}
@@ -58,10 +60,11 @@ export function SearchField({
           onPress={() => onChangeText("")}
           hitSlop={10}
           accessibilityLabel={t("Clear search", "Suche löschen")}
-          className="ml-2 h-6 w-6 items-center justify-center rounded-pill"
-          style={{ backgroundColor: "rgba(26,26,26,0.12)" }}
+          className="ml-2 h-6 w-6 items-center justify-center rounded-pill bg-line/[0.12]"
         >
-          <Text className="font-hk-bold text-[12px] text-ink">✕</Text>
+          <Text maxFontSizeMultiplier={MAX_CHROME_SCALE} className="font-hk-bold text-[12px] text-ink">
+            ✕
+          </Text>
         </Pressable>
       ) : null}
     </View>

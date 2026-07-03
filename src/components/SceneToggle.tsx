@@ -2,6 +2,7 @@ import { useRouter } from "expo-router";
 import { useEffect } from "react";
 import { Text, View } from "react-native";
 import { tapSelection } from "../lib/haptics";
+import { MAX_CHROME_SCALE } from "../lib/fontScale";
 import { useT } from "../lib/i18n";
 import type { Scene } from "../lib/scene";
 import { useInsider } from "../store/insider";
@@ -55,7 +56,9 @@ export function SceneToggle() {
           style={{ borderRadius: 999, paddingHorizontal: 11, paddingVertical: 6 }}
           accessibilityLabel={t(seg.en, seg.de)}
         >
-          <Text className="text-[15px]">{seg.icon}</Text>
+          <Text maxFontSizeMultiplier={MAX_CHROME_SCALE} className="text-[15px]">
+            {seg.icon}
+          </Text>
         </AnimatedChip>
       ))}
 
@@ -69,7 +72,9 @@ export function SceneToggle() {
           style={{ borderRadius: 999, paddingHorizontal: 11, paddingVertical: 6 }}
           accessibilityLabel={t("Verso Insider", "Verso Insider")}
         >
-          <Text className="text-[15px]">⭐</Text>
+          <Text maxFontSizeMultiplier={MAX_CHROME_SCALE} className="text-[15px]">
+            ⭐
+          </Text>
         </AnimatedChip>
       ) : null}
     </View>

@@ -1,5 +1,6 @@
 import { Pressable, Text, View } from "react-native";
 import { tapSelection } from "../lib/haptics";
+import { MAX_CHROME_SCALE } from "../lib/fontScale";
 import { AnimatedChip } from "./AnimatedChip";
 
 // Pill / chip. Two uses:
@@ -40,6 +41,7 @@ export function Pill({
         style={customActive ? { backgroundColor: activeColor } : undefined}
       >
         <Text
+          maxFontSizeMultiplier={MAX_CHROME_SCALE}
           className={`font-hk-semibold ${textSize} ${
             active ? (customActive ? "" : "text-accent-ink") : "text-ink-2"
           }`}
@@ -70,6 +72,7 @@ export function Pill({
       }}
     >
       <Text
+        maxFontSizeMultiplier={MAX_CHROME_SCALE}
         className={`font-hk-semibold ${textSize} ${
           active ? (customActive ? "" : "text-accent-ink") : "text-ink-2"
         }`}

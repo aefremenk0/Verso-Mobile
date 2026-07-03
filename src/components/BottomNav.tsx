@@ -9,6 +9,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useT } from "../lib/i18n";
+import { MAX_CHROME_SCALE } from "../lib/fontScale";
 import { useGeheimtipp } from "../store/geheimtipp";
 import { shadows } from "../theme";
 import { GeheimtippButton } from "./GeheimtippButton";
@@ -134,6 +135,7 @@ export function BottomNav({ state, navigation }: BottomNavProps) {
                 <InitialsAvatar size={26} textSize={11} focused={focused} />
               ) : (
                 <Text
+                  maxFontSizeMultiplier={MAX_CHROME_SCALE}
                   className={`font-hk-semibold text-[10px] tracking-[1px] ${
                     focused ? "text-accent-ink" : "text-ink-3"
                   }`}
