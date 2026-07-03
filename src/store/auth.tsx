@@ -9,6 +9,7 @@ import {
 import type { Session, User } from "@supabase/supabase-js";
 import * as Linking from "expo-linking";
 import * as WebBrowser from "expo-web-browser";
+import { router } from "expo-router";
 import { hasSupabase, supabase } from "../lib/supabase";
 import { identify } from "../lib/analytics";
 
@@ -63,14 +64,39 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setLoading(false);
     });
     // … and keep it in sync with sign-in / sign-out / token refresh.
-    const { data: sub } = supabase.auth.onAuthStateChange((_event, s) => {
+    const { data: sub } = supabase.auth.onAuthStateChange((event, s) => {
       setSession(s);
       identify(s?.user?.id ?? null); // attach analytics to the opaque uid
+      // Landed via a password-reset email link -> let the user set a new one.
+      if (event === "PASSWORD_RECOVERY") {
+        router.push("/reset-password");
+      }
     });
     return () => {
       cancelled = true;
       sub.subscription.unsubscribe();
     };
+  }, []);
+
+  // Handle auth deep links that OPEN the app (password reset / email confirmation).
+  // The OAuth flow reads its redirect inline; these links instead arrive here via
+  // the URL scheme, so we pull the PKCE ?code=… and exchange it for a session.
+  // supabase-js then emits PASSWORD_RECOVERY / SIGNED_IN (handled above).
+  useEffect(() => {
+    if (!hasSupabase) return;
+    const handle = async (url: string | null) => {
+      if (!url || !url.includes("code=")) return;
+      const code = /[?&]code=([^&]+)/.exec(url)?.[1];
+      if (!code) return;
+      try {
+        await supabase.auth.exchangeCodeForSession(decodeURIComponent(code));
+      } catch {
+        /* already exchanged (e.g. by the OAuth flow) or invalid — ignore */
+      }
+    };
+    Linking.getInitialURL().then(handle); // cold start via the link
+    const sub = Linking.addEventListener("url", (e) => handle(e.url)); // warm
+    return () => sub.remove();
   }, []);
 
   const value = useMemo<AuthContextValue>(

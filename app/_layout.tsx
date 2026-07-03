@@ -124,6 +124,10 @@ export default function RootLayout() {
             />
             <Stack.Screen name="profil-bearbeiten" />
             <Stack.Screen name="passwort-aendern" />
+            <Stack.Screen
+              name="reset-password"
+              options={{ presentation: "modal", animation: "slide_from_bottom" }}
+            />
             <Stack.Screen name="app-icon" />
             <Stack.Screen name="bezirk/[name]" />
           </Stack>
