@@ -9,6 +9,7 @@ import { distanceLabel, getOpenState } from "../spotMeta";
 import { editDistance, matchesQuery, normalize } from "../search";
 import { friendlyAuthError, isNetworkError } from "../errors";
 import { scrubProps, shouldEmit } from "../analyticsCore";
+import { parseSharedPost } from "../shareImport";
 
 // Pure logic tests (RN-free). Cover the helpers that feed, map, filter and
 // spot detail build on.
@@ -263,5 +264,30 @@ describe("analytics: shouldEmit", () => {
     expect(shouldEmit("error", false)).toBe(true);
     expect(shouldEmit("track", false)).toBe(false);
     expect(shouldEmit("track", true)).toBe(true);
+  });
+});
+
+describe("shareImport: parseSharedPost (mock)", () => {
+  it("detects the source platform", () => {
+    expect(parseSharedPost("https://www.tiktok.com/@x/video/1").source).toBe("tiktok");
+    expect(parseSharedPost("https://instagram.com/p/abc").source).toBe("instagram");
+    expect(parseSharedPost("https://example.com/x").source).toBe("link");
+    expect(parseSharedPost("just some words").source).toBe("text");
+  });
+  it("pulls a name from an @handle", () => {
+    expect(parseSharedPost("love this @cafe.central spot").name).toBe("Cafe Central");
+  });
+  it("guesses a category from keywords", () => {
+    expect(parseSharedPost("best matcha latte here").category).toBe("cafe");
+    expect(parseSharedPost("insane cocktail bar").category).toBe("bar");
+    expect(parseSharedPost("techno club all night").category).toBe("club");
+  });
+  it("recognises a city (accent-insensitive)", () => {
+    expect(parseSharedPost("hidden gem in Munich").city).toBe("München");
+    expect(parseSharedPost("beste bar in muenchen").city).toBe("München");
+  });
+  it("keeps the original text as the note (clipped)", () => {
+    const long = "x".repeat(700);
+    expect(parseSharedPost(long).note).toHaveLength(500);
   });
 });

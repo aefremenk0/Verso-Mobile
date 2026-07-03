@@ -1,10 +1,10 @@
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { useState } from "react";
 import { Pressable, ScrollView, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { KEYBOARD_DONE_ID, KeyboardDoneBar } from "../src/components/KeyboardDoneBar";
 import { Pill } from "../src/components/Pill";
-import { categoryFilters } from "../src/data/categories";
+import { CATEGORY_ORDER, categoryFilters } from "../src/data/categories";
 import type { Category } from "../src/data/types";
 import { useLang, useT } from "../src/lib/i18n";
 import { PIN_COLORS } from "../src/lib/pinColors";
@@ -28,10 +28,24 @@ export default function OrtVorschlagen() {
   const lang = useLang();
   const { city } = useCity();
 
-  const [name, setName] = useState("");
-  const [category, setCategory] = useState<Category | null>(null);
-  const [area, setArea] = useState("");
-  const [note, setNote] = useState("");
+  // Optional prefill (e.g. handed over from the TikTok/Instagram share import).
+  const params = useLocalSearchParams<{
+    name?: string;
+    category?: string;
+    area?: string;
+    note?: string;
+    from?: string;
+  }>();
+  const prefillCategory =
+    params.category && params.category in CATEGORY_ORDER
+      ? (params.category as Category)
+      : null;
+  const fromShare = params.from === "share";
+
+  const [name, setName] = useState(params.name ?? "");
+  const [category, setCategory] = useState<Category | null>(prefillCategory);
+  const [area, setArea] = useState(params.area ?? "");
+  const [note, setNote] = useState(params.note ?? "");
   const [sent, setSent] = useState(false);
   const [busy, setBusy] = useState(false);
 
@@ -114,12 +128,48 @@ export default function OrtVorschlagen() {
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       >
-        <Text className="mb-5 font-hk-medium-italic text-[14px] leading-[21px] text-ink-2">
-          {t(
-            "Know a place worth knowing? Send it to our editors — real tips, no business directory.",
-            "Kennst du einen Ort, den man kennen sollte? Schick ihn der Redaktion — echte Tipps, kein Branchenverzeichnis.",
-          )}
-        </Text>
+        {/* Draft-from-share banner (AI transparency: label it, ask to review). */}
+        {fromShare ? (
+          <View className="mb-4 rounded-[14px] bg-chip px-4 py-3">
+            <Text className="font-hk-bold text-[12px] text-ink">
+              {t("✨ Draft from a shared post", "✨ Entwurf aus einem geteilten Beitrag")}
+            </Text>
+            <Text className="mt-1 font-hk-medium text-[12px] leading-[17px] text-ink-2">
+              {t(
+                "We pre-filled this from the post you shared. Please check it before sending.",
+                "Wir haben das aus deinem geteilten Beitrag vorausgefüllt. Bitte prüf es vor dem Senden.",
+              )}
+            </Text>
+          </View>
+        ) : (
+          <Text className="mb-5 font-hk-medium-italic text-[14px] leading-[21px] text-ink-2">
+            {t(
+              "Know a place worth knowing? Send it to our editors — real tips, no business directory.",
+              "Kennst du einen Ort, den man kennen sollte? Schick ihn der Redaktion — echte Tipps, kein Branchenverzeichnis.",
+            )}
+          </Text>
+        )}
+
+        {/* Shortcut: draft from a TikTok/Instagram post instead of typing. */}
+        {!fromShare ? (
+          <Pressable
+            onPress={() => router.push("/share-import")}
+            className="mb-5 flex-row items-center justify-between rounded-[14px] border border-line/10 bg-surface px-4 py-3.5"
+          >
+            <View className="flex-1 pr-3">
+              <Text className="font-hk-extrabold text-[14px] text-ink">
+                {t("Import from TikTok / Instagram", "Aus TikTok / Instagram importieren")}
+              </Text>
+              <Text className="mt-0.5 font-hk-medium text-[12px] text-ink-3">
+                {t(
+                  "Paste a post link and we draft the suggestion.",
+                  "Beitrags-Link einfügen — wir entwerfen den Vorschlag.",
+                )}
+              </Text>
+            </View>
+            <Text className="text-[18px]">✨</Text>
+          </Pressable>
+        ) : null}
 
         <FieldLabel>{t("NAME", "NAME")}</FieldLabel>
         <TextInput

@@ -122,6 +122,10 @@ export default function RootLayout() {
               name="ort-vorschlagen"
               options={{ presentation: "modal", animation: "slide_from_bottom" }}
             />
+            <Stack.Screen
+              name="share-import"
+              options={{ presentation: "modal", animation: "slide_from_bottom" }}
+            />
             <Stack.Screen name="profil-bearbeiten" />
             <Stack.Screen name="passwort-aendern" />
             <Stack.Screen
