@@ -1,7 +1,7 @@
 import { useRouter } from "expo-router";
 import { Image } from "expo-image";
 import { useState } from "react";
-import { Pressable, ScrollView, Text, TextInput, View } from "react-native";
+import { Alert, Pressable, ScrollView, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
   KeyboardDoneBar,
@@ -9,8 +9,9 @@ import {
 } from "../src/components/KeyboardDoneBar";
 import { StripeTexture } from "../src/components/StripeTexture";
 import { pickAndUploadAvatar } from "../src/lib/avatar";
+import { friendlyAuthError } from "../src/lib/errors";
 import { initialsFromName } from "../src/lib/initials";
-import { useT } from "../src/lib/i18n";
+import { useT, useLang } from "../src/lib/i18n";
 import { supabase, hasSupabase } from "../src/lib/supabase";
 import { useProfile } from "../src/store/profile";
 
@@ -52,11 +53,13 @@ function Field({
 export default function ProfilBearbeiten() {
   const router = useRouter();
   const t = useT();
+  const lang = useLang();
   const profile = useProfile();
   const [name, setName] = useState(profile.name);
   const [username, setUsername] = useState(profile.username);
   const [bio, setBio] = useState(profile.bio);
   const [uploading, setUploading] = useState(false);
+  const [saving, setSaving] = useState(false);
   const INITIALS = initialsFromName(name);
 
   // Pick a photo, upload it to Storage, store the URL on the profile.
@@ -70,17 +73,35 @@ export default function ProfilBearbeiten() {
     }
     const url = await pickAndUploadAvatar(uid);
     setUploading(false);
-    if (url) await profile.saveAvatar(url);
+    if (!url) return; // cancelled or upload failed (avatar lib is fail-soft)
+    const { error } = await profile.saveAvatar(url);
+    if (error) {
+      Alert.alert(
+        t("Couldn't save photo", "Foto nicht gespeichert"),
+        friendlyAuthError(error, lang),
+      );
+    }
   };
 
   const onSave = async () => {
+    if (saving) return;
     // Normalize the username to a @handle (unless left empty).
     const handle = username.trim().replace(/^@+/, "").replace(/\s+/g, "").toLowerCase();
-    await profile.save({
+    setSaving(true);
+    const { error } = await profile.save({
       name: name.trim(),
       username: handle ? `@${handle}` : "",
       bio: bio.trim(),
     });
+    setSaving(false);
+    if (error) {
+      // Don't leave the screen — the write didn't land (likely offline).
+      Alert.alert(
+        t("Couldn't save", "Nicht gespeichert"),
+        friendlyAuthError(error, lang),
+      );
+      return;
+    }
     router.back();
   };
 
@@ -146,9 +167,13 @@ export default function ProfilBearbeiten() {
         <View className="flex-1" />
         <Pressable
           onPress={onSave}
+          disabled={saving}
           className="mt-8 items-center rounded-[16px] bg-accent py-4"
+          style={{ opacity: saving ? 0.6 : 1 }}
         >
-          <Text className="font-hk-extrabold text-[17px] text-accent-ink">{t("Save", "Speichern")}</Text>
+          <Text className="font-hk-extrabold text-[17px] text-accent-ink">
+            {saving ? t("Saving …", "Speichern …") : t("Save", "Speichern")}
+          </Text>
         </Pressable>
       </ScrollView>
 

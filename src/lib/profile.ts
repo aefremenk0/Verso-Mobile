@@ -91,13 +91,14 @@ export async function fetchProfileRow(
 export async function patchProfile(
   userId: string,
   patch: Record<string, unknown>,
-): Promise<void> {
-  if (!hasSupabase) return;
+): Promise<{ error: string | null }> {
+  if (!hasSupabase) return { error: null }; // guest -> nothing to persist
   try {
-    await supabase
+    const { error } = await supabase
       .from("profiles")
       .upsert({ id: userId, ...patch }, { onConflict: "id" });
-  } catch {
-    // ignore
+    return { error: error?.message ?? null };
+  } catch (e) {
+    return { error: e instanceof Error ? e.message : "save failed" };
   }
 }

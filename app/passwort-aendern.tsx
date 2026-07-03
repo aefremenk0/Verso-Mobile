@@ -6,7 +6,8 @@ import {
   KeyboardDoneBar,
   KEYBOARD_DONE_ID,
 } from "../src/components/KeyboardDoneBar";
-import { useT } from "../src/lib/i18n";
+import { useT, useLang } from "../src/lib/i18n";
+import { friendlyAuthError } from "../src/lib/errors";
 import { useAuth } from "../src/store/auth";
 
 // Screen 07d — Change password. Updates the signed-in user's password via
@@ -58,6 +59,7 @@ function PwField({
 export default function PasswortAendern() {
   const router = useRouter();
   const t = useT();
+  const lang = useLang();
   const { user, updatePassword, resetPassword } = useAuth();
   const [current, setCurrent] = useState("");
   const [next, setNext] = useState("");
@@ -89,7 +91,7 @@ export default function PasswortAendern() {
     const { error } = await updatePassword(next);
     setBusy(false);
     if (error) {
-      setMsg({ ok: false, text: error });
+      setMsg({ ok: false, text: friendlyAuthError(error, lang) });
       return;
     }
     setMsg({
@@ -116,7 +118,7 @@ export default function PasswortAendern() {
     setBusy(false);
     setMsg(
       error
-        ? { ok: false, text: error }
+        ? { ok: false, text: friendlyAuthError(error, lang) }
         : {
             ok: true,
             text: t(

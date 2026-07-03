@@ -26,10 +26,10 @@ interface ProfileFields {
 interface ProfileContextValue extends ProfileFields {
   /** Public URL of the user's avatar image ("" if none). */
   avatarUrl: string;
-  /** Save (upsert) profile fields for the current user. */
-  save: (fields: Partial<ProfileFields>) => Promise<void>;
-  /** Store a freshly uploaded avatar URL on the profile. */
-  saveAvatar: (url: string) => Promise<void>;
+  /** Save (upsert) profile fields for the current user. Reports write failure. */
+  save: (fields: Partial<ProfileFields>) => Promise<{ error: string | null }>;
+  /** Store a freshly uploaded avatar URL on the profile. Reports write failure. */
+  saveAvatar: (url: string) => Promise<{ error: string | null }>;
 }
 
 const ProfileContext = createContext<ProfileContextValue | null>(null);
@@ -91,25 +91,25 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
       if (fields.name !== undefined) setName(fields.name);
       if (fields.username !== undefined) setUsername(fields.username);
       if (fields.bio !== undefined) setBio(fields.bio);
-      if (!hasSupabase) return;
+      if (!hasSupabase) return { error: null };
       // Resolve the uid live (avoids a race with the auth state update).
       const { data } = await supabase.auth.getUser();
       const uid = data.user?.id;
-      if (!uid) return;
+      if (!uid) return { error: null };
       // Remember what we wrote so a concurrent login-fetch can't clobber it.
       justSaved.current = { uid, fields };
-      await patchProfile(uid, fields);
+      return patchProfile(uid, fields);
     },
     [],
   );
 
   const saveAvatar = useCallback(async (url: string) => {
     setAvatarUrl(url);
-    if (!hasSupabase) return;
+    if (!hasSupabase) return { error: null };
     const { data } = await supabase.auth.getUser();
     const uid = data.user?.id;
-    if (!uid) return;
-    await patchProfile(uid, { avatar_url: url });
+    if (!uid) return { error: null };
+    return patchProfile(uid, { avatar_url: url });
   }, []);
 
   const value = useMemo<ProfileContextValue>(

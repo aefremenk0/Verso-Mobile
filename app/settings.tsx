@@ -10,7 +10,8 @@ import Animated, {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LanguageToggle } from "../src/components/LanguageToggle";
 import { tapSelection } from "../src/lib/haptics";
-import { useT } from "../src/lib/i18n";
+import { useT, useLang } from "../src/lib/i18n";
+import { friendlyAuthError } from "../src/lib/errors";
 import { useAppearance } from "../src/store/appearance";
 import { useAuth } from "../src/store/auth";
 import { useGeheimtipp } from "../src/store/geheimtipp";
@@ -115,6 +116,7 @@ function NavRow({
 export default function Settings() {
   const router = useRouter();
   const t = useT();
+  const lang = useLang();
   const geheimtipp = useGeheimtipp();
   const saved = useSaved();
   const interests = useInterests();
@@ -153,7 +155,10 @@ export default function Settings() {
           onPress: async () => {
             const { error } = await deleteAccount();
             if (error) {
-              Alert.alert(t("Couldn't delete", "Löschen fehlgeschlagen"), error);
+              Alert.alert(
+                t("Couldn't delete", "Löschen fehlgeschlagen"),
+                friendlyAuthError(error, lang),
+              );
               return;
             }
             resetStores();

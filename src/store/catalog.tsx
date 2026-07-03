@@ -65,6 +65,9 @@ interface CatalogContextValue {
   getSpotById: (id: string) => Spot | undefined;
   /** Where the current data comes from (handy for a debug badge). */
   source: "mock" | "supabase";
+  /** Load state for the UI: "loading" (first DB fetch), "live" (got data or no
+   *  backend configured), "offline" (DB fetch failed -> showing cached content). */
+  status: "loading" | "live" | "offline";
 }
 
 const CatalogContext = createContext<CatalogContextValue | null>(null);
@@ -74,6 +77,10 @@ export function CatalogProvider({ children }: { children: ReactNode }) {
   const [neighborhoods, setNeighborhoods] =
     useState<Neighborhood[]>(MOCK_NEIGHBORHOODS);
   const [source, setSource] = useState<"mock" | "supabase">("mock");
+  // No backend configured -> the mock IS the product, so we're "live", not loading.
+  const [status, setStatus] = useState<"loading" | "live" | "offline">(
+    hasSupabase ? "loading" : "live",
+  );
 
   useEffect(() => {
     if (!hasSupabase) return;
@@ -85,6 +92,11 @@ export function CatalogProvider({ children }: { children: ReactNode }) {
           supabase.from("neighborhoods").select("*"),
         ]);
         if (cancelled) return;
+        // A Supabase error comes back on the result object (not thrown).
+        if (s.error || n.error) {
+          setStatus("offline"); // fetch failed -> keep cached mock, tell the UI
+          return;
+        }
         const mappedSpots = (s.data ?? []).map(rowToSpot);
         const mappedHoods = (n.data ?? []).map(rowToNeighborhood);
         // Only swap if we actually got rows — otherwise keep the mock fallback.
@@ -92,8 +104,10 @@ export function CatalogProvider({ children }: { children: ReactNode }) {
         if (mappedHoods.length > 0) setNeighborhoods(mappedHoods);
         if (mappedSpots.length > 0 || mappedHoods.length > 0)
           setSource("supabase");
+        setStatus("live");
       } catch {
-        // network/mapping error -> keep the mock data
+        // network/mapping error -> keep the mock data, flag offline
+        if (!cancelled) setStatus("offline");
       }
     })();
     return () => {
@@ -108,8 +122,9 @@ export function CatalogProvider({ children }: { children: ReactNode }) {
       neighborhoods,
       getSpotById: (id: string) => byId.get(id),
       source,
+      status,
     };
-  }, [spots, neighborhoods, source]);
+  }, [spots, neighborhoods, source, status]);
 
   return (
     <CatalogContext.Provider value={value}>{children}</CatalogContext.Provider>

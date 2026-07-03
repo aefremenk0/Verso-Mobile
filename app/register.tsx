@@ -18,6 +18,7 @@ import {
 } from "../src/components/KeyboardDoneBar";
 import { AppleLogo, GoogleLogo } from "../src/components/Logos";
 import { ambienteOptions } from "../src/lib/mapFilter";
+import { friendlyAuthError } from "../src/lib/errors";
 import { useAuth, type OAuthProvider } from "../src/store/auth";
 import { useInterests } from "../src/store/interests";
 import { useProfile } from "../src/store/profile";
@@ -84,7 +85,7 @@ export default function Register() {
       mode === "register" ? await signUp(mail, password) : await signIn(mail, password);
     if (err) {
       setBusy(false);
-      setError(err);
+      setError(friendlyAuthError(err, lang));
       return;
     }
     // On sign-up, save the chosen name + username to the profile.
@@ -111,7 +112,7 @@ export default function Register() {
     setError(null);
     const { error: err } = await resetPassword(mail);
     if (err) {
-      setError(err);
+      setError(friendlyAuthError(err, lang));
       return;
     }
     Alert.alert(
@@ -131,7 +132,7 @@ export default function Register() {
     const { error: err } = await signInWithProvider(provider);
     setBusy(false);
     if (err) {
-      setError(err);
+      setError(friendlyAuthError(err, lang));
       return;
     }
     enter();
@@ -150,7 +151,7 @@ export default function Register() {
     }
     if (res.error) {
       setBusy(false);
-      setError(res.error);
+      setError(friendlyAuthError(res.error, lang));
       return;
     }
     // Give the demo account a friendly name/handle for the profile screen.

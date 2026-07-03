@@ -7,6 +7,7 @@ import { DEFAULT_FILTER, matchesFilter } from "../mapFilter";
 import { SCENE_CATEGORIES } from "../scene";
 import { distanceLabel, getOpenState } from "../spotMeta";
 import { editDistance, matchesQuery, normalize } from "../search";
+import { friendlyAuthError, isNetworkError } from "../errors";
 
 // Pure logic tests (RN-free). Cover the helpers that feed, map, filter and
 // spot detail build on.
@@ -207,5 +208,37 @@ describe("search: matchesQuery", () => {
   });
   it("rejects unrelated queries", () => {
     expect(matchesQuery(fields, "helicopter")).toBe(false);
+  });
+});
+
+describe("errors: isNetworkError", () => {
+  it("detects connectivity failures", () => {
+    expect(isNetworkError("Network request failed")).toBe(true);
+    expect(isNetworkError("TypeError: Failed to fetch")).toBe(true);
+    expect(isNetworkError("The request timed out")).toBe(true);
+  });
+  it("is false for auth errors and empty", () => {
+    expect(isNetworkError("Invalid login credentials")).toBe(false);
+    expect(isNetworkError(null)).toBe(false);
+    expect(isNetworkError("")).toBe(false);
+  });
+});
+
+describe("errors: friendlyAuthError", () => {
+  it("maps network errors to a no-connection line", () => {
+    expect(friendlyAuthError("Network request failed", "en")).toMatch(/No connection/i);
+    expect(friendlyAuthError("Network request failed", "de")).toMatch(/Keine Verbindung/i);
+  });
+  it("maps invalid credentials", () => {
+    expect(friendlyAuthError("Invalid login credentials", "en")).toMatch(/isn't right/i);
+    expect(friendlyAuthError("Invalid login credentials", "de")).toMatch(/stimmt nicht/i);
+  });
+  it("maps already-registered", () => {
+    expect(friendlyAuthError("User already registered", "de")).toMatch(/schon ein Konto/i);
+  });
+  it("never leaks the raw string for unknown errors", () => {
+    const raw = "pg: relation xyz does not exist";
+    expect(friendlyAuthError(raw, "en")).not.toContain("relation xyz");
+    expect(friendlyAuthError(raw, "de")).not.toContain("relation xyz");
   });
 });

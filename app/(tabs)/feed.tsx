@@ -38,7 +38,7 @@ import { RecentRail } from "../../src/components/RecentRail";
 export default function Feed() {
   const router = useRouter();
   const t = useT();
-  const { spots: SPOTS } = useCatalog();
+  const { spots: SPOTS, status } = useCatalog();
   const { city } = useCity();
   const { scene } = useScene();
   const { isInsider } = useInsider();
@@ -138,6 +138,19 @@ export default function Feed() {
         </View>
         <FilterButton active={filterActive} onPress={() => setFilterOpen(true)} />
       </View>
+
+      {/* Offline hint: DB fetch failed -> we're showing cached places. */}
+      {status === "offline" ? (
+        <View className="mx-6 mt-2 flex-row items-center rounded-pill bg-chip px-3.5 py-2">
+          <Text className="text-[12px]">📡</Text>
+          <Text className="ml-2 font-hk-semibold text-[11px] text-ink-2">
+            {t(
+              "Offline — showing saved places.",
+              "Offline — gespeicherte Orte werden gezeigt.",
+            )}
+          </Text>
+        </View>
+      ) : null}
 
       {/* List + floating category bar. The bar sits transparently ABOVE the
           list -> cards scroll visibly behind it. The list fades + rises on
