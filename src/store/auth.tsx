@@ -9,7 +9,6 @@ import {
 import type { Session, User } from "@supabase/supabase-js";
 import * as Linking from "expo-linking";
 import * as WebBrowser from "expo-web-browser";
-import { router } from "expo-router";
 import { hasSupabase, supabase } from "../lib/supabase";
 import { identify } from "../lib/analytics";
 
@@ -45,6 +44,11 @@ interface AuthContextValue {
   updatePassword: (newPassword: string) => Promise<AuthResult>;
   /** Permanently delete the signed-in user's account (+ their data). */
   deleteAccount: () => Promise<AuthResult>;
+  /** True when a password-reset link was opened -> show the reset screen. A
+   *  watcher UNDER the navigator consumes this (we must not navigate from the
+   *  provider, which renders above the navigator). */
+  passwordRecovery: boolean;
+  clearPasswordRecovery: () => void;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -53,6 +57,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   // Only "loading" when Supabase can actually restore a session.
   const [loading, setLoading] = useState<boolean>(hasSupabase);
+  const [passwordRecovery, setPasswordRecovery] = useState(false);
 
   useEffect(() => {
     if (!hasSupabase) return;
@@ -67,9 +72,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const { data: sub } = supabase.auth.onAuthStateChange((event, s) => {
       setSession(s);
       identify(s?.user?.id ?? null); // attach analytics to the opaque uid
-      // Landed via a password-reset email link -> let the user set a new one.
+      // Landed via a password-reset email link -> flag it. We do NOT navigate
+      // here: this provider renders ABOVE the navigator, so calling the router
+      // now (possibly before the navigator has mounted) throws "no navigation
+      // context". A watcher under the navigator performs the navigation.
       if (event === "PASSWORD_RECOVERY") {
-        router.push("/reset-password");
+        setPasswordRecovery(true);
       }
     });
     return () => {
@@ -178,8 +186,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           return { error: e instanceof Error ? e.message : "Delete failed" };
         }
       },
+      passwordRecovery,
+      clearPasswordRecovery: () => setPasswordRecovery(false),
     }),
-    [session, loading],
+    [session, loading, passwordRecovery],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

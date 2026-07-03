@@ -2,7 +2,7 @@ import "react-native-gesture-handler";
 import "../global.css";
 
 import { useFonts } from "expo-font";
-import { Stack } from "expo-router";
+import { Stack, useRootNavigationState, useRouter } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useState, type ReactNode } from "react";
@@ -17,7 +17,7 @@ import {
   DARK_VARS,
   useAppearance,
 } from "../src/store/appearance";
-import { AuthProvider } from "../src/store/auth";
+import { AuthProvider, useAuth } from "../src/store/auth";
 import { CatalogProvider } from "../src/store/catalog";
 import { CityProvider } from "../src/store/city";
 import { ProfileProvider } from "../src/store/profile";
@@ -48,6 +48,23 @@ function ThemedApp({ children }: { children: ReactNode }) {
       {children}
     </View>
   );
+}
+
+// Navigates to the reset-password screen when a recovery link was opened — but
+// ONLY once the root navigator is mounted (navState?.key present). The auth
+// provider can't navigate itself: it renders above the navigator, so calling the
+// router too early throws "Couldn't find a navigation context".
+function PasswordRecoveryWatcher() {
+  const { passwordRecovery, clearPasswordRecovery } = useAuth();
+  const router = useRouter();
+  const navState = useRootNavigationState();
+  useEffect(() => {
+    if (passwordRecovery && navState?.key) {
+      clearPasswordRecovery();
+      router.push("/reset-password");
+    }
+  }, [passwordRecovery, navState?.key, clearPasswordRecovery, router]);
+  return null;
 }
 
 export default function RootLayout() {
@@ -135,6 +152,7 @@ export default function RootLayout() {
             <Stack.Screen name="app-icon" />
             <Stack.Screen name="bezirk/[name]" />
           </Stack>
+          <PasswordRecoveryWatcher />
           </ThemedApp>
           </AppearanceProvider>
           </NotificationsProvider>
