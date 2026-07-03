@@ -16,6 +16,7 @@ import { MapFilterSheet } from "../../src/components/MapFilterSheet";
 import { SceneToggle } from "../../src/components/SceneToggle";
 import { SearchField } from "../../src/components/SearchField";
 import { SpotCard } from "../../src/components/SpotCard";
+import { SpotListSkeleton } from "../../src/components/SpotCardSkeleton";
 import { SurpriseButton } from "../../src/components/SurpriseButton";
 import { sortByCategory } from "../../src/data/categories";
 import type { Category } from "../../src/data/types";
@@ -191,17 +192,23 @@ export default function Feed() {
             </View>
           }
           ListEmptyComponent={
-            <Text className="mt-10 text-center font-hk-medium-italic text-[15px] text-ink-3">
-              {q || filterActive
-                ? t(
-                    "Nothing matches your search/filter. Loosen the criteria.",
-                    "Nichts passt zu Suche/Filter. Lockere die Kriterien.",
-                  )
-                : t(
-                    "Still digging here. Check back soon.",
-                    "Hier kramen wir noch. Schau bald wieder rein.",
-                  )}
-            </Text>
+            // While the first DB fetch is in flight and there's nothing yet,
+            // show shimmering skeletons instead of an empty screen.
+            status === "loading" && !q && !filterActive ? (
+              <SpotListSkeleton />
+            ) : (
+              <Text className="mt-10 text-center font-hk-medium-italic text-[15px] text-ink-3">
+                {q || filterActive
+                  ? t(
+                      "Nothing matches your search/filter. Loosen the criteria.",
+                      "Nichts passt zu Suche/Filter. Lockere die Kriterien.",
+                    )
+                  : t(
+                      "Still digging here. Check back soon.",
+                      "Hier kramen wir noch. Schau bald wieder rein.",
+                    )}
+              </Text>
+            )
           }
         />
         </Animated.View>
