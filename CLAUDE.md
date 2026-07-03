@@ -651,7 +651,70 @@ npm test               # Unit-Tests der reinen Logik (vitest, src/**)
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-07-02 · CLAUDE.md überarbeitet (Stand: Backend live, Premium, Dark Mode)
+### (dieser Commit) · 2026-07-03 · Politur + Robustheit + Recht (großer Sweep)
+> Ein langer Arbeitsblock: 🟢 Politur, 🟡 Robustheit, Launch-/Rechts-Lücken,
+> plus Social-Share-Mockup. Alles reines JS (läuft in Expo Go), 46/46 vitest, tsc
+> sauber. Neue Setup-Schritte: Migrationen **0008** (analytics_events) + **0009**
+> (Konto-Lösch-Kaskade) ausführen; OAuth-Redirect `verso://auth-callback`
+> allow-listen (für Passwort-Reset-Deeplink).
+
+**🟢 Politur**
+- **App-Icon zentriert:** die „v."-Glyphe war auf allen vier Icons um (12,20)px
+  aus der Mitte → per Bounding-Box neu exakt zentriert (Typografie unverändert).
+  `hasAltIcons` prüft jetzt `supportsAlternateIcons`. Echtes Icon-Umschalten
+  braucht einen Dev Build (`npx expo run:ios`).
+- **Dark-Mode-Feinschliff:** neues theme-fähiges **`line`-Token**
+  (`rgb(var(--c-line)/…)`, Light-Default in `global.css`, Dark in `DARK_VARS`).
+  Alle `border-black/x`-Hairlines + Inline-rgba-Ränder auf theme-flippenden
+  Flächen → `border-line/x`. Bewusst fix: Geheimtipp/Register (feste Bühnen),
+  MysticBadge-Gold, RangeSlider-Knopf.
+- **Suche akzent-/tippfehler-tolerant:** neues `src/lib/search.ts` (`normalize`,
+  bounded `editDistance`, `matchesQuery`) — „munchen"→München, „cofee"→coffee.
+  Feed/Karte/Gespeichert nutzen es. Neue **„Zuletzt angesehen"-Rail** (`RecentRail`
+  + `store/recent.tsx`, geräteweit in AsyncStorage) im Feed-Kopf.
+- **Dynamic Type:** Screen-Inhalte skalieren weiter (a11y), fixes Chrome ist per
+  `maxFontSizeMultiplier=1.3` (`src/lib/fontScale.ts`) gedeckelt (Pill, BottomNav,
+  Button, SearchField, CityDropdown, SceneToggle). Kein globaler Cap möglich
+  (RN 0.81/React 19: Text = Plain-Function-Component via Getter).
+
+**🟡 Robustheit**
+- **Fehler/Offline:** neues `src/lib/errors.ts` (`isNetworkError`,
+  `friendlyAuthError`) → ruhige, zweisprachige Meldungen statt roher Supabase-
+  Strings (register/passwort-aendern/settings/insider). `patchProfile`/`save`/
+  `saveAvatar` melden jetzt `{error}` → profil-bearbeiten zeigt Alert + bleibt.
+  `catalog` hat `status` (loading/live/**offline**) → Feed-Offline-Hinweis.
+- **Lade-Skelette:** `SpotCardSkeleton`/`SpotListSkeleton` (Reanimated-Puls,
+  reduce-motion-fest) im Feed bei `status==="loading"`.
+- **Analytics + Crash-Reporting:** `src/lib/analytics.ts` (+ reiner Kern
+  `analyticsCore.ts`) — privacy-first, **kein Fremd-SDK** (Expo-Go-fest),
+  pluggable Sink (Sentry später via `registerSink`), Default-Sink → eigene
+  Supabase-Tabelle `analytics_events` (Migration 0008, RLS nur INSERT). Keine PII
+  (`scrubProps`), consent-fähig („Anonyme Nutzungsdaten"-Toggle in Settings),
+  globaler `ErrorUtils`-Handler. Verdrahtet an app_open/sign_in/…/purchase.
+- **CI:** `.github/workflows/ci.yml` (tsc + vitest bei Push/PR). Tests 18→46.
+
+**Recht/Launch** (Code-Teile; verbindliche Texte macht der Anwalt → verso.app)
+- **`legal.tsx` überholt:** falsche „keine Daten"-Aussage entfernt → ehrliche
+  Datenschutz-Zusammenfassung (was/wer verarbeitet); neue Sektionen **KI-Funktionen**
+  (EU AI Act Art. 50), **Abo & Widerruf** (14-Tage-Belehrung); UGC-Lizenz in AGB.
+- **Paywall:** sichtbare **Nutzungsbedingungen · Datenschutz**-Links an der
+  Kaufstelle (Apple-Pflicht 3.1.2).
+- **Altersfreigabe 16+:** Registrierung verlangt 16+-Bestätigung (DSGVO Art. 8);
+  Store-Listing 12+→16+.
+- **Konto-Löschung vollständig (Migration 0009):** `delete_user()` löscht jetzt
+  Avatar-Datei (Storage), `analytics_events`, `spot_suggestions` + auth.users.
+- **Passwort-Reset-/E-Mail-Deeplink:** `auth.tsx` fängt eingehende
+  `verso://…?code=`-Links, tauscht den Code, `PASSWORD_RECOVERY` → neuer Screen
+  **`app/reset-password.tsx`**.
+
+**Social-Share (Mockup, ohne AI)**
+- **TikTok/Instagram → Ortsvorschlag:** `src/lib/shareImport.ts`
+  (`parseSharedPost`, deterministischer Mock) + **`app/share-import.tsx`**
+  (Deep-Link `verso://share-import?text=…` oder Einfügen) → Entwurf →
+  `ort-vorschlagen` (nimmt jetzt Prefill-Params + „✨ Entwurf"-Banner). Echter
+  System-Share-Sheet-Eintrag braucht ein natives Share-Extension-Target (Dev Build).
+
+### (Commit) · 2026-07-02 · CLAUDE.md überarbeitet (Stand: Backend live, Premium, Dark Mode)
 - Tech-Stack, „Aktueller Stand", Architektur (neue Stores/Libs) und Konventionen
   (theme-fähige Tokens) auf den aktuellen Stand gebracht; Setup-Schritte für den
   Live-Betrieb (Supabase-Migrationen, OAuth-Provider, RevenueCat-Entitlement)
