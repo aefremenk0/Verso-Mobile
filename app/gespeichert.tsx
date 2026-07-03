@@ -23,6 +23,7 @@ import type { Category, Spot } from "../src/data/types";
 import { useT, useLang } from "../src/lib/i18n";
 import { spotText } from "../src/lib/localized";
 import { DEFAULT_FILTER, matchesFilter, type MapFilter } from "../src/lib/mapFilter";
+import { matchesQuery } from "../src/lib/search";
 import { PIN_COLORS } from "../src/lib/pinColors";
 import { SCENE_CATEGORIES, sceneFilters } from "../src/lib/scene";
 import { useCatalog } from "../src/store/catalog";
@@ -200,19 +201,14 @@ export default function Gespeichert() {
 
   // Filter: city -> scene -> hotbar category -> search text (name/neighborhood/
   // tag) -> budget/rating/ambience. Then group by type (like the feed).
-  const q = query.trim().toLowerCase();
+  const q = query.trim();
   const shown = sortByCategory(
     saved
       .filter((s) => s.city === city)
       .filter((s) => SCENE_CATEGORIES[scene].includes(s.category))
       .filter((s) => (activeCategory ? s.category === activeCategory : true))
-      .filter((s) =>
-        q
-          ? s.name.toLowerCase().includes(q) ||
-            s.neighborhood.toLowerCase().includes(q) ||
-            s.tags.some((tag) => tag.toLowerCase().includes(q))
-          : true,
-      )
+      // Accent- & typo-tolerant search over name / neighborhood / tags.
+      .filter((s) => matchesQuery([s.name, s.neighborhood, ...s.tags], q))
       .filter((s) => matchesFilter(s, filter)),
   );
 

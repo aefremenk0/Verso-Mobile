@@ -23,6 +23,7 @@ import {
   matchesFilter,
   type MapFilter,
 } from "../../src/lib/mapFilter";
+import { matchesQuery } from "../../src/lib/search";
 import { useLang, useT } from "../../src/lib/i18n";
 import { spotText } from "../../src/lib/localized";
 import { SCENE_CATEGORIES, type Scene } from "../../src/lib/scene";
@@ -151,19 +152,14 @@ export default function Karte() {
   }, [scene]);
 
   // City -> scene (category group) -> category bar -> search -> filter sheet.
-  const q = query.trim().toLowerCase();
+  const q = query.trim();
   const spots = useMemo(
     () =>
       SPOTS.filter((s) => s.city === city)
         .filter((s) => SCENE_CATEGORIES[scene].includes(s.category))
         .filter((s) => (activeCategory ? s.category === activeCategory : true))
-        .filter((s) =>
-          q
-            ? s.name.toLowerCase().includes(q) ||
-              s.neighborhood.toLowerCase().includes(q) ||
-              s.tags.some((t) => t.toLowerCase().includes(q))
-            : true,
-        )
+        // Accent- & typo-tolerant search over name / neighborhood / tags.
+        .filter((s) => matchesQuery([s.name, s.neighborhood, ...s.tags], q))
         .filter((s) => matchesFilter(s, filter)),
     [SPOTS, city, scene, activeCategory, q, filter],
   );

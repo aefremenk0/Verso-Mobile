@@ -6,6 +6,7 @@ import type { Spot } from "../../data/types";
 import { DEFAULT_FILTER, matchesFilter } from "../mapFilter";
 import { SCENE_CATEGORIES } from "../scene";
 import { distanceLabel, getOpenState } from "../spotMeta";
+import { editDistance, matchesQuery, normalize } from "../search";
 
 // Pure logic tests (RN-free). Cover the helpers that feed, map, filter and
 // spot detail build on.
@@ -159,5 +160,52 @@ describe("SPOTS data (integrity)", () => {
       );
       expect(valid, `${s.id}: "${s.neighborhood}" (${s.city})`).toBe(true);
     }
+  });
+});
+
+describe("search: normalize", () => {
+  it("lowercases and strips diacritics", () => {
+    expect(normalize("München")).toBe("munchen");
+    expect(normalize("Café")).toBe("cafe");
+    expect(normalize("Grüße")).toBe("grusse"); // ü->u, ß->ss
+  });
+});
+
+describe("search: editDistance (bounded)", () => {
+  it("counts single edits", () => {
+    expect(editDistance("cafe", "cafe", 2)).toBe(0);
+    expect(editDistance("cafe", "caff", 2)).toBe(1); // substitution
+    expect(editDistance("cafe", "caffe", 2)).toBe(1); // insertion
+  });
+  it("early-outs past the budget", () => {
+    expect(editDistance("abcdef", "zzzzzz", 2)).toBeGreaterThan(2);
+  });
+});
+
+describe("search: matchesQuery", () => {
+  const fields = ["Café Central", "Glockenbachviertel", ["cozy", "coffee"]].flat();
+
+  it("empty query matches", () => {
+    expect(matchesQuery(fields, "")).toBe(true);
+    expect(matchesQuery(fields, "   ")).toBe(true);
+  });
+  it("plain substring matches", () => {
+    expect(matchesQuery(fields, "central")).toBe(true);
+    expect(matchesQuery(fields, "coffee")).toBe(true);
+  });
+  it("is accent-insensitive both ways", () => {
+    expect(matchesQuery(fields, "cafe")).toBe(true);
+    expect(matchesQuery(["Munchen"], "münchen")).toBe(true);
+  });
+  it("tolerates a small typo", () => {
+    expect(matchesQuery(fields, "cofee")).toBe(true); // coffee, 1 edit
+    expect(matchesQuery(["Glockenbachviertel"], "glockenbachvirtel")).toBe(true);
+  });
+  it("requires every token to match some word", () => {
+    expect(matchesQuery(fields, "central coffee")).toBe(true);
+    expect(matchesQuery(fields, "central sushi")).toBe(false);
+  });
+  it("rejects unrelated queries", () => {
+    expect(matchesQuery(fields, "helicopter")).toBe(false);
   });
 });

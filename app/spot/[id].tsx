@@ -1,5 +1,5 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { Pressable, ScrollView, Share, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { AnimatedChip } from "../../src/components/AnimatedChip";
@@ -22,6 +22,7 @@ import { spotText } from "../../src/lib/localized";
 import { openAppleMaps, openExternal, openGoogleMaps } from "../../src/lib/maps";
 import { distanceLabel, getOpenState } from "../../src/lib/spotMeta";
 import { useCatalog } from "../../src/store/catalog";
+import { useRecent } from "../../src/store/recent";
 import { useSaved } from "../../src/store/saved";
 
 // Screen 03 — Spot detail (and event detail).
@@ -34,10 +35,16 @@ export default function SpotDetail() {
   const insets = useSafeAreaInsets();
   const { getSpotById } = useCatalog();
   const { isSaved, toggle } = useSaved();
+  const { pushRecent } = useRecent();
   const t = useT();
   const lang = useLang();
 
   const spot = getSpotById(id);
+
+  // Remember this spot for the feed's "recently viewed" rail.
+  useEffect(() => {
+    if (id) pushRecent(id);
+  }, [id, pushRecent]);
 
   if (!spot) {
     return (

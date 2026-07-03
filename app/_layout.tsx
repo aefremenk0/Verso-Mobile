@@ -25,6 +25,7 @@ import { GeheimtippProvider } from "../src/store/geheimtipp";
 import { InsiderProvider } from "../src/store/insider";
 import { InterestsProvider } from "../src/store/interests";
 import { NotificationsProvider } from "../src/store/notifications";
+import { RecentProvider } from "../src/store/recent";
 import { SavedProvider } from "../src/store/saved";
 import { SceneProvider } from "../src/store/scene";
 import { fontMap } from "../src/theme";
@@ -72,6 +73,7 @@ export default function RootLayout() {
       <CatalogProvider>
       <CityProvider>
         <SceneProvider>
+        <RecentProvider>
         <SavedProvider>
           <GeheimtippProvider>
           <InsiderProvider>
@@ -126,6 +128,7 @@ export default function RootLayout() {
           </InsiderProvider>
           </GeheimtippProvider>
         </SavedProvider>
+        </RecentProvider>
         </SceneProvider>
       </CityProvider>
       </CatalogProvider>

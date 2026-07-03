@@ -22,12 +22,14 @@ import type { Category } from "../../src/data/types";
 import { tapMedium } from "../../src/lib/haptics";
 import { useT } from "../../src/lib/i18n";
 import { DEFAULT_FILTER, matchesFilter, type MapFilter } from "../../src/lib/mapFilter";
+import { matchesQuery } from "../../src/lib/search";
 import { SCENE_CATEGORIES } from "../../src/lib/scene";
 import { useCatalog } from "../../src/store/catalog";
 import { useCity } from "../../src/store/city";
 import { useInsider } from "../../src/store/insider";
 import { useInterests } from "../../src/store/interests";
 import { useScene } from "../../src/store/scene";
+import { RecentRail } from "../../src/components/RecentRail";
 
 // Screen 02 — Discovery feed.
 // Below the notch: list/map switch (centered) + scene toggle (right). Below that
@@ -77,20 +79,15 @@ export default function Feed() {
   // Filter: city -> scene (category group) -> optional selected category ->
   // optional search text (name/neighborhood/tag) -> budget/rating/ambience. Then
   // group by type (sortByCategory) so the list isn't chaotic.
-  const q = query.trim().toLowerCase();
+  const q = query.trim();
   const visibleSpots = useMemo(
     () =>
       sortByCategory(
         SPOTS.filter((s) => s.city === city)
           .filter((s) => SCENE_CATEGORIES[scene].includes(s.category))
           .filter((s) => (activeCategory ? s.category === activeCategory : true))
-          .filter((s) =>
-            q
-              ? s.name.toLowerCase().includes(q) ||
-                s.neighborhood.toLowerCase().includes(q) ||
-                s.tags.some((t) => t.toLowerCase().includes(q))
-              : true,
-          )
+          // Accent- & typo-tolerant search over name / neighborhood / tags.
+          .filter((s) => matchesQuery([s.name, s.neighborhood, ...s.tags], q))
           .filter((s) => matchesFilter(s, filter)),
       ),
     [SPOTS, city, scene, activeCategory, q, filter],
@@ -168,6 +165,9 @@ export default function Feed() {
                   <SurpriseButton onPress={onSurprise} />
                 </View>
               ) : null}
+
+              {/* Recently viewed — only when not actively searching */}
+              {!q ? <RecentRail /> : null}
 
               {/* Subtle hint when the feed is tuned to the vibe */}
               {interests.length > 0 && !q ? (
