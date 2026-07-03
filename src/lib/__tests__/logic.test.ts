@@ -10,6 +10,9 @@ import { editDistance, matchesQuery, normalize } from "../search";
 import { friendlyAuthError, isNetworkError } from "../errors";
 import { scrubProps, shouldEmit } from "../analyticsCore";
 import { parseSharedPost } from "../shareImport";
+import { cityLabel } from "../lang";
+import { CATEGORY_ORDER } from "../../data/categories";
+import { PIN_COLORS } from "../pinColors";
 
 // Pure logic tests (RN-free). Cover the helpers that feed, map, filter and
 // spot detail build on.
@@ -289,5 +292,28 @@ describe("shareImport: parseSharedPost (mock)", () => {
   it("keeps the original text as the note (clipped)", () => {
     const long = "x".repeat(700);
     expect(parseSharedPost(long).note).toHaveLength(500);
+  });
+});
+
+describe("cityLabel (i18n)", () => {
+  it("localizes the canonical German city value", () => {
+    expect(cityLabel("München", "en")).toBe("Munich");
+    expect(cityLabel("München", "de")).toBe("München");
+  });
+  it("falls back to the raw value for unknown cities", () => {
+    expect(cityLabel("Paris", "en")).toBe("Paris");
+  });
+});
+
+describe("PIN_COLORS (integrity)", () => {
+  it("every category used by a spot has a pin color", () => {
+    for (const s of SPOTS) {
+      expect(PIN_COLORS[s.category], s.category).toBeTruthy();
+    }
+  });
+  it("every category in CATEGORY_ORDER has a pin color", () => {
+    for (const cat of Object.keys(CATEGORY_ORDER)) {
+      expect(PIN_COLORS[cat as keyof typeof PIN_COLORS], cat).toBeTruthy();
+    }
   });
 });
