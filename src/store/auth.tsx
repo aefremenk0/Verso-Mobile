@@ -10,6 +10,7 @@ import type { Session, User } from "@supabase/supabase-js";
 import * as Linking from "expo-linking";
 import * as WebBrowser from "expo-web-browser";
 import { hasSupabase, supabase } from "../lib/supabase";
+import { identify } from "../lib/analytics";
 
 // Ensure the auth browser session closes cleanly when it redirects back.
 WebBrowser.maybeCompleteAuthSession();
@@ -64,6 +65,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // … and keep it in sync with sign-in / sign-out / token refresh.
     const { data: sub } = supabase.auth.onAuthStateChange((_event, s) => {
       setSession(s);
+      identify(s?.user?.id ?? null); // attach analytics to the opaque uid
     });
     return () => {
       cancelled = true;

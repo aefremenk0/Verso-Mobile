@@ -24,6 +24,7 @@ import { tapMedium } from "../../src/lib/haptics";
 import { useT } from "../../src/lib/i18n";
 import { DEFAULT_FILTER, matchesFilter, type MapFilter } from "../../src/lib/mapFilter";
 import { matchesQuery } from "../../src/lib/search";
+import { track } from "../../src/lib/analytics";
 import { SCENE_CATEGORIES } from "../../src/lib/scene";
 import { useCatalog } from "../../src/store/catalog";
 import { useCity } from "../../src/store/city";
@@ -118,6 +119,7 @@ export default function Feed() {
     if (surprisePool.length === 0) return;
     tapMedium(); // small "dice roll" impulse
     const pick = surprisePool[Math.floor(Math.random() * surprisePool.length)];
+    track("surprise_used");
     router.push(`/spot/${pick.id}`);
   };
 

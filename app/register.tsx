@@ -19,6 +19,7 @@ import {
 import { AppleLogo, GoogleLogo } from "../src/components/Logos";
 import { ambienteOptions } from "../src/lib/mapFilter";
 import { friendlyAuthError } from "../src/lib/errors";
+import { track } from "../src/lib/analytics";
 import { useAuth, type OAuthProvider } from "../src/store/auth";
 import { useInterests } from "../src/store/interests";
 import { useProfile } from "../src/store/profile";
@@ -96,6 +97,7 @@ export default function Register() {
         username: handle ? `@${handle}` : "",
       });
     }
+    track(mode === "register" ? "sign_up" : "sign_in", { method: "email" });
     setBusy(false);
     enter();
   };

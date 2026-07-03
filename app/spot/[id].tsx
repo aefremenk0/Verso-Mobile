@@ -21,6 +21,7 @@ import { useT, useLang } from "../../src/lib/i18n";
 import { spotText } from "../../src/lib/localized";
 import { openAppleMaps, openExternal, openGoogleMaps } from "../../src/lib/maps";
 import { distanceLabel, getOpenState } from "../../src/lib/spotMeta";
+import { track } from "../../src/lib/analytics";
 import { useCatalog } from "../../src/store/catalog";
 import { useRecent } from "../../src/store/recent";
 import { useSaved } from "../../src/store/saved";
@@ -41,9 +42,12 @@ export default function SpotDetail() {
 
   const spot = getSpotById(id);
 
-  // Remember this spot for the feed's "recently viewed" rail.
+  // Remember this spot for the feed's "recently viewed" rail + log the view.
   useEffect(() => {
-    if (id) pushRecent(id);
+    if (id) {
+      pushRecent(id);
+      track("spot_view", { id });
+    }
   }, [id, pushRecent]);
 
   if (!spot) {

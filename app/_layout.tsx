@@ -11,6 +11,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { vars } from "nativewind";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { VersoLoader } from "../src/components/VersoLoader";
+import { initAnalytics, track } from "../src/lib/analytics";
 import {
   AppearanceProvider,
   DARK_VARS,
@@ -60,6 +61,11 @@ export default function RootLayout() {
       SplashScreen.hideAsync();
     }
   }, [fontsLoaded, fontError]);
+
+  // Load analytics consent + install the global crash handler, then log app open.
+  useEffect(() => {
+    initAnalytics().then(() => track("app_open"));
+  }, []);
 
   // While the fonts are loading, render nothing (the splash stays visible).
   if (!fontsLoaded && !fontError) return null;

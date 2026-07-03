@@ -1,5 +1,5 @@
 import { useRouter } from "expo-router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Alert, Pressable, ScrollView, Text, View } from "react-native";
 import Animated, {
   interpolateColor,
@@ -10,6 +10,7 @@ import Animated, {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LanguageToggle } from "../src/components/LanguageToggle";
 import { tapSelection } from "../src/lib/haptics";
+import { isAnalyticsEnabled, setAnalyticsConsent } from "../src/lib/analytics";
 import { useT, useLang } from "../src/lib/i18n";
 import { friendlyAuthError } from "../src/lib/errors";
 import { useAppearance } from "../src/store/appearance";
@@ -125,6 +126,7 @@ export default function Settings() {
   const { user, signOut, deleteAccount } = useAuth();
   const notif = useNotifications();
   const appearance = useAppearance();
+  const [statsOn, setStatsOn] = useState(isAnalyticsEnabled());
 
   const resetStores = () => {
     geheimtipp.reset();
@@ -297,6 +299,28 @@ export default function Settings() {
                 } else {
                   router.push("/insider");
                 }
+              }}
+            />
+          </View>
+          {/* Anonymous usage stats — opt-out (privacy-first). */}
+          <View className="flex-row items-center justify-between border-b border-line/5 px-4 py-3">
+            <View className="flex-1 pr-3">
+              <Text className="font-hk-extrabold text-[15px] text-ink">
+                {t("Anonymous usage stats", "Anonyme Nutzungsdaten")}
+              </Text>
+              <Text className="mt-0.5 font-hk-medium text-[11px] text-ink-3">
+                {t(
+                  "Helps improve Verso. No personal data, no tracking.",
+                  "Hilft, Verso zu verbessern. Keine persönlichen Daten, kein Tracking.",
+                )}
+              </Text>
+            </View>
+            <Toggle
+              value={statsOn}
+              onChange={() => {
+                const next = !statsOn;
+                setStatsOn(next);
+                setAnalyticsConsent(next);
               }}
             />
           </View>

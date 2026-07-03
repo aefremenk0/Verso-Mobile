@@ -8,6 +8,7 @@ import { SCENE_CATEGORIES } from "../scene";
 import { distanceLabel, getOpenState } from "../spotMeta";
 import { editDistance, matchesQuery, normalize } from "../search";
 import { friendlyAuthError, isNetworkError } from "../errors";
+import { scrubProps, shouldEmit } from "../analyticsCore";
 
 // Pure logic tests (RN-free). Cover the helpers that feed, map, filter and
 // spot detail build on.
@@ -240,5 +241,27 @@ describe("errors: friendlyAuthError", () => {
     const raw = "pg: relation xyz does not exist";
     expect(friendlyAuthError(raw, "en")).not.toContain("relation xyz");
     expect(friendlyAuthError(raw, "de")).not.toContain("relation xyz");
+  });
+});
+
+describe("analytics: scrubProps", () => {
+  it("keeps primitives, drops non-primitives", () => {
+    const out = scrubProps({ a: 1, b: true, c: null, d: "x" });
+    expect(out).toEqual({ a: 1, b: true, c: null, d: "x" });
+  });
+  it("clips long strings to 64 chars (no free-text/PII leak)", () => {
+    const long = "y".repeat(200);
+    expect(scrubProps({ note: long })?.note).toHaveLength(64);
+  });
+  it("undefined in -> undefined out", () => {
+    expect(scrubProps(undefined)).toBeUndefined();
+  });
+});
+
+describe("analytics: shouldEmit", () => {
+  it("errors always emit, tracks need consent", () => {
+    expect(shouldEmit("error", false)).toBe(true);
+    expect(shouldEmit("track", false)).toBe(false);
+    expect(shouldEmit("track", true)).toBe(true);
   });
 });

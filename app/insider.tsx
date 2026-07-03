@@ -9,7 +9,9 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useT } from "../src/lib/i18n";
+import { useT, useLang } from "../src/lib/i18n";
+import { friendlyAuthError } from "../src/lib/errors";
+import { track } from "../src/lib/analytics";
 import { useInsider, type InsiderPackage } from "../src/store/insider";
 
 // "Verso Insider" — upsell + paywall (modal). Dark stage with gold accents.
@@ -42,6 +44,7 @@ function priceText(price: number, priceString: string): string {
 export default function Insider() {
   const router = useRouter();
   const t = useT();
+  const lang = useLang();
   const {
     isInsider,
     setInsider,
@@ -86,20 +89,27 @@ export default function Insider() {
     opacity: 0.5 + shimmer.value * 0.5,
   }));
 
+  // Log that the paywall was seen (once).
+  useEffect(() => {
+    track("paywall_view");
+  }, []);
+
   const onBuy = async () => {
     if (!selected) return;
     setError(null);
+    track("purchase_started", { plan: selected.packageType ?? "unknown" });
     const { error: err } = await purchase(selected.id);
     if (err) {
-      setError(err);
+      setError(friendlyAuthError(err, lang));
       return;
     }
+    track("purchase_success", { plan: selected.packageType ?? "unknown" });
     router.back();
   };
   const onRestore = async () => {
     setError(null);
     const { error: err } = await restore();
-    if (err) setError(err);
+    if (err) setError(friendlyAuthError(err, lang));
   };
 
   const BENEFITS = [
