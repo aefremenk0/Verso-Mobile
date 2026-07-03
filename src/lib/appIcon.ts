@@ -19,8 +19,10 @@ if (!isExpoGo && Platform.OS === "ios") {
   }
 }
 
-/** True when alternate icons can actually be switched (iOS dev build). */
-export const hasAltIcons = Boolean(mod);
+/** True when alternate icons can actually be switched (iOS dev build + device
+ * support). `supportsAlternateIcons` is false in Expo Go and on the (few)
+ * devices without the capability, so this is the real gate the UI checks. */
+export const hasAltIcons = Boolean(mod) && mod.supportsAlternateIcons === true;
 
 // Names must match app.config.js. "Default" = the main icon (null).
 export type IconKey = "Default" | "Gold" | "Inverse";

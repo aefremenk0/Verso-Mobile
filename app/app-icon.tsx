@@ -60,8 +60,14 @@ export default function AppIconScreen() {
       router.push("/insider");
       return;
     }
-    setSelected(o.key);
-    await setIcon(o.key);
+    // In Expo Go there's no native module -> keep it as a visual preview.
+    // In a dev/App Store build only commit the selection if the switch worked.
+    if (!hasAltIcons) {
+      setSelected(o.key);
+      return;
+    }
+    const ok = await setIcon(o.key);
+    if (ok) setSelected(o.key);
   };
 
   return (
