@@ -82,9 +82,13 @@ Sekundär:  Reisen            (Alternative: Lifestyle)
 
 ########## 8) ALTERSFREIGABE (Hinweis) ##########
 
-Voraussichtlich 12+ — die App nennt Bars, Clubs und Alkohol (Cocktails, Wein)
-im redaktionellen Ton. Im Apple-Fragebogen „Alkohol/Tabak/Drogen: selten/mild"
-angeben. Kein expliziter Inhalt, keine Käufe, kein nutzergenerierter Inhalt.
+16+ — die App nennt Bars, Clubs und Alkohol (Cocktails, Wein) im redaktionellen
+Ton, enthält nutzergenerierte Inhalte (Ort vorschlagen / Social-Share) und ein
+kostenpflichtiges Abo. Im Apple-Fragebogen „Alkohol/Tabak/Drogen: häufig/intensiv?
+nein → selten/mild", „User-Generated Content: ja", „unbeschränkter Web-/Social-
+Zugang: nein". Zusätzlich verlangt DSGVO Art. 8 für unter-16-Jährige eine Eltern-
+Einwilligung — deshalb bestätigt die App bei der Registrierung ein Mindestalter
+von 16. (Frühere Einschätzung 12+ verworfen: UGC + Alkohol + Abo → 16+.)
 
 
 ########## 9) URLS  (bitte ausfüllen — Datenschutz ist PFLICHT) ##########

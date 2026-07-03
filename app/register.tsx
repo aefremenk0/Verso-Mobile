@@ -44,6 +44,7 @@ export default function Register() {
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [is16, setIs16] = useState(false); // GDPR Art. 8 age gate (register mode)
   const { interests, toggle, max } = useInterests();
   const { signUp, signIn, signInWithProvider, resetPassword } = useAuth();
   const { save: saveProfile } = useProfile();
@@ -78,6 +79,15 @@ export default function Register() {
       }
       if (!name.trim()) {
         setError(t("Please enter your name.", "Bitte gib deinen Namen ein."));
+        return;
+      }
+      if (!is16) {
+        setError(
+          t(
+            "Please confirm you're at least 16.",
+            "Bitte bestätige, dass du mindestens 16 bist.",
+          ),
+        );
         return;
       }
     }
@@ -362,6 +372,34 @@ export default function Register() {
           onSubmitEditing={submit}
           returnKeyType={mode === "register" ? "done" : "go"}
         />
+
+        {/* Age gate (GDPR Art. 8): confirm 16+ before creating an account. */}
+        {mode === "register" ? (
+          <Pressable
+            onPress={() => setIs16((v) => !v)}
+            className="mt-3.5 flex-row items-center"
+            accessibilityRole="checkbox"
+            accessibilityState={{ checked: is16 }}
+          >
+            <View
+              className="h-[22px] w-[22px] items-center justify-center rounded-[7px] border"
+              style={{
+                borderColor: is16 ? "#FFE500" : "rgba(0,0,0,0.2)",
+                backgroundColor: is16 ? "#FFE500" : "transparent",
+              }}
+            >
+              {is16 ? (
+                <Text className="font-hk-bold text-[13px] text-accent-ink">✓</Text>
+              ) : null}
+            </View>
+            <Text className="ml-2.5 flex-1 font-hk-medium text-[12.5px] leading-[17px] text-ink-2">
+              {t(
+                "I'm at least 16 years old.",
+                "Ich bin mindestens 16 Jahre alt.",
+              )}
+            </Text>
+          </Pressable>
+        ) : null}
 
         {/* Error message (invalid credentials, email in use, …) */}
         {error ? (
