@@ -1,6 +1,6 @@
 # Handoff — Verso Mobile
 
-_Branch: `claude/charming-sagan-jyk0wh` · Last update: 2026-07-03_
+_Branch: `claude/charming-sagan-jyk0wh` · Last update: 2026-07-03 (incl. nav-context crash fix)_
 
 ---
 
@@ -31,8 +31,12 @@ vitest suite green, and be committed + pushed to the feature branch.
 
 - `npx tsc --noEmit` → clean.
 - `npm test` → **46/46 vitest passing** (was 18 at session start).
-- Latest pushed commit: `966d1d9` on `claude/charming-sagan-jyk0wh`.
-- CLAUDE.md changelog updated with a consolidated 2026-07-03 entry.
+- `npx expo export --platform ios` → bundle builds.
+- Latest pushed commit: `5fb79fa` on `claude/charming-sagan-jyk0wh`.
+- CLAUDE.md changelog updated (consolidated 2026-07-03 entry + nav-context fix).
+
+**Post-session fix:** a "Couldn't find a navigation context" crash (took down dark
+mode / launch) was found and fixed — see §4 item 15 and §5.
 
 The app now has: theme-aware borders (dark mode), tolerant search, a
 "recently viewed" rail, Dynamic-Type-capped chrome, friendly bilingual
@@ -96,7 +100,13 @@ Modified:
 11. Password-reset / email deep-link handler + `app/reset-password.tsx`.
 12. TikTok/Instagram share-import mockup (+5 tests).
 13. CI workflow + tests grown 18 → 46; cityLabel + PIN_COLORS coverage.
-14. CLAUDE.md consolidated changelog.
+14. CLAUDE.md consolidated changelog + handoff.md.
+15. **Fix: "Couldn't find a navigation context" crash** (regression from item 11).
+    `router.push` was called from `AuthProvider` (above the navigator) in
+    `onAuthStateChange`; on launch (persisted `PASSWORD_RECOVERY` session) it fired
+    before the navigator mounted → crash that took down `ThemedApp` / dark mode.
+    Fix: provider now only sets a `passwordRecovery` flag; a `PasswordRecoveryWatcher`
+    under the navigator navigates once `useRootNavigationState().key` is set.
 
 ---
 
@@ -120,6 +130,11 @@ Modified:
   synchronously, so the feed is almost never truly empty on load. The skeleton is
   wired into the empty+loading state as the correct pattern / safety net, but note
   it won't usually show unless mock seeding is removed.
+- **Navigating from a provider above `<Stack>`** — calling `router.push` from
+  `AuthProvider`'s `onAuthStateChange` throws "Couldn't find a navigation context"
+  (providers render above the expo-router navigator; the call can fire before it
+  mounts). **Rule:** never call `router.*` above `<Stack>`. Navigate from a
+  component under the navigator, gated on `useRootNavigationState().key`.
 
 ---
 

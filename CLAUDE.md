@@ -651,7 +651,24 @@ npm test               # Unit-Tests der reinen Logik (vitest, src/**)
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-07-03 · Politur + Robustheit + Recht (großer Sweep)
+### 5fb79fa · 2026-07-03 · Fix: Crash „Couldn't find a navigation context" (Dark Mode/Launch)
+- **Ursache:** der neue Passwort-Reset-Handler rief `router.push("/reset-password")`
+  direkt im `onAuthStateChange` des `AuthProvider` auf. Alle Provider (AuthProvider,
+  ThemedApp) rendern **oberhalb** des expo-router-Navigators → ein Router-Aufruf von
+  dort (feuert beim Start, z. B. bei persistierter `PASSWORD_RECOVERY`-Session)
+  wirft „Couldn't find a navigation context" und reißt **ThemedApp (→ Dark Mode)**
+  mit runter. Deshalb zeigte der Stacktrace ThemedApp, obwohl der Auslöser die
+  Navigation war.
+- **Fix:** `auth.tsx` navigiert nicht mehr selbst — neuer Context-Flag
+  `passwordRecovery` (+ `clearPasswordRecovery`); `onAuthStateChange` setzt nur den
+  Flag. Neuer **`PasswordRecoveryWatcher`** in `_layout.tsx` (unter dem Navigator)
+  navigiert erst, wenn der Root-Navigator gemountet ist
+  (`useRootNavigationState().key`). `router`-Import aus `auth.tsx` raus.
+- **Regel/Stolperfalle:** NIE `router.*` aus einem Provider oberhalb von `<Stack>`
+  aufrufen — nur aus Komponenten unter dem Navigator (oder gegated auf
+  `useRootNavigationState().key`). tsc sauber, 46/46 Tests, iOS-Bundle baut.
+
+### (Sweep) · 2026-07-03 · Politur + Robustheit + Recht (großer Sweep)
 > Ein langer Arbeitsblock: 🟢 Politur, 🟡 Robustheit, Launch-/Rechts-Lücken,
 > plus Social-Share-Mockup. Alles reines JS (läuft in Expo Go), 46/46 vitest, tsc
 > sauber. Neue Setup-Schritte: Migrationen **0008** (analytics_events) + **0009**
