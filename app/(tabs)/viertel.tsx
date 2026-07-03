@@ -49,7 +49,7 @@ export default function Viertel() {
             <Pressable
               key={n.name}
               onPress={() => router.push(`/bezirk/${encodeURIComponent(n.name)}`)}
-              className="flex-row items-center border-b border-black/5 py-5"
+              className="flex-row items-center border-b border-line/5 py-5"
             >
               <View className="flex-1 pr-4">
                 <Text className="font-hk-extrabold text-title-sm text-ink">

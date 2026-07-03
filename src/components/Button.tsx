@@ -22,7 +22,7 @@ interface ButtonProps {
 const STYLE: Record<Variant, { box: string; text: string }> = {
   accent: { box: "bg-accent", text: "text-accent-ink" },
   dark: { box: "bg-night", text: "text-white" },
-  light: { box: "bg-surface border border-black/10", text: "text-ink" },
+  light: { box: "bg-surface border border-line/10", text: "text-ink" },
 };
 
 export function Button({

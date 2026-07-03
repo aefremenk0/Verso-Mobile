@@ -14,6 +14,9 @@ module.exports = {
         screen: "rgb(var(--c-screen) / <alpha-value>)", // App-Hintergrund
         surface: "rgb(var(--c-surface) / <alpha-value>)", // Karten / Sheets
         chip: "rgb(var(--c-chip) / <alpha-value>)", // Toggle-/Chip-Flächen
+        // Hairline-/Rahmenfarbe — theme-fähig: dunkel auf Hell, hell auf Dunkel.
+        // Nutzung mit Opazität: border-line/10, border-line/[0.18] …
+        line: "rgb(var(--c-line) / <alpha-value>)",
         // Akzent (in beiden Modi gleich)
         accent: "#FFE500", // Signalgelb
         "accent-ink": "#1A1A1A", // Text auf Gelb

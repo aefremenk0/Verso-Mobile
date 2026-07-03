@@ -97,8 +97,7 @@ export default function OrtVorschlagen() {
         <Pressable
           onPress={() => router.back()}
           accessibilityLabel={t("Close", "Schließen")}
-          className="h-[42px] w-[42px] items-center justify-center rounded-pill"
-          style={{ borderWidth: 1, borderColor: "rgba(26,26,26,0.18)" }}
+          className="h-[42px] w-[42px] items-center justify-center rounded-pill border border-line/[0.18]"
         >
           <Text className="font-hk-extrabold text-[16px] text-ink">✕</Text>
         </Pressable>
@@ -128,7 +127,7 @@ export default function OrtVorschlagen() {
           onChangeText={setName}
           placeholder={t("e.g. Kellerkind", "z. B. Kellerkind")}
           placeholderTextColor="#8A857C"
-          className="rounded-[14px] border border-black/10 bg-surface px-4 py-3.5 font-hk-medium text-[15px] text-ink"
+          className="rounded-[14px] border border-line/10 bg-surface px-4 py-3.5 font-hk-medium text-[15px] text-ink"
           inputAccessoryViewID={KEYBOARD_DONE_ID}
         />
 
@@ -159,7 +158,7 @@ export default function OrtVorschlagen() {
             onChangeText={setArea}
             placeholder={t("Neighborhood or street", "Viertel oder Straße")}
             placeholderTextColor="#8A857C"
-            className="rounded-[14px] border border-black/10 bg-surface px-4 py-3.5 font-hk-medium text-[15px] text-ink"
+            className="rounded-[14px] border border-line/10 bg-surface px-4 py-3.5 font-hk-medium text-[15px] text-ink"
             inputAccessoryViewID={KEYBOARD_DONE_ID}
           />
         </View>
@@ -175,7 +174,7 @@ export default function OrtVorschlagen() {
             )}
             placeholderTextColor="#8A857C"
             multiline
-            className="h-[110px] rounded-[14px] border border-black/10 bg-surface px-4 py-3.5 font-hk-medium text-[15px] text-ink"
+            className="h-[110px] rounded-[14px] border border-line/10 bg-surface px-4 py-3.5 font-hk-medium text-[15px] text-ink"
             style={{ textAlignVertical: "top" }}
             inputAccessoryViewID={KEYBOARD_DONE_ID}
           />

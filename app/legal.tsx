@@ -14,7 +14,7 @@ function Section({ label, children }: { label: string; children: React.ReactNode
       <Text className="mb-2 font-hk-semibold text-[10px] tracking-[1.5px] text-ink-3">
         {label}
       </Text>
-      <View className="rounded-[18px] border border-black/[0.08] bg-surface px-4 py-4">
+      <View className="rounded-[18px] border border-line/[0.08] bg-surface px-4 py-4">
         {children}
       </View>
     </View>
@@ -52,8 +52,7 @@ export default function Legal() {
         <Pressable
           onPress={() => router.back()}
           accessibilityLabel={t("Back", "Zurück")}
-          className="h-[42px] w-[42px] items-center justify-center rounded-pill"
-          style={{ borderWidth: 1, borderColor: "rgba(26,26,26,0.18)" }}
+          className="h-[42px] w-[42px] items-center justify-center rounded-pill border border-line/[0.18]"
         >
           <Text className="font-hk-extrabold text-[18px] text-ink">←</Text>
         </Pressable>

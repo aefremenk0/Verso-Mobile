@@ -39,10 +39,8 @@ function Field({
         onChangeText={onChangeText}
         multiline={multiline}
         inputAccessoryViewID={KEYBOARD_DONE_ID}
-        className="rounded-[14px] bg-surface px-4 py-3.5 font-hk-medium text-[15px] text-ink"
+        className="rounded-[14px] border border-line/20 bg-surface px-4 py-3.5 font-hk-medium text-[15px] text-ink"
         style={{
-          borderWidth: 1,
-          borderColor: "rgba(26,26,26,0.2)",
           minHeight: multiline ? 64 : undefined,
           textAlignVertical: multiline ? "top" : "center",
         }}
@@ -92,8 +90,7 @@ export default function ProfilBearbeiten() {
       <View className="flex-row items-center gap-3.5 px-6 pb-3.5 pt-3">
         <Pressable
           onPress={() => router.back()}
-          className="h-[42px] w-[42px] items-center justify-center rounded-pill"
-          style={{ borderWidth: 1, borderColor: "rgba(26,26,26,0.18)" }}
+          className="h-[42px] w-[42px] items-center justify-center rounded-pill border border-line/[0.18]"
         >
           <Text className="font-hk-extrabold text-[18px] text-ink">←</Text>
         </Pressable>
@@ -124,8 +121,7 @@ export default function ProfilBearbeiten() {
               )}
             </View>
             <View
-              className="absolute -bottom-0.5 -right-0.5 h-[30px] w-[30px] items-center justify-center rounded-pill bg-accent"
-              style={{ borderWidth: 3, borderColor: "#F7F4EF" }}
+              className="absolute -bottom-0.5 -right-0.5 h-[30px] w-[30px] items-center justify-center rounded-pill border-[3px] border-screen bg-accent"
             >
               <Text className="text-[13px] text-accent-ink">✎</Text>
             </View>

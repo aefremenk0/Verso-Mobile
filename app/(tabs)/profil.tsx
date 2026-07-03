@@ -33,7 +33,7 @@ function Row({
   return (
     <Pressable
       onPress={onPress}
-      className="flex-row items-center justify-between border-b border-black/5 py-4"
+      className="flex-row items-center justify-between border-b border-line/5 py-4"
     >
       <Text className="font-hk-semibold text-[16px] text-ink">{label}</Text>
       <View className="flex-row items-center">
@@ -156,7 +156,7 @@ export default function Profil() {
           ].map((s, i) => (
             <View
               key={s.l}
-              className={`flex-1 items-center ${i < 2 ? "border-r border-black/5" : ""}`}
+              className={`flex-1 items-center ${i < 2 ? "border-r border-line/5" : ""}`}
             >
               <Text className="font-hk-extrabold text-title-sm text-ink">{s.n}</Text>
               <Text className="mt-1 font-hk-bold text-[10px] tracking-[1px] text-ink-3">

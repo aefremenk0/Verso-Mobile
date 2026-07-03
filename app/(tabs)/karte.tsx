@@ -190,7 +190,7 @@ export default function Karte() {
     <SafeAreaView className="flex-1 bg-screen" edges={["top"]}>
       {/* White field: city header + search/filter sit on solid background,
           above the map (not floating over it). */}
-      <View className="border-b border-black/5">
+      <View className="border-b border-line/5">
         <CityDropdown right={<SceneToggle />} />
         <View className="mt-3 flex-row items-center gap-2 px-6 pb-3">
           <View className="flex-1">

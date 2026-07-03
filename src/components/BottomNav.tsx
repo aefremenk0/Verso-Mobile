@@ -91,7 +91,7 @@ export function BottomNav({ state, navigation }: BottomNavProps) {
       {/* Full-width bottom field (flush to the edges, hairline top border), with
           the home-indicator safe area below the row. */}
       <View
-        className="border-t border-black/10 bg-surface"
+        className="border-t border-line/10 bg-surface"
         style={[
           { paddingBottom: insets.bottom > 0 ? insets.bottom : 12 },
           shadows.nav,

@@ -54,8 +54,7 @@ export default function Bezirk() {
         <Pressable
           onPress={() => router.back()}
           accessibilityLabel={t("Back", "Zurück")}
-          className="h-[42px] w-[42px] items-center justify-center rounded-pill"
-          style={{ borderWidth: 1, borderColor: "rgba(26,26,26,0.18)" }}
+          className="h-[42px] w-[42px] items-center justify-center rounded-pill border border-line/[0.18]"
         >
           <Text className="font-hk-extrabold text-[18px] text-ink">←</Text>
         </Pressable>

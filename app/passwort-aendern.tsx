@@ -32,8 +32,7 @@ function PwField({
         {label}
       </Text>
       <View
-        className="flex-row items-center justify-between rounded-[14px] bg-surface px-4"
-        style={{ borderWidth: 1, borderColor: "rgba(26,26,26,0.2)" }}
+        className="flex-row items-center justify-between rounded-[14px] border border-line/20 bg-surface px-4"
       >
         <TextInput
           value={value}
@@ -134,8 +133,7 @@ export default function PasswortAendern() {
       <View className="flex-row items-center gap-3.5 px-6 pb-3.5 pt-3">
         <Pressable
           onPress={() => router.back()}
-          className="h-[42px] w-[42px] items-center justify-center rounded-pill"
-          style={{ borderWidth: 1, borderColor: "rgba(26,26,26,0.18)" }}
+          className="h-[42px] w-[42px] items-center justify-center rounded-pill border border-line/[0.18]"
         >
           <Text className="font-hk-extrabold text-[18px] text-ink">←</Text>
         </Pressable>

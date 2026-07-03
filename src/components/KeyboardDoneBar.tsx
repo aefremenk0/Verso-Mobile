@@ -21,8 +21,7 @@ export function KeyboardDoneBar() {
   return (
     <InputAccessoryView nativeID={KEYBOARD_DONE_ID}>
       <View
-        className="flex-row justify-end bg-chip px-4 py-2"
-        style={{ borderTopWidth: 1, borderTopColor: "rgba(26,26,26,0.1)" }}
+        className="flex-row justify-end border-t border-line/10 bg-chip px-4 py-2"
       >
         <Pressable
           onPress={() => Keyboard.dismiss()}

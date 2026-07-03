@@ -99,7 +99,7 @@ function NavRow({
     <Pressable
       onPress={onPress}
       className={`flex-row items-center justify-between px-4 py-[18px] ${
-        last ? "" : "border-b border-black/5"
+        last ? "" : "border-b border-line/5"
       }`}
     >
       <Text className="font-hk-extrabold text-[15px] text-ink">{label}</Text>
@@ -171,8 +171,7 @@ export default function Settings() {
         <Pressable
           onPress={() => router.back()}
           accessibilityLabel={t("Back", "Zurück")}
-          className="h-[42px] w-[42px] items-center justify-center rounded-pill"
-          style={{ borderWidth: 1, borderColor: "rgba(26,26,26,0.18)" }}
+          className="h-[42px] w-[42px] items-center justify-center rounded-pill border border-line/[0.18]"
         >
           <Text className="font-hk-extrabold text-[18px] text-ink">←</Text>
         </Pressable>
@@ -200,7 +199,7 @@ export default function Settings() {
         <Text className="mb-2.5 font-hk-semibold text-[10px] tracking-[1.5px] text-ink-3">
           {t("ACCOUNT", "KONTO")}
         </Text>
-        <View className="overflow-hidden rounded-[18px] border border-black/[0.08] bg-surface">
+        <View className="overflow-hidden rounded-[18px] border border-line/[0.08] bg-surface">
           <NavRow
             label={t("Edit profile", "Profil bearbeiten")}
             onPress={() => router.push("/profil-bearbeiten")}
@@ -220,8 +219,8 @@ export default function Settings() {
         <Text className="mb-2.5 font-hk-semibold text-[10px] tracking-[1.5px] text-ink-3">
           {t("NOTIFICATIONS", "BENACHRICHTIGUNGEN")}
         </Text>
-        <View className="overflow-hidden rounded-[18px] border border-black/[0.08] bg-surface">
-          <View className="flex-row items-center justify-between border-b border-black/5 px-4 py-[17px]">
+        <View className="overflow-hidden rounded-[18px] border border-line/[0.08] bg-surface">
+          <View className="flex-row items-center justify-between border-b border-line/5 px-4 py-[17px]">
             <Text className="font-hk-extrabold text-[15px] text-ink">
               {t("Hidden gem of the week", "Geheimtipp der Woche")}
             </Text>
@@ -232,7 +231,7 @@ export default function Settings() {
               }
             />
           </View>
-          <View className="flex-row items-center justify-between border-b border-black/5 px-4 py-[17px]">
+          <View className="flex-row items-center justify-between border-b border-line/5 px-4 py-[17px]">
             <Text className="font-hk-extrabold text-[15px] text-ink">
               {t("New spots nearby", "Neue Spots in der Nähe")}
             </Text>
@@ -262,9 +261,9 @@ export default function Settings() {
         <Text className="mb-2.5 font-hk-semibold text-[10px] tracking-[1.5px] text-ink-3">
           APP
         </Text>
-        <View className="overflow-hidden rounded-[18px] border border-black/[0.08] bg-surface">
+        <View className="overflow-hidden rounded-[18px] border border-line/[0.08] bg-surface">
           {/* Language row — emoji toggle flips the whole app EN <-> DE. */}
-          <View className="flex-row items-center justify-between border-b border-black/5 px-4 py-3">
+          <View className="flex-row items-center justify-between border-b border-line/5 px-4 py-3">
             <Text className="font-hk-extrabold text-[15px] text-ink">
               {t("Language", "Sprache")}
             </Text>
@@ -276,7 +275,7 @@ export default function Settings() {
             onPress={() => router.push("/app-icon")}
           />
           {/* Dark mode — an Insider perk. Non-Insiders tapping it get the upsell. */}
-          <View className="flex-row items-center justify-between border-b border-black/5 px-4 py-3">
+          <View className="flex-row items-center justify-between border-b border-line/5 px-4 py-3">
             <View className="flex-row items-center">
               <Text className="font-hk-extrabold text-[15px] text-ink">
                 {t("Dark mode", "Dunkelmodus")}
@@ -309,8 +308,7 @@ export default function Settings() {
         <View className="items-center">
           <Pressable
             onPress={abmelden}
-            className="w-full items-center rounded-[16px] border py-4"
-            style={{ borderColor: "rgba(26,26,26,0.2)" }}
+            className="w-full items-center rounded-[16px] border border-line/20 py-4"
           >
             <Text className="font-hk-extrabold text-[15px] text-ink">
               {t("Log out", "Abmelden")}

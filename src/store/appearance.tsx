@@ -78,4 +78,5 @@ export const DARK_VARS = {
   "--c-ink": "245 241 234", // #F5F1EA near-white
   "--c-ink-2": "184 178 168", // #B8B2A8
   "--c-ink-3": "143 136 126", // #8F887E
+  "--c-line": "245 241 234", // light hairlines on dark surfaces
 };

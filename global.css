@@ -14,5 +14,6 @@
     --c-ink: 26 26 26;
     --c-ink-2: 110 106 99;
     --c-ink-3: 138 133 124;
+    --c-line: 26 26 26; /* dark hairlines on light surfaces */
   }
 }

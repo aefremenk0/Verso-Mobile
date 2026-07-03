@@ -77,8 +77,7 @@ export default function AppIconScreen() {
         <Pressable
           onPress={() => router.back()}
           accessibilityLabel={t("Back", "Zurück")}
-          className="h-[42px] w-[42px] items-center justify-center rounded-pill"
-          style={{ borderWidth: 1, borderColor: "rgba(26,26,26,0.18)" }}
+          className="h-[42px] w-[42px] items-center justify-center rounded-pill border border-line/[0.18]"
         >
           <Text className="font-hk-extrabold text-[18px] text-ink">←</Text>
         </Pressable>
@@ -106,11 +105,8 @@ export default function AppIconScreen() {
               <Pressable
                 key={o.key}
                 onPress={() => choose(o)}
-                className="flex-row items-center rounded-card bg-surface p-3.5"
-                style={{
-                  borderWidth: 1.5,
-                  borderColor: active ? GOLD : "rgba(26,26,26,0.08)",
-                }}
+                className="flex-row items-center rounded-card border-[1.5px] border-line/[0.08] bg-surface p-3.5"
+                style={active ? { borderColor: GOLD } : undefined}
               >
                 <View className="h-16 w-16 overflow-hidden rounded-[16px]">
                   <Image
