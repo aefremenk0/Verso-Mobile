@@ -80,3 +80,18 @@ export const DARK_VARS = {
   "--c-ink-3": "143 136 126", // #8F887E
   "--c-line": "245 241 234", // light hairlines on dark surfaces
 };
+
+// Light theme values (mirror global.css :root). We apply these explicitly in
+// light mode so ThemedApp's `style` is ALWAYS a vars() object — never toggling
+// between `undefined` and an object. That prevents NativeWind from restructuring
+// the View that wraps the navigator on a theme switch (which briefly tore down
+// the navigator -> "Couldn't find a navigation context" crash).
+export const LIGHT_VARS = {
+  "--c-screen": "247 244 239",
+  "--c-surface": "255 255 255",
+  "--c-chip": "237 233 225",
+  "--c-ink": "26 26 26",
+  "--c-ink-2": "110 106 99",
+  "--c-ink-3": "138 133 124",
+  "--c-line": "26 26 26",
+};

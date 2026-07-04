@@ -15,6 +15,7 @@ import { initAnalytics, track } from "../src/lib/analytics";
 import {
   AppearanceProvider,
   DARK_VARS,
+  LIGHT_VARS,
   useAppearance,
 } from "../src/store/appearance";
 import { AuthProvider, useAuth } from "../src/store/auth";
@@ -39,11 +40,12 @@ SplashScreen.preventAutoHideAsync();
 // status bar. bg-screen itself is themed, so the whole app follows.
 function ThemedApp({ children }: { children: ReactNode }) {
   const { isDark } = useAppearance();
+  // ALWAYS pass a vars() object (light or dark) — never toggle between undefined
+  // and an object. Toggling presence makes NativeWind restructure this View
+  // (which wraps the navigator) and briefly tears the navigator down → a
+  // "Couldn't find a navigation context" crash when switching themes.
   return (
-    <View
-      className="flex-1 bg-screen"
-      style={isDark ? vars(DARK_VARS) : undefined}
-    >
+    <View className="flex-1 bg-screen" style={vars(isDark ? DARK_VARS : LIGHT_VARS)}>
       <StatusBar style={isDark ? "light" : "dark"} />
       {children}
     </View>
