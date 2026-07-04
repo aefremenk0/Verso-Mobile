@@ -2,7 +2,7 @@ import "react-native-gesture-handler";
 import "../global.css";
 
 import { useFonts } from "expo-font";
-import { Stack, useRootNavigationState, useRouter } from "expo-router";
+import { router as globalRouter, Stack, useNavigationContainerRef } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useState, type ReactNode } from "react";
@@ -50,20 +50,36 @@ function ThemedApp({ children }: { children: ReactNode }) {
   );
 }
 
-// Navigates to the reset-password screen when a recovery link was opened — but
-// ONLY once the root navigator is mounted (navState?.key present). The auth
-// provider can't navigate itself: it renders above the navigator, so calling the
-// router too early throws "Couldn't find a navigation context".
+// Navigates to the reset-password screen when a recovery link was opened.
+//
+// This component renders ABOVE the navigator, so it must NOT use any hook that
+// reads the react-navigation context (useNavigation / useRouter / useRoute /
+// useRootNavigationState all throw "Couldn't find a navigation context" here).
+// We only use useNavigationContainerRef() — which just returns the container ref
+// (safe, may be null until mounted) — and the imperative `router` singleton,
+// polling until the navigator is ready before we navigate.
 function PasswordRecoveryWatcher() {
   const { passwordRecovery, clearPasswordRecovery } = useAuth();
-  const router = useRouter();
-  const navState = useRootNavigationState();
+  const navRef = useNavigationContainerRef();
   useEffect(() => {
-    if (passwordRecovery && navState?.key) {
-      clearPasswordRecovery();
-      router.push("/reset-password");
-    }
-  }, [passwordRecovery, navState?.key, clearPasswordRecovery, router]);
+    if (!passwordRecovery) return;
+    let cancelled = false;
+    let tries = 0;
+    const go = () => {
+      if (cancelled) return;
+      // NavigationContainerRef exposes isReady() directly (not on .current).
+      if (navRef?.isReady?.()) {
+        clearPasswordRecovery();
+        globalRouter.push("/reset-password");
+      } else if (tries++ < 50) {
+        setTimeout(go, 100); // wait for the root navigator to mount
+      }
+    };
+    go();
+    return () => {
+      cancelled = true;
+    };
+  }, [passwordRecovery, navRef, clearPasswordRecovery]);
   return null;
 }
 
