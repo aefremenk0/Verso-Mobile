@@ -185,7 +185,7 @@ export function SpotCard({
           style={[{ position: "absolute", top: 12, right: 12, zIndex: 15 }, hintStyle]}
         >
           <View className="rounded-pill bg-night px-3 py-1.5" style={shadows.card}>
-            <Text className="font-hk-semibold text-[11px] text-screen">
+            <Text className="font-hk-semibold text-[11px] text-white">
               {t("Long-press: Save & Share", "Lange drücken: Merken & Teilen")}
             </Text>
           </View>

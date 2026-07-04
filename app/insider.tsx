@@ -130,7 +130,7 @@ export default function Insider() {
           className="h-[42px] w-[42px] items-center justify-center rounded-pill"
           style={{ borderWidth: 1, borderColor: "rgba(247,244,239,0.22)" }}
         >
-          <Text className="font-hk-extrabold text-[16px] text-screen">✕</Text>
+          <Text className="font-hk-extrabold text-[16px] text-white">✕</Text>
         </Pressable>
       </View>
 
@@ -161,10 +161,10 @@ export default function Insider() {
         </View>
 
         {/* Headline */}
-        <Text className="mt-5 font-hk-extrabold-italic text-[34px] leading-[38px] text-screen">
+        <Text className="mt-5 font-hk-extrabold-italic text-[34px] leading-[38px] text-white">
           {t("Lift the curtain.", "Lüfte den Vorhang.")}
         </Text>
-        <Text className="mt-3 font-hk-medium text-[15px] leading-[21px] text-screen/65">
+        <Text className="mt-3 font-hk-medium text-[15px] leading-[21px] text-white/65">
           {t(
             "Free stays generous. Insider opens the doors others don't get through.",
             "Free bleibt großzügig. Insider öffnet die Türen, durch die andere nicht kommen.",
@@ -181,7 +181,7 @@ export default function Insider() {
               >
                 <Text style={{ color: GOLD, fontSize: 12 }}>✦</Text>
               </View>
-              <Text className="flex-1 font-hk-semibold text-[15px] text-screen">
+              <Text className="flex-1 font-hk-semibold text-[15px] text-white">
                 {b}
               </Text>
             </View>
@@ -204,7 +204,7 @@ export default function Insider() {
             ))}
           </View>
         ) : (
-          <Text className="mt-7 text-center font-hk-medium text-[12px] text-screen/40">
+          <Text className="mt-7 text-center font-hk-medium text-[12px] text-white/40">
             {t(
               "Preview is a mock — real plans need a dev build with products.",
               "Vorschau ist ein Mock — echte Pläne brauchen einen Dev Build mit Produkten.",
@@ -256,11 +256,11 @@ export default function Insider() {
               ) : null}
             </Pressable>
             <Pressable onPress={onRestore} disabled={loading} className="mt-3 items-center py-1.5">
-              <Text className="font-hk-semibold text-[12px] text-screen/50">
+              <Text className="font-hk-semibold text-[12px] text-white/50">
                 {t("Restore purchases", "Käufe wiederherstellen")}
               </Text>
             </Pressable>
-            <Text className="mt-1 text-center font-hk-medium text-[10px] leading-[15px] text-screen/35">
+            <Text className="mt-1 text-center font-hk-medium text-[10px] leading-[15px] text-white/35">
               {t(
                 "Auto-renews until cancelled. Manage in the App Store.",
                 "Verlängert sich automatisch bis zur Kündigung. Verwaltung im App Store.",
@@ -283,7 +283,7 @@ export default function Insider() {
               </Text>
             </Pressable>
             <Pressable onPress={() => router.back()} className="mt-3 items-center py-1.5">
-              <Text className="font-hk-semibold text-[12px] text-screen/50">
+              <Text className="font-hk-semibold text-[12px] text-white/50">
                 {t("Back to profile", "Zurück zum Profil")}
               </Text>
             </Pressable>
@@ -293,13 +293,13 @@ export default function Insider() {
         {/* Terms + Privacy links at the point of purchase (App Store requirement). */}
         <View className="mt-3 flex-row items-center justify-center">
           <Pressable onPress={() => router.push("/legal")} hitSlop={8}>
-            <Text className="font-hk-semibold text-[11px] text-screen/45 underline">
+            <Text className="font-hk-semibold text-[11px] text-white/45 underline">
               {t("Terms", "Nutzungsbedingungen")}
             </Text>
           </Pressable>
-          <Text className="mx-2 text-[11px] text-screen/30">·</Text>
+          <Text className="mx-2 text-[11px] text-white/30">·</Text>
           <Pressable onPress={() => router.push("/legal")} hitSlop={8}>
-            <Text className="font-hk-semibold text-[11px] text-screen/45 underline">
+            <Text className="font-hk-semibold text-[11px] text-white/45 underline">
               {t("Privacy", "Datenschutz")}
             </Text>
           </Pressable>
@@ -352,7 +352,7 @@ function PlanCard({
     >
       <View className="flex-row items-center justify-between">
         <View className="flex-row items-center">
-          <Text className="font-hk-extrabold text-[17px] text-screen">
+          <Text className="font-hk-extrabold text-[17px] text-white">
             {periodLabel}
           </Text>
           {bestValue ? (
@@ -371,16 +371,16 @@ function PlanCard({
       </View>
 
       <View className="mt-1 flex-row items-baseline">
-        <Text className="font-hk-extrabold text-[20px] text-screen">
+        <Text className="font-hk-extrabold text-[20px] text-white">
           {priceText(pkg.price, pkg.priceString)}
         </Text>
-        <Text className="ml-1 font-hk-medium text-[13px] text-screen/55">
+        <Text className="ml-1 font-hk-medium text-[13px] text-white/55">
           {suffix}
         </Text>
       </View>
 
       {perMonth > 0 ? (
-        <Text className="mt-0.5 font-hk-medium text-[12px] text-screen/50">
+        <Text className="mt-0.5 font-hk-medium text-[12px] text-white/50">
           ≈ {fmtMoney(perMonth)} {t("/ month", "/ Monat")}
         </Text>
       ) : null}

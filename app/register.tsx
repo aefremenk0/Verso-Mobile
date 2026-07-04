@@ -282,23 +282,30 @@ export default function Register() {
 
         {/* Social login via Supabase OAuth (system browser). */}
         <View className="mt-5 gap-2.5">
+          {/* Apple: stays the dark brand button, text always white. */}
           <Pressable
             onPress={() => oauth("apple")}
             disabled={busy}
             className="flex-row items-center justify-center gap-2.5 rounded-[16px] bg-night py-4"
           >
-            <Text className="font-hk-semibold text-[14px] text-screen">
+            <Text className="font-hk-semibold text-[14px] text-white">
               {t("Continue with Apple", "Weiter mit Apple")}
             </Text>
             <AppleLogo size={17} color="#FFFFFF" />
           </Pressable>
+          {/* Google: stays a WHITE button (brand), with dark text — even in dark
+              mode (bg-surface/text-ink would flip to dark-on-dark). */}
           <Pressable
             onPress={() => oauth("google")}
             disabled={busy}
-            className="flex-row items-center justify-center gap-2.5 rounded-[16px] bg-surface py-4"
-            style={{ borderWidth: 1, borderColor: "rgba(26,26,26,0.16)" }}
+            className="flex-row items-center justify-center gap-2.5 rounded-[16px] py-4"
+            style={{
+              backgroundColor: "#FFFFFF",
+              borderWidth: 1,
+              borderColor: "rgba(26,26,26,0.16)",
+            }}
           >
-            <Text className="font-hk-semibold text-[14px] text-ink">
+            <Text className="font-hk-semibold text-[14px]" style={{ color: "#1A1A1A" }}>
               {t("Continue with Google", "Weiter mit Google")}
             </Text>
             <GoogleLogo size={18} />

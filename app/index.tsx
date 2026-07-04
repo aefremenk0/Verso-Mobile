@@ -11,6 +11,7 @@ import {
 } from "../src/components/QuestionBubbles";
 import { isComingSoon, type City } from "../src/data/cities";
 import { useAuth } from "../src/store/auth";
+import { useAppearance } from "../src/store/appearance";
 import { useCity } from "../src/store/city";
 import { useT, useLang } from "../src/lib/i18n";
 import { useScaleSize } from "../src/lib/responsive";
@@ -31,6 +32,7 @@ export default function Welcome() {
   const router = useRouter();
   const { city, setCity } = useCity();
   const { session, loading } = useAuth();
+  const { isDark } = useAppearance();
   const insets = useSafeAreaInsets();
 
   // Already signed in (persisted session)? Skip the Welcome screen entirely and
@@ -53,7 +55,7 @@ export default function Welcome() {
       >
         {/* diagonal stripe texture */}
         <StripeTexture />
-        <Text className="mt-12 px-[30px] font-hk-semibold text-[10px] tracking-[2.2px] text-screen/60">
+        <Text className="mt-12 px-[30px] font-hk-semibold text-[10px] tracking-[2.2px] text-white/60">
           {t(
             "// your first night in a city you don't know",
             "// dein erster abend in einer fremden stadt",
@@ -73,13 +75,13 @@ export default function Welcome() {
             className="self-start"
           >
             <Text
-              className="font-hk-extrabold-italic text-screen"
+              className="font-hk-extrabold-italic text-white"
               style={{ fontSize: scale(92), lineHeight: scale(83) }}
             >
               verso
             </Text>
           </Pressable>
-          <Text className="mt-3.5 max-w-[280px] font-hk-medium text-[14px] leading-[21px] text-screen/90">
+          <Text className="mt-3.5 max-w-[280px] font-hk-medium text-[14px] leading-[21px] text-white/90">
             {t(
               "Real places. Real people. The city like no one else shows you.",
               "Echte Orte. Echte Menschen. Die Stadt, wie sie dir sonst niemand zeigt.",
@@ -133,7 +135,11 @@ export default function Welcome() {
                       activeBg="#FFE500"
                       inactiveBg="rgba(255,229,0,0)"
                       activeBorder="#FFE500"
-                      inactiveBorder="rgba(26,26,26,0.18)"
+                      // Inactive chips: yellow outline in dark mode (a dark hairline
+                      // is invisible on the black background), faint dark in light.
+                      inactiveBorder={
+                        isDark ? "rgba(255,229,0,0.7)" : "rgba(26,26,26,0.18)"
+                      }
                       style={{
                         height: 42,
                         paddingHorizontal: 16,
@@ -144,8 +150,12 @@ export default function Welcome() {
                       }}
                     >
                       <Text
-                        className="font-hk-extrabold text-[19px] text-ink"
+                        className="font-hk-extrabold text-[19px]"
                         style={{
+                          // Active chip is yellow -> always black text (text-ink
+                          // would flip to white on yellow in dark mode). Inactive
+                          // follows the theme.
+                          color: active ? "#1A1A1A" : isDark ? "#F5F1EA" : "#1A1A1A",
                           // exact vertical centering – also on Android
                           lineHeight: 22,
                           textAlign: "center",
@@ -166,16 +176,25 @@ export default function Welcome() {
 
         {/* If already signed in (persisted session), skip straight to the feed;
             otherwise go to sign up / sign in. */}
+        {/* Dark mode: the brown button blends into the black page -> make it
+            yellow with black text so it pops. Light mode keeps the dark button. */}
         <Pressable
           onPress={() =>
             session ? router.replace("/(tabs)/feed") : router.push("/register")
           }
-          className="mb-2 mt-auto flex-row items-center justify-between rounded-[18px] bg-night px-5 py-[18px]"
+          className={`mb-2 mt-auto flex-row items-center justify-between rounded-[18px] px-5 py-[18px] ${
+            isDark ? "bg-accent" : "bg-night"
+          }`}
         >
-          <Text className="font-hk-extrabold text-[18px] text-screen">
+          <Text
+            className="font-hk-extrabold text-[18px]"
+            style={{ color: isDark ? "#1A1A1A" : "#F7F4EF" }}
+          >
             {session ? t("Continue", "Weiter") : t("Let's go", "Los geht's")}
           </Text>
-          <Text className="text-[18px] text-screen">→</Text>
+          <Text className="text-[18px]" style={{ color: isDark ? "#1A1A1A" : "#F7F4EF" }}>
+            →
+          </Text>
         </Pressable>
       </View>
 

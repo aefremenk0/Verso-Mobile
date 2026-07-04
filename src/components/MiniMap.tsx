@@ -52,13 +52,15 @@ export function MiniMap({ spot, onPress }: { spot: Spot; onPress: () => void }) 
         className="absolute bottom-2 left-2 right-2 flex-row items-center justify-between rounded-pill px-3.5 py-2"
         style={{ backgroundColor: "rgba(26,26,26,0.82)" }}
       >
+        {/* Fixed dark bar -> both texts always white (text-white would flip to
+            dark in dark mode; the label was yellow — user wants white). */}
         <Text
           numberOfLines={1}
-          className="mr-2 flex-1 font-hk-semibold text-[12px] text-screen"
+          className="mr-2 flex-1 font-hk-semibold text-[12px] text-white"
         >
           {spot.address}
         </Text>
-        <Text className="font-hk-bold text-[12px] text-accent">
+        <Text className="font-hk-bold text-[12px] text-white">
           {t("On map ↗", "In Karte ↗")}
         </Text>
       </View>

@@ -41,7 +41,7 @@ export function GoogleExportSheet({
               onPress={onClose}
               className="mt-6 items-center rounded-[18px] bg-night py-4"
             >
-              <Text className="font-hk-extrabold text-[16px] text-screen">
+              <Text className="font-hk-extrabold text-[16px] text-white">
                 {t("Done", "Fertig")}
               </Text>
             </Pressable>
@@ -65,7 +65,7 @@ export function GoogleExportSheet({
               className="mt-6 flex-row items-center justify-center gap-2 rounded-[18px] bg-night py-4"
             >
               <GoogleLogo size={18} />
-              <Text className="font-hk-extrabold text-[15px] text-screen">
+              <Text className="font-hk-extrabold text-[15px] text-white">
                 {t("Link account & export", "Konto verknüpfen & exportieren")}
               </Text>
             </Pressable>

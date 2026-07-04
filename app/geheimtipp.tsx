@@ -102,7 +102,7 @@ export default function Geheimtipp() {
             className="h-[42px] w-[42px] items-center justify-center rounded-pill"
             style={{ borderWidth: 1, borderColor: "rgba(247,244,239,0.25)" }}
           >
-            <Text className="font-hk-extrabold text-[16px] text-screen">✕</Text>
+            <Text className="font-hk-extrabold text-[16px] text-white">✕</Text>
           </Pressable>
         </View>
 
@@ -125,10 +125,10 @@ export default function Geheimtipp() {
             <Text className="font-hk-extrabold text-[52px] text-accent">?</Text>
           </View>
 
-          <Text className="mt-9 font-hk-semibold text-[11px] tracking-[2px] text-screen/55">
+          <Text className="mt-9 font-hk-semibold text-[11px] tracking-[2px] text-white/55">
             {t("HIDDEN GEM OF THE WEEK", "GEHEIMTIPP DER WOCHE")}
           </Text>
-          <Text className="mt-3 text-center font-hk-extrabold-italic text-[22px] leading-[29px] text-screen">
+          <Text className="mt-3 text-center font-hk-extrabold-italic text-[22px] leading-[29px] text-white">
             {t(
               `Digging through${"\n"}the back room …`,
               `Wir kramen kurz${"\n"}im Hinterzimmer …`,
@@ -147,7 +147,7 @@ export default function Geheimtipp() {
           </View>
         </View>
 
-        <Text className="pb-6 text-center font-hk-semibold text-[10px] tracking-[2px] text-screen/40">
+        <Text className="pb-6 text-center font-hk-semibold text-[10px] tracking-[2px] text-white/40">
           {t("FOR EVERYONE · ONCE A WEEK", "FÜR ALLE · EINMAL WÖCHENTLICH")}
         </Text>
       </SafeAreaView>
@@ -232,7 +232,7 @@ export default function Geheimtipp() {
           }}
           className="mt-7 flex-row items-center justify-between rounded-[18px] bg-night px-5 py-4"
         >
-          <Text className="font-hk-extrabold text-[17px] text-screen">
+          <Text className="font-hk-extrabold text-[17px] text-white">
             {t("Continue to your profile", "Weiter zu deinem Profil")}
           </Text>
           <View className="h-[34px] w-[34px] items-center justify-center rounded-pill bg-accent">

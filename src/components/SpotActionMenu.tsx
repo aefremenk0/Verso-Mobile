@@ -65,7 +65,7 @@ function Circle({
           <Text style={{ fontSize: glyphSize, color: glyphColor }}>{glyph}</Text>
         </Pressable>
       </Animated.View>
-      <Text className="mt-2 font-hk-bold text-[10px] tracking-[1.5px] text-screen">
+      <Text className="mt-2 font-hk-bold text-[10px] tracking-[1.5px] text-white">
         {label}
       </Text>
     </View>

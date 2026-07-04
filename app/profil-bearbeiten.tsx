@@ -135,7 +135,7 @@ export default function ProfilBearbeiten() {
               ) : (
                 <>
                   <StripeTexture />
-                  <Text className="font-hk-extrabold-italic text-[26px] text-screen">
+                  <Text className="font-hk-extrabold-italic text-[26px] text-white">
                     {INITIALS}
                   </Text>
                 </>

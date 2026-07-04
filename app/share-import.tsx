@@ -105,7 +105,7 @@ export default function ShareImport() {
           className="mt-6 items-center rounded-[18px] py-4"
           style={{ backgroundColor: canDraft ? "#1A1A1A" : "rgba(26,26,26,0.25)" }}
         >
-          <Text className="font-hk-extrabold text-[16px] text-screen">
+          <Text className="font-hk-extrabold text-[16px] text-white">
             {t("Draft suggestion", "Entwurf erstellen")}
           </Text>
         </Pressable>

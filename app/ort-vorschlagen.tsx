@@ -81,7 +81,7 @@ export default function OrtVorschlagen() {
             onPress={() => router.back()}
             className="mt-8 w-full items-center rounded-[18px] bg-night py-4"
           >
-            <Text className="font-hk-extrabold text-[16px] text-screen">
+            <Text className="font-hk-extrabold text-[16px] text-white">
               {t("Done", "Fertig")}
             </Text>
           </Pressable>
@@ -236,7 +236,7 @@ export default function OrtVorschlagen() {
           className="mt-7 items-center rounded-[18px] py-4"
           style={{ backgroundColor: canSubmit ? "#1A1A1A" : "rgba(26,26,26,0.25)" }}
         >
-          <Text className="font-hk-extrabold text-[16px] text-screen">
+          <Text className="font-hk-extrabold text-[16px] text-white">
             {busy
               ? t("Sending …", "Wird gesendet …")
               : t("Send to editors", "An die Redaktion senden")}

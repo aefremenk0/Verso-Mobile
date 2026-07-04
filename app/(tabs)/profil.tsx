@@ -5,6 +5,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Arrow } from "../../src/components/Arrow";
 import { Brand } from "../../src/components/Brand";
 import { MysticBadge } from "../../src/components/MysticBadge";
+import { useAppearance } from "../../src/store/appearance";
 import { useCatalog } from "../../src/store/catalog";
 import { useCity } from "../../src/store/city";
 import { useProfile } from "../../src/store/profile";
@@ -57,6 +58,7 @@ export default function Profil() {
   const router = useRouter();
   const t = useT();
   const lang = useLang();
+  const { isDark } = useAppearance();
   const { savedIds } = useSaved();
   const { neighborhoods, getSpotById } = useCatalog();
   const { name, username, avatarUrl } = useProfile();
@@ -186,23 +188,42 @@ export default function Profil() {
           />
         </View>
 
-        {/* Invite a friend — fits the app DNA (tips from friend to friend). */}
+        {/* Invite a friend — fits the app DNA (tips from friend to friend).
+            Dark mode: the brown card blends into the black page -> yellow with
+            black text so it stands out. Light mode keeps the dark card. */}
         <Pressable
           onPress={onInvite}
-          className="flex-row items-center justify-between rounded-card bg-night p-5"
+          className={`flex-row items-center justify-between rounded-card p-5 ${
+            isDark ? "bg-accent" : "bg-night"
+          }`}
           style={{ marginTop: 21 }}
         >
           <View className="flex-1 pr-3">
-            <Text className="font-hk-extrabold-italic text-[18px] text-screen">
+            <Text
+              className="font-hk-extrabold-italic text-[18px]"
+              style={{ color: isDark ? "#1A1A1A" : "#F7F4EF" }}
+            >
               {t("Know someone with good taste?", "Kennst du jemanden mit Gespür?")}
             </Text>
-            <Text className="mt-1 font-hk-medium text-[13px] leading-[18px] text-screen/60">
+            <Text
+              className="mt-1 font-hk-medium text-[13px] leading-[18px]"
+              style={{ color: isDark ? "rgba(26,26,26,0.6)" : "rgba(247,244,239,0.6)" }}
+            >
               {t("Verso thrives on word of mouth.", "Verso lebt von Mundpropaganda.")}{"\n"}
               {t("Pass the hidden gem on.", "Gib den Geheimtipp weiter.")}
             </Text>
           </View>
-          <View className="h-10 w-10 items-center justify-center rounded-pill bg-accent">
-            <Text className="font-hk-bold text-[16px] text-accent-ink">↗</Text>
+          {/* Circle: yellow-on-dark in light, dark-on-yellow in dark. */}
+          <View
+            className="h-10 w-10 items-center justify-center rounded-pill"
+            style={{ backgroundColor: isDark ? "#1A1A1A" : "#FFE500" }}
+          >
+            <Text
+              className="font-hk-bold text-[16px]"
+              style={{ color: isDark ? "#FFE500" : "#1A1A1A" }}
+            >
+              ↗
+            </Text>
           </View>
         </Pressable>
 

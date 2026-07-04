@@ -26,6 +26,7 @@ import { tapSelection } from "../lib/haptics";
 import { useLang, useT } from "../lib/i18n";
 import { PIN_COLORS } from "../lib/pinColors";
 import { SCENE_CATEGORIES } from "../lib/scene";
+import { useAppearance } from "../store/appearance";
 import { useScene } from "../store/scene";
 import { shadows } from "../theme";
 import { AnimatedChip } from "./AnimatedChip";
@@ -50,6 +51,7 @@ export function MapFilterSheet({
   showArt?: boolean;
 }) {
   const { height: screenH } = useWindowDimensions();
+  const { isDark } = useAppearance();
   const { scene } = useScene();
   const t = useT();
   const lang = useLang();
@@ -265,12 +267,16 @@ export function MapFilterSheet({
                       paddingVertical: 10,
                     }}
                   >
-                    <Text className="font-hk-extrabold text-[15px] text-ink">
+                    {/* Chips sit on a fixed yellow/white background, so the text
+                        is always dark (text-ink would flip to white in dark). */}
+                    <Text
+                      className="font-hk-extrabold text-[15px]"
+                      style={{ color: "#1A1A1A" }}
+                    >
                       {a.label}
                       <Text
-                        className={`font-hk-medium text-[12.5px] ${
-                          on ? "text-accent-ink/70" : "text-ink-2"
-                        }`}
+                        className="font-hk-medium text-[12.5px]"
+                        style={{ color: on ? "rgba(26,26,26,0.7)" : "#6E6A63" }}
                       >
                         {"  — "}
                         {a.desc}
@@ -286,15 +292,22 @@ export function MapFilterSheet({
           <View className="px-6 pb-3 pt-3">
             <Pressable
               onPress={close}
-              className="flex-row items-center justify-center gap-2 rounded-[18px] bg-night py-4"
+              className={`flex-row items-center justify-center gap-2 rounded-[18px] py-4 ${
+                isDark ? "bg-accent" : "bg-night"
+              }`}
             >
-              <Text className="font-hk-extrabold text-[17px] text-screen">
+              <Text
+                className="font-hk-extrabold text-[17px]"
+                style={{ color: isDark ? "#1A1A1A" : "#F7F4EF" }}
+              >
                 {t(
                   `Show ${count} ${count === 1 ? "place" : "places"}`,
                   `${count} ${count === 1 ? "Ort" : "Orte"} zeigen`,
                 )}
               </Text>
-              <Text className="text-[16px] text-screen">→</Text>
+              <Text className="text-[16px]" style={{ color: isDark ? "#1A1A1A" : "#F7F4EF" }}>
+                →
+              </Text>
             </Pressable>
           </View>
           {/* Gray handle at the bottom = swipe zone: swiping up closes the sheet */}

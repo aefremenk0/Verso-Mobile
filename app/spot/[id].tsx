@@ -142,7 +142,12 @@ export default function SpotDetail() {
                     paddingVertical: 10,
                   }}
                 >
-                  <Text className="font-hk-bold text-[13px] text-ink">
+                  {/* White (unsaved) or yellow (saved) bg -> text always dark
+                      (text-ink would flip to white in dark mode). */}
+                  <Text
+                    className="font-hk-bold text-[13px]"
+                    style={{ color: "#1A1A1A" }}
+                  >
                     {saved ? t("Saved ✓", "Gemerkt ✓") : t("Save +", "Merken +")}
                   </Text>
                 </AnimatedChip>

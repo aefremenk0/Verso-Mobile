@@ -44,7 +44,9 @@ export function SurpriseButton({ onPress }: { onPress: () => void }) {
         className="flex-row items-center justify-center gap-2 rounded-pill bg-night py-3"
       >
         <Sparkle />
-        <Text className="font-hk-extrabold text-[15px] text-screen">
+        {/* Fixed dark pill -> text is always white (text-white would flip to
+            dark in dark mode and vanish). */}
+        <Text className="font-hk-extrabold text-[15px] text-white">
           {t("Surprise me", "Überrasch mich")}
         </Text>
       </Pressable>

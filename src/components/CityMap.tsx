@@ -20,6 +20,7 @@ import { useLang, useT } from "../lib/i18n";
 import { spotText } from "../lib/localized";
 import { PIN_COLORS } from "../lib/pinColors";
 import { useReduceMotion } from "../lib/useReduceMotion";
+import { useAppearance } from "../store/appearance";
 import { shadows } from "../theme";
 
 // Background map for the Map screen.
@@ -283,6 +284,7 @@ export function CityMap({
   centerOn = null,
 }: CityMapProps) {
   const t = useT();
+  const { isDark } = useAppearance();
   // Ref to the real map so a "focus" navigation can animate to a spot.
   const mapRef = useRef<any>(null);
   useEffect(() => {
@@ -355,6 +357,8 @@ export function CityMap({
         ref={mapRef}
         style={{ flex: 1 }}
         provider={RNMaps.PROVIDER_DEFAULT}
+        // Apple Maps night view in dark mode.
+        userInterfaceStyle={isDark ? "dark" : "light"}
         initialRegion={{ ...center, latitudeDelta: 0.055, longitudeDelta: 0.055 }}
         mapPadding={{ top: topInset, right: 0, bottom: bottomInset, left: 0 }}
         showsUserLocation
@@ -447,7 +451,7 @@ export function CityMap({
           style={[{ position: "absolute", top: 66, right: 12 }, hintStyle]}
         >
           <View className="rounded-pill bg-night px-3 py-2" style={shadows.card}>
-            <Text className="font-hk-semibold text-[11px] text-screen">
+            <Text className="font-hk-semibold text-[11px] text-white">
               {t("Double-tap to show all places", "Doppeltippen zeigt alle Orte")}
             </Text>
           </View>
