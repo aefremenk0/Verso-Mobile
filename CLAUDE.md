@@ -651,7 +651,26 @@ npm test               # Unit-Tests der reinen Logik (vitest, src/**)
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### 5fb79fa · 2026-07-03 · Fix: Crash „Couldn't find a navigation context" (Dark Mode/Launch)
+### 79cbab2 · 2026-07-03 · Fix (echt): Nav-Context-Crash — richtige API statt `useRootNavigationState`
+- **Der erste Fix (5fb79fa) war falsch** und machte es schlimmer: der neue
+  `PasswordRecoveryWatcher` rief **`useRootNavigationState()`** auf, das intern
+  `@react-navigation`s **`useNavigation()`** nutzt → wirft „Couldn't find a
+  navigation context" bei **jedem** Render, weil der Watcher **oberhalb** des
+  Navigators sitzt. Folge: unbedingter Crash bei jedem Start (Log 2 → Log 3).
+- **Im expo-router-Quellcode verifiziert:**
+  `useRootNavigationState`/`useRouter`/`useNavigation` lesen den
+  react-navigation-Context → werfen oberhalb von `<Stack>`.
+  **`useNavigationContainerRef()`** gibt nur `store.navigationRef` zurück (kein
+  Context-Hook) → sicher; `.isReady()` sagt, wann der Navigator gemountet ist.
+  Der imperative `router.push` ruft `assertIsReady()` → wirft, wenn zu früh.
+- **Fix:** Watcher nutzt `useNavigationContainerRef()` + den **imperativen**
+  `router.push`, gegated auf `navRef.isReady()` (Poll bis mounted). **Kein**
+  Navigation-Hook mehr oberhalb des Navigators.
+- **Stolperfalle (endgültig):** oberhalb von `<Stack>` NUR
+  `useNavigationContainerRef()` (Ref) + imperativer `router` (queued/`assertIsReady`)
+  verwenden — NIE `useNavigation`/`useRouter`/`useRootNavigationState`.
+
+### 5fb79fa · 2026-07-03 · Fix (Teil 1, unvollständig): Crash „Couldn't find a navigation context"
 - **Ursache:** der neue Passwort-Reset-Handler rief `router.push("/reset-password")`
   direkt im `onAuthStateChange` des `AuthProvider` auf. Alle Provider (AuthProvider,
   ThemedApp) rendern **oberhalb** des expo-router-Navigators → ein Router-Aufruf von

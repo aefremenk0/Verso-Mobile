@@ -130,11 +130,19 @@ Modified:
   synchronously, so the feed is almost never truly empty on load. The skeleton is
   wired into the empty+loading state as the correct pattern / safety net, but note
   it won't usually show unless mock seeding is removed.
-- **Navigating from a provider above `<Stack>`** — calling `router.push` from
-  `AuthProvider`'s `onAuthStateChange` throws "Couldn't find a navigation context"
-  (providers render above the expo-router navigator; the call can fire before it
-  mounts). **Rule:** never call `router.*` above `<Stack>`. Navigate from a
-  component under the navigator, gated on `useRootNavigationState().key`.
+- **Navigating from above `<Stack>`** — two-part bug, worth remembering exactly:
+  1. `router.push` in `AuthProvider`'s `onAuthStateChange` threw "Couldn't find a
+     navigation context" (imperative `router.push` → `assertIsReady()` throws when
+     the navigator hasn't mounted; providers render above it and this fires on
+     launch with a persisted `PASSWORD_RECOVERY` session).
+  2. First attempted fix used a `PasswordRecoveryWatcher` with
+     **`useRootNavigationState()`** — WRONG: it internally calls
+     `@react-navigation`'s `useNavigation()`, which throws the SAME error on every
+     render above the navigator → crashed unconditionally on every launch.
+  - **Final rule:** above `<Stack>`, use ONLY `useNavigationContainerRef()` (just
+    returns the ref, never throws) + the imperative `router`, gated on
+    `navRef.isReady()`. NEVER `useNavigation`/`useRouter`/`useRootNavigationState`
+    there. (Fix commit `79cbab2`.)
 
 ---
 
