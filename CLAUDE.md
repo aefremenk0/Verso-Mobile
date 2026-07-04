@@ -651,7 +651,24 @@ npm test               # Unit-Tests der reinen Logik (vitest, src/**)
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### 79cbab2 · 2026-07-03 · Fix (echt): Nav-Context-Crash — richtige API statt `useRootNavigationState`
+### 642ef21 · 2026-07-03 · Fix (Kern-Ursache): Dark-Mode-Crash — `vars()` immer setzen
+- **Der eigentliche Auslöser** des wiederkehrenden „Couldn't find a navigation
+  context"-Crashes: `ThemedApp` setzte `style={isDark ? vars(DARK_VARS) : undefined}`.
+  Der Wechsel **undefined ↔ vars()-Objekt** lässt NativeWind die View, die den
+  `<Stack>`-Navigator umschließt, umstrukturieren (Variable-Context an/aus) → der
+  Navigator wird beim Theme-Wechsel kurz ab-/wieder aufgebaut, und der imperative
+  Routing-Emitter liest dabei einen fehlenden Navigation-Context → Crash. Trat beim
+  **Dark-Toggle** UND beim **Test-Kauf** auf (Insider aktiviert die gespeicherte
+  Dark-Präferenz → Dark schaltet an → gleicher Crash).
+- **Fix:** neue **`LIGHT_VARS`** (= `global.css :root`); `ThemedApp` setzt jetzt
+  **immer** `vars(isDark ? DARK_VARS : LIGHT_VARS)`. Der `style` ist damit immer ein
+  vars()-Objekt, nur die Werte wechseln → keine Umstrukturierung, Navigator bleibt
+  gemountet.
+- **Stolperfalle:** ein `vars()`-Style, der eine View oberhalb des Navigators
+  umschließt, NIE zwischen `undefined` und einem Objekt togglen — immer ein Objekt
+  liefern (Light- und Dark-Vars), sonst remountet der Navigator.
+
+### 79cbab2 · 2026-07-03 · Fix (Teil 2): Nav-Context — richtige API statt `useRootNavigationState`
 - **Der erste Fix (5fb79fa) war falsch** und machte es schlimmer: der neue
   `PasswordRecoveryWatcher` rief **`useRootNavigationState()`** auf, das intern
   `@react-navigation`s **`useNavigation()`** nutzt → wirft „Couldn't find a
