@@ -57,17 +57,26 @@ export function Pill({
 
   // Interactive: pop + press + color crossfade (AnimatedChip) + selection haptic.
   const activeBg = customActive ? (activeColor as string) : "#FFE500";
-  // Dark mode: an inactive chip's fixed cream (#EDE9E1) reads as a white oval on
-  // the black page. Make inactive chips yellow with black text instead, so they
-  // stay visible and on-brand. Light mode is unchanged.
-  const inactiveBg = isDark ? "#FFE500" : "#EDE9E1";
+  // Dark mode: the inactive cream (#EDE9E1) would read oddly; use a clean white
+  // oval with black text (unselected hotbar chips). Light mode unchanged.
+  const inactiveBg = isDark ? "#FFFFFF" : "#EDE9E1";
   const handlePress = () => {
     tapSelection(); // subtle "tick" on every chip selection
     onPress();
   };
-  // Text color: custom-active uses its own; else on any yellow/cream chip the
-  // text must be dark (text-ink-2 would flip to light in dark mode).
+  // Text color: custom-active uses its own; on any yellow/white chip the text is
+  // dark (text-ink-2 would flip to light in dark mode).
   const inactiveTextColor = isDark ? "#1A1A1A" : undefined; // undefined -> text-ink-2
+  // Fixed line height so a chip with a leading emoji (e.g. "🍽  Restaurant") is
+  // the SAME height as the icon-less "All/Alle" chip (emoji glyphs are taller
+  // than Latin text and would otherwise inflate the pill).
+  const lineHeight = small ? 17 : 18;
+  const colorStyle =
+    customActive && active
+      ? { color: activeTextColor ?? "#FFFFFF" }
+      : !active && inactiveTextColor
+        ? { color: inactiveTextColor }
+        : null;
   return (
     <AnimatedChip
       active={active}
@@ -85,13 +94,7 @@ export function Pill({
         className={`font-hk-semibold ${textSize} ${
           active ? (customActive ? "" : "text-accent-ink") : inactiveTextColor ? "" : "text-ink-2"
         }`}
-        style={
-          customActive && active
-            ? { color: activeTextColor ?? "#FFFFFF" }
-            : !active && inactiveTextColor
-              ? { color: inactiveTextColor }
-              : undefined
-        }
+        style={{ lineHeight, ...(colorStyle ?? {}) }}
       >
         {label}
       </Text>

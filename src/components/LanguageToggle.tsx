@@ -113,10 +113,11 @@ export function LanguageToggle() {
               <Animated.Text style={[{ fontSize: 16 }, popStyle]}>
                 {l.flag}
               </Animated.Text>
+              {/* Active label sits on the yellow selector -> always black
+                  (text-ink would flip to white on yellow in dark mode). */}
               <Text
-                className={`font-hk-extrabold text-[13px] ${
-                  active ? "text-ink" : "text-ink-3"
-                }`}
+                className={`font-hk-extrabold text-[13px] ${active ? "" : "text-ink-3"}`}
+                style={active ? { color: "#1A1A1A" } : undefined}
               >
                 {l.label}
               </Text>
