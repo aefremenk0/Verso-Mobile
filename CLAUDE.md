@@ -354,14 +354,10 @@ dokumentieren** (Trigger · Ort · Datei) — und unten bei „Ideen" abhaken/er
     (`hintCandidate`) ploppt das Menü kurz auto-auf (Demo) + Hinweis-Chip **oben
     rechts auf der Karte** „Lange drücken: Merken & Teilen" (fadet aus). Flag
     `feedHintShown` (in-memory).
-- **Karte-Doppeltipp → alle Pins ploppen (Toggle):** Doppeltipp auf die leere
-  (Fallback-)Kartenfläche lässt **alle Pin-Labels gleichzeitig** aufploppen und
-  BLEIBEN; ein weiterer Doppeltipp blendet sie wieder aus (`popAll`-Boolean →
-  `flash` je Pin). → `CityMap.tsx` (Expo-Go-Fallback; auf der echten Mapbox-Karte
-  bleibt der native Doppeltipp-Zoom).
-  - **Signalisierung (einmal pro Session):** beim ersten Öffnen kurze
-    Auto-Demo (alle Labels ploppen ~1,6 s auf) + Hinweis-Chip oben rechts
-    „Doppeltippen zeigt alle Orte" (fadet aus). Flag `demoShown` (in-memory).
+- **(entfernt) Karte-Doppeltipp → alle Pins ploppen:** das Doppeltipp-Egg auf der
+  Fallback-Karte (inkl. Auto-Demo + Hinweis-Chip) wurde auf Nutzerwunsch
+  **komplett entfernt** (2026-07-04). Tippen auf die leere Kartenfläche hebt jetzt
+  nur noch die Auswahl auf. Kein `popAll`/`flash`/`demoShown` mehr.
 
 ### Ideen / Roadmap (offen)
 - **Logo-Tap-Combo (Bottom-Nav):** „?"-Squiggle mehrfach schnell tippen →
@@ -650,6 +646,44 @@ npm test               # Unit-Tests der reinen Logik (vitest, src/**)
 
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
+
+### (dieser Commit) · 2026-07-04 · Doppeltipp-Egg raus + Teilen-Pfeil + Doku
+- **Doppeltipp-„alle Orte"-Feature komplett entfernt** (`CityMap.tsx`): kein
+  `popAll`/`flash`/`demoShown`/Hinweis-Chip mehr. Tippen auf die leere Fallback-
+  Kartenfläche hebt nur noch die Auswahl auf. Ungenutzte Imports (`useState`,
+  `withDelay`, `useT`) mitentfernt.
+- **SpotActionMenu (Long-Press Merken/Teilen):** der **Teilen-Pfeil** ist im Dark
+  Mode jetzt **weiß** (das Kreis-`bg-surface` flippt dunkel → schwarzer Pfeil war
+  unsichtbar). Merken-Kreis bleibt gelb/schwarz.
+- CLAUDE.md + handoff.md nachgezogen (Dark-Mode-Politur-Eintrag, Nav-Crash-Kette,
+  Stolperfallen).
+
+### 0c37602 · 2026-07-04 · Dark-Mode-Politur (Pre-Login/Feed/Detail/Karte)
+> Großer Lesbarkeits-Pass, nachdem der Dark-Mode-Crash weg war. Screens rendern
+> im Dark Mode, weil der RevenueCat-Insider-Flag nach dem Logout aktiv bleibt.
+> Alles reines JS, 46/46 Tests, tsc sauber, iOS-Bundle baut.
+- **Kern-Bug:** `text-screen` ist theme-fähig und wurde überall als „heller Text
+  auf fixer dunkler Bühne" (bg-night, Hero, dunkle Pills) benutzt → flippte im
+  Dark Mode dunkel → unsichtbar. **App-weit `text-screen` → `text-white`**
+  (Geheimtipp-Lade-Screen, Insider-Paywall, ort-vorschlagen, share-import,
+  SpotCard-Badge, CityMap-Label, SpotActionMenu, profil-bearbeiten, MiniMap).
+- **Muster „gelbe/weiße Fläche braucht schwarzen Text":** `text-ink` flippt auf
+  Gelb/Weiß im Dark Mode weiß → fixe `#1A1A1A` gesetzt (Merken-Button, aktive
+  Stadt-Chips, Ambiente-Chips im Filter, LanguageToggle-Aktiv-Label).
+- **Muster „braunes Oval/Rechteck → gelb im Dark":** bg-night-Buttons blenden auf
+  der schwarzen Seite; im Dark Mode gelb + schwarzer Text (Welcome „Los geht's",
+  Filter-„Orte zeigen", Profil-Einladen-Karte „Kennst du jemanden mit Gespür?").
+- **Welcome:** verso + Untertitel weiß; inaktive Stadt-Ovale mit gelber Kontur.
+- **Register:** Apple-Text weiß (Button bleibt dunkel/Brand); **Google bleibt
+  weiß** mit dunklem Text (fix, flippt nicht).
+- **Feed-Hotbar:** inaktive Kategorie-Pills im Dark = **weiße** Ovale mit
+  schwarzem Text (Pill-Komponente theme-fähig). „Überrasch mich" weiß.
+- **Pill-Fix:** feste `lineHeight` → Chips mit Emoji-Icon sind exakt so hoch wie
+  das icon-lose „Alle"-Oval (Emoji-Glyphen blähten die Höhe sonst auf).
+- **Karte:** Apple Maps **Nachtsicht** (`userInterfaceStyle="dark"`).
+- **Stolperfalle:** auf FIXEN dunklen Bühnen NIE `text-screen`/`text-ink` (theme-
+  fähig) für Text nutzen — fixe Farbe (`text-white` / `#1A1A1A`). Und: gelbe/weiße
+  Flächen immer mit fixem dunklem Text, da `text-ink` im Dark weiß wird.
 
 ### 642ef21 · 2026-07-03 · Fix (Kern-Ursache): Dark-Mode-Crash — `vars()` immer setzen
 - **Der eigentliche Auslöser** des wiederkehrenden „Couldn't find a navigation

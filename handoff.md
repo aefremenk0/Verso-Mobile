@@ -1,6 +1,6 @@
 # Handoff — Verso Mobile
 
-_Branch: `claude/charming-sagan-jyk0wh` · Last update: 2026-07-03 (incl. nav-context crash fix)_
+_Branch: `claude/charming-sagan-jyk0wh` · Last update: 2026-07-04 (dark-mode crash fix + dark-mode readability polish)_
 
 ---
 
@@ -32,11 +32,16 @@ vitest suite green, and be committed + pushed to the feature branch.
 - `npx tsc --noEmit` → clean.
 - `npm test` → **46/46 vitest passing** (was 18 at session start).
 - `npx expo export --platform ios` → bundle builds.
-- Latest pushed commit: `5fb79fa` on `claude/charming-sagan-jyk0wh`.
-- CLAUDE.md changelog updated (consolidated 2026-07-03 entry + nav-context fix).
+- Latest pushed commit: `0c37602` on `claude/charming-sagan-jyk0wh`.
+- CLAUDE.md changelog updated (through the 2026-07-04 dark-mode polish entry).
 
-**Post-session fix:** a "Couldn't find a navigation context" crash (took down dark
-mode / launch) was found and fixed — see §4 item 15 and §5.
+**Post-session work:** (a) a "Couldn't find a navigation context" crash that took
+down dark mode / launch was fixed across three commits (see §4 items 15–17 and
+§5); (b) a large dark-mode readability pass followed (§4 item 18).
+
+**Note on why dark mode shows on pre-login screens:** `isDark = isInsider && pref==="dark"`,
+and `isInsider` comes from RevenueCat (device-level), so it persists after a
+Supabase logout. That's why Welcome/Register render in dark mode and needed fixing.
 
 The app now has: theme-aware borders (dark mode), tolerant search, a
 "recently viewed" rail, Dynamic-Type-capped chrome, friendly bilingual
@@ -101,12 +106,26 @@ Modified:
 12. TikTok/Instagram share-import mockup (+5 tests).
 13. CI workflow + tests grown 18 → 46; cityLabel + PIN_COLORS coverage.
 14. CLAUDE.md consolidated changelog + handoff.md.
-15. **Fix: "Couldn't find a navigation context" crash** (regression from item 11).
-    `router.push` was called from `AuthProvider` (above the navigator) in
-    `onAuthStateChange`; on launch (persisted `PASSWORD_RECOVERY` session) it fired
-    before the navigator mounted → crash that took down `ThemedApp` / dark mode.
-    Fix: provider now only sets a `passwordRecovery` flag; a `PasswordRecoveryWatcher`
-    under the navigator navigates once `useRootNavigationState().key` is set.
+15. **Fix (attempt 1): "Couldn't find a navigation context" crash** (regression
+    from item 11). `router.push` was called from `AuthProvider` (above the
+    navigator) in `onAuthStateChange`; on launch (persisted `PASSWORD_RECOVERY`
+    session) it fired before the navigator mounted. Moved to a flag +
+    `PasswordRecoveryWatcher` — but the watcher used `useRootNavigationState()`,
+    which itself throws above the navigator (see §5). Incomplete.
+16. **Fix (attempt 2):** watcher rewritten to use `useNavigationContainerRef()`
+    (safe, ref only) + imperative `router`, gated on `navRef.isReady()` (poll).
+17. **Fix (root cause):** the crash actually fired on every theme *toggle*.
+    `ThemedApp` set `style={isDark ? vars(DARK_VARS) : undefined}` — toggling the
+    style between `undefined` and a `vars()` object made NativeWind restructure
+    the View wrapping `<Stack>`, briefly tearing the navigator down. Fixed by
+    adding `LIGHT_VARS` and ALWAYS passing `vars(isDark ? DARK_VARS : LIGHT_VARS)`.
+18. **Dark-mode readability polish** (many small commits): app-wide `text-screen`
+    → `text-white` (theme token flipped invisible on fixed dark stages); fixed
+    dark text on all yellow/white surfaces (Merken button, chips, LanguageToggle);
+    brown buttons → yellow+black in dark (Welcome CTA, filter CTA, invite card);
+    Welcome hero text white + yellow city-chip outlines; Google button stays white
+    / Apple text white; hotbar inactive pills → white ovals; Apple Maps night view;
+    Pill `lineHeight` fix so emoji chips match the icon-less "All" chip height.
 
 ---
 
@@ -143,6 +162,24 @@ Modified:
     returns the ref, never throws) + the imperative `router`, gated on
     `navRef.isReady()`. NEVER `useNavigation`/`useRouter`/`useRootNavigationState`
     there. (Fix commit `79cbab2`.)
+  3. **Actual root cause of the recurring crash** (commit `642ef21`): it fired on
+     every theme *toggle*, not just launch. `ThemedApp` toggled its `vars()` style
+     between `undefined` (light) and an object (dark). That presence change makes
+     NativeWind restructure the View wrapping `<Stack>` → the navigator remounts →
+     a queued navigation reads missing context. **Rule:** a `vars()` style on a
+     View above the navigator must ALWAYS be an object (light AND dark vars), never
+     toggled to `undefined`.
+- **Dark-mode theming on fixed stages** — `text-screen`/`text-ink`/`bg-night` are
+  a trap in dark mode:
+  - `text-screen` (theme token) was used everywhere as "light text on a dark
+    stage" but it FLIPS to dark in dark mode → invisible. Use `text-white` on
+    fixed-dark surfaces.
+  - `text-ink` flips to near-white in dark mode → invisible on any yellow/white
+    surface (chips, buttons). Use a fixed `#1A1A1A` on those.
+  - `bg-night` (brown) blends into the dark page; where a button must pop, switch
+    it to `bg-accent` + black text in dark mode (gate on `useAppearance().isDark`).
+  - Emoji in a `<Text>` inflates its height vs. Latin-only text → set an explicit
+    `lineHeight` when chips must be uniform height.
 
 ---
 

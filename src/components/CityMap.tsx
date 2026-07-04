@@ -1,5 +1,5 @@
 import Constants, { ExecutionEnvironment } from "expo-constants";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { Pressable, Text, View } from "react-native";
 import Animated, {
   Easing,
@@ -7,7 +7,6 @@ import Animated, {
   LinearTransition,
   useAnimatedStyle,
   useSharedValue,
-  withDelay,
   withRepeat,
   withSequence,
   withSpring,
@@ -16,7 +15,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { isEventCategory } from "../data/categories";
 import type { Spot } from "../data/types";
-import { useLang, useT } from "../lib/i18n";
+import { useLang } from "../lib/i18n";
 import { spotText } from "../lib/localized";
 import { PIN_COLORS } from "../lib/pinColors";
 import { useReduceMotion } from "../lib/useReduceMotion";
@@ -32,7 +31,7 @@ import { shadows } from "../theme";
 //   floating chrome (location button below the pills, Apple logo above the nav).
 // - In **Expo Go** (where native modules are missing) a stylized fallback map
 //   is shown automatically, so nothing crashes. The playful custom pin labels
-//   + double-tap easter egg live on this fallback.
+//   live on this fallback.
 
 const isExpoGo =
   Constants.executionEnvironment === ExecutionEnvironment.StoreClient;
@@ -66,20 +65,16 @@ function cityCenter(spots: Spot[]): { latitude: number; longitude: number } {
 function Pin({
   spot,
   active,
-  popAll,
   onPress,
 }: {
   spot: Spot;
   active: boolean;
-  popAll: boolean;
   onPress: () => void;
 }) {
   const lang = useLang();
   const name = spotText(spot, lang).name;
   // Initial value matching the state, so the first pin does not animate by accident.
   const pop = useSharedValue(active ? 1 : 0);
-  // Easter egg: double-tapping the map shows/hides ALL labels (toggle).
-  const flash = useSharedValue(0);
 
   useEffect(() => {
     pop.value = active
@@ -101,16 +96,9 @@ function Pin({
     transform: [{ scale: dotScale.value }],
   }));
 
-  // popAll on -> all labels pop open and STAY; popAll off -> gone again.
-  useEffect(() => {
-    flash.value = popAll
-      ? withSpring(1, { damping: 12, stiffness: 190, mass: 0.6 })
-      : withTiming(0, { duration: 200 });
-  }, [popAll, flash]);
-
-  // Visibility = the stronger of selection (pop) and double-tap (flash).
+  // Visibility follows the selection pop.
   const labelStyle = useAnimatedStyle(() => {
-    const v = Math.max(pop.value, flash.value);
+    const v = pop.value;
     return {
       opacity: v,
       transform: [{ translateY: (1 - v) * 8 }, { scale: 0.6 + v * 0.4 }],
@@ -143,10 +131,10 @@ function Pin({
     transform: [{ scale: 1 + pulse.value * 1.8 }],
   }));
 
-  // The label is only tappable when visible (selected or via double-tap).
+  // The label is only tappable when visible (selected).
   // `box-none` -> only the label box itself catches taps, the wide transparent
   // area lets taps through (background/other pins).
-  const labelTouchable = active || popAll;
+  const labelTouchable = active;
 
   return (
     <View className="items-center justify-center">
@@ -270,10 +258,6 @@ interface CityMapProps {
   centerOn?: { latitude: number; longitude: number; key: number } | null;
 }
 
-// Once per session: on the first open of the map, show the double-tap gesture
-// (all pins pop open briefly + hint chip). In-memory, no storage needed.
-let demoShown = false;
-
 export function CityMap({
   spots,
   selectedId,
@@ -283,7 +267,6 @@ export function CityMap({
   bottomInset = 0,
   centerOn = null,
 }: CityMapProps) {
-  const t = useT();
   const { isDark } = useAppearance();
   // Ref to the real map so a "focus" navigation can animate to a spot.
   const mapRef = useRef<any>(null);
@@ -300,50 +283,6 @@ export function CityMap({
       );
     }
   }, [centerOn]);
-  // Easter egg: double-tap on the empty map area -> TOGGLE: all pins pop open;
-  // another double-tap hides them again. Both also reset the single selection,
-  // so no selected pin/card stays "stuck".
-  const [popAll, setPopAll] = useState(false);
-  const lastTap = useRef(0);
-  const handleBackgroundTap = () => {
-    const now = Date.now();
-    if (now - lastTap.current < 300) {
-      setPopAll((v) => !v); // double-tap -> toggle
-      onClearSelection?.(); // always reset the selection too
-      lastTap.current = 0;
-    } else {
-      lastTap.current = now;
-    }
-  };
-
-  // First-visit demo (A) + hint chip (B) — only on the fallback map (where the
-  // double-tap applies), once per session.
-  const [hint, setHint] = useState(false);
-  const hintOpacity = useSharedValue(0);
-  const hintStyle = useAnimatedStyle(() => ({ opacity: hintOpacity.value }));
-
-  useEffect(() => {
-    if (RNMaps || demoShown) return;
-    if (spots.length === 0) return; // nothing to show
-    demoShown = true;
-
-    setPopAll(true); // A: briefly pop open all labels
-    setHint(true); // B: show the hint chip
-    hintOpacity.value = withSequence(
-      withTiming(1, { duration: 300 }),
-      withDelay(3000, withTiming(0, { duration: 500 })),
-    );
-
-    const t1 = setTimeout(() => setPopAll(false), 1600); // hide the demo again
-    const t2 = setTimeout(() => setHint(false), 3900); // remove the chip
-    return () => {
-      clearTimeout(t1);
-      clearTimeout(t2);
-    };
-    // only evaluate on the first mount
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   // ── Real native map: Apple Maps (iOS) / Google Maps (Android), Dev Build ──
   if (RNMaps) {
     const MapView = RNMaps.default;
@@ -410,10 +349,10 @@ export function CityMap({
         Rechte Wienzeile
       </Text>
 
-      {/* Tap area for the double-tap (sits BEHIND the pins, which are rendered
-          afterward -> pin taps still go through). */}
+      {/* Tap the empty map area to deselect (sits BEHIND the pins, which are
+          rendered afterward -> pin taps still go through). */}
       <Pressable
-        onPress={handleBackgroundTap}
+        onPress={() => onClearSelection?.()}
         className="absolute inset-0"
       />
 
@@ -436,27 +375,10 @@ export function CityMap({
           <Pin
             spot={spot}
             active={spot.id === selectedId}
-            popAll={popAll}
             onPress={() => onSelect(spot)}
           />
         </Animated.View>
       ))}
-
-      {/* Hint chip (B): explains the double-tap gesture, fades out. Deliberately
-          sits below the floating category bar (~top 6–56), so it does not
-          overlap the category ovals. */}
-      {hint ? (
-        <Animated.View
-          pointerEvents="none"
-          style={[{ position: "absolute", top: 66, right: 12 }, hintStyle]}
-        >
-          <View className="rounded-pill bg-night px-3 py-2" style={shadows.card}>
-            <Text className="font-hk-semibold text-[11px] text-white">
-              {t("Double-tap to show all places", "Doppeltippen zeigt alle Orte")}
-            </Text>
-          </View>
-        </Animated.View>
-      ) : null}
     </View>
   );
 }

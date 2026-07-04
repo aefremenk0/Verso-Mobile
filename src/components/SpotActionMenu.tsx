@@ -7,6 +7,7 @@ import Animated, {
   withSpring,
 } from "react-native-reanimated";
 import { useT } from "../lib/i18n";
+import { useAppearance } from "../store/appearance";
 import { shadows } from "../theme";
 
 // Pop-up action menu over a spot card (Pinterest-style): two circles that
@@ -79,6 +80,7 @@ export function SpotActionMenu({
   onClose,
 }: SpotActionMenuProps) {
   const t = useT();
+  const { isDark } = useAppearance();
   return (
     <View
       className="absolute inset-0 items-center justify-center"
@@ -102,7 +104,9 @@ export function SpotActionMenu({
           index={1}
           circleClass="bg-surface"
           glyph="↗"
-          glyphColor="#1A1A1A"
+          // bg-surface flips dark -> the arrow must be white in dark mode
+          // (a black arrow would be invisible on the dark circle).
+          glyphColor={isDark ? "#FFFFFF" : "#1A1A1A"}
           glyphSize={24}
           label={t("SHARE", "TEILEN")}
           onPress={onShare}
