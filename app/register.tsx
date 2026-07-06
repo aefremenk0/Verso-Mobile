@@ -68,11 +68,11 @@ export default function Register() {
       return;
     }
     if (mode === "register") {
-      if (password.length < 6) {
+      if (password.length < 8) {
         setError(
           t(
-            "Password needs at least 6 characters.",
-            "Das Passwort braucht mindestens 6 Zeichen.",
+            "Password needs at least 8 characters.",
+            "Das Passwort braucht mindestens 8 Zeichen.",
           ),
         );
         return;

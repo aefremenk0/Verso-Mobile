@@ -30,3 +30,12 @@ export function shouldEmit(type: AnalyticsEvent["type"], hasConsent: boolean): b
   if (type === "error") return true; // crash reports always allowed (no PII)
   return hasConsent; // product events need consent
 }
+
+/** Redact obvious PII/secrets from a free-text error string before it leaves the
+ *  device (crash reports carry error messages that could incidentally contain an
+ *  email or a token). */
+export function redactText(s: string): string {
+  return s
+    .replace(/[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}/gi, "[email]")
+    .replace(/\b[A-Za-z0-9_-]{24,}\b/g, "[token]"); // long token-ish runs
+}

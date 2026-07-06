@@ -8,7 +8,7 @@ import { SCENE_CATEGORIES } from "../scene";
 import { distanceLabel, getOpenState } from "../spotMeta";
 import { editDistance, matchesQuery, normalize } from "../search";
 import { friendlyAuthError, isNetworkError } from "../errors";
-import { scrubProps, shouldEmit } from "../analyticsCore";
+import { redactText, scrubProps, shouldEmit } from "../analyticsCore";
 import { parseSharedPost } from "../shareImport";
 import { cityLabel } from "../lang";
 import { CATEGORY_ORDER } from "../../data/categories";
@@ -315,5 +315,17 @@ describe("PIN_COLORS (integrity)", () => {
     for (const cat of Object.keys(CATEGORY_ORDER)) {
       expect(PIN_COLORS[cat as keyof typeof PIN_COLORS], cat).toBeTruthy();
     }
+  });
+});
+
+describe("analytics: redactText", () => {
+  it("redacts emails and long tokens", () => {
+    expect(redactText("login failed for a@b.com")).toBe("login failed for [email]");
+    expect(redactText("token=abcdefghijklmnopqrstuvwxyz123")).toContain("[token]");
+  });
+  it("leaves ordinary error text intact", () => {
+    expect(redactText("TypeError: undefined is not a function")).toBe(
+      "TypeError: undefined is not a function",
+    );
   });
 });

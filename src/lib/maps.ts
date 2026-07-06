@@ -18,7 +18,12 @@ export function openGoogleMaps(query: string) {
   Linking.openURL(`https://www.google.com/maps/search/?api=1&query=${q}`);
 }
 
-/** Opens any external link (reservation, tickets). */
+/** Opens any external link (reservation, tickets). Only web/mail/tel schemes are
+ *  allowed — never open an arbitrary/unknown scheme (defense in depth in case a
+ *  URL ever comes from a less-trusted source than the admin-curated catalog). */
 export function openExternal(url: string) {
-  Linking.openURL(url);
+  const u = (url ?? "").trim();
+  if (/^(https?|mailto|tel):/i.test(u)) {
+    Linking.openURL(u);
+  }
 }

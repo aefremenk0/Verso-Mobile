@@ -1,13 +1,14 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { hasSupabase, supabase } from "./supabase";
 import {
+  redactText,
   scrubProps,
   shouldEmit,
   type AnalyticsEvent,
   type EventProps,
 } from "./analyticsCore";
 
-export { scrubProps, shouldEmit };
+export { redactText, scrubProps, shouldEmit };
 export type { AnalyticsEvent, EventProps };
 
 // Lightweight, privacy-first analytics + crash reporting.
@@ -110,8 +111,9 @@ export function track(name: string, props?: EventProps) {
 }
 
 export function captureError(error: unknown, context?: EventProps) {
-  const name =
+  const raw =
     error instanceof Error ? `${error.name}: ${error.message}` : String(error);
+  const name = redactText(raw); // strip incidental email/token from the message
   emit({
     type: "error",
     name: name.slice(0, 200),
