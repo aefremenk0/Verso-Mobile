@@ -1,6 +1,6 @@
 # Handoff — Verso Mobile
 
-_Branch: `claude/charming-sagan-jyk0wh` · Last update: 2026-07-04 (security hardening + RevenueCat log fix)_
+_Branch: `claude/charming-sagan-jyk0wh` · Last update: 2026-07-06 (deep security pass, email-confirmation flow, per-account recents, rate-limiting, encrypted auth token)_
 
 ---
 
@@ -32,18 +32,22 @@ vitest suite green, and be committed + pushed to the feature branch.
 - `npx tsc --noEmit` → clean.
 - `npm test` → **48/48 vitest passing** (was 18 at session start).
 - `npx expo export --platform ios` → bundle builds.
-- Latest pushed commit: `a6e09f4` on `claude/charming-sagan-jyk0wh`.
-- CLAUDE.md changelog current through the 2026-07-04 security-hardening entry.
+- Latest pushed commit: `2e3cbdc` on `claude/charming-sagan-jyk0wh`.
+- CLAUDE.md changelog current through the 2026-07-06 SecureStore entry.
 
 **Later work (post the initial 10 tasks):** (a) a "Couldn't find a navigation
 context" crash (dark mode / launch) fixed across three commits (§4 items 15–17,
 §5); (b) a large dark-mode readability pass (§4 item 18); (c) a full security
 review + fixes (§4 item 19); (d) the RevenueCat "logOut on anonymous" console
-error (§4 item 20). See §7 for open/known items.
+error (§4 item 20). **2026-07-06 block** (§4 items 21–27): donations removed;
+dark mode un-gated (all users) + app-icon picker removed; a second deep security
+review (Insider INSERT gap → migration 0012, webhook constant-time compare) + a
+targeted SQL-injection review (clean); email-confirmation flow; per-account
+"recently viewed"; rate-limiting + length caps; encrypted auth token. See §7.
 
-**Note on why dark mode shows on pre-login screens:** `isDark = isInsider && pref==="dark"`,
-and `isInsider` comes from RevenueCat (device-level), so it persists after a
-Supabase logout. That's why Welcome/Register render in dark mode and needed fixing.
+**Note on dark mode:** as of 2026-07-06 it is available to **everyone**
+(`isDark = pref==="dark"`, no Insider gate). The pre-login dark-mode readability
+fixes (§4 item 18) still matter — Welcome/Register can render in dark mode.
 
 The app now has: theme-aware borders (dark mode), tolerant search, a
 "recently viewed" rail, Dynamic-Type-capped chrome, friendly bilingual
@@ -71,6 +75,37 @@ New this session:
 - `src/lib/shareImport.ts` + `app/share-import.tsx` — TikTok/Insta → draft suggestion (mock).
 - `supabase/migrations/0008_analytics.sql`, `0009_delete_cascade.sql`.
 - `.github/workflows/ci.yml` — tsc + vitest on push/PR.
+
+New in the 2026-07-06 block:
+- `src/lib/secureStore.ts` — LargeSecureStore (AES key in Keychain/Keystore,
+  ciphertext in AsyncStorage) for the Supabase auth session; web → AsyncStorage.
+- `supabase/migrations/0012_protect_insider_insert.sql` — insider trigger on
+  INSERT+UPDATE (was UPDATE only).
+- `supabase/migrations/0013_profile_from_metadata.sql` — copy name/username from
+  sign-up metadata into profiles (email-confirmation flow).
+- `supabase/migrations/0014_profiles_recent.sql` — `recent_spot_ids` column.
+- `supabase/migrations/0015_length_caps.sql` — CHECK length caps (profiles /
+  spot_suggestions / analytics_events props ≤4 KB).
+- `supabase/migrations/0016_rate_limit.sql` — `rate_limits` table +
+  `enforce_rate_limit()` + BEFORE INSERT triggers (analytics 120/min, suggestions
+  10/h, keyed by hashed IP).
+- `supabase/setup_all.sql` — regenerated to concat ALL migrations 0001–0016 + seed.
+
+Modified in the 2026-07-06 block:
+- `src/store/appearance.tsx` — dark mode for everyone (no Insider gate).
+- `src/store/recent.tsx` — now `usePersistedList("recent_spot_ids")` (per-account).
+- `src/lib/supabase.ts` — `auth.storage = authStorage` (encrypted).
+- `src/store/auth.tsx` — `signUp` returns `needsConfirmation` + sends metadata/redirect.
+- `src/lib/profile.ts` — `ProfileColumn` += `recent_spot_ids`.
+- `app/register.tsx` — confirm-email state + name/username maxLength.
+- `app/profil-bearbeiten.tsx`, `app/ort-vorschlagen.tsx` — input maxLength.
+- `app/settings.tsx`, `app/_layout.tsx` — app-icon row/route removed.
+- `app/(tabs)/profil.tsx` — donation row + `badge` prop removed.
+- `app.config.js`, `package.json` — `expo-alternate-app-icons` removed;
+  `expo-secure-store`/`expo-crypto`/`aes-js` (+`@types/aes-js`) added; nativewind pinned.
+- `supabase/functions/revenuecat-webhook/index.ts` — constant-time secret compare
+  + require the `insider` entitlement explicitly.
+- `supabase/migrations/0002`, `0009` — `search_path = ''` hardening.
 
 Modified:
 - `tailwind.config.js`, `global.css`, `src/store/appearance.tsx` — `line` token.
@@ -141,6 +176,43 @@ Modified:
     the throw, so try/catch didn't suppress the redbox). Guarded with
     `Purchases.isAnonymous()` in the identity effect and `reset()`.
 
+**2026-07-06 block:**
+
+21. **Donations removed** (`c9e9562`) — the "Support Verso / SPENDE" profile row +
+    the `badge` prop were removed. Rationale: in-app donations aren't worth it
+    (Apple's 30%, no nonprofit exemption, rejection risk) and dilute Insider.
+    Support = Insider subscription only; a pure donation gesture belongs on the
+    website, not in-app.
+22. **Dark mode for everyone + app-icon picker removed** (`277be10`) —
+    `appearance.tsx`: `isDark = pref==="dark"`, `canDark = true` (no Insider gate),
+    settings ✦ badge + upsell gone. App-icon screen/helper deleted, route + settings
+    row removed, `expo-alternate-app-icons` dropped from config + package.json.
+23. **Security review 2 (deep) + fixes** (`cec3d27`) — 4 parallel auditors
+    (backend/RLS, client auth/secrets, deep-links/PII, deps). One real MEDIUM:
+    `protect_insider` trigger was UPDATE-only, so a crafted INSERT of the own
+    profile row could set `is_insider=true` → **migration 0012** extends it to
+    `BEFORE INSERT OR UPDATE`. Webhook: constant-time secret compare + require the
+    `insider` entitlement explicitly. `nativewind` pinned exact.
+24. **SQL-injection review — clean** (`de049e5`) — search is 100% client-side
+    (`matchesQuery` over loaded arrays; nothing user-typed reaches PostgREST), no
+    `.or()`/`.filter(string)`/`.textSearch()`, all `.eq()` parameterized,
+    `rpc("delete_user")` arg-less. Fix: `setup_all.sql` was stale (only 0001–0003)
+    → regenerated with all migrations; `search_path=''` on 0002/0009.
+25. **Email-confirmation flow** (`f2d2f65`) — `signUp` returns `needsConfirmation`
+    (no session ⇒ confirmation on) + sends `emailRedirectTo` and name/username as
+    metadata; `register.tsx` shows a "confirm your email" state instead of entering.
+    **Migration 0013** copies name/username from metadata into profiles so the name
+    survives the confirmation gap.
+26. **"Recently viewed" per account** (`2ca0c65`) — `recent.tsx` now uses
+    `usePersistedList("recent_spot_ids")` → follows the account, empty for a new
+    one, clears on logout. **Migration 0014** adds the column.
+27. **Rate-limiting + length caps + encrypted auth token** (`624669f`, `2e3cbdc`) —
+    **Migration 0015** CHECK length caps (+ client maxLength); **migration 0016**
+    hashed-IP fixed-window limiter (analytics 120/min, suggestions 10/h). Auth
+    token now encrypted via LargeSecureStore (`src/lib/secureStore.ts`,
+    `expo-secure-store`+`expo-crypto`+`aes-js`), web falls back to AsyncStorage;
+    existing plaintext sessions require one re-login (fail-soft).
+
 ---
 
 ## 5. Failed attempts / dead ends (so the next agent doesn't repeat them)
@@ -199,36 +271,43 @@ Modified:
 
 ## 6. DB migration status (Supabase, run by the user)
 
-The user has run in the SQL editor: **0001–0009** (schema/trigger/geheimtipp/seed,
-notify, avatars, suggestions+delete, insider_status, analytics, delete_cascade),
-the delete-cascade hotfix, **and the two security queries** (`12_protect_insider`
-= migration `0010`, `13_harden_inserts` = migration `0011`). Live DB confirmed via
-their `information_schema` report: profiles has all columns incl. `is_insider`;
-`analytics_events` exists; `spot_suggestions` was **missing at first** and added
-afterwards (0006's table part). Migration files in `supabase/migrations/` mirror
-the live DB — the next agent should NOT assume they still need running unless the
-user says otherwise.
+Confirmed run by the user (live DB verified via `information_schema`): **0001–0011**
+(schema/trigger/geheimtipp/seed, notify, avatars, suggestions+delete,
+insider_status, analytics, delete_cascade, protect_insider UPDATE, harden_inserts).
+
+**Pending — the user must run these (paste-ready SQL was handed over):**
+- **0012** `protect_insider_insert` (trigger → INSERT+UPDATE)
+- **0013** `profile_from_metadata` (name/username from sign-up metadata)
+- **0014** `profiles_recent` (`recent_spot_ids` column)
+- **0015** `length_caps`
+- **0016** `rate_limit`
+- Optional: re-run `0002`/`0009` for the `search_path=''` hardening (not exploitable;
+  0013 already ships `handle_new_user` with `search_path=''`, so only `delete_user`
+  (0009) is left). Until run, the affected features fail soft (no crash): recents
+  fall back to empty, name may be blank until first profile save, no rate limit.
+
+`supabase/setup_all.sql` is regenerated to contain ALL migrations 0001–0016 + seed
+(use it OR the numbered files for a fresh DB — never the old truncated version).
 
 ## 7. Known open items & pending decisions
 
-- **"Recently viewed" is device-local, NOT per-user** (`src/store/recent.tsx`,
-  AsyncStorage `verso.recent`). It's real (tracks actual spot-detail opens), but
-  it is NOT cleared on logout, so a **new account on the same device sees the
-  previous user's recents**. Decision pending: move it to the backend like
-  saved/interests (add `profiles.recent_spot_ids` + switch to `usePersistedList`,
-  which auto-isolates per account), OR keep local but clear it on logout. The user
-  wants "new account → empty".
+- **✅ RESOLVED — "Recently viewed" is now per-account** (`recent.tsx` →
+  `usePersistedList("recent_spot_ids")`, migration 0014). New account starts empty,
+  clears on logout. Requires migration 0014 in the live DB (else falls back empty).
+- **✅ RESOLVED — Auth token encrypted** (`src/lib/secureStore.ts`, LargeSecureStore).
+  Client-only, no DB. Existing users re-login once. `npm install` needed after pull
+  (3 new deps).
+- **✅ CODE DONE — Email confirmation** — the app now handles the no-session-yet
+  case (`needsConfirmation`) + metadata trigger 0013. Still needs the **Supabase
+  dashboard toggle ON** + redirect URL + migration 0013, and is **untested against
+  live email**. Demo login only works if the demo account is already confirmed.
 - **RevenueCat is Test-Store only** — `revenueCatIosKey` is a `test_…` key. The
   paywall/purchase flow works in a dev build against RC's sandbox, but there are
   **no real purchases**. Production needs: App Store Connect subscription products,
   a production `appl_…` key, the `insider` entitlement mapped to the products, the
   Paid Applications Agreement, and (recommended) deploying the webhook with its
-  secret.
-- **Email confirmation is OFF** in Supabase (was for testing). Turn ON for prod;
-  the reset/confirm deep-link handler is built but **untested against live email**.
-- **Auth token in AsyncStorage (plaintext)** — recommended to move to
-  `expo-secure-store` (native module → needs a dev-build test; keep an AsyncStorage
-  fallback so login can't break). Not done yet.
+  secret. **Webhook is deployed** (constant-time compare, entitlement-explicit) but
+  `REVENUECAT_WEBHOOK_SECRET` is **not set yet** → it fail-closes (401) until set.
 - **No spot photos** — the `Spot` type / `spots` table have `image_note` + `tone`
   (placeholder), but **no `image_url`**. Adding real photos needs a column + type
   field + `rowToSpot` mapping + rendering (SpotCard/detail) + a Storage bucket or
@@ -236,20 +315,25 @@ user says otherwise.
 
 ## 8. Next step (setup / launch)
 
-**Setup (no code):**
-1. Supabase → Authentication → URL Configuration: allow-list
-   **`verso://auth-callback`**; test the reset flow with real email templates.
-2. Enable **Google/Apple OAuth** providers (launch blocker; Apple Sign-In is
+**Setup (no code) — do first:**
+1. **Run migrations 0012–0016** in the SQL editor (paste-ready SQL handed over;
+   also in `supabase/migrations/`). Optional `search_path` re-run of 0009.
+2. Supabase → Authentication → URL Configuration: allow-list
+   **`verso://auth-callback`**; turn **email confirmation ON**; test with real
+   email templates (consider an SMTP provider — the built-in mailer is low-limit).
+3. Enable **Google/Apple OAuth** providers (launch blocker; Apple Sign-In is
    mandatory once Google login ships).
-3. Turn **email confirmation ON** before launch.
-4. RevenueCat → App Store Connect production setup (see §7).
+4. RevenueCat → App Store Connect production setup (see §7) + set
+   `REVENUECAT_WEBHOOK_SECRET`.
 
 **Legal (P0 — lawyer):** binding **Impressum, privacy policy, ToS**; **DPAs**
 (Supabase/RevenueCat/Apple/Google); verify **Supabase data region**. `legal.tsx`
-is honest placeholder scaffolding pointing to `verso.app/*`.
+is honest placeholder scaffolding pointing to `verso.app/*`. The **verso.app site
+with privacy/imprint/support URLs is the single biggest launch blocker** (Apple).
 
-**Product (code — the next agent can do):** real spot images (add `image_url`),
-"recently viewed" → backend, Insider-only "hidden" spots (RLS example commented
-in `0007_insider_status.sql`), server push sender (tokens stored, nothing sends),
-swap mock `parseSharedPost` for real AI (same signature; UI already labels it as
-assisted), drop Sentry into `registerSink()`.
+**Product (code — the next agent can do):** real spot images (add `image_url` +
+`rowToSpot` mapping + SpotCard/detail rendering + a Storage bucket) — this is the
+most valuable remaining code task; Insider-only "hidden" spots (RLS example
+commented in `0007_insider_status.sql`), server push sender (tokens stored,
+nothing sends), swap mock `parseSharedPost` for real AI (same signature; UI
+already labels it as assisted), drop Sentry into `registerSink()`.
