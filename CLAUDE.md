@@ -58,7 +58,10 @@ Expo **SDK 54**. Diese Versionen sind bewusst gepinnt — siehe Stolperfallen.
 | react-native-maps | 1.20.1 | echte Karte: Apple Maps (iOS)/Google (Android), `mapPadding`, **NUR Dev Build** |
 | react-native-purchases | **10.4.0** (exakt) | RevenueCat (Insider-Abo), natives Modul, **NUR Dev Build** |
 | @supabase/supabase-js | 2.x | Backend/Auth/DB (Expo-Go-fest) |
-| @react-native-async-storage/async-storage | 2.2.0 | Session + Offline-Cache |
+| @react-native-async-storage/async-storage | 2.2.0 | Offline-Cache + Chiffretext |
+| expo-secure-store | ~15.0.8 | verschlüsselter Auth-Token (Keychain/Keystore), Expo-Go-fest |
+| expo-crypto | ~15.0.9 | Zufalls-AES-Key für LargeSecureStore, Expo-Go-fest |
+| aes-js | ^3.1.2 | AES-CTR (Session verschlüsseln), reines JS |
 | expo-web-browser | ~15.0.x | OAuth-Browserflow (Google/Apple), Expo-Go-fest |
 | expo-notifications | ~0.32.17 | Push + lokale Benachrichtigungen |
 | expo-device | ~8.0.10 | echtes Gerät? (Push-Token) |
@@ -202,7 +205,10 @@ scripts/gen-seed.ts       erzeugt supabase/seed.sql aus src/data/* (via tsx)
   store/profile.tsx       Nutzerprofil (name/username/bio) aus profiles;
                           useProfile().save() upsertet. Gast = Mock.
   lib/supabase.ts         Supabase-Client (hasSupabase-Flag; URL+Key aus extra;
-                          AsyncStorage-Session, autoRefresh)
+                          Session über authStorage=LargeSecureStore, autoRefresh)
+  lib/secureStore.ts      LargeSecureStore: verschlüsselte Auth-Session (AES-Key
+                          im Keychain/Keystore, Chiffretext in AsyncStorage);
+                          Web → AsyncStorage-Fallback
 
 app.config.js             Expo-Config (ersetzt app.json; iOS-Location-Permission)
   data/                   types.ts, spots.ts (Mock-Orte — Pilot: nur München),
@@ -648,6 +654,22 @@ npm test               # Unit-Tests der reinen Logik (vitest, src/**)
 
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
+
+### (Commit) · 2026-07-06 · Auth-Token verschlüsselt (SecureStore statt Klartext)
+> Der Supabase-Auth-Token (Access + Refresh + User) lag im Klartext in
+> AsyncStorage. Jetzt verschlüsselt auf dem Gerät.
+- **Neu `src/lib/secureStore.ts` (LargeSecureStore):** ein frischer 256-bit-
+  **AES-Key liegt im iOS Keychain / Android Keystore** (`expo-secure-store`), die
+  **AES-CTR-Chiffre der Session in AsyncStorage** (kein 2-KB-Limit). Grund für den
+  Umweg: SecureStore cappt Werte bei ~2 KB, die Session-Blob (zwei JWTs + User)
+  ist größer. Key-Erzeugung via `expo-crypto` (`getRandomBytes`), AES via `aes-js`
+  — alles **Expo-Go-fest**. **Web:** kein SecureStore → AsyncStorage-Fallback.
+- **`lib/supabase.ts`:** `auth.storage` = `authStorage` statt rohem AsyncStorage.
+- **Migration bestehender Sessions:** alte Klartext-Sessions haben keinen AES-Key →
+  `decrypt` liefert `null` → Nutzer meldet sich **einmalig** neu an (fail-soft,
+  kein Crash); der nächste `setItem` schreibt verschlüsselt.
+- **Deps:** `expo-secure-store` ~15.0.8, `expo-crypto` ~15.0.9, `aes-js` ^3.1.2
+  (+ `@types/aes-js` dev). tsc sauber, 48/48 Tests, iOS-Bundle baut.
 
 ### (Commit) · 2026-07-06 · Rate-Limiting + Längen-Caps für anonyme Inserts
 > Härtet die zwei client-beschreibbaren Tabellen (`analytics_events`,
