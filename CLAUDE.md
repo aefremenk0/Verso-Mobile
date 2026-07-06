@@ -649,6 +649,27 @@ npm test               # Unit-Tests der reinen Logik (vitest, src/**)
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
+### (Commit) · 2026-07-06 · E-Mail-Bestätigung: App-Flow + Metadaten-Trigger
+> Vorbereitung, damit „Confirm email" in Supabase **angeschaltet** werden kann,
+> ohne die Registrierung zu brechen. Vorher sprang `signUp` immer in den Feed —
+> mit Bestätigung gibt es aber erst **keine Session**, der Nutzer wäre als Gast
+> im Feed gelandet (nichts persistent).
+- **`signUp` meldet jetzt `needsConfirmation`** (`src/store/auth.tsx`): kommt keine
+  Session zurück, ist Bestätigung aktiv. Setzt `emailRedirectTo`
+  (`verso://auth-callback`, damit der Link zurück in die App führt) und übergibt
+  **name/username als User-Metadaten** (`options.data`).
+- **`register.tsx`:** bei `needsConfirmation` **nicht** mehr `enter()`, sondern
+  Hinweis „E-Mail bestätigen — Link antippen, dann anmelden", Form wechselt auf
+  Login. Ohne Bestätigung (Session sofort da) läuft alles wie bisher + Profil-Save.
+- **Migration `0013`:** `handle_new_user()` schreibt jetzt **name/username aus den
+  Metadaten** in `profiles` — so ist der Name da, sobald der Nutzer bestätigt hat,
+  auch ohne dass die App (mangels Session) selbst schreiben konnte. `search_path=''`.
+- **Setup (Nutzer):** in Supabase → Authentication → **„Confirm email" AN**;
+  Redirect-URL `verso://auth-callback` erlauben; Migration `0013` einmal ausführen.
+  **Demo-Login** funktioniert dann nur noch, wenn das Demo-Konto schon bestätigt
+  ist (Testkomfort sinkt bewusst).
+- `setup_all.sql` neu generiert (inkl. 0013). tsc sauber, 48/48 Tests.
+
 ### (Commit) · 2026-07-06 · SQL-Injection-Review — clean; setup_all.sql + search_path gehärtet
 > Gezielter SQL-Injection-/Server-Trust-Audit (alle supabase-Calls, Edge Function,
 > 12 Migrationen). **Kein SQL-Injection-Vektor gefunden** — Suche ist 100 %

@@ -28,12 +28,22 @@ interface AuthResult {
   error: string | null;
 }
 
+interface SignUpResult extends AuthResult {
+  /** True when the account was created but email confirmation is required
+   *  (no session yet) — the user must click the link in their inbox first. */
+  needsConfirmation?: boolean;
+}
+
 interface AuthContextValue {
   session: Session | null;
   user: User | null;
   /** True while the persisted session is being restored on launch. */
   loading: boolean;
-  signUp: (email: string, password: string) => Promise<AuthResult>;
+  signUp: (
+    email: string,
+    password: string,
+    meta?: { name?: string; username?: string },
+  ) => Promise<SignUpResult>;
   signIn: (email: string, password: string) => Promise<AuthResult>;
   /** Sign in via an OAuth provider (Google/Apple) through the system browser. */
   signInWithProvider: (provider: OAuthProvider) => Promise<AuthResult>;
@@ -112,13 +122,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       session,
       user: session?.user ?? null,
       loading,
-      signUp: async (email, password) => {
+      signUp: async (email, password, meta) => {
         if (!hasSupabase) return { error: null }; // guest mode
-        const { error } = await supabase.auth.signUp({
+        // emailRedirectTo: the confirmation link opens back into the app
+        // (verso://auth-callback) so exchangeCodeForSession completes the sign-in.
+        // data: name/username ride along as user metadata so the handle_new_user
+        // trigger can write them into `profiles` even before the first session
+        // exists (email-confirmation flow).
+        const redirectTo = Linking.createURL("auth-callback");
+        const { data, error } = await supabase.auth.signUp({
           email: email.trim(),
           password,
+          options: { emailRedirectTo: redirectTo, data: meta ?? {} },
         });
-        return { error: error?.message ?? null };
+        if (error) return { error: error.message };
+        // No session back => "Confirm email" is ON: the user must verify first.
+        return { error: null, needsConfirmation: !data.session };
       },
       signIn: async (email, password) => {
         if (!hasSupabase) return { error: null }; // guest mode

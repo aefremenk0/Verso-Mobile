@@ -92,22 +92,44 @@ export default function Register() {
       }
     }
     setBusy(true);
-    const { error: err } =
-      mode === "register" ? await signUp(mail, password) : await signIn(mail, password);
-    if (err) {
+    const handle = cleanUsername(username);
+    const profileMeta = {
+      name: name.trim(),
+      username: handle ? `@${handle}` : "",
+    };
+    const res =
+      mode === "register"
+        ? await signUp(mail, password, profileMeta)
+        : await signIn(mail, password);
+    if (res.error) {
       setBusy(false);
-      setError(friendlyAuthError(err, lang));
+      setError(friendlyAuthError(res.error, lang));
       return;
     }
-    // On sign-up, save the chosen name + username to the profile.
-    if (mode === "register") {
-      const handle = cleanUsername(username);
-      await saveProfile({
-        name: name.trim(),
-        username: handle ? `@${handle}` : "",
-      });
-    }
     track(mode === "register" ? "sign_up" : "sign_in", { method: "email" });
+
+    // Email confirmation is ON -> no session yet. Don't enter the app; tell the
+    // user to confirm first. Their name/username was passed as sign-up metadata,
+    // so the DB trigger sets it on the profile once the account is created.
+    if (mode === "register" && "needsConfirmation" in res && res.needsConfirmation) {
+      setBusy(false);
+      Alert.alert(
+        t("Confirm your email", "E-Mail bestätigen"),
+        t(
+          `We sent a confirmation link to ${mail}. Tap it, then log in.`,
+          `Wir haben einen Bestätigungslink an ${mail} geschickt. Tippe ihn an und melde dich dann an.`,
+        ),
+      );
+      setMode("login"); // switch the form to login for when they come back
+      setPassword("");
+      return;
+    }
+
+    // Confirmation OFF -> we have a session immediately. Save name + username
+    // (the trigger also sets them from metadata; this is the fast local path).
+    if (mode === "register") {
+      await saveProfile(profileMeta);
+    }
     setBusy(false);
     enter();
   };
