@@ -12,7 +12,7 @@ create or replace function public.delete_user()
 returns void
 language plpgsql
 security definer
-set search_path = public
+set search_path = ''
 as $$
 declare
   uid uuid := auth.uid();

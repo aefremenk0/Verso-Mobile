@@ -1,6 +1,11 @@
--- Verso — komplettes Backend-Setup in einem Rutsch.
--- Reihenfolge: Schema+RLS -> Trigger -> geheimtipp-Spalte -> Seed.
+-- Verso — komplettes Backend-Setup in einem Rutsch (GENERIERT).
+-- Reihenfolge: alle Migrationen 0001–0012 in Nummernfolge, dann Seed.
+-- WICHTIG: bei jeder NEUEN Migration diese Datei neu generieren
+--          (concat der supabase/migrations/*.sql + seed.sql).
+-- Alternativ direkt die nummerierten Migrationen einzeln ausführen.
 
+
+-- ============================================================ 0001
 -- Verso — initial schema + Row Level Security.
 -- Run once in the Supabase SQL editor (or via `supabase db push`).
 --
@@ -88,7 +93,7 @@ create policy "own profile insert" on profiles for insert with check (auth.uid()
 drop policy if exists "own profile update" on profiles;
 create policy "own profile update" on profiles for update using (auth.uid() = id);
 
--- ===== 0002 =====
+-- ============================================================ 0002
 -- Verso — auto-create a profile row for every new auth user.
 -- Run once in the Supabase SQL editor after 0001_init.sql.
 --
@@ -100,7 +105,7 @@ create or replace function public.handle_new_user()
 returns trigger
 language plpgsql
 security definer
-set search_path = public
+set search_path = ''
 as $$
 begin
   insert into public.profiles (id)
@@ -115,7 +120,7 @@ create trigger on_auth_user_created
   after insert on auth.users
   for each row execute function public.handle_new_user();
 
--- ===== 0003 =====
+-- ============================================================ 0003
 -- Verso — persist the collected weekly hidden-gem per user.
 -- Run once in the Supabase SQL editor after 0001_init.sql / 0002_*.sql.
 --
@@ -126,7 +131,306 @@ create trigger on_auth_user_created
 alter table profiles
   add column if not exists geheimtipp_abgeholt text[] not null default '{}';
 
--- ===== SEED =====
+-- ============================================================ 0004
+-- Verso — notification preferences + push token per user.
+-- Run once in the Supabase SQL editor after the earlier migrations.
+--
+-- `notify` holds which notification types the user enabled
+-- (e.g. {"geheimtipp","spots"}). `push_token` is the Expo push token used by a
+-- future backend / edge function to send "new spots" / "events" notifications.
+
+alter table profiles
+  add column if not exists notify text[] not null default '{}';
+
+alter table profiles
+  add column if not exists push_token text;
+
+-- ============================================================ 0005
+-- Verso — avatar image support.
+-- Run once in the Supabase SQL editor after the earlier migrations.
+--
+-- Adds profiles.avatar_url and a public "avatars" Storage bucket. Anyone can
+-- READ avatars (public bucket); each user may only write files under their own
+-- <uid>/ folder.
+
+alter table profiles
+  add column if not exists avatar_url text;
+
+-- Public bucket for avatars.
+insert into storage.buckets (id, name, public)
+values ('avatars', 'avatars', true)
+on conflict (id) do nothing;
+
+-- Public read of avatar objects.
+drop policy if exists "avatars public read" on storage.objects;
+create policy "avatars public read" on storage.objects
+  for select using (bucket_id = 'avatars');
+
+-- A user may upload/replace only files under their own uid folder.
+drop policy if exists "avatars user insert" on storage.objects;
+create policy "avatars user insert" on storage.objects
+  for insert with check (
+    bucket_id = 'avatars'
+    and (storage.foldername(name))[1] = auth.uid()::text
+  );
+
+drop policy if exists "avatars user update" on storage.objects;
+create policy "avatars user update" on storage.objects
+  for update using (
+    bucket_id = 'avatars'
+    and (storage.foldername(name))[1] = auth.uid()::text
+  );
+
+drop policy if exists "avatars user delete" on storage.objects;
+create policy "avatars user delete" on storage.objects
+  for delete using (
+    bucket_id = 'avatars'
+    and (storage.foldername(name))[1] = auth.uid()::text
+  );
+
+-- ============================================================ 0006
+-- Verso — place suggestions + account deletion.
+-- Run once in the Supabase SQL editor after the earlier migrations.
+
+-- ── Place suggestions ("Ort vorschlagen") ────────────────────────────────────
+create table if not exists spot_suggestions (
+  id         uuid primary key default gen_random_uuid(),
+  user_id    uuid references auth.users on delete set null,
+  name       text not null,
+  category   text,
+  area       text,
+  note       text,
+  city       text,
+  created_at timestamptz not null default now()
+);
+
+alter table spot_suggestions enable row level security;
+
+-- Anyone (signed-in or guest) may submit; nobody can read them from the client
+-- (only via the dashboard / an admin role) -> no select policy.
+drop policy if exists "suggestions insert" on spot_suggestions;
+create policy "suggestions insert" on spot_suggestions
+  for insert with check (true);
+
+-- ── Account deletion ─────────────────────────────────────────────────────────
+-- Lets a signed-in user delete their own auth account (profiles cascade-delete).
+-- security definer so it can touch auth.users; only the caller's own row.
+create or replace function public.delete_user()
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  delete from auth.users where id = auth.uid();
+end;
+$$;
+
+revoke all on function public.delete_user() from public;
+grant execute on function public.delete_user() to authenticated;
+
+-- ============================================================ 0007
+-- Verso — server-side Insider status (fed by the RevenueCat webhook).
+-- Run once in the Supabase SQL editor after the earlier migrations.
+--
+-- The RevenueCat webhook (supabase/functions/revenuecat-webhook) writes these
+-- columns so the DATABASE knows who's a paying Insider — needed to protect
+-- premium content server-side (the client alone can't be trusted for that).
+
+alter table profiles
+  add column if not exists is_insider boolean not null default false;
+
+alter table profiles
+  add column if not exists insider_expires_at timestamptz;
+
+-- ── Example: Insider-only spots ("verborgene Ebene") ─────────────────────────
+-- When you add hidden spots, gate them with a column + RLS that trusts the
+-- server-set flag. Uncomment when needed:
+--
+-- alter table spots add column if not exists insider_only boolean not null default false;
+--
+-- drop policy if exists "read spots" on spots;
+-- create policy "read spots" on spots for select using (
+--   not insider_only
+--   or exists (
+--     select 1 from profiles p
+--     where p.id = auth.uid() and p.is_insider
+--   )
+-- );
+
+-- ============================================================ 0008
+-- Verso — first-party analytics + crash events (fed by src/lib/analytics.ts).
+-- Run once in the Supabase SQL editor after the earlier migrations.
+--
+-- Privacy by design: clients may INSERT events but never SELECT them back, and
+-- events carry no PII (only event names, an opaque user id, whitelisted props).
+
+create table if not exists analytics_events (
+  id bigint generated always as identity primary key,
+  type text not null check (type in ('track', 'error')),
+  name text not null,
+  props jsonb not null default '{}'::jsonb,
+  user_id uuid,
+  ts timestamptz not null default now(),
+  inserted_at timestamptz not null default now()
+);
+
+create index if not exists analytics_events_name_idx on analytics_events (name);
+create index if not exists analytics_events_ts_idx on analytics_events (ts);
+
+alter table analytics_events enable row level security;
+
+-- Anyone (incl. anonymous/guest) may write an event...
+drop policy if exists "insert analytics" on analytics_events;
+create policy "insert analytics" on analytics_events
+  for insert
+  with check (true);
+
+-- ...but NO client may read them back (only the service role / SQL editor can).
+-- (No select policy => select is denied under RLS.)
+
+-- ============================================================ 0009
+-- Verso — complete account deletion (GDPR Art. 17 "right to erasure").
+-- Run once in the Supabase SQL editor after the earlier migrations.
+--
+-- The old delete_user() only removed the auth.users row (profiles cascade). That
+-- left the user's AVATAR file in Storage, their ANALYTICS rows and their SPOT
+-- SUGGESTIONS behind. This version wipes all of it in one transaction.
+--
+-- NOTE (can't be done in SQL): the RevenueCat customer must be deleted via the
+-- RevenueCat API/dashboard (or a server job) — do that in the deletion pipeline.
+
+create or replace function public.delete_user()
+returns void
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  uid uuid := auth.uid();
+begin
+  if uid is null then
+    return; -- not signed in, nothing to delete
+  end if;
+
+  -- 1) Avatar file(s) in the public "avatars" bucket (stored under "<uid>/…").
+  delete from storage.objects
+   where bucket_id = 'avatars'
+     and name like uid::text || '/%';
+
+  -- 2) First-party analytics rows tied to this user (if the table exists).
+  if to_regclass('public.analytics_events') is not null then
+    delete from public.analytics_events where user_id = uid;
+  end if;
+
+  -- 3) This user's place suggestions (remove content, not just the link).
+  if to_regclass('public.spot_suggestions') is not null then
+    delete from public.spot_suggestions where user_id = uid;
+  end if;
+
+  -- 4) Finally the auth user itself — profiles cascade-delete via their FK.
+  delete from auth.users where id = uid;
+end;
+$$;
+
+revoke all on function public.delete_user() from public;
+grant execute on function public.delete_user() to authenticated;
+
+-- ============================================================ 0010
+-- Verso 0010 — protect the Insider status columns from self-service escalation.
+-- Run once in the Supabase SQL editor.
+--
+-- Security: the `profiles` UPDATE policy allows a user to update their own row,
+-- which includes `is_insider` / `insider_expires_at`. Those must ONLY be set by
+-- the RevenueCat webhook (service role). This trigger resets any change to those
+-- columns unless the caller is the service role, so a user can't grant themselves
+-- Insider by writing to their own profile row via the REST API.
+
+create or replace function public.protect_insider_columns()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  if auth.role() is distinct from 'service_role' then
+    new.is_insider := old.is_insider;
+    new.insider_expires_at := old.insider_expires_at;
+  end if;
+  return new;
+end;
+$$;
+
+drop trigger if exists protect_insider on profiles;
+create trigger protect_insider
+  before update on profiles
+  for each row execute function public.protect_insider_columns();
+
+-- ============================================================ 0011
+-- Verso 0011 — bind inserts to the caller's own identity.
+-- Run once in the Supabase SQL editor.
+--
+-- Security: `spot_suggestions` and `analytics_events` previously allowed inserts
+-- with check (true) — anyone could write rows attributed to ANY user_id. This
+-- restricts inserts so a row's user_id must be null (guest) or the caller's own
+-- uid, so nobody can forge suggestions/events in another user's name. Guest
+-- inserts (no user_id, e.g. pre-login analytics) stay allowed.
+
+drop policy if exists "suggestions insert" on spot_suggestions;
+create policy "suggestions insert" on spot_suggestions
+  for insert with check (user_id is null or user_id = auth.uid());
+
+drop policy if exists "insert analytics" on analytics_events;
+create policy "insert analytics" on analytics_events
+  for insert with check (user_id is null or user_id = auth.uid());
+
+-- ============================================================ 0012
+-- Verso 0012 — close the Insider-escalation gap on the INSERT path.
+-- Run once in the Supabase SQL editor (after 0010).
+--
+-- Security: 0010 added a BEFORE UPDATE trigger that resets is_insider /
+-- insider_expires_at for non-service-role callers, so a user can't grant
+-- themselves Insider by UPDATING their own profile row. But the profiles
+-- INSERT policy ("own profile insert", with check auth.uid() = id) authorizes a
+-- user to insert their OWN row with ANY column values — including
+-- is_insider = true — and the trigger did NOT fire on INSERT. Normally the
+-- handle_new_user() trigger (0002) pre-creates the row, so a client INSERT hits
+-- a PK conflict and fails; but relying on "the row always pre-exists" is fragile
+-- for a privilege-granting column (a row provisioned via the Admin API / import
+-- that bypasses 0002, or a deleted-then-recreated row, would let a plain
+-- `insert into profiles (id, is_insider) values (auth.uid(), true)` succeed).
+--
+-- Fix: extend the guard to INSERT too. On INSERT there is no `old` row, so a
+-- non-service-role caller's Insider columns are forced to the safe default.
+
+create or replace function public.protect_insider_columns()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $$
+begin
+  if auth.role() is distinct from 'service_role' then
+    if tg_op = 'INSERT' then
+      -- No prior row to preserve — force the safe default.
+      new.is_insider := false;
+      new.insider_expires_at := null;
+    else
+      -- Preserve whatever the service role (webhook) last set.
+      new.is_insider := old.is_insider;
+      new.insider_expires_at := old.insider_expires_at;
+    end if;
+  end if;
+  return new;
+end;
+$$;
+
+drop trigger if exists protect_insider on public.profiles;
+create trigger protect_insider
+  before insert or update on public.profiles
+  for each row execute function public.protect_insider_columns();
+
+-- ============================================================ SEED
 -- GENERATED by scripts/gen-seed.ts — do not edit by hand.
 -- Run after 0001_init.sql (Supabase SQL editor bypasses RLS).
 

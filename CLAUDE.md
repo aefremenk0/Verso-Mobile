@@ -649,6 +649,29 @@ npm test               # Unit-Tests der reinen Logik (vitest, src/**)
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
+### (Commit) · 2026-07-06 · SQL-Injection-Review — clean; setup_all.sql + search_path gehärtet
+> Gezielter SQL-Injection-/Server-Trust-Audit (alle supabase-Calls, Edge Function,
+> 12 Migrationen). **Kein SQL-Injection-Vektor gefunden** — Suche ist 100 %
+> client-seitig (`matchesQuery` über bereits geladene Arrays, kein User-Text geht
+> je als PostgREST-Filter an die DB); **keine** `.or()`/`.filter(string)`/
+> `.textSearch()`/dynamische `order`-Strings; alle `.eq()` parametrisiert;
+> `rpc("delete_user")` ohne Argument (nutzt `auth.uid()` intern); Mass-Assignment
+> auf `is_insider` durch Trigger 0012 + RLS geblockt; Webhook nutzt `.eq("id",uid)`.
+- **🟠 F1 (Deployment-Drift, gefixt): `supabase/setup_all.sql` war veraltet** —
+  enthielt nur 0001–0003 + Seed, **ohne** jede Härtung (0009 Kaskade, 0010/0012
+  Insider-Trigger, 0011 Insert-Checks) und ohne 0004–0008. Wer diese Datei statt
+  der nummerierten Migrationen laufen lässt, bekommt ein **ungeschütztes** Schema.
+  → **komplett neu generiert** (alle 0001–0012 in Reihenfolge + Seed). Merke: bei
+  jeder neuen Migration `setup_all.sql` neu erzeugen (oder einzeln ausführen).
+- **🟢 F2 (Hardening): `search_path = ''`** statt `public` in `handle_new_user()`
+  (0002) und `delete_user()` (0009) — Gleichstand mit 0012. Nicht ausnutzbar (alle
+  Objekte sind schema-qualifiziert), reine Defense-in-depth. **Live-DB:** optional
+  0002/0009 einmal neu ausführen; nicht dringend.
+- **F3 (nur Hinweis, kein Fix nötig):** `.select(column)`/`.select(columns.join)`
+  in `src/lib/profile.ts` interpolieren Spaltennamen — heute sicher, weil `column`
+  der feste `ProfileColumn`-Union ist und `columns` nur das Literal
+  `["name","username","bio","avatar_url"]`. Nie User-Input dorthin geben.
+
 ### (Commit) · 2026-07-06 · Dark Mode für alle + App-Icon-Auswahl entfernt
 - **Dark Mode ist nicht mehr Insider-only** — für **jeden** verfügbar
   (`src/store/appearance.tsx`: `isDark = pref === "dark"`, `canDark = true`,
