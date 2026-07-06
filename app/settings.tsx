@@ -276,30 +276,16 @@ export default function Settings() {
             </Text>
             <LanguageToggle />
           </View>
-          <NavRow
-            label={t("App icon", "App-Icon")}
-            value="✦"
-            onPress={() => router.push("/app-icon")}
-          />
-          {/* Dark mode — an Insider perk. Non-Insiders tapping it get the upsell. */}
+          {/* Dark mode — available to everyone. */}
           <View className="flex-row items-center justify-between border-b border-line/5 px-4 py-3">
-            <View className="flex-row items-center">
-              <Text className="font-hk-extrabold text-[15px] text-ink">
-                {t("Dark mode", "Dunkelmodus")}
-              </Text>
-              <Text className="ml-2 text-[12px]" style={{ color: "#F4C430" }}>
-                ✦
-              </Text>
-            </View>
+            <Text className="font-hk-extrabold text-[15px] text-ink">
+              {t("Dark mode", "Dunkelmodus")}
+            </Text>
             <Toggle
               value={appearance.isDark}
-              onChange={() => {
-                if (appearance.canDark) {
-                  appearance.setPref(appearance.pref === "dark" ? "light" : "dark");
-                } else {
-                  router.push("/insider");
-                }
-              }}
+              onChange={() =>
+                appearance.setPref(appearance.pref === "dark" ? "light" : "dark")
+              }
             />
           </View>
           {/* Anonymous usage stats — opt-out (privacy-first). */}

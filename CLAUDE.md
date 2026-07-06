@@ -525,8 +525,10 @@ Einstellungen, Geheimtipp) + Legal + Ort-vorschlagen + App-Icon-Picker.
   (Dev Build); `app/insider.tsx` = echte **Paywall** (Jahres-/Monatsplan, „Bester
   Wert" + Ersparnis, Trial, **Preise in EUR**). Expo Go / ohne Produkte → Mock-Vorschau.
 - **Insider-Features:** Sport-/Live-Events-Szenen, **„Überrasch mich"** (nur Insider),
-  **Dark Mode**, **wählbare App-Icons** (Gold/Invers, iOS), goldenes „✦ VERSO
-  INSIDER"-Banner. Alle über denselben Flag.
+  goldenes „✦ VERSO INSIDER"-Banner. Über denselben Flag.
+  **Dark Mode ist NICHT mehr Insider-only** — für alle verfügbar (Einstellungen →
+  Dunkelmodus). Die **wählbaren App-Icons wurden komplett entfernt** (kein
+  App-Icon-Picker mehr).
 - **Echte Karte = Apple Maps** (`react-native-maps`, Dev Build); Expo Go = Fallback.
   Spot-Karte poppt, Karte zentriert auf den Pin.
 - **Push-Benachrichtigungen** (`expo-notifications`): 3 Toggles echt; wöchentliche
@@ -646,6 +648,21 @@ npm test               # Unit-Tests der reinen Logik (vitest, src/**)
 
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
+
+### (Commit) · 2026-07-06 · Dark Mode für alle + App-Icon-Auswahl entfernt
+- **Dark Mode ist nicht mehr Insider-only** — für **jeden** verfügbar
+  (`src/store/appearance.tsx`: `isDark = pref === "dark"`, `canDark = true`,
+  `useInsider`-Abhängigkeit raus). In den Einstellungen: das goldene **✦**-Badge
+  neben „Dunkelmodus" weg, kein Upsell-Redirect mehr → der Toggle schaltet direkt.
+- **App-Icon-Auswahl komplett entfernt** (nicht mehr customizable): Screen
+  `app/app-icon.tsx` + Helper `src/lib/appIcon.ts` gelöscht, „App-Icon"-Zeile aus
+  den Einstellungen raus, Route aus `_layout.tsx` raus, `expo-alternate-app-icons`
+  aus `app.config.js` (Plugin) **und** `package.json` (Dependency) entfernt. Das
+  **Standard-App-Icon bleibt** (weißes „v." auf dunkel, `assets/icon.png`). Die
+  ungenutzten Assets `assets/icon-gold.png`/`icon-inverse.png` liegen noch da
+  (harmlos, kein Code referenziert sie). tsc sauber, 48/48 Tests.
+- Hinweis: `expo-alternate-app-icons` ist ein natives Plugin → beim nächsten
+  Dev-Build einmal `npm install` + Prebuild, damit es aus dem nativen Projekt fällt.
 
 ### (Commit) · 2026-07-06 · „Verso unterstützen / Spende" komplett entfernt
 - **Spenden-Zeile raus** (`app/(tabs)/profil.tsx`): die „Verso unterstützen"-Row

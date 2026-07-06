@@ -8,21 +8,19 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { useInsider } from "./insider";
-
-// Appearance (light / dark). Dark mode is an Insider perk: the preference is
-// stored for everyone, but only takes effect while the user is an Insider.
-// Persisted in AsyncStorage (device-level, survives restarts).
+// Appearance (light / dark). Dark mode is available to EVERYONE (not gated on
+// Insider). The preference is persisted in AsyncStorage (device-level, survives
+// restarts).
 
 type Theme = "light" | "dark";
 const KEY = "verso.theme";
 
 interface AppearanceContextValue {
-  /** The user's chosen preference (persists even without Insider). */
+  /** The user's chosen preference. */
   pref: Theme;
-  /** The EFFECTIVE theme (dark only when Insider + pref dark). */
+  /** The EFFECTIVE theme (dark when pref is dark). */
   isDark: boolean;
-  /** Whether the user may switch to dark (Insider). */
+  /** Kept for API compatibility — dark mode is always available now. */
   canDark: boolean;
   setPref: (theme: Theme) => void;
 }
@@ -30,7 +28,6 @@ interface AppearanceContextValue {
 const AppearanceContext = createContext<AppearanceContextValue | null>(null);
 
 export function AppearanceProvider({ children }: { children: ReactNode }) {
-  const { isInsider } = useInsider();
   const [pref, setPrefState] = useState<Theme>("light");
 
   useEffect(() => {
@@ -49,11 +46,11 @@ export function AppearanceProvider({ children }: { children: ReactNode }) {
   const value = useMemo<AppearanceContextValue>(
     () => ({
       pref,
-      isDark: isInsider && pref === "dark",
-      canDark: isInsider,
+      isDark: pref === "dark",
+      canDark: true,
       setPref,
     }),
-    [pref, isInsider, setPref],
+    [pref, setPref],
   );
 
   return (

@@ -167,7 +167,6 @@ export default function RootLayout() {
               name="reset-password"
               options={{ presentation: "modal", animation: "slide_from_bottom" }}
             />
-            <Stack.Screen name="app-icon" />
             <Stack.Screen name="bezirk/[name]" />
           </Stack>
           <PasswordRecoveryWatcher />
