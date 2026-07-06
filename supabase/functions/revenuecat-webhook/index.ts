@@ -14,6 +14,17 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const ENTITLEMENT = "insider";
 
+// Constant-time string compare (avoids leaking the secret via response timing).
+// Hash both sides to equal-length digests, then diff every byte — no early exit.
+async function timingSafeEqual(a: string, b: string): Promise<boolean> {
+  const enc = new TextEncoder();
+  const ha = new Uint8Array(await crypto.subtle.digest("SHA-256", enc.encode(a)));
+  const hb = new Uint8Array(await crypto.subtle.digest("SHA-256", enc.encode(b)));
+  let diff = 0;
+  for (let i = 0; i < ha.length; i++) diff |= ha[i] ^ hb[i];
+  return diff === 0;
+}
+
 // Event types that grant / keep access vs. revoke it.
 const GRANTING = new Set([
   "INITIAL_PURCHASE",
@@ -34,7 +45,8 @@ Deno.serve(async (req) => {
   // Fail CLOSED: if the secret isn't configured, reject everything — otherwise a
   // missing env var would let anyone POST and grant/revoke Insider status.
   const secret = Deno.env.get("REVENUECAT_WEBHOOK_SECRET");
-  if (!secret || req.headers.get("Authorization") !== secret) {
+  const auth = req.headers.get("Authorization") ?? "";
+  if (!secret || !(await timingSafeEqual(auth, secret))) {
     return new Response("Unauthorized", { status: 401 });
   }
 
@@ -56,8 +68,10 @@ Deno.serve(async (req) => {
   const entitlements: string[] =
     event.entitlement_ids ??
     (event.entitlement_id ? [event.entitlement_id] : []);
-  const touchesInsider =
-    entitlements.length === 0 || entitlements.includes(ENTITLEMENT);
+  // Only act when the "insider" entitlement is explicitly present. An event that
+  // omits entitlement fields (or concerns some other product) must NOT flip
+  // Insider on — don't treat an empty list as "touches insider".
+  const touchesInsider = entitlements.includes(ENTITLEMENT);
 
   const expiresMs: number | null = event.expiration_at_ms ?? null;
   const activeByTime = expiresMs ? expiresMs > Date.now() : true;

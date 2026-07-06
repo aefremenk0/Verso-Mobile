@@ -647,6 +647,37 @@ npm test               # Unit-Tests der reinen Logik (vitest, src/**)
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
+### (Commit) · 2026-07-06 · Security-Review 2 (Deep) — Insider-INSERT-Lücke + Webhook-Härtung
+> Zweiter, tiefer Security-Review (4 parallele Auditoren: Backend/RLS, Client-
+> Auth/Secrets, Deep-Links/PII, Deps/Config). Ergebnis überwiegend sauber — der
+> a6e09f4-Pass hält. Ein realer **MEDIUM**-Fund + zwei LOW-Backend-Härtungen
+> gefixt. tsc sauber, 48/48 Tests.
+- **🟠 MEDIUM — Insider-Eskalation über den INSERT-Pfad (Migration 0012):** der
+  `protect_insider`-Trigger aus 0010 feuerte nur `before update`. Die profiles-
+  INSERT-Policy (`with check auth.uid() = id`) erlaubt aber, die **eigene** Zeile
+  mit **beliebigen** Spalten anzulegen — inkl. `is_insider = true` — und der
+  Trigger griff dort nicht. Normal pre-created `handle_new_user()` (0002) die
+  Zeile (Client-INSERT → PK-Konflikt → schlägt fehl), aber sich darauf zu
+  verlassen ist für eine Privileg-Spalte fragil (Admin-API/Import-Provisionierung
+  oder gelöschte+neu angelegte Zeile umgeht 0002). **Fix:** Trigger auf
+  `before insert or update`; die Funktion setzt bei `tg_op = 'INSERT'` die
+  Insider-Spalten hart auf Default (kein `old` vorhanden). `search_path` zudem auf
+  `''` (statt `public`) verschärft.
+- **🟢 Webhook-Härtung (`revenuecat-webhook`):** (1) **Konstant-Zeit-Vergleich**
+  des Authorization-Secrets (SHA-256 beидseitig, byteweises XOR) statt `!==`
+  (kein Timing-Leak). (2) **Explizite Entitlement-Prüfung:** eine leere
+  `entitlement_ids`-Liste gilt nicht mehr als „betrifft insider" → ein Grant-Event
+  ohne/mit fremdem Entitlement schaltet Insider nicht mehr an (Revoke bleibt
+  fail-safe). Fail-closed-Secret-Gate (a6e09f4) unverändert.
+- **🟢 `nativewind` exakt gepinnt** (`^4.1.23` → `4.1.23`): ohne committetes
+  Lockfile ließ das Caret ein `npm install` auf das **kaputte 4.2.x** springen
+  (Stolperfalle #2). Jetzt fest.
+- **Bewusst als LOW/offen dokumentiert** (nicht gefixt, kein aktiver Exploit):
+  Auth-Token in AsyncStorage (→ SecureStore empfohlen); unbegrenzte anonyme
+  Inserts in `analytics_events`/`spot_suggestions` (Rate-Limit später); keine
+  Längen-Caps auf name/username/note (DB-CHECK empfohlen); Avatar-MIME/Größe
+  ungeprüft; `scrubProps` redigiert PII in Prop-Strings noch nicht.
+
 ### a6e09f4 · 2026-07-04 · Security-Härtung + RevenueCat-Log-Fix
 > Nach einem vollständigen Security-Review. Alle Backend-Fixes als versionierte
 > Migrationen (0010/0011); der Nutzer hat die zugehörigen Queries (12/13) im
