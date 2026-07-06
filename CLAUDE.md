@@ -647,6 +647,19 @@ npm test               # Unit-Tests der reinen Logik (vitest, src/**)
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
+### (Commit) · 2026-07-06 · „Verso unterstützen / Spende" komplett entfernt
+- **Spenden-Zeile raus** (`app/(tabs)/profil.tsx`): die „Verso unterstützen"-Row
+  mit dem gelben **„SPENDE/DONATE"-Badge** (führte auf `verso.app`) ist
+  entfernt. Grund: In-App-Spenden lohnen sich nicht (Apple nimmt 30 %, für eine
+  Firma keine Steuer-/Gemeinnutz-Ausnahme; Rejection-Risiko) und untergraben die
+  Insider-Wertigkeit. **Unterstützung läuft ausschließlich über Verso Insider**
+  (Abo) — bei Bedarf später „Abo verschenken"; eine reine Spenden-Geste nur
+  außerhalb der App auf `verso.app`.
+- Ungenutztes `badge`-Prop aus der lokalen `Row`-Komponente mitentfernt.
+  `openExternal` bleibt (Vorschlag-Zeile nutzt es weiter). tsc sauber, 48/48 Tests.
+- Hinweis: das Design-Mockup (`design/Verso_Mobile_v2.dc.html`) enthält noch ein
+  „Spende"-Badge — das ist Referenzmaterial, kein App-Code, und bleibt unberührt.
+
 ### (Commit) · 2026-07-06 · Security-Review 2 (Deep) — Insider-INSERT-Lücke + Webhook-Härtung
 > Zweiter, tiefer Security-Review (4 parallele Auditoren: Backend/RLS, Client-
 > Auth/Secrets, Deep-Links/PII, Deps/Config). Ergebnis überwiegend sauber — der

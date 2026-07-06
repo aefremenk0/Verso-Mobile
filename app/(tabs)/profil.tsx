@@ -24,12 +24,10 @@ function Row({
   label,
   value,
   onPress,
-  badge,
 }: {
   label: string;
   value?: string;
   onPress?: () => void;
-  badge?: string;
 }) {
   return (
     <Pressable
@@ -40,13 +38,6 @@ function Row({
       <View className="flex-row items-center">
         {value ? (
           <Text className="mr-2 font-hk-medium text-[14px] text-ink-3">{value}</Text>
-        ) : null}
-        {badge ? (
-          <View className="mr-2 rounded-pill bg-accent px-2.5 py-1">
-            <Text className="font-hk-bold text-[10px] tracking-[1px] text-accent-ink">
-              {badge}
-            </Text>
-          </View>
         ) : null}
         <Arrow width={18} color="#8A857C" />
       </View>
@@ -176,11 +167,6 @@ export default function Profil() {
             onPress={() => router.push("/gespeichert")}
           />
           <Row label={t("Settings", "Einstellungen")} onPress={() => router.push("/settings")} />
-          <Row
-            label={t("Support Verso", "Verso unterstützen")}
-            badge={t("DONATE", "SPENDE")}
-            onPress={() => openExternal("https://verso.app")}
-          />
           <Row
             label={t("Make a suggestion", "Vorschlag machen")}
             value="verso.app ↗"
