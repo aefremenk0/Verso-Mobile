@@ -177,6 +177,7 @@ export default function OrtVorschlagen() {
           onChangeText={setName}
           placeholder={t("e.g. Kellerkind", "z. B. Kellerkind")}
           placeholderTextColor="#8A857C"
+          maxLength={120}
           className="rounded-[14px] border border-line/10 bg-surface px-4 py-3.5 font-hk-medium text-[15px] text-ink"
           inputAccessoryViewID={KEYBOARD_DONE_ID}
         />
@@ -208,6 +209,7 @@ export default function OrtVorschlagen() {
             onChangeText={setArea}
             placeholder={t("Neighborhood or street", "Viertel oder Straße")}
             placeholderTextColor="#8A857C"
+            maxLength={120}
             className="rounded-[14px] border border-line/10 bg-surface px-4 py-3.5 font-hk-medium text-[15px] text-ink"
             inputAccessoryViewID={KEYBOARD_DONE_ID}
           />
@@ -224,6 +226,7 @@ export default function OrtVorschlagen() {
             )}
             placeholderTextColor="#8A857C"
             multiline
+            maxLength={1000}
             className="h-[110px] rounded-[14px] border border-line/10 bg-surface px-4 py-3.5 font-hk-medium text-[15px] text-ink"
             style={{ textAlignVertical: "top" }}
             inputAccessoryViewID={KEYBOARD_DONE_ID}

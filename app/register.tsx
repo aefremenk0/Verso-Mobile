@@ -353,6 +353,7 @@ export default function Register() {
               placeholderTextColor="#8A857C"
               autoCapitalize="words"
               autoComplete="name"
+              maxLength={80}
               className="mb-2.5 rounded-button bg-surface px-5 py-4 font-hk-medium text-[15px] text-ink"
               style={{ borderWidth: 1, borderColor: "rgba(0,0,0,0.08)" }}
               inputAccessoryViewID={KEYBOARD_DONE_ID}
@@ -367,6 +368,7 @@ export default function Register() {
                 autoCapitalize="none"
                 autoCorrect={false}
                 autoComplete="username-new"
+                maxLength={39}
                 className="flex-1 py-4 pl-1 font-hk-medium text-[15px] text-ink"
                 inputAccessoryViewID={KEYBOARD_DONE_ID}
               />

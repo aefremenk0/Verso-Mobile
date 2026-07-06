@@ -24,11 +24,13 @@ function Field({
   value,
   onChangeText,
   multiline,
+  maxLength,
 }: {
   label: string;
   value: string;
   onChangeText: (t: string) => void;
   multiline?: boolean;
+  maxLength?: number;
 }) {
   return (
     <View>
@@ -39,6 +41,7 @@ function Field({
         value={value}
         onChangeText={onChangeText}
         multiline={multiline}
+        maxLength={maxLength}
         inputAccessoryViewID={KEYBOARD_DONE_ID}
         className="rounded-[14px] border border-line/20 bg-surface px-4 py-3.5 font-hk-medium text-[15px] text-ink"
         style={{
@@ -158,9 +161,9 @@ export default function ProfilBearbeiten() {
 
         {/* Fields */}
         <View className="gap-3.5">
-          <Field label={t("NAME", "NAME")} value={name} onChangeText={setName} />
-          <Field label={t("USERNAME", "BENUTZERNAME")} value={username} onChangeText={setUsername} />
-          <Field label={t("BIO", "BIO")} value={bio} onChangeText={setBio} multiline />
+          <Field label={t("NAME", "NAME")} value={name} onChangeText={setName} maxLength={80} />
+          <Field label={t("USERNAME", "BENUTZERNAME")} value={username} onChangeText={setUsername} maxLength={40} />
+          <Field label={t("BIO", "BIO")} value={bio} onChangeText={setBio} multiline maxLength={300} />
         </View>
 
         {/* Save (at the bottom) */}

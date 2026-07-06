@@ -649,6 +649,26 @@ npm test               # Unit-Tests der reinen Logik (vitest, src/**)
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
+### (Commit) · 2026-07-06 · Rate-Limiting + Längen-Caps für anonyme Inserts
+> Härtet die zwei client-beschreibbaren Tabellen (`analytics_events`,
+> `spot_suggestions`) gegen Spam/Bloat über den öffentlichen anon-Key.
+- **Längen-Caps (Migration `0015`, DB-CHECK):** `profiles.name ≤80`, `username ≤40`,
+  `bio ≤300`; `spot_suggestions.name ≤120`, `area ≤120`, `note ≤1000`,
+  `category ≤40`, `city ≤80`; `analytics_events.name ≤120` + **`props`-Payload
+  ≤4 KB** (`octet_length(props::text)`). Server-seitiger Backstop.
+- **Client-`maxLength`** passend gesetzt (register Name/Username, profil-bearbeiten
+  Name/Username/Bio, ort-vorschlagen Name/Area/Note) → Nutzer sieht die Grenze in
+  der UI statt einer stillen Server-Ablehnung.
+- **Rate-Limiting (Migration `0016`):** neue Tabelle `rate_limits` (RLS, keine
+  Policy → nur SECURITY-DEFINER-Funktionen schreiben) + `enforce_rate_limit(tag,
+  max,window)` — Fixed-Window-Limiter, gebucketet über einen **md5-Hash der Client-
+  IP** (nie die rohe IP → privacy-first). BEFORE-INSERT-Trigger:
+  **analytics = 120/min/IP**, **spot_suggestions = 10/Stunde/IP**. Bei Überschreitung
+  `raise exception` → die fail-soften Insert-Pfade (analytics/suggestions) verwerfen
+  still, **kein Crash**. Opportunistisches Cleanup abgelaufener Buckets (~1 %).
+- **Setup (Nutzer):** Migrationen `0015` + `0016` im SQL-Editor ausführen.
+  `setup_all.sql` neu generiert. tsc sauber, 48/48 Tests.
+
 ### (Commit) · 2026-07-06 · „Zuletzt angesehen" pro Konto statt geräte-lokal
 - **`store/recent.tsx` nutzt jetzt `usePersistedList("recent_spot_ids", …)`** statt
   eines geräteweiten AsyncStorage-Keys. Damit folgt „zuletzt angesehen" dem
