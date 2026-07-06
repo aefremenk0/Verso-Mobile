@@ -31,8 +31,10 @@ Deno.serve(async (req) => {
   }
 
   // Verify the shared secret (RevenueCat sends it as the Authorization header).
+  // Fail CLOSED: if the secret isn't configured, reject everything — otherwise a
+  // missing env var would let anyone POST and grant/revoke Insider status.
   const secret = Deno.env.get("REVENUECAT_WEBHOOK_SECRET");
-  if (secret && req.headers.get("Authorization") !== secret) {
+  if (!secret || req.headers.get("Authorization") !== secret) {
     return new Response("Unauthorized", { status: 401 });
   }
 
