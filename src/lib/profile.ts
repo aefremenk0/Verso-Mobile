@@ -13,6 +13,7 @@ export type ProfileColumn =
   | "saved_spot_ids"
   | "interests"
   | "geheimtipp_abgeholt"
+  | "recent_spot_ids"
   | "notify";
 
 export async function loadLocal(key: string): Promise<string[] | null> {

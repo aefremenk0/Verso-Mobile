@@ -649,6 +649,20 @@ npm test               # Unit-Tests der reinen Logik (vitest, src/**)
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
+### (Commit) · 2026-07-06 · „Zuletzt angesehen" pro Konto statt geräte-lokal
+- **`store/recent.tsx` nutzt jetzt `usePersistedList("recent_spot_ids", …)`** statt
+  eines geräteweiten AsyncStorage-Keys. Damit folgt „zuletzt angesehen" dem
+  **angemeldeten Konto** (AsyncStorage-Cache pro `uid` + Spalte in `profiles`) —
+  ein **neues Konto startet leer**, und ein Folge-Login auf demselben Gerät sieht
+  **nicht** mehr die Einträge des Vorgängers. Gast (nicht eingeloggt) = in-memory,
+  leer. API (`recentIds`/`pushRecent`/`clearRecent`) unverändert; Logout leert die
+  Liste automatisch (uid→null), ohne die DB zu löschen.
+- **Migration `0014`:** Spalte `recent_spot_ids text[]` auf `profiles`
+  (`ProfileColumn` in `src/lib/profile.ts` erweitert). Konto-Löschung (0009)
+  räumt sie via profiles-Kaskade mit auf. `setup_all.sql` neu generiert.
+- **Setup (Nutzer):** Migration `0014` einmal im SQL-Editor ausführen.
+  tsc sauber, 48/48 Tests.
+
 ### (Commit) · 2026-07-06 · E-Mail-Bestätigung: App-Flow + Metadaten-Trigger
 > Vorbereitung, damit „Confirm email" in Supabase **angeschaltet** werden kann,
 > ohne die Registrierung zu brechen. Vorher sprang `signUp` immer in den Feed —

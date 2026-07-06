@@ -1,20 +1,20 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   createContext,
   useCallback,
   useContext,
-  useEffect,
   useMemo,
-  useState,
   type ReactNode,
 } from "react";
+import { usePersistedList } from "./usePersistedList";
 
-// "Recently viewed" spots. Device-level (works for guests too — it's a browsing
-// convenience, not account data), persisted in AsyncStorage. Most-recent first,
-// capped so it stays a short rail.
+// "Recently viewed" spots — PER ACCOUNT (profiles.recent_spot_ids), so the list
+// follows the signed-in user and a fresh account starts empty. Persisted via
+// usePersistedList (AsyncStorage cache keyed by uid + the profiles column).
+// Guest (not signed in): in-memory only, empty. Most-recent first, capped.
 
-const KEY = "verso.recent";
 const CAP = 12;
+// Stable module constant (usePersistedList expects a stable guest fallback).
+const EMPTY: string[] = [];
 
 interface RecentContextValue {
   recentIds: string[];
@@ -25,36 +25,17 @@ interface RecentContextValue {
 const RecentContext = createContext<RecentContextValue | null>(null);
 
 export function RecentProvider({ children }: { children: ReactNode }) {
-  const [recentIds, setRecentIds] = useState<string[]>([]);
+  const [recentIds, update, reset] = usePersistedList("recent_spot_ids", EMPTY);
 
-  // Hydrate once from disk.
-  useEffect(() => {
-    AsyncStorage.getItem(KEY)
-      .then((raw) => {
-        if (!raw) return;
-        try {
-          const arr = JSON.parse(raw);
-          if (Array.isArray(arr)) setRecentIds(arr.filter((x) => typeof x === "string"));
-        } catch {
-          /* ignore corrupt cache */
-        }
-      })
-      .catch(() => {});
-  }, []);
-
-  const pushRecent = useCallback((id: string) => {
-    setRecentIds((prev) => {
+  const pushRecent = useCallback(
+    (id: string) => {
       // Move to front, dedupe, cap.
-      const next = [id, ...prev.filter((x) => x !== id)].slice(0, CAP);
-      AsyncStorage.setItem(KEY, JSON.stringify(next)).catch(() => {});
-      return next;
-    });
-  }, []);
+      update((prev) => [id, ...prev.filter((x) => x !== id)].slice(0, CAP));
+    },
+    [update],
+  );
 
-  const clearRecent = useCallback(() => {
-    setRecentIds([]);
-    AsyncStorage.removeItem(KEY).catch(() => {});
-  }, []);
+  const clearRecent = useCallback(() => reset(), [reset]);
 
   const value = useMemo<RecentContextValue>(
     () => ({ recentIds, pushRecent, clearRecent }),
