@@ -647,7 +647,33 @@ npm test               # Unit-Tests der reinen Logik (vitest, src/**)
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
-### (dieser Commit) · 2026-07-04 · Doppeltipp-Egg raus + Teilen-Pfeil + Doku
+### a6e09f4 · 2026-07-04 · Security-Härtung + RevenueCat-Log-Fix
+> Nach einem vollständigen Security-Review. Alle Backend-Fixes als versionierte
+> Migrationen (0010/0011); der Nutzer hat die zugehörigen Queries (12/13) im
+> SQL-Editor ausgeführt. tsc sauber, 48/48 Tests.
+- **🔴 Privilege Escalation gefixt (Migration 0010):** die `profiles`-UPDATE-Policy
+  erlaubte, `is_insider`/`insider_expires_at` **selbst** zu setzen (gratis Insider,
+  latent — die App liest den Status aus RevenueCat, aber serverseitiges Gating
+  hätte es ausgenutzt). Neuer Trigger `protect_insider_columns` setzt die Spalten
+  bei Nicht-Service-Role zurück.
+- **🟠 Webhook fail-closed (`revenuecat-webhook`):** Secret-Prüfung war `if (secret
+  && …)` → ohne gesetztes Secret wurde die Auth **übersprungen**. Jetzt `if
+  (!secret || …)` → ohne Secret wird alles abgelehnt. **Secret vorm Deploy setzen.**
+- **🟠 Insert-Härtung (Migration 0011):** `spot_suggestions`/`analytics_events`
+  hatten `insert with check (true)` → Fremd-`user_id` fälschbar. Jetzt `user_id is
+  null or user_id = auth.uid()`.
+- **🟢 Weitere Härtungen:** `openExternal` öffnet nur http(s)/mailto/tel;
+  `captureError` säubert Fehlertexte via `redactText` (E-Mail/Token → [redacted]);
+  Passwort-Minimum 6 → 8 (register/reset/passwort-aendern).
+- **RevenueCat-Console-Error weg:** `Purchases.logOut()` wurde auch für anonyme
+  RC-Nutzer aufgerufen → RC loggt lautstark (vor dem throw, daher trotz try/catch
+  Redbox). Jetzt via `Purchases.isAnonymous()`-Guard nur für identifizierte Nutzer.
+- **Offene, bewusste Punkte** (siehe handoff.md): „zuletzt angesehen" liegt noch
+  gerätelokal (nicht per-User → sichtbar für ein Folge-Konto auf demselben Gerät);
+  RevenueCat nur **Test Store** (keine echten Käufe); E-Mail-Bestätigung noch AUS;
+  SecureStore für den Auth-Token empfohlen, aber noch nicht umgesetzt.
+
+### (Commit) · 2026-07-04 · Doppeltipp-Egg raus + Teilen-Pfeil + Doku
 - **Doppeltipp-„alle Orte"-Feature komplett entfernt** (`CityMap.tsx`): kein
   `popAll`/`flash`/`demoShown`/Hinweis-Chip mehr. Tippen auf die leere Fallback-
   Kartenfläche hebt nur noch die Auswahl auf. Ungenutzte Imports (`useState`,

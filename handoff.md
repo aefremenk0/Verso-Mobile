@@ -1,6 +1,6 @@
 # Handoff — Verso Mobile
 
-_Branch: `claude/charming-sagan-jyk0wh` · Last update: 2026-07-04 (dark-mode crash fix + dark-mode readability polish)_
+_Branch: `claude/charming-sagan-jyk0wh` · Last update: 2026-07-04 (security hardening + RevenueCat log fix)_
 
 ---
 
@@ -27,17 +27,19 @@ vitest suite green, and be committed + pushed to the feature branch.
 
 ## 2. Current state
 
-**Done, committed, and pushed.** All 10 planned tasks are complete.
+**Done, committed, and pushed.** All planned work + several follow-ups.
 
 - `npx tsc --noEmit` → clean.
-- `npm test` → **46/46 vitest passing** (was 18 at session start).
+- `npm test` → **48/48 vitest passing** (was 18 at session start).
 - `npx expo export --platform ios` → bundle builds.
-- Latest pushed commit: `0c37602` on `claude/charming-sagan-jyk0wh`.
-- CLAUDE.md changelog updated (through the 2026-07-04 dark-mode polish entry).
+- Latest pushed commit: `a6e09f4` on `claude/charming-sagan-jyk0wh`.
+- CLAUDE.md changelog current through the 2026-07-04 security-hardening entry.
 
-**Post-session work:** (a) a "Couldn't find a navigation context" crash that took
-down dark mode / launch was fixed across three commits (see §4 items 15–17 and
-§5); (b) a large dark-mode readability pass followed (§4 item 18).
+**Later work (post the initial 10 tasks):** (a) a "Couldn't find a navigation
+context" crash (dark mode / launch) fixed across three commits (§4 items 15–17,
+§5); (b) a large dark-mode readability pass (§4 item 18); (c) a full security
+review + fixes (§4 item 19); (d) the RevenueCat "logOut on anonymous" console
+error (§4 item 20). See §7 for open/known items.
 
 **Note on why dark mode shows on pre-login screens:** `isDark = isInsider && pref==="dark"`,
 and `isInsider` comes from RevenueCat (device-level), so it persists after a
@@ -126,6 +128,18 @@ Modified:
     Welcome hero text white + yellow city-chip outlines; Google button stays white
     / Apple text white; hotbar inactive pills → white ovals; Apple Maps night view;
     Pill `lineHeight` fix so emoji chips match the icon-less "All" chip height.
+19. **Security review + fixes** (commits `8f8046b`, `5e5d676`, `79f9eff`; migrations
+    `0010`/`0011`; user ran queries 12/13 in the SQL editor):
+    - 🔴 `is_insider` self-escalation (profiles UPDATE policy) → `protect_insider`
+      trigger resets the column unless caller is service_role.
+    - 🟠 RevenueCat webhook fail-open → fail-closed (`!secret || …`).
+    - 🟠 `spot_suggestions`/`analytics_events` inserts bound to `auth.uid()`.
+    - 🟢 `openExternal` scheme allowlist; `captureError` PII redaction
+      (`redactText`, +2 tests); password minimum 6 → 8.
+20. **RevenueCat "logOut on anonymous" console error** (`a6e09f4`) — `Purchases
+    .logOut()` was called for anonymous RC users too; RC logs that loudly (before
+    the throw, so try/catch didn't suppress the redbox). Guarded with
+    `Purchases.isAnonymous()` in the identity effect and `reset()`.
 
 ---
 
@@ -183,28 +197,59 @@ Modified:
 
 ---
 
-## 6. Next step
+## 6. DB migration status (Supabase, run by the user)
 
-**Setup (no code — required before these features are truly live):**
-1. Run Supabase migrations **`0008_analytics.sql`** and **`0009_delete_cascade.sql`**
-   in the SQL editor.
-2. Supabase → Authentication → URL Configuration: allow-list
-   **`verso://auth-callback`** (so the password-reset/email deep link works).
-   Test the reset flow end-to-end with the real email templates — the handler is
-   built but **untested against live email** (can't be verified in-sandbox).
-3. Enable Google/Apple OAuth providers (still a launch blocker).
-4. Dev Build (`npx expo run:ios`) to verify real app-icon switching and to add a
-   native **Share Extension** target for the TikTok/Instagram "Share to Verso"
-   entry (the extension just opens `verso://share-import?text=…`).
+The user has run in the SQL editor: **0001–0009** (schema/trigger/geheimtipp/seed,
+notify, avatars, suggestions+delete, insider_status, analytics, delete_cascade),
+the delete-cascade hotfix, **and the two security queries** (`12_protect_insider`
+= migration `0010`, `13_harden_inserts` = migration `0011`). Live DB confirmed via
+their `information_schema` report: profiles has all columns incl. `is_insider`;
+`analytics_events` exists; `spot_suggestions` was **missing at first** and added
+afterwards (0006's table part). Migration files in `supabase/migrations/` mirror
+the live DB — the next agent should NOT assume they still need running unless the
+user says otherwise.
 
-**Legal (P0 — needs a lawyer, not code):** publish binding **Impressum, privacy
-policy, ToS** and sign **DPAs** (Supabase, RevenueCat, Apple, Google); verify the
-**Supabase data region** (EU vs. international transfer). The in-app `legal.tsx`
-is now honest placeholder scaffolding pointing to `verso.app/*`.
+## 7. Known open items & pending decisions
 
-**Product polish (P1–P2):** real spot images (`image_url` unused today), more
-spots/cities, Insider-only "hidden" spots (RLS example is commented in
-`0007_insider_status.sql`), a server push sender (tokens are stored but nothing
-sends), and — when ready — swap the mock `parseSharedPost` for a real AI step
-(same signature; the UI already labels it as assisted for EU AI-Act compliance)
-and drop Sentry into `registerSink()` in a Dev Build.
+- **"Recently viewed" is device-local, NOT per-user** (`src/store/recent.tsx`,
+  AsyncStorage `verso.recent`). It's real (tracks actual spot-detail opens), but
+  it is NOT cleared on logout, so a **new account on the same device sees the
+  previous user's recents**. Decision pending: move it to the backend like
+  saved/interests (add `profiles.recent_spot_ids` + switch to `usePersistedList`,
+  which auto-isolates per account), OR keep local but clear it on logout. The user
+  wants "new account → empty".
+- **RevenueCat is Test-Store only** — `revenueCatIosKey` is a `test_…` key. The
+  paywall/purchase flow works in a dev build against RC's sandbox, but there are
+  **no real purchases**. Production needs: App Store Connect subscription products,
+  a production `appl_…` key, the `insider` entitlement mapped to the products, the
+  Paid Applications Agreement, and (recommended) deploying the webhook with its
+  secret.
+- **Email confirmation is OFF** in Supabase (was for testing). Turn ON for prod;
+  the reset/confirm deep-link handler is built but **untested against live email**.
+- **Auth token in AsyncStorage (plaintext)** — recommended to move to
+  `expo-secure-store` (native module → needs a dev-build test; keep an AsyncStorage
+  fallback so login can't break). Not done yet.
+- **No spot photos** — the `Spot` type / `spots` table have `image_note` + `tone`
+  (placeholder), but **no `image_url`**. Adding real photos needs a column + type
+  field + `rowToSpot` mapping + rendering (SpotCard/detail) + a Storage bucket or
+  external URLs. (Earlier notes wrongly said `image_url` existed — it does not.)
+
+## 8. Next step (setup / launch)
+
+**Setup (no code):**
+1. Supabase → Authentication → URL Configuration: allow-list
+   **`verso://auth-callback`**; test the reset flow with real email templates.
+2. Enable **Google/Apple OAuth** providers (launch blocker; Apple Sign-In is
+   mandatory once Google login ships).
+3. Turn **email confirmation ON** before launch.
+4. RevenueCat → App Store Connect production setup (see §7).
+
+**Legal (P0 — lawyer):** binding **Impressum, privacy policy, ToS**; **DPAs**
+(Supabase/RevenueCat/Apple/Google); verify **Supabase data region**. `legal.tsx`
+is honest placeholder scaffolding pointing to `verso.app/*`.
+
+**Product (code — the next agent can do):** real spot images (add `image_url`),
+"recently viewed" → backend, Insider-only "hidden" spots (RLS example commented
+in `0007_insider_status.sql`), server push sender (tokens stored, nothing sends),
+swap mock `parseSharedPost` for real AI (same signature; UI already labels it as
+assisted), drop Sentry into `registerSink()`.
