@@ -134,11 +134,16 @@ export function InsiderProvider({ children }: { children: ReactNode }) {
     if (!hasRevenueCat) return;
     (async () => {
       try {
-        if (user?.id) await Purchases.logIn(user.id);
-        else await Purchases.logOut();
+        if (user?.id) {
+          await Purchases.logIn(user.id);
+        } else if (!(await Purchases.isAnonymous())) {
+          // Only log out a previously identified RC user. Calling logOut() on an
+          // already-anonymous user just spams a console error (no-op otherwise).
+          await Purchases.logOut();
+        }
         setIsInsider(activeEntitlement(await Purchases.getCustomerInfo()));
       } catch {
-        /* logOut throws for anonymous users -> ignore */
+        /* ignore */
       }
     })();
   }, [user?.id]);
@@ -156,11 +161,15 @@ export function InsiderProvider({ children }: { children: ReactNode }) {
 
   const reset = useCallback(() => {
     if (hasRevenueCat) {
-      try {
-        Purchases.logOut();
-      } catch {
-        /* ignore */
-      }
+      // Only log out a previously identified RC user (avoids the "logOut on
+      // anonymous user" console error).
+      (async () => {
+        try {
+          if (!(await Purchases.isAnonymous())) await Purchases.logOut();
+        } catch {
+          /* ignore */
+        }
+      })();
     }
     setIsInsider(false);
   }, []);
