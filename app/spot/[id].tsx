@@ -103,10 +103,7 @@ export default function SpotDetail() {
 
   return (
     <View className="flex-1 bg-screen">
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ flexGrow: 1 }}
-      >
+      <ScrollView showsVerticalScrollIndicator={false}>
         {/* Hero (larger, so no empty area is left at the bottom) */}
         <ImagePlaceholder tone={spot.tone} height={400} radius={0}>
           {/* Back + Save (with safe-area spacing at the top) */}
@@ -163,7 +160,7 @@ export default function SpotDetail() {
             flex-1 + spacer push the CTAs to the bottom -> no more empty
             white area. */}
         <View
-          className="-mt-6 flex-1 rounded-t-sheet bg-screen px-6 pt-7"
+          className="-mt-6 rounded-t-sheet bg-screen px-6 pt-7"
           style={{ paddingBottom: insets.bottom + 16 }}
         >
           <Text className="font-hk-bold text-[11px] tracking-[1.5px] text-ink-3">
@@ -275,8 +272,9 @@ export default function SpotDetail() {
             />
           </View>
 
-          {/* Spacer: pushes the CTAs to the bottom of the screen */}
-          <View className="min-h-[24px] flex-1" />
+          {/* Small fixed gap before the CTAs (natural flow — no bottom-pinning,
+              so the map buttons stay right below the mini-map). */}
+          <View className="h-5" />
 
           {/* Main CTA: one yellow button that opens whatever link the spot has
               (we don't distinguish ticket vs. reservation vs. website). No link
