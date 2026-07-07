@@ -655,6 +655,27 @@ npm test               # Unit-Tests der reinen Logik (vitest, src/**)
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
+### (Commit) · 2026-07-07 · UI-Fixes: Sport-Pille raus · Titel-Lücke · generischer Link-Button
+> Kleinere, aber sichtbare Korrekturen im Detail/Feed + Content-Vorbereitung.
+- **Generische „Sport"-Kategorie-Pille entfernt** (`categories.ts`, EN+DE): die
+  Hotbar im Sport-Bereich zeigt nur noch **Pilates · Run Club · Cycle Club · Gym**.
+  Die **Szene „Sport"** bleibt das Dach; der Schlüssel `sport` bleibt als Fallback
+  gültig (solche Orte erscheinen unter „Alle", ohne eigene Pille).
+- **Phantom-Lücke unter 1-zeiligen Titeln gefixt** (`spot/[id].tsx` + `bezirk/
+  [name].tsx`): `adjustsFontSizeToFit` **+** `numberOfLines={2}` ließ iOS Platz für
+  eine 2. Zeile reservieren und die Schrift **asynchron** verkleinern → sichtbare
+  Leerzeile unter einzeiligen Namen, die sich erst nach ein paar Navigationen
+  „einpendelte". `adjustsFontSizeToFit` entfernt → natürlicher Umbruch (max. 2
+  Zeilen, dann „…"), stabil und lückenlos. (Profil-Fußzeile behält es — dort mit
+  `numberOfLines={1}`, korrekt.)
+- **Spot-Detail: ein generischer gelber Button** „Website öffnen" statt der
+  Unterscheidung Ticket (oeticket) / Reservierung (OpenTable). Öffnet
+  `reserveUrl ?? ticketUrl`; **ohne URL kein Button** → Sport-Events (und alle
+  Orte ohne Link) zeigen nur noch die Karten-Buttons. Kein OpenTable-Default mehr.
+- **Migration `0017_spot_images`**: öffentlicher Storage-Bucket `spot-images`
+  (public read, nur Service-Role/Dashboard schreibt) — Vorbereitung für echte
+  Fotos (`<id>.jpg`). `setup_all.sql` bis 0017 neu generiert. tsc sauber, 55 Tests.
+
 ### (Commit) · 2026-07-07 · Passwort-Regeln sichtbar (Live-Checkliste) + Policy-Abgleich
 > Die Supabase-Passwort-Policy (8+ Zeichen, Groß-/Kleinbuchstabe, Ziffer) war in
 > der App nur als (falsche „mind. 6 Zeichen") Fehlermeldung sichtbar. Jetzt klar.

@@ -1,6 +1,6 @@
 # Handoff — Verso Mobile
 
-_Branch: `claude/charming-sagan-jyk0wh` · Last update: 2026-07-06 (deep security pass, email-confirmation flow, per-account recents, rate-limiting, encrypted auth token)_
+_Branch: `claude/charming-sagan-jyk0wh` · Last update: 2026-07-07 (Sentry sink, password-policy UI, mock cleanup, push sender, spot-images bucket, content-prep + UI fixes)_
 
 ---
 
@@ -32,8 +32,19 @@ vitest suite green, and be committed + pushed to the feature branch.
 - `npx tsc --noEmit` → clean.
 - `npm test` → **48/48 vitest passing** (was 18 at session start).
 - `npx expo export --platform ios` → bundle builds.
-- Latest pushed commit: `2e3cbdc` on `claude/charming-sagan-jyk0wh`.
-- CLAUDE.md changelog current through the 2026-07-06 SecureStore entry.
+- Latest pushed commit: `753ef9d` on `claude/charming-sagan-jyk0wh`.
+- CLAUDE.md changelog current through the 2026-07-07 UI-fixes entry.
+- `npm test` → **55/55** (added password-policy + initials + scrubProps tests).
+
+**2026-07-07 block (on top of §4):** Sentry fetch-sink (inert until DSN); visible
+password-policy checklist (`src/lib/password.ts` + `PasswordHints.tsx`) + fixed the
+misleading "min 6 chars" error → real policy (8 + upper + lower + digit); removed
+MOCK_USER (guest = empty profile) + the demo-login button + the `lena@verso.app`
+placeholder; `send-push` edge function (Expo push to opted-in users, admin-secret);
+deleted orphaned icon assets; migration `0017_spot_images` (public bucket for real
+photos); dropped the generic "Sport" category pill (scene stays the umbrella);
+fixed a phantom title gap (`adjustsFontSizeToFit`+`numberOfLines=2`); spot-detail
+CTA is now one generic "Open website" button (no button without a URL).
 
 **Later work (post the initial 10 tasks):** (a) a "Couldn't find a navigation
 context" crash (dark mode / launch) fixed across three commits (§4 items 15–17,
@@ -311,6 +322,20 @@ UPDATE`. Only remaining optional hardening: re-run `0009_delete_cascade` for
 (use it OR the numbered files for a fresh DB — never the old truncated version).
 Spot content is imported separately from the Google Sheet via a non-numbered
 `import_spots_muenchen` query (data, not schema).
+
+**`0017_spot_images` is live** (their Supabase query `18_spot_images`): public
+`spot-images` bucket, public read, no client write policy (admin/dashboard only).
+Images to be keyed `<spot-id>.jpg`. Code side (image_url column + rendering) NOT
+built yet — see §7.
+
+**Content pipeline (Munich, 80 spots in a Google Sheet):** the user maintains a
+Google Sheet (ID `1odDNP-mkjI3Y6zWfgQRpFOYNIFOroEqZ_R8YuvqtVyA`) and preps columns
+via claude.ai prompts (id → `muc-<slug>`, category → app keys, tone → brown/green/
+charcoal placeholder color, `de` jsonb from the DE columns). Then a Cowork/import
+step upserts them into `spots` (+ creates missing `neighborhoods`). Sheet `tone`
+(mood word) ≠ app `tone` (card color) — do NOT map 1:1. Sheet `hours` is free text →
+leave DB `hours` null (category defaults). Sheet `reserve_url`/`ticket_url` empty →
+most spots show no yellow CTA (by design now).
 
 ## 7. Known open items & pending decisions
 
