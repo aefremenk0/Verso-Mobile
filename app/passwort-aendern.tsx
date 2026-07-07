@@ -70,12 +70,17 @@ export default function PasswortAendern() {
   const onUpdate = async () => {
     if (busy) return;
     setMsg(null);
-    if (next.length < 8) {
+    const strong =
+      next.length >= 8 &&
+      /[a-z]/.test(next) &&
+      /[A-Z]/.test(next) &&
+      /[0-9]/.test(next);
+    if (!strong) {
       setMsg({
         ok: false,
         text: t(
-          "Password needs at least 8 characters.",
-          "Das Passwort braucht mindestens 8 Zeichen.",
+          "Password: min. 8 characters, with an upper- and lowercase letter and a digit.",
+          "Passwort: mind. 8 Zeichen, mit Groß- und Kleinbuchstabe und einer Ziffer.",
         ),
       });
       return;
@@ -167,8 +172,8 @@ export default function PasswortAendern() {
 
         <Text className="mt-3.5 font-hk-medium text-[12px] leading-[18px] text-ink-2">
           {t(
-            "At least 8 characters, including a number and a special character.",
-            "Mindestens 8 Zeichen, davon eine Zahl und ein Sonderzeichen.",
+            "At least 8 characters, with an upper- and lowercase letter and a digit.",
+            "Mindestens 8 Zeichen, mit Groß- und Kleinbuchstabe und einer Ziffer.",
           )}
         </Text>
         <Pressable onPress={onForgot} disabled={busy} className="mt-4 self-start">

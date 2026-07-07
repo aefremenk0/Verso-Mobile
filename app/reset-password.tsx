@@ -23,12 +23,17 @@ export default function ResetPassword() {
 
   const submit = async () => {
     if (busy) return;
-    if (next.length < 8) {
+    const strong =
+      next.length >= 8 &&
+      /[a-z]/.test(next) &&
+      /[A-Z]/.test(next) &&
+      /[0-9]/.test(next);
+    if (!strong) {
       setMsg({
         ok: false,
         text: t(
-          "Password needs at least 8 characters.",
-          "Das Passwort braucht mindestens 8 Zeichen.",
+          "Password: min. 8 characters, with an upper- and lowercase letter and a digit.",
+          "Passwort: mind. 8 Zeichen, mit Groß- und Kleinbuchstabe und einer Ziffer.",
         ),
       });
       return;

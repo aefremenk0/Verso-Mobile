@@ -63,11 +63,18 @@ export default function Register() {
       return;
     }
     if (mode === "register") {
-      if (password.length < 8) {
+      // Match the Supabase password policy: >= 8 chars + lower + upper + digit.
+      // Validate here so the user sees the requirement before the server rejects.
+      const strong =
+        password.length >= 8 &&
+        /[a-z]/.test(password) &&
+        /[A-Z]/.test(password) &&
+        /[0-9]/.test(password);
+      if (!strong) {
         setError(
           t(
-            "Password needs at least 8 characters.",
-            "Das Passwort braucht mindestens 8 Zeichen.",
+            "Password: min. 8 characters, with an upper- and lowercase letter and a digit.",
+            "Passwort: mind. 8 Zeichen, mit Groß- und Kleinbuchstabe und einer Ziffer.",
           ),
         );
         return;

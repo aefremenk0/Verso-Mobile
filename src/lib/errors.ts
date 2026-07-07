@@ -52,10 +52,17 @@ export function friendlyAuthError(raw: string | null | undefined, lang: Lang): s
       ? "Für diese E-Mail gibt es schon ein Konto. Melde dich an."
       : "There's already an account for this email. Try signing in.";
   }
-  if (m.includes("password") && (m.includes("at least") || m.includes("weak") || m.includes("6 char"))) {
+  if (
+    m.includes("password") &&
+    (m.includes("at least") ||
+      m.includes("weak") ||
+      m.includes("char") ||
+      m.includes("requirement") ||
+      m.includes("should contain"))
+  ) {
     return de
-      ? "Das Passwort ist zu kurz (mind. 6 Zeichen)."
-      : "That password is too short (min. 6 characters).";
+      ? "Passwort zu schwach: mind. 8 Zeichen, mit Groß- und Kleinbuchstabe und einer Ziffer."
+      : "Password too weak: at least 8 characters, with an upper- and lowercase letter and a digit.";
   }
   if (m.includes("rate limit") || m.includes("too many")) {
     return de
