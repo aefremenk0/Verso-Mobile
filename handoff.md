@@ -1,6 +1,6 @@
 # Handoff — Verso Mobile
 
-_Branch: `claude/charming-sagan-jyk0wh` · Last update: 2026-07-07 (Sentry sink, password-policy UI, mock cleanup, push sender, spot-images bucket, content-prep + UI fixes)_
+_Branch: `claude/charming-sagan-jyk0wh` · Last update: 2026-07-07 (Sentry sink, password UI, mock cleanup, push sender, spot-images bucket, insider-only spots, backend-driven cities, content-prep + UI fixes)_
 
 ---
 
@@ -314,6 +314,13 @@ Mapping (Supabase query → repo file):
 | 19_insider_spots | 0018_insider_spots |
 | Untitled query | unknown / scratch |
 
+⏳ **`0019_cities` NOT confirmed run yet** (would be their query `20_cities`): table
+`cities(name, is_live, sort_order)` + public read; seed all 7 cities, only München
+live. App: `CatalogProvider` loads live cities fail-soft, exposes
+`liveCities`/`isComingSoon` (fallback to code `LIVE_CITIES`). Flip a city:
+`update cities set is_live=true where name='Wien'` (needs content first). Until the
+table exists, the code fallback keeps München-only — nothing breaks.
+
 ✅ **`0018_insider_spots` is live** (their query `19_insider_spots`, 2026-07-07):
 `spots.insider_only` + RLS gate on `profiles.is_insider`. Caveat: nothing is hidden
 until a spot is flagged `insider_only=true` AND the reader's `profiles.is_insider`
@@ -345,6 +352,24 @@ step upserts them into `spots` (+ creates missing `neighborhoods`). Sheet `tone`
 (mood word) ≠ app `tone` (card color) — do NOT map 1:1. Sheet `hours` is free text →
 leave DB `hours` null (category defaults). Sheet `reserve_url`/`ticket_url` empty →
 most spots show no yellow CTA (by design now).
+
+**Neighborhoods — CRITICAL matching rule + consolidation (in progress):** the app
+groups spots by `s.neighborhood === neighborhoods.name` (EXACT string match). So
+the `neighborhoods` table must contain EXACTLY the set of names the spots use — a
+name with no spots shows an empty Viertel; a spot whose name isn't in the table
+disappears. The user's hand-entered Munich neighborhoods had fragmented/duplicate
+names (slash-combos like `Laim/Sendling-Westpark`, `Lehel/Maxvorstadt`, two
+Isarvorstadt/Glockenbach variants). **Decision:** consolidate to ONE canonical,
+colloquial name per real area (Verso's friend-tone > administrative Stadtbezirke),
+e.g. merge `Schwabing-West`+`Schwabing-Freimann` → **`Schwabing`**; prefer
+`Glockenbachviertel`, `Giesing`, `Neuhausen`. The neighborhoods should be DERIVED
+from the (normalized) spot `neighborhood` values so they always match. Also: the
+user swapped blurb columns correctly (English → `blurb`, German → `blurb_de`).
+Verso-tone EN blurbs already written for Altstadt, Au-Haidhausen, Bogenhausen,
+Laim, Lehel, Maxvorstadt, Neuhausen-Nymphenburg, Obergiesing-Fasangarten,
+Sendling-Westpark, Schwabing, Gärtnerplatzviertel, Ludwigsvorstadt-Isarvorstadt
+(Glockenbach). Import converter (to derive neighborhoods + validate matches) still
+pending the CSV.
 
 ## 7. Known open items & pending decisions
 
