@@ -71,6 +71,10 @@ export default {
       revenueCatIosKey: "test_GgChnfUgBORlmxIgyTaLCwfucJn",
       // Entitlement identifier that unlocks Insider (create it in the dashboard).
       revenueCatEntitlement: "insider",
+      // Sentry crash reporting (fetch-based, Expo-Go-safe). Empty = disabled.
+      // Paste your project's DSN here to turn it on. Use an EU-region DSN for
+      // GDPR, and add Sentry to your privacy policy + sign their DPA.
+      sentryDsn: "",
     },
   },
 };

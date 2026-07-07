@@ -12,6 +12,7 @@ import { vars } from "nativewind";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { VersoLoader } from "../src/components/VersoLoader";
 import { initAnalytics, track } from "../src/lib/analytics";
+import { initSentry } from "../src/lib/sentry";
 import {
   AppearanceProvider,
   DARK_VARS,
@@ -98,7 +99,10 @@ export default function RootLayout() {
   }, [fontsLoaded, fontError]);
 
   // Load analytics consent + install the global crash handler, then log app open.
+  // initSentry() registers the Sentry error sink IF a DSN is configured (no-op
+  // otherwise) — must run before initAnalytics installs the global handler.
   useEffect(() => {
+    initSentry();
     initAnalytics().then(() => track("app_open"));
   }, []);
 

@@ -655,6 +655,23 @@ npm test               # Unit-Tests der reinen Logik (vitest, src/**)
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
+### (Commit) · 2026-07-07 · Sentry-Crash-Reporting (fetch-Sink, Expo-Go-fest)
+> Der pluggable Analytics-Seam bekommt endlich einen echten Fehler-Sink — ohne
+> natives SDK, damit Expo Go weiter läuft.
+- **Neu `src/lib/sentry.ts`:** ein **fetch-basierter Sentry-Sink** hinter
+  `registerSink()`. Der globale JS-Error-Handler routet Crashes ohnehin durch
+  `captureError` → alle Sinks; dieser Sink schickt **nur `error`-Events** (keine
+  Produkt-Analytics) an Sentrys HTTP-Ingest (`/api/<projectId>/store/`). Events
+  sind bereits redigiert (`redactText`) und consent-geprüft. `event_id` via
+  `expo-crypto`, `release = verso@<version>`, `environment` dev/prod, `fatal`-Tag.
+- **`initSentry()`** in `app/_layout.tsx` vor `initAnalytics()` — registriert den
+  Sink **nur wenn ein DSN** in `app.config.js` `extra.sentryDsn` steht, sonst
+  No-op. **Aktivierung:** DSN eintragen (EU-Region für DSGVO), Sentry in die
+  Datenschutzerklärung + DPA aufnehmen.
+- **Trade-off dokumentiert:** fängt **JS-Fehler** (via `captureError`, PII-frei),
+  aber **keine nativen Crashes/ANRs** — dafür später das native
+  `@sentry/react-native` im Dev Build. tsc sauber, 53/53 Tests.
+
 ### (Commit) · 2026-07-06 · Mock-Reste raus + Push-Versand (Edge Function) + mehr Tests
 > Aufräum-Runde Richtung Produktion: Fake-Daten entfernt, der fehlende Server-
 > Push-Versand gebaut, Testabdeckung erweitert.
