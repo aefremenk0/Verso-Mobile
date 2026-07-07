@@ -8,10 +8,10 @@ import Animated, {
   withSpring,
   withTiming,
 } from "react-native-reanimated";
-import { isComingSoon } from "../data/cities";
 import { useT, useLang } from "../lib/i18n";
 import { MAX_CHROME_SCALE } from "../lib/fontScale";
 import { cityLabel } from "../lib/lang";
+import { useCatalog } from "../store/catalog";
 import { useCity } from "../store/city";
 import { DiagonalStrike } from "./DiagonalStrike";
 import { Pill } from "./Pill";
@@ -128,6 +128,7 @@ function DropdownCity({
 
 export function CityDropdown({ right }: { right?: ReactNode }) {
   const { city, setCity, cities } = useCity();
+  const { isComingSoon } = useCatalog();
   const t = useT();
   const lang = useLang();
   const [open, setOpen] = useState(false);

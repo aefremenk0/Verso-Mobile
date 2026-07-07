@@ -655,6 +655,21 @@ npm test               # Unit-Tests der reinen Logik (vitest, src/**)
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
+### (Commit) · 2026-07-07 · Städte backend-steuerbar freischalten (Migration 0019)
+> Welche Städte „live" (auswählbar) sind, kam bisher hartkodiert aus `LIVE_CITIES`
+> — neue Stadt = App-Update. Jetzt aus der DB steuerbar.
+- **Migration `0019_cities`:** Tabelle `cities` (name, `is_live`, sort_order),
+  öffentlich lesbar, nur Dashboard schreibt. Seed: alle 7 Städte, nur München live.
+- **`CatalogProvider` lädt die Live-Städte** (fail-soft, unabhängig vom spots/
+  neighborhoods-Load) und stellt `liveCities` + `isComingSoon(c)` bereit. Fehlt die
+  Tabelle / ist leer → **Fallback auf das Code-Konstrukt `LIVE_CITIES`** (nichts bricht).
+- **Consumer umgestellt:** `CityDropdown` + Welcome (`index.tsx`) lesen `isComingSoon`
+  jetzt aus `useCatalog()` statt der statischen Funktion. Der **`City`-Typ + die
+  Städte-Liste + Labels bleiben im Code** (typisiert); nur der Live-Status ist dynamisch.
+- **Freischalten künftig:** `update cities set is_live=true where name='Wien'` →
+  greift beim nächsten App-Start, **ohne App-Update**. **Wichtig:** vorher Content
+  (spots + neighborhoods) für die Stadt in der DB, sonst leerer Feed. tsc sauber, 55 Tests.
+
 ### (Commit) · 2026-07-07 · Insider-only Spots („verborgene Ebene", Migration 0018)
 > Die geplante Premium-„verborgene Ebene": Spots, die nur zahlende Insider sehen.
 - **Migration `0018_insider_spots`:** neue Spalte `spots.insider_only` (boolean,

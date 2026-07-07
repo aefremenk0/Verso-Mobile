@@ -9,9 +9,10 @@ import {
   QuestionBubbles,
   type QuestionBubblesHandle,
 } from "../src/components/QuestionBubbles";
-import { isComingSoon, type City } from "../src/data/cities";
+import { type City } from "../src/data/cities";
 import { useAuth } from "../src/store/auth";
 import { useAppearance } from "../src/store/appearance";
+import { useCatalog } from "../src/store/catalog";
 import { useCity } from "../src/store/city";
 import { useT, useLang } from "../src/lib/i18n";
 import { useScaleSize } from "../src/lib/responsive";
@@ -33,6 +34,7 @@ export default function Welcome() {
   const { city, setCity } = useCity();
   const { session, loading } = useAuth();
   const { isDark } = useAppearance();
+  const { isComingSoon } = useCatalog();
   const insets = useSafeAreaInsets();
 
   // Already signed in (persisted session)? Skip the Welcome screen entirely and

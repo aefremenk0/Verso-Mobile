@@ -6,7 +6,11 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { NEIGHBORHOODS as MOCK_NEIGHBORHOODS } from "../data/cities";
+import {
+  LIVE_CITIES,
+  NEIGHBORHOODS as MOCK_NEIGHBORHOODS,
+  type City,
+} from "../data/cities";
 import { SPOTS as MOCK_SPOTS } from "../data/spots";
 import type {
   Category,
@@ -63,6 +67,11 @@ interface CatalogContextValue {
   spots: Spot[];
   neighborhoods: Neighborhood[];
   getSpotById: (id: string) => Spot | undefined;
+  /** Cities unlocked for selection (from the `cities` table; falls back to the
+   *  code constant). Flip a city live in the DB — no app update needed. */
+  liveCities: City[];
+  /** True if a city is NOT yet unlocked ("coming soon"). Backend-driven. */
+  isComingSoon: (c: City) => boolean;
   /** Where the current data comes from (handy for a debug badge). */
   source: "mock" | "supabase";
   /** Load state for the UI: "loading" (first DB fetch), "live" (got data or no
@@ -76,6 +85,7 @@ export function CatalogProvider({ children }: { children: ReactNode }) {
   const [spots, setSpots] = useState<Spot[]>(MOCK_SPOTS);
   const [neighborhoods, setNeighborhoods] =
     useState<Neighborhood[]>(MOCK_NEIGHBORHOODS);
+  const [liveCities, setLiveCities] = useState<City[]>(LIVE_CITIES);
   const [source, setSource] = useState<"mock" | "supabase">("mock");
   // No backend configured -> the mock IS the product, so we're "live", not loading.
   const [status, setStatus] = useState<"loading" | "live" | "offline">(
@@ -110,6 +120,20 @@ export function CatalogProvider({ children }: { children: ReactNode }) {
         if (!cancelled) setStatus("offline");
       }
     })();
+    // Live-city flags — fully independent + fail-soft, so a missing `cities`
+    // table (migration not run yet) simply keeps the code fallback.
+    (async () => {
+      try {
+        const c = await supabase.from("cities").select("name,is_live");
+        if (cancelled || c.error || !c.data) return;
+        const live = c.data
+          .filter((r: { is_live: boolean }) => r.is_live)
+          .map((r: { name: string }) => r.name as City);
+        if (live.length > 0) setLiveCities(live);
+      } catch {
+        /* keep the code fallback */
+      }
+    })();
     return () => {
       cancelled = true;
     };
@@ -121,10 +145,12 @@ export function CatalogProvider({ children }: { children: ReactNode }) {
       spots,
       neighborhoods,
       getSpotById: (id: string) => byId.get(id),
+      liveCities,
+      isComingSoon: (c: City) => !liveCities.includes(c),
       source,
       status,
     };
-  }, [spots, neighborhoods, source, status]);
+  }, [spots, neighborhoods, liveCities, source, status]);
 
   return (
     <CatalogContext.Provider value={value}>{children}</CatalogContext.Provider>
