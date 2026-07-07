@@ -5,15 +5,14 @@ import {
   useMemo,
   type ReactNode,
 } from "react";
-import { MOCK_USER } from "../data/user";
 import { usePersistedList } from "./usePersistedList";
 
 // Saved spots. Persisted per signed-in user (Supabase `profiles.saved_spot_ids`
 // + AsyncStorage cache) via usePersistedList, so the list survives app restarts
-// and follows the account. Guest = in-memory mock (MOCK_USER.savedSpotIds).
+// and follows the account. Guest = in-memory, empty.
 
 // Stable guest fallback (module constant so the persist hook's deps stay stable).
-const GUEST_SAVED = MOCK_USER.savedSpotIds;
+const GUEST_SAVED: string[] = [];
 
 interface SavedContextValue {
   savedIds: string[];

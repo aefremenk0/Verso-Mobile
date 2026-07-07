@@ -10,7 +10,6 @@ import {
 } from "react";
 import { fetchProfileRow, patchProfile } from "../lib/profile";
 import { supabase, hasSupabase } from "../lib/supabase";
-import { MOCK_USER } from "../data/user";
 import { useAuth } from "./auth";
 
 // User profile (name / username / bio). Backed by the Supabase `profiles` row of
@@ -52,11 +51,11 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const uid = user?.id ?? null;
     if (!uid) {
-      // Guest: fall back to the mock so the profile screen isn't empty.
+      // Guest / signed out: empty profile (no fake data).
       justSaved.current = null;
-      setName(MOCK_USER.name);
-      setUsername(MOCK_USER.username);
-      setBio(MOCK_USER.bio);
+      setName("");
+      setUsername("");
+      setBio("");
       setAvatarUrl("");
       return;
     }

@@ -1,15 +1,5 @@
 import type { City } from "./cities";
-import type { GeheimtippDerWoche, User } from "./types";
-
-/** Mock profile. There is no real login in the MVP. */
-export const MOCK_USER: User = {
-  name: "Lena Hofer",
-  username: "@lenahofer",
-  bio: "Collects back rooms and places without a sign.",
-  // Initial values; saved places are managed at runtime by the SavedProvider.
-  // (Munich spots — pilot city.)
-  savedSpotIds: ["glasscherbe", "kellerkind", "isarliebe"],
-};
+import type { GeheimtippDerWoche } from "./types";
 
 /**
  * The "Hidden Gem of the Week" — one per city. Pilot phase: only Munich has

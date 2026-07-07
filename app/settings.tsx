@@ -211,7 +211,7 @@ export default function Settings() {
             label={t("Edit profile", "Profil bearbeiten")}
             onPress={() => router.push("/profil-bearbeiten")}
           />
-          <NavRow label={t("Email", "E-Mail")} value={user?.email ?? "lena@verso.app"} />
+          <NavRow label={t("Email", "E-Mail")} value={user?.email ?? "—"} />
           <NavRow
             label={t("Change password", "Passwort ändern")}
             last

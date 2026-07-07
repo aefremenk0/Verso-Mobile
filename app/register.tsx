@@ -30,11 +30,6 @@ import { useT, useLang } from "../src/lib/i18n";
 // (src/store/auth). On sign-up the chosen name + username are saved to the
 // profile. Every success leads to the feed.
 
-// Fixed demo account for quick testing. The button below signs in with it (and
-// creates it on first use if email confirmation is turned off in Supabase).
-const DEMO_EMAIL = "demo@verso.app";
-const DEMO_PASSWORD = "versodemo";
-
 export default function Register() {
   const router = useRouter();
   const [mode, setMode] = useState<"register" | "login">("register");
@@ -169,28 +164,6 @@ export default function Register() {
       setError(friendlyAuthError(err, lang));
       return;
     }
-    enter();
-  };
-
-  // Quick demo login: sign in with the fixed demo account; if it doesn't exist
-  // yet, create it once and sign in (works when email confirmation is off).
-  const demoLogin = async () => {
-    if (busy) return;
-    setError(null);
-    setBusy(true);
-    let res = await signIn(DEMO_EMAIL, DEMO_PASSWORD);
-    if (res.error) {
-      const up = await signUp(DEMO_EMAIL, DEMO_PASSWORD);
-      res = up.error ? up : await signIn(DEMO_EMAIL, DEMO_PASSWORD);
-    }
-    if (res.error) {
-      setBusy(false);
-      setError(friendlyAuthError(res.error, lang));
-      return;
-    }
-    // Give the demo account a friendly name/handle for the profile screen.
-    await saveProfile({ name: "Demo", username: "@demo" });
-    setBusy(false);
     enter();
   };
 
@@ -462,17 +435,6 @@ export default function Register() {
             </Text>
           </Pressable>
         ) : null}
-
-        {/* Quick demo login for testing (demo@verso.app) */}
-        <Pressable
-          onPress={demoLogin}
-          disabled={busy}
-          className="mt-3 items-center py-2"
-        >
-          <Text className="font-hk-semibold text-[13px] text-ink-3 underline">
-            {t("Log in as demo user", "Als Demo-Nutzer einloggen")}
-          </Text>
-        </Pressable>
 
         <Text className="mt-6 text-center font-hk-medium text-[12px] leading-[18px] text-ink-3">
           {t("By signing up you accept our", "Mit der Registrierung akzeptierst du")}{" "}
