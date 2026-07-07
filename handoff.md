@@ -311,7 +311,16 @@ Mapping (Supabase query → repo file):
 | 17_rate_limit | 0016_rate_limit |
 | 12b_protect_insider_insert | 0012_protect_insider_insert |
 | 18_spot_images | 0017_spot_images |
+| 19_insider_spots | 0018_insider_spots |
 | Untitled query | unknown / scratch |
+
+✅ **`0018_insider_spots` is live** (their query `19_insider_spots`, 2026-07-07):
+`spots.insider_only` + RLS gate on `profiles.is_insider`. Caveat: nothing is hidden
+until a spot is flagged `insider_only=true` AND the reader's `profiles.is_insider`
+is true — which only the RevenueCat webhook sets (Test Store + no webhook secret →
+no live insiders). To TEST: `update profiles set is_insider=true where id=auth.uid()`
+and flag a spot. App has NO `insider_only` in its Spot type yet (RLS filters
+server-side; add it only for an in-app "Insider" badge).
 
 ✅ **Insider-INSERT gap closed:** the user ran `12b_protect_insider_insert` (repo
 `0012`) on 2026-07-07 — the live `protect_insider` trigger is now `BEFORE INSERT OR
