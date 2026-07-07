@@ -17,8 +17,10 @@ import {
   KEYBOARD_DONE_ID,
 } from "../src/components/KeyboardDoneBar";
 import { AppleLogo, GoogleLogo } from "../src/components/Logos";
+import { PasswordHints } from "../src/components/PasswordHints";
 import { ambienteOptions } from "../src/lib/mapFilter";
 import { friendlyAuthError } from "../src/lib/errors";
+import { isStrongPassword } from "../src/lib/password";
 import { track } from "../src/lib/analytics";
 import { useAuth, type OAuthProvider } from "../src/store/auth";
 import { useInterests } from "../src/store/interests";
@@ -65,12 +67,7 @@ export default function Register() {
     if (mode === "register") {
       // Match the Supabase password policy: >= 8 chars + lower + upper + digit.
       // Validate here so the user sees the requirement before the server rejects.
-      const strong =
-        password.length >= 8 &&
-        /[a-z]/.test(password) &&
-        /[A-Z]/.test(password) &&
-        /[0-9]/.test(password);
-      if (!strong) {
+      if (!isStrongPassword(password)) {
         setError(
           t(
             "Password: min. 8 characters, with an upper- and lowercase letter and a digit.",
@@ -383,6 +380,9 @@ export default function Register() {
           onSubmitEditing={submit}
           returnKeyType={mode === "register" ? "done" : "go"}
         />
+
+        {/* Live password requirements (register only). */}
+        {mode === "register" ? <PasswordHints password={password} /> : null}
 
         {/* Age gate (GDPR Art. 8): confirm 16+ before creating an account. */}
         {mode === "register" ? (

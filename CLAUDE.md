@@ -655,6 +655,23 @@ npm test               # Unit-Tests der reinen Logik (vitest, src/**)
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
+### (Commit) · 2026-07-07 · Passwort-Regeln sichtbar (Live-Checkliste) + Policy-Abgleich
+> Die Supabase-Passwort-Policy (8+ Zeichen, Groß-/Kleinbuchstabe, Ziffer) war in
+> der App nur als (falsche „mind. 6 Zeichen") Fehlermeldung sichtbar. Jetzt klar.
+- **Neu `src/lib/password.ts`:** `passwordChecks()` + `isStrongPassword()` — eine
+  zentrale, RN-freie, getestete Prüfung, die exakt die Supabase-Policy spiegelt
+  (≥8, `[a-z]`, `[A-Z]`, `[0-9]`).
+- **Neu `src/components/PasswordHints.tsx`:** Live-Checkliste unter dem Passwortfeld
+  — jede Regel zeigt ✓ (grün, erfüllt) / ○ (grau) während des Tippens. Zweisprachig.
+  Eingebaut in **register** (Register-Modus), **passwort-aendern**, **reset-password**.
+- **Fehlermeldung korrigiert** (`errors.ts` + die drei Screens): statt „zu kurz
+  (mind. 6 Zeichen)" jetzt „mind. 8 Zeichen, mit Groß- und Kleinbuchstabe und
+  einer Ziffer". Der irreführende „Sonderzeichen"-Hinweis in passwort-aendern raus
+  (Sonderzeichen sind laut Policy NICHT nötig).
+- **Client-Validierung** vor dem Submit in allen drei Screens über
+  `isStrongPassword` → der Nutzer sieht die Anforderung, bevor der Server ablehnt.
+- Tests 53 → 55 (password policy). tsc sauber.
+
 ### (Commit) · 2026-07-07 · Sentry-Crash-Reporting (fetch-Sink, Expo-Go-fest)
 > Der pluggable Analytics-Seam bekommt endlich einen echten Fehler-Sink — ohne
 > natives SDK, damit Expo Go weiter läuft.

@@ -8,6 +8,8 @@ import {
 } from "../src/components/KeyboardDoneBar";
 import { useT, useLang } from "../src/lib/i18n";
 import { friendlyAuthError } from "../src/lib/errors";
+import { isStrongPassword } from "../src/lib/password";
+import { PasswordHints } from "../src/components/PasswordHints";
 import { useAuth } from "../src/store/auth";
 
 // Screen 07d — Change password. Updates the signed-in user's password via
@@ -70,12 +72,7 @@ export default function PasswortAendern() {
   const onUpdate = async () => {
     if (busy) return;
     setMsg(null);
-    const strong =
-      next.length >= 8 &&
-      /[a-z]/.test(next) &&
-      /[A-Z]/.test(next) &&
-      /[0-9]/.test(next);
-    if (!strong) {
+    if (!isStrongPassword(next)) {
       setMsg({
         ok: false,
         text: t(
@@ -170,12 +167,17 @@ export default function PasswortAendern() {
           />
         </View>
 
-        <Text className="mt-3.5 font-hk-medium text-[12px] leading-[18px] text-ink-2">
-          {t(
-            "At least 8 characters, with an upper- and lowercase letter and a digit.",
-            "Mindestens 8 Zeichen, mit Groß- und Kleinbuchstabe und einer Ziffer.",
-          )}
-        </Text>
+        {/* Live requirement checklist for the new password. */}
+        {next ? (
+          <PasswordHints password={next} />
+        ) : (
+          <Text className="mt-3.5 font-hk-medium text-[12px] leading-[18px] text-ink-2">
+            {t(
+              "At least 8 characters, with an upper- and lowercase letter and a digit.",
+              "Mindestens 8 Zeichen, mit Groß- und Kleinbuchstabe und einer Ziffer.",
+            )}
+          </Text>
+        )}
         <Pressable onPress={onForgot} disabled={busy} className="mt-4 self-start">
           <Text className="font-hk-semibold text-[12px] text-ink underline">
             {t("Forgot password?", "Passwort vergessen?")}

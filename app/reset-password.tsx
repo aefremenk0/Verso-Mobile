@@ -3,7 +3,9 @@ import { useState } from "react";
 import { Pressable, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { KeyboardDoneBar, KEYBOARD_DONE_ID } from "../src/components/KeyboardDoneBar";
+import { PasswordHints } from "../src/components/PasswordHints";
 import { friendlyAuthError } from "../src/lib/errors";
+import { isStrongPassword } from "../src/lib/password";
 import { useT, useLang } from "../src/lib/i18n";
 import { useAuth } from "../src/store/auth";
 
@@ -23,12 +25,7 @@ export default function ResetPassword() {
 
   const submit = async () => {
     if (busy) return;
-    const strong =
-      next.length >= 8 &&
-      /[a-z]/.test(next) &&
-      /[A-Z]/.test(next) &&
-      /[0-9]/.test(next);
-    if (!strong) {
+    if (!isStrongPassword(next)) {
       setMsg({
         ok: false,
         text: t(
@@ -87,6 +84,7 @@ export default function ResetPassword() {
           inputAccessoryViewID={KEYBOARD_DONE_ID}
           className="mt-6 rounded-button border border-line/20 bg-surface px-5 py-4 font-hk-medium text-[15px] text-ink"
         />
+        <PasswordHints password={next} />
         <TextInput
           value={confirm}
           onChangeText={setConfirm}

@@ -14,6 +14,7 @@ import { cityLabel } from "../lang";
 import { CATEGORY_ORDER } from "../../data/categories";
 import { PIN_COLORS } from "../pinColors";
 import { initialsFromName } from "../initials";
+import { isStrongPassword, passwordChecks } from "../password";
 
 // Pure logic tests (RN-free). Cover the helpers that feed, map, filter and
 // spot detail build on.
@@ -345,6 +346,30 @@ describe("analytics: scrubProps (drops non-primitives)", () => {
       obj: { a: 1 } as any,
     });
     expect(out).toEqual({ ok: "x", n: 3 });
+  });
+});
+
+describe("password policy", () => {
+  it("passwordChecks flags each rule independently", () => {
+    expect(passwordChecks("abcdefg")).toEqual({
+      length: false,
+      lower: true,
+      upper: false,
+      digit: false,
+    });
+    expect(passwordChecks("VersoApp1")).toEqual({
+      length: true,
+      lower: true,
+      upper: true,
+      digit: true,
+    });
+  });
+  it("isStrongPassword requires 8+ chars + lower + upper + digit", () => {
+    expect(isStrongPassword("VersoApp1")).toBe(true); // ok
+    expect(isStrongPassword("Verso1")).toBe(false); // too short
+    expect(isStrongPassword("versoapp1")).toBe(false); // no uppercase
+    expect(isStrongPassword("VERSOAPP1")).toBe(false); // no lowercase
+    expect(isStrongPassword("VersoApplication")).toBe(false); // no digit
   });
 });
 
