@@ -271,23 +271,47 @@ Modified:
 
 ## 6. DB migration status (Supabase, run by the user)
 
-Confirmed run by the user (live DB verified via `information_schema`): **0001–0011**
-(schema/trigger/geheimtipp/seed, notify, avatars, suggestions+delete,
-insider_status, analytics, delete_cascade, protect_insider UPDATE, harden_inserts).
+**All migrations run in the live DB** (confirmed via the user's saved-query list,
+2026-07-07). ⚠️ The user's Supabase SQL-editor query NAMES are OFFSET from the repo
+migration filenames — they use 2-digit names plus three EXTRA queries (`04_seed`,
+`07b_spot_suggestions`, `11_delete_user_fix`), which shifts everything from ~05
+onward by +1. **Do NOT assume `NN_name` in Supabase == `00NN_name` in the repo.**
+Mapping (Supabase query → repo file):
 
-**Pending — the user must run these (paste-ready SQL was handed over):**
-- **0012** `protect_insider_insert` (trigger → INSERT+UPDATE)
-- **0013** `profile_from_metadata` (name/username from sign-up metadata)
-- **0014** `profiles_recent` (`recent_spot_ids` column)
-- **0015** `length_caps`
-- **0016** `rate_limit`
-- Optional: re-run `0002`/`0009` for the `search_path=''` hardening (not exploitable;
-  0013 already ships `handle_new_user` with `search_path=''`, so only `delete_user`
-  (0009) is left). Until run, the affected features fail soft (no crash): recents
-  fall back to empty, name may be blank until first profile save, no rate limit.
+| Supabase query (their name) | Repo migration file |
+|---|---|
+| 01_init | 0001_init |
+| 02_profiles_trigger | 0002_profiles_trigger |
+| 03_geheimtipp | 0003_profiles_geheimtipp |
+| 04_seed | seed.sql |
+| 05_notify | 0004_profiles_notify |
+| 06_avatars | 0005_avatars |
+| 07_suggestions_delete | 0006_suggestions_and_delete |
+| 07b_spot_suggestions | standalone fix (spot_suggestions table, part of 0006) |
+| 08_insider_status | 0007_insider_status |
+| 09_analytics | 0008_analytics |
+| 10_delete_cascade | 0009_delete_cascade |
+| 11_delete_user_fix | delete_user best-effort hotfix (folded into 0009) |
+| 12_protect_insider | 0010_protect_insider |
+| 13_harden_inserts | 0011_harden_inserts |
+| 14_profile_from_metadata | 0013_profile_from_metadata |
+| 15_profiles_recent | 0014_profiles_recent |
+| 16_length_caps | 0015_length_caps |
+| 17_rate_limit | 0016_rate_limit |
+| 18_spot_images | 0017_spot_images |
+| Untitled query | unknown / scratch |
 
-`supabase/setup_all.sql` is regenerated to contain ALL migrations 0001–0016 + seed
+⚠️ **VERIFY:** the repo's **`0012_protect_insider_insert`** (extends the trigger to
+`BEFORE INSERT OR UPDATE`) has **no distinct query** in their list — `12_protect_insider`
+matches the older 0010 (UPDATE-only). The user said they ran "0012–0016"; likely they
+re-ran `12_protect_insider` with the newer body OR it's the `Untitled query`. Confirm
+the live `protect_insider` trigger is `insert or update` (else the Insider-INSERT gap
+is still open). Same for the optional `search_path=''` re-run of `0009_delete_cascade`.
+
+`supabase/setup_all.sql` is regenerated to contain ALL migrations 0001–0017 + seed
 (use it OR the numbered files for a fresh DB — never the old truncated version).
+Spot content is imported separately from the Google Sheet via a non-numbered
+`import_spots_muenchen` query (data, not schema).
 
 ## 7. Known open items & pending decisions
 
