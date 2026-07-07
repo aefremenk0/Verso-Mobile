@@ -298,15 +298,14 @@ Mapping (Supabase query → repo file):
 | 15_profiles_recent | 0014_profiles_recent |
 | 16_length_caps | 0015_length_caps |
 | 17_rate_limit | 0016_rate_limit |
+| 12b_protect_insider_insert | 0012_protect_insider_insert |
 | 18_spot_images | 0017_spot_images |
 | Untitled query | unknown / scratch |
 
-⚠️ **VERIFY:** the repo's **`0012_protect_insider_insert`** (extends the trigger to
-`BEFORE INSERT OR UPDATE`) has **no distinct query** in their list — `12_protect_insider`
-matches the older 0010 (UPDATE-only). The user said they ran "0012–0016"; likely they
-re-ran `12_protect_insider` with the newer body OR it's the `Untitled query`. Confirm
-the live `protect_insider` trigger is `insert or update` (else the Insider-INSERT gap
-is still open). Same for the optional `search_path=''` re-run of `0009_delete_cascade`.
+✅ **Insider-INSERT gap closed:** the user ran `12b_protect_insider_insert` (repo
+`0012`) on 2026-07-07 — the live `protect_insider` trigger is now `BEFORE INSERT OR
+UPDATE`. Only remaining optional hardening: re-run `0009_delete_cascade` for
+`search_path=''` (not exploitable; nice-to-have).
 
 `supabase/setup_all.sql` is regenerated to contain ALL migrations 0001–0017 + seed
 (use it OR the numbered files for a fresh DB — never the old truncated version).
