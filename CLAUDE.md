@@ -672,6 +672,12 @@ npm test               # Unit-Tests der reinen Logik (vitest, src/**)
   Unterscheidung Ticket (oeticket) / Reservierung (OpenTable). Öffnet
   `reserveUrl ?? ticketUrl`; **ohne URL kein Button** → Sport-Events (und alle
   Orte ohne Link) zeigen nur noch die Karten-Buttons. Kein OpenTable-Default mehr.
+  Beide URL-Spalten sind **kategorie-egal** (auch Restaurants nutzen wahlweise
+  `reserve_url` oder `ticket_url`; `reserve_url` gewinnt).
+- **Spot-Detail: Karten-Buttons näher an die Mini-Map** — das Bottom-Pinning
+  (`ScrollView flexGrow:1` + Sheet `flex-1` + `flex-1`-Spacer) ließ ohne gelben
+  Button eine große Lücke zwischen Mini-Karte und Apple/Google-Buttons. Jetzt
+  natürlicher Fluss (fester `h-5`-Abstand), Buttons sitzen direkt unter der Karte.
 - **Migration `0017_spot_images`**: öffentlicher Storage-Bucket `spot-images`
   (public read, nur Service-Role/Dashboard schreibt) — Vorbereitung für echte
   Fotos (`<id>.jpg`). `setup_all.sql` bis 0017 neu generiert. tsc sauber, 55 Tests.

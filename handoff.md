@@ -32,7 +32,7 @@ vitest suite green, and be committed + pushed to the feature branch.
 - `npx tsc --noEmit` → clean.
 - `npm test` → **48/48 vitest passing** (was 18 at session start).
 - `npx expo export --platform ios` → bundle builds.
-- Latest pushed commit: `753ef9d` on `claude/charming-sagan-jyk0wh`.
+- Latest pushed commit: `7cee198` on `claude/charming-sagan-jyk0wh`.
 - CLAUDE.md changelog current through the 2026-07-07 UI-fixes entry.
 - `npm test` → **55/55** (added password-policy + initials + scrubProps tests).
 
