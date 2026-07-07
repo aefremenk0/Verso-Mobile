@@ -65,6 +65,9 @@ export default function SpotDetail() {
 
   const txt = spotText(spot, lang);
   const isEvent = isEventCategory(spot.category);
+  // One external link, whatever kind it is (reservation / ticket / website). No
+  // link -> no CTA button. We deliberately don't distinguish the link type.
+  const linkUrl = spot.reserveUrl ?? spot.ticketUrl ?? null;
   const saved = isSaved(spot.id);
   const metaLine = `${categoryLabel(spot.category, lang)} · ${spot.neighborhood.toUpperCase()}`;
   // Detail depth: open status (null for events) + distance to the center.
@@ -275,28 +278,19 @@ export default function SpotDetail() {
           {/* Spacer: pushes the CTAs to the bottom of the screen */}
           <View className="min-h-[24px] flex-1" />
 
-          {/* Main CTA: events -> ticket, otherwise always OpenTable reservation */}
-          <View>
-            {isEvent ? (
+          {/* Main CTA: one yellow button that opens whatever link the spot has
+              (we don't distinguish ticket vs. reservation vs. website). No link
+              set -> no button at all (e.g. sport events with no URL). */}
+          {linkUrl ? (
+            <View>
               <Button
-                label={t("Book ticket", "Ticket buchen")}
+                label={t("Open website", "Website öffnen")}
                 variant="accent"
-                subtitle={t("via oeticket", "über oeticket")}
                 trailing="arrow"
-                onPress={() => spot.ticketUrl && openExternal(spot.ticketUrl)}
+                onPress={() => openExternal(linkUrl)}
               />
-            ) : (
-              <Button
-                label={t("Reserve a table", "Tisch reservieren")}
-                variant="accent"
-                subtitle={t("via opentable", "über opentable")}
-                trailing="arrow"
-                onPress={() =>
-                  openExternal(spot.reserveUrl ?? "https://www.opentable.de/")
-                }
-              />
-            )}
-          </View>
+            </View>
+          ) : null}
 
           {/* Map deep links */}
           <View className="mt-3 flex-row gap-3">
