@@ -655,6 +655,25 @@ npm test               # Unit-Tests der reinen Logik (vitest, src/**)
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
+### (Commit) · 2026-07-07 · Insider-only Spots („verborgene Ebene", Migration 0018)
+> Die geplante Premium-„verborgene Ebene": Spots, die nur zahlende Insider sehen.
+- **Migration `0018_insider_spots`:** neue Spalte `spots.insider_only` (boolean,
+  Default `false`) + neue Read-Policy auf `spots`. Die Sicherheit läuft
+  **serverseitig per RLS** — ein Client-Filter allein würde die Zeilen leaken, da
+  `spots` öffentlich lesbar ist. Die Policy vertraut `profiles.is_insider` (vom
+  RevenueCat-Webhook gesetzt): `not insider_only OR (Nutzer ist is_insider)`.
+- **Kein Nacharbeiten nötig:** dank `default false` sind alle bestehenden/importierten
+  Spots automatisch „für alle sichtbar". Nur bewusst versteckte Orte auf `true` setzen.
+- **Abgrenzung zur Szenen-Sperre:** die **Sport-/Events-Szenen** sind bereits
+  Insider-only (`INSIDER_SCENES`, client-seitig — Nicht-Insider sehen die Szene
+  gar nicht). `insider_only` ist der **zusätzliche, serverseitige** Riegel für
+  einzelne Nicht-Szenen-Spots (geheime Bar/Restaurant).
+- **Caveat:** wirkt erst, wenn ein Spot `insider_only=true` hat UND der Leser
+  `profiles.is_insider=true` (nur der RC-Webhook setzt das → Test Store ohne Secret
+  = keine Live-Insider). Zum Testen: `update profiles set is_insider=true where
+  id=auth.uid()`. Die App hat `insider_only` NICHT im `Spot`-Typ (RLS filtert
+  serverseitig) — nur für ein künftiges „Insider"-Badge nötig. `setup_all.sql` bis 0018.
+
 ### (Commit) · 2026-07-07 · UI-Fixes: Sport-Pille raus · Titel-Lücke · generischer Link-Button
 > Kleinere, aber sichtbare Korrekturen im Detail/Feed + Content-Vorbereitung.
 - **Generische „Sport"-Kategorie-Pille entfernt** (`categories.ts`, EN+DE): die
