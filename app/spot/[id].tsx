@@ -166,11 +166,14 @@ export default function SpotDetail() {
           <Text className="font-hk-bold text-[11px] tracking-[1.5px] text-ink-3">
             {metaLine}
           </Text>
+          {/* No adjustsFontSizeToFit: combined with numberOfLines it reserves a
+              2nd line and re-measures async -> a phantom gap under 1-line names
+              that only "settled" after navigating. Natural wrap (max 2 lines,
+              then ellipsis) is stable and gap-free. */}
           <Text
             className="mt-3 font-hk-extrabold text-ink"
             style={{ fontSize: 46, lineHeight: 48 }}
             numberOfLines={2}
-            adjustsFontSizeToFit
           >
             {txt.name}
           </Text>

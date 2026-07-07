@@ -64,11 +64,12 @@ export default function Bezirk() {
       <Text className="px-6 font-hk-bold text-[11px] tracking-[1.5px] text-ink-3">
         {cityLabel(city, lang).toUpperCase()}
       </Text>
+      {/* No adjustsFontSizeToFit: with numberOfLines it reserves a 2nd line and
+          re-measures async -> phantom gap under 1-line names. Natural wrap. */}
       <Text
         className="px-6 font-hk-extrabold text-ink"
         style={{ fontSize: 38, lineHeight: 40, marginTop: 8 }}
         numberOfLines={2}
-        adjustsFontSizeToFit
       >
         {name}
       </Text>
