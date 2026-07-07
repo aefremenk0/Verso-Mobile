@@ -13,6 +13,7 @@ import { parseSharedPost } from "../shareImport";
 import { cityLabel } from "../lang";
 import { CATEGORY_ORDER } from "../../data/categories";
 import { PIN_COLORS } from "../pinColors";
+import { initialsFromName } from "../initials";
 
 // Pure logic tests (RN-free). Cover the helpers that feed, map, filter and
 // spot detail build on.
@@ -327,5 +328,37 @@ describe("analytics: redactText", () => {
     expect(redactText("TypeError: undefined is not a function")).toBe(
       "TypeError: undefined is not a function",
     );
+  });
+  it("redacts multiple emails in one string", () => {
+    expect(redactText("a@b.com and c@d.org")).toBe("[email] and [email]");
+  });
+});
+
+describe("analytics: scrubProps (drops non-primitives)", () => {
+  it("removes arrays and objects (only primitives survive)", () => {
+    const out = scrubProps({
+      ok: "x",
+      n: 3,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      arr: [1, 2] as any,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      obj: { a: 1 } as any,
+    });
+    expect(out).toEqual({ ok: "x", n: 3 });
+  });
+});
+
+describe("initials: initialsFromName", () => {
+  it("takes the first letter of up to two words, uppercased", () => {
+    expect(initialsFromName("Andrey Efremenko")).toBe("AE");
+    expect(initialsFromName("lena hofer maier")).toBe("LH"); // max two
+    expect(initialsFromName("madonna")).toBe("M");
+  });
+  it("handles extra whitespace", () => {
+    expect(initialsFromName("  jon   snow  ")).toBe("JS");
+  });
+  it("falls back to '?' for an empty name", () => {
+    expect(initialsFromName("")).toBe("?");
+    expect(initialsFromName("   ")).toBe("?");
   });
 });

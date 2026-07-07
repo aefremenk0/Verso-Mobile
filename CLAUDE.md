@@ -655,6 +655,32 @@ npm test               # Unit-Tests der reinen Logik (vitest, src/**)
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
+### (Commit) · 2026-07-06 · Mock-Reste raus + Push-Versand (Edge Function) + mehr Tests
+> Aufräum-Runde Richtung Produktion: Fake-Daten entfernt, der fehlende Server-
+> Push-Versand gebaut, Testabdeckung erweitert.
+- **`MOCK_USER` komplett entfernt** (`src/data/user.ts`): Gast/ausgeloggt zeigt
+  jetzt ein **leeres** Profil (kein „Lena Hofer" mehr) und **keine** vorab
+  gemerkten Orte. `saved.tsx` Gast-Fallback = `[]`, `profile.tsx` Gast = leere
+  Strings. `GEHEIMTIPP_BY_CITY` bleibt.
+- **Demo-Login entfernt** (`app/register.tsx`): `DEMO_EMAIL`/`DEMO_PASSWORD`,
+  `demoLogin()` und der „Als Demo-Nutzer einloggen"-Button sind raus (war reines
+  Test-Feature; mit „Confirm email AN" ohnehin tot).
+- **Settings-E-Mail-Platzhalter** `lena@verso.app` → `—` (nur für Gäste sichtbar).
+- **Verwaiste Assets gelöscht:** `assets/icon-gold.png`, `icon-inverse.png` (seit
+  dem App-Icon-Removal von keinem Code mehr referenziert).
+- **Neu: Edge Function `supabase/functions/send-push`** — schließt die Lücke, dass
+  `push_token` zwar gespeichert, aber nie ein Push gesendet wurde. POST mit
+  `{ segment: "geheimtipp"|"spots"|"events", title, body, data? }` + Admin-Secret
+  (fail-closed, konstant-Zeit) → fächert an alle Nutzer mit passendem `notify`-
+  Eintrag **und** `push_token` auf (Service-Role, Expo-Push-API, 100er-Chunks).
+  Aufruf manuell / per Cron / DB-Webhook. **Setup:** `supabase functions deploy
+  send-push --no-verify-jwt` + `PUSH_ADMIN_SECRET` setzen.
+- **Tests 48 → 53:** `initialsFromName` (initials.ts, vorher ungetestet) +
+  redactText-Mehrfach-E-Mail + scrubProps verwirft Arrays/Objects.
+- **Hinweis Component-/E2E-Tests:** weiterhin offen — vitest bleibt RN-frei
+  (reine Logik). Für Screens bräuchte es `jest-expo` + Testing-Library, für E2E
+  Maestro/Detox + Simulator (separates Setup, hier nicht verifizierbar).
+
 ### (Commit) · 2026-07-06 · Auth-Token verschlüsselt (SecureStore statt Klartext)
 > Der Supabase-Auth-Token (Access + Refresh + User) lag im Klartext in
 > AsyncStorage. Jetzt verschlüsselt auf dem Gerät.
