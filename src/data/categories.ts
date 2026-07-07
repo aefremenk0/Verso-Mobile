@@ -25,8 +25,8 @@ export const CATEGORY_FILTERS: CategoryFilter[] = [
   { key: "bar", label: "Bars" },
   { key: "club", label: "Clubs" },
   { key: "rooftop", label: "Rooftop" },
-  // Sport (Insider)
-  { key: "sport", label: "Sports" },
+  // Sport (Insider) — the "Sport" SCENE is the umbrella; here we only list the
+  // specific disciplines (no generic "Sports" pill — kept distinct on purpose).
   { key: "pilates", label: "Pilates" },
   { key: "runclub", label: "Run Club" },
   { key: "cycleclub", label: "Cycle Club" },
@@ -51,8 +51,8 @@ const CATEGORY_FILTERS_DE: CategoryFilter[] = [
   { key: "bar", label: "Bars" },
   { key: "club", label: "Clubs" },
   { key: "rooftop", label: "Rooftop" },
-  // Sport (Insider)
-  { key: "sport", label: "Sport" },
+  // Sport (Insider) — nur die konkreten Disziplinen (keine generische
+  // „Sport"-Pille; die Szene „Sport" ist das Dach).
   { key: "pilates", label: "Pilates" },
   { key: "runclub", label: "Run Club" },
   { key: "cycleclub", label: "Cycle Club" },
