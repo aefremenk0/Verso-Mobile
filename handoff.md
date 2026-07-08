@@ -390,20 +390,23 @@ pending the CSV.
   Paid Applications Agreement, and (recommended) deploying the webhook with its
   secret. **Webhook is deployed** (constant-time compare, entitlement-explicit) but
   `REVENUECAT_WEBHOOK_SECRET` is **not set yet** → it fail-closes (401) until set.
-- **No spot photos** — the `Spot` type / `spots` table have `image_note` + `tone`
-  (placeholder), but **no `image_url`**. Adding real photos needs a column + type
-  field + `rowToSpot` mapping + rendering (SpotCard/detail) + a Storage bucket or
-  external URLs. (Earlier notes wrongly said `image_url` existed — it does not.)
+- **Photos: code ✅ DONE, content pending.** `image_url` is now wired end-to-end
+  (migration `0020`, `Spot.imageUrl`, `ImagePlaceholder` `uri` prop with placeholder
+  fallback, all callsites; `spot-images` bucket exists from `0017`). REMAINING: run
+  `0020` in the live DB + upload actual photos (`<id>.jpg`) and set `spots.image_url`.
+  Until then every spot shows the tone-colored placeholder (nothing breaks).
 
 ## 8. Next step (setup / launch)
 
 **Setup (no code) — status 2026-07-08:**
 1. ✅ **All migrations 0012–0019 run** (incl. `0019_cities`). ✅ **80 real Munich
    spots imported** into `spots` (2026-07-08) — the catalog now serves live Supabase
-   data, not the mock. TO VERIFY: neighborhood matching (spot.neighborhood must
-   `===` a neighborhoods.name, else the spot shows in no Viertel) and `de` jsonb
-   populated. ❌ **Photos NOT done** — no `image_url` column/rendering yet; spots
-   show the tone-colored placeholder. Photo code-side is the top remaining code task.
+   data, not the mock. Neighborhood matching checked: only 1 mismatch
+   (`Westend / Schwanthalerhöhe` → canonicalized to `Westend`, spot re-pointed +
+   neighborhood row added). ✅ **Photo CODE built** (migration `0020_spot_image_url`
+   + `Spot.imageUrl` + `ImagePlaceholder` `uri` prop with placeholder fallback,
+   all callsites). REMAINING: run `0020` in the DB (their query `21_spot_image_url`)
+   + upload photos to the `spot-images` bucket as `<id>.jpg` and set `spots.image_url`.
 2. ⏳ Supabase → URL Configuration: `verso://auth-callback` is allow-listed (✅).
    **Email confirmation** — turn ON for prod + consider an SMTP provider (built-in
    mailer is low-limit). Password policy is set (8 + upper + lower + digit; the app
