@@ -314,12 +314,12 @@ Mapping (Supabase query → repo file):
 | 19_insider_spots | 0018_insider_spots |
 | Untitled query | unknown / scratch |
 
-⏳ **`0019_cities` NOT confirmed run yet** (would be their query `20_cities`): table
-`cities(name, is_live, sort_order)` + public read; seed all 7 cities, only München
+✅ **`0019_cities` run** (their query `20_cities`, 2026-07-08): table
+`cities(name, is_live, sort_order)` + public read; all 7 cities seeded, only München
 live. App: `CatalogProvider` loads live cities fail-soft, exposes
-`liveCities`/`isComingSoon` (fallback to code `LIVE_CITIES`). Flip a city:
-`update cities set is_live=true where name='Wien'` (needs content first). Until the
-table exists, the code fallback keeps München-only — nothing breaks.
+`liveCities`/`isComingSoon`. Flip a city: `update cities set is_live=true where
+name='Wien'` (needs content first). ✅ **80 Munich spots imported into `spots`** —
+catalog is now live Supabase data.
 
 ✅ **`0018_insider_spots` is live** (their query `19_insider_spots`, 2026-07-07):
 `spots.insider_only` + RLS gate on `profiles.is_insider`. Caveat: nothing is hidden
@@ -398,9 +398,12 @@ pending the CSV.
 ## 8. Next step (setup / launch)
 
 **Setup (no code) — status 2026-07-08:**
-1. ✅ **Migrations 0012–0018 run** (their queries `12b`/`14`–`19`). ⏳ **0019_cities
-   NOT run yet** (would be `20_cities`) — until then the app falls back to
-   München-only via the code constant.
+1. ✅ **All migrations 0012–0019 run** (incl. `0019_cities`). ✅ **80 real Munich
+   spots imported** into `spots` (2026-07-08) — the catalog now serves live Supabase
+   data, not the mock. TO VERIFY: neighborhood matching (spot.neighborhood must
+   `===` a neighborhoods.name, else the spot shows in no Viertel) and `de` jsonb
+   populated. ❌ **Photos NOT done** — no `image_url` column/rendering yet; spots
+   show the tone-colored placeholder. Photo code-side is the top remaining code task.
 2. ⏳ Supabase → URL Configuration: `verso://auth-callback` is allow-listed (✅).
    **Email confirmation** — turn ON for prod + consider an SMTP provider (built-in
    mailer is low-limit). Password policy is set (8 + upper + lower + digit; the app
