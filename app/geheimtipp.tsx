@@ -203,7 +203,7 @@ export default function Geheimtipp() {
                 ]}
               />
               <Pressable onPress={openSpot}>
-                <ImagePlaceholder tone="green" height={236} radius={24}>
+                <ImagePlaceholder tone="green" height={236} radius={24} uri={spot.imageUrl}>
                   <View className="absolute left-3.5 top-3.5 rounded-pill bg-accent px-3 py-1.5">
                     <Text className="font-hk-semibold text-[9px] tracking-[1.5px] text-accent-ink">
                       {categoryLabel(spot.category, lang)} · {spot.neighborhood.split(",")[0].toUpperCase()} · {priceLabel(spot.priceLevel)}

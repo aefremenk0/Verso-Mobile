@@ -61,6 +61,9 @@ export interface Spot {
   lat: number;
   lng: number;
   tone: PlaceholderTone;
+  /** Optional real photo URL (Supabase `spot-images` bucket). When set the app
+   *  shows the photo; otherwise it falls back to the tone-colored placeholder. */
+  imageUrl?: string;
   reserveUrl?: string; // e.g. OpenTable link (only linked externally)
   /** Optional opening hours (24h; close > 24 = after midnight). If this
    *  field is missing, `getOpenState` derives the time from the category. */

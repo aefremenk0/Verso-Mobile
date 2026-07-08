@@ -150,7 +150,7 @@ function SavedRow({ spot }: { spot: Spot }) {
             onPress={openDetail}
             className="flex-row items-center bg-screen py-2"
           >
-            <ImagePlaceholder tone={spot.tone} height={64} radius={16} style={{ width: 64 }} />
+            <ImagePlaceholder tone={spot.tone} height={64} radius={16} style={{ width: 64 }} uri={spot.imageUrl} />
             <View className="ml-4 flex-1">
               <Text className="font-hk-bold text-[10px] tracking-[1px] text-ink-3">
                 {categoryLabel(spot.category, lang)} · {spot.neighborhood.toUpperCase()}

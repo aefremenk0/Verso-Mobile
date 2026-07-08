@@ -75,7 +75,7 @@ function MapSpotCard({
         className="flex-row items-center gap-3.5 rounded-card bg-surface p-3.5"
         style={shadows.card}
       >
-        <ImagePlaceholder tone={spot.tone} height={66} radius={18} style={{ width: 66 }} />
+        <ImagePlaceholder tone={spot.tone} height={66} radius={18} style={{ width: 66 }} uri={spot.imageUrl} />
         <View className="flex-1">
           <Text className="font-hk-semibold text-[9px] tracking-[1.5px] text-ink-3">
             {categoryLabel(spot.category, lang)} · {spot.neighborhood.split(",")[0].toUpperCase()} · {priceLabel(spot.priceLevel)}

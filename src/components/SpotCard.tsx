@@ -131,7 +131,7 @@ export function SpotCard({
         className="overflow-hidden rounded-card bg-surface"
         style={shadows.card}
       >
-        <ImagePlaceholder tone={spot.tone} height={150} radius={0} note={spot.imageNote}>
+        <ImagePlaceholder tone={spot.tone} height={150} radius={0} note={spot.imageNote} uri={spot.imageUrl}>
           {/* Category badge top left — in the category color */}
           <View
             className="absolute left-4 top-4 rounded-pill px-3 py-1"

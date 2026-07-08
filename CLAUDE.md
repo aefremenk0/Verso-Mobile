@@ -658,6 +658,19 @@ npm test               # Unit-Tests der reinen Logik (vitest, src/**)
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
+### (Commit) · 2026-07-08 · Echte Fotos: `image_url` + Anzeige (Placeholder-Fallback)
+> Die Bild-Anzeige, damit der `spot-images`-Bucket auch in der App sichtbar wird.
+- **Migration `0020_spot_image_url`:** neue Spalte `spots.image_url` (text, nullable).
+- **`Spot.imageUrl`** ergänzt (types.ts) + `rowToSpot` mappt `image_url` (catalog.tsx).
+- **`ImagePlaceholder`** nimmt jetzt ein optionales **`uri`**-Prop: gesetzt → zeigt
+  das echte Foto (`expo-image`, `contentFit=cover`, mit Fade); leer/null → weiter
+  die tonfarbene Platzhalter-Kachel. Der „//"-Note wird bei echtem Foto ausgeblendet.
+- **Alle Callsites** geben `uri={spot.imageUrl}` weiter: Feed-Karte, Spot-Detail-Hero,
+  Gespeichert-Thumbnail, Karten-Spot-Card, Geheimtipp-Reveal.
+- **Nutzung:** Datei in Bucket `spot-images` als `<id>.jpg` hochladen, dann
+  `image_url` = public URL setzen. Fehlt sie → Platzhalter (Fotos gradual ergänzbar).
+  tsc sauber, 55 Tests, iOS-Bundle baut.
+
 ### (Commit) · 2026-07-07 · Städte backend-steuerbar freischalten (Migration 0019)
 > Welche Städte „live" (auswählbar) sind, kam bisher hartkodiert aus `LIVE_CITIES`
 > — neue Stadt = App-Update. Jetzt aus der DB steuerbar.

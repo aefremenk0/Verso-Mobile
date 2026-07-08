@@ -45,6 +45,7 @@ function rowToSpot(r: any): Spot {
     lat: Number(r.lat),
     lng: Number(r.lng),
     tone: r.tone as PlaceholderTone,
+    imageUrl: r.image_url ?? undefined,
     reserveUrl: r.reserve_url ?? undefined,
     hours: r.hours ?? undefined,
     dateLabel: r.date_label ?? undefined,

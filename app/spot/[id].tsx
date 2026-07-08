@@ -105,7 +105,7 @@ export default function SpotDetail() {
     <View className="flex-1 bg-screen">
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Hero (larger, so no empty area is left at the bottom) */}
-        <ImagePlaceholder tone={spot.tone} height={400} radius={0}>
+        <ImagePlaceholder tone={spot.tone} height={400} radius={0} uri={spot.imageUrl}>
           {/* Back + Save (with safe-area spacing at the top) */}
           <View
             className="absolute left-0 right-0 flex-row items-center justify-between px-5"

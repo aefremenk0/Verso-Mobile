@@ -1,4 +1,5 @@
-import { Text, View, type ViewStyle } from "react-native";
+import { Image } from "expo-image";
+import { StyleSheet, Text, View, type ViewStyle } from "react-native";
 import type { PlaceholderTone } from "../data/types";
 import { StripeTexture } from "./StripeTexture";
 
@@ -22,6 +23,8 @@ interface ImagePlaceholderProps {
   radius?: number;
   /** Optional machine-style note bottom-left ("// candlelight, six stools"). */
   note?: string;
+  /** Real photo URL. When set, the photo (cover) replaces the placeholder. */
+  uri?: string;
   /** Overlays (badge, buttons) are placed over the image as children. */
   children?: React.ReactNode;
   style?: ViewStyle;
@@ -32,6 +35,7 @@ export function ImagePlaceholder({
   height = 180,
   radius = 24,
   note,
+  uri,
   children,
   style,
 }: ImagePlaceholderProps) {
@@ -40,10 +44,21 @@ export function ImagePlaceholder({
       style={[{ height, borderRadius: radius, backgroundColor: TONE_BG[tone] }, style]}
       className="overflow-hidden"
     >
-      {/* Diagonal stripe texture (decorative, slightly lightened). */}
-      <StripeTexture />
+      {uri ? (
+        // Real photo (tone stays as the loading background). expo-image caches.
+        <Image
+          source={uri}
+          style={StyleSheet.absoluteFill}
+          contentFit="cover"
+          transition={150}
+        />
+      ) : (
+        // Diagonal stripe texture (decorative, slightly lightened).
+        <StripeTexture />
+      )}
 
-      {note ? (
+      {/* The "//" note only makes sense on the placeholder, not over a real photo. */}
+      {note && !uri ? (
         <Text className="absolute bottom-3 left-4 font-hk-medium-italic text-[12px] text-white/45">
           {note}
         </Text>
