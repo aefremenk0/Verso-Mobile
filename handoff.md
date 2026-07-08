@@ -1,6 +1,6 @@
 # Handoff — Verso Mobile
 
-_Branch: `claude/charming-sagan-jyk0wh` · Last update: 2026-07-07 (Sentry sink, password UI, mock cleanup, push sender, spot-images bucket, insider-only spots, backend-driven cities, content-prep + UI fixes)_
+_Branch: `claude/charming-sagan-jyk0wh` · Last update: 2026-07-08 (Google + Apple OAuth configured; prior: Sentry, password UI, mock cleanup, push sender, spot-images bucket, insider-only spots, backend-driven cities)_
 
 ---
 
@@ -397,14 +397,21 @@ pending the CSV.
 
 ## 8. Next step (setup / launch)
 
-**Setup (no code) — do first:**
-1. **Run migrations 0012–0016** in the SQL editor (paste-ready SQL handed over;
-   also in `supabase/migrations/`). Optional `search_path` re-run of 0009.
-2. Supabase → Authentication → URL Configuration: allow-list
-   **`verso://auth-callback`**; turn **email confirmation ON**; test with real
-   email templates (consider an SMTP provider — the built-in mailer is low-limit).
-3. Enable **Google/Apple OAuth** providers (launch blocker; Apple Sign-In is
-   mandatory once Google login ships).
+**Setup (no code) — status 2026-07-08:**
+1. ✅ **Migrations 0012–0018 run** (their queries `12b`/`14`–`19`). ⏳ **0019_cities
+   NOT run yet** (would be `20_cities`) — until then the app falls back to
+   München-only via the code constant.
+2. ⏳ Supabase → URL Configuration: `verso://auth-callback` is allow-listed (✅).
+   **Email confirmation** — turn ON for prod + consider an SMTP provider (built-in
+   mailer is low-limit). Password policy is set (8 + upper + lower + digit; the app
+   mirrors it, see 2026-07-07 changelog).
+3. ✅ **Google + Apple OAuth both configured** (2026-07-08). Apple: Services ID
+   `app.verso.signin`, Team ID `YMH7N2555V`, Key ID `TTV37D9YU4`; Supabase Apple
+   provider enabled with the generated client-secret JWT. **⚠️ Apple client secret
+   expires ~Jan 2027 (Apple max 6 months)** — regenerate via the local
+   `gen-apple-secret.js` (uses the `.p8`) and update Supabase. Google: Web OAuth
+   client, redirect = the Supabase `/auth/v1/callback`. Test both in a **dev build**
+   (`npx expo run:ios`), not Expo Go.
 4. RevenueCat → App Store Connect production setup (see §7) + set
    `REVENUECAT_WEBHOOK_SECRET`.
 

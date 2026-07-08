@@ -543,15 +543,18 @@ Einstellungen, Geheimtipp) + Legal + Ort-vorschlagen + App-Icon-Picker.
   ändern/zurücksetzen**, **Konto löschen** (DSGVO) — alle echt.
 - **Zweisprachig EN/DE**, Haptik, Reduce-Motion, a11y, Easter Eggs.
 
-**Nötig, damit alles live läuft (Setup, kein Code):**
-- Supabase-Migrationen `0001`–`0006` ausführen; **„Confirm email" AUS**.
-- **Google/Apple-Provider** in Supabase aktivieren + Redirect-URL (`verso://auth-callback`).
-- RevenueCat: Entitlement **`insider`** + Offering (yearly/monthly) anlegen.
+**Setup-Stand (kein Code, 2026-07-08):**
+- Migrationen `0001`–`0018` ausgeführt (Query-Namen leicht versetzt, Mapping in
+  handoff.md §6). **`0019_cities` noch offen** (dann Städte backend-steuerbar).
+- ✅ **Google + Apple OAuth konfiguriert** (Redirect `verso://auth-callback` gelistet).
+  **⚠️ Apple-Client-Secret läuft ~Jan 2027 ab** (max. 6 Monate) → per lokalem
+  `gen-apple-secret.js` neu erzeugen. Nur im **Dev Build** testbar.
+- Offen: **„Confirm email" AN**, RevenueCat-Produkte + Webhook-Secret.
 
 ## Nächste Schritte
 
-- **Launch-Blocker:** Google/Apple-OAuth konfigurieren; **verso.app-Website**
-  (Datenschutz/Impressum/Support-URL — Pflicht); TestFlight-Build.
+- **Launch-Blocker:** **verso.app-Website** (Datenschutz/Impressum/Support-URL —
+  Pflicht); TestFlight-Build; RevenueCat-Produkte scharf.
 - **Inhalte:** echte Spot-Bilder (Supabase Storage + `image_url`), mehr Spots/Städte.
 - **Premium serverseitig:** RevenueCat-Webhook → Supabase (Insider-Status), 
   Insider-only Spots („verborgene Ebene").
