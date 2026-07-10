@@ -1,4 +1,5 @@
 import { Image } from "expo-image";
+import { useState } from "react";
 import { StyleSheet, Text, View, type ViewStyle } from "react-native";
 import type { PlaceholderTone } from "../data/types";
 import { StripeTexture } from "./StripeTexture";
@@ -39,18 +40,24 @@ export function ImagePlaceholder({
   children,
   style,
 }: ImagePlaceholderProps) {
+  // If the photo fails to load (missing file / broken URL), fall back to the
+  // placeholder so a not-yet-uploaded image never shows a blank/broken box.
+  const [failed, setFailed] = useState(false);
+  const showPhoto = Boolean(uri) && !failed;
+
   return (
     <View
       style={[{ height, borderRadius: radius, backgroundColor: TONE_BG[tone] }, style]}
       className="overflow-hidden"
     >
-      {uri ? (
+      {showPhoto ? (
         // Real photo (tone stays as the loading background). expo-image caches.
         <Image
           source={uri}
           style={StyleSheet.absoluteFill}
           contentFit="cover"
           transition={150}
+          onError={() => setFailed(true)}
         />
       ) : (
         // Diagonal stripe texture (decorative, slightly lightened).
@@ -58,7 +65,7 @@ export function ImagePlaceholder({
       )}
 
       {/* The "//" note only makes sense on the placeholder, not over a real photo. */}
-      {note && !uri ? (
+      {note && !showPhoto ? (
         <Text className="absolute bottom-3 left-4 font-hk-medium-italic text-[12px] text-white/45">
           {note}
         </Text>
