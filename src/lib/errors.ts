@@ -74,6 +74,23 @@ export function friendlyAuthError(raw: string | null | undefined, lang: Lang): s
       ? "Zu dieser E-Mail gibt es kein Konto."
       : "No account for this email.";
   }
+  // Confirmation email couldn't be sent (mailer down / rate-limited / no SMTP).
+  if (
+    m.includes("sending") ||
+    m.includes("confirmation email") ||
+    (m.includes("email") && m.includes("error")) ||
+    m.includes("smtp")
+  ) {
+    return de
+      ? "Bestätigungs-E-Mail konnte gerade nicht gesendet werden. Bitte in ein paar Minuten nochmal versuchen."
+      : "We couldn't send the confirmation email right now. Please try again in a few minutes.";
+  }
+  // Invalid email address.
+  if (m.includes("invalid") && m.includes("email")) {
+    return de
+      ? "Diese E-Mail-Adresse sieht nicht gültig aus."
+      : "That email address doesn't look valid.";
+  }
 
   // Unknown -> keep it calm, don't leak the raw technical string.
   return de ? "Etwas ist schiefgelaufen. Versuch es nochmal." : "Something went wrong. Please try again.";
