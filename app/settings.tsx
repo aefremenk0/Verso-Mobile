@@ -164,6 +164,7 @@ export default function Settings() {
               return;
             }
             resetStores();
+            appearance.setPref("light"); // deleting the account resets to light theme
             router.replace("/");
           },
         },
