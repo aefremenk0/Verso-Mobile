@@ -401,9 +401,9 @@ pending the CSV.
 **Setup (no code) — status 2026-07-08:**
 1. ✅ **All migrations 0012–0019 run** (incl. `0019_cities`). ✅ **80 real Munich
    spots imported** into `spots` (2026-07-08) — the catalog now serves live Supabase
-   data, not the mock. Neighborhood matching checked: only 1 mismatch
-   (`Westend / Schwanthalerhöhe` → canonicalized to `Westend`, spot re-pointed +
-   neighborhood row added). ✅ **Photo CODE built** (migration `0020_spot_image_url`
+   data, not the mock. ✅ Neighborhood matching cleaned (only 1 mismatch,
+   `Westend`), empty Viertel removed, and German `de` texts tidied by the user
+   (2026-07-08). ✅ **Photo CODE built** (migration `0020_spot_image_url`
    + `Spot.imageUrl` + `ImagePlaceholder` `uri` prop with placeholder fallback,
    all callsites). REMAINING: run `0020` in the DB (their query `21_spot_image_url`)
    + upload photos to the `spot-images` bucket as `<id>.jpg` and set `spots.image_url`.
