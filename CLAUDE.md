@@ -658,6 +658,28 @@ npm test               # Unit-Tests der reinen Logik (vitest, src/**)
 > Neueste Einträge oben. Format: `Hash · Datum · Titel` + Stichpunkte.
 > (Der Hash des jeweils neuesten Eintrags wird im Folge-Commit nachgetragen.)
 
+### (Commit) · 2026-07-08 · E-Mail-Registrierung: „Schau in dein Postfach" statt „schiefgelaufen"
+> Nutzer ohne Apple/Google (reine E-Mail-Anmeldung) sahen bei einem Mailer-
+> Schluckauf ein abschreckendes „Etwas ist schiefgelaufen", obwohl sie nur ihre
+> E-Mail bestätigen müssen. Jetzt positiver, klarer Flow.
+- **`app/register.tsx`:** Feuert `signUp` einen Fehler, der nach einem **Mail-
+  Versand-Problem** aussieht (roh enthält `sending`/`confirmation email`/`smtp`/
+  `email … error`), zeigt die App im **Register-Modus** dieselbe positive
+  **„Schau in dein Postfach / Check your inbox"**-Meldung wie bei einer normalen
+  Bestätigung (+ Wechsel auf Login, Passwort geleert). Grund: das Konto wird meist
+  trotzdem angelegt und der Link kommt kurz danach. **Alle anderen Fehler** behalten
+  die ruhige generische Meldung (`friendlyAuthError`).
+- **`src/lib/errors.ts`:** `friendlyAuthError` bekam zusätzlich präzise Fälle für
+  **nicht-versendete Bestätigungsmail** und **ungültige E-Mail-Adresse** (statt der
+  generischen Zeile) — greift überall dort, wo weiter `friendlyAuthError` genutzt
+  wird (z. B. Login, Passwort-Reset).
+- **`app/settings.tsx`:** **Konto löschen** setzt das Theme jetzt zurück auf
+  **Light** (`appearance.setPref("light")`) — ein frisch angelegtes/gelöschtes
+  Konto startet nicht mehr im Dark Mode des Vorgängers.
+- **`ImagePlaceholder`:** fehlendes/kaputtes Foto fällt via `onError` automatisch
+  auf die tonfarbene Platzhalter-Kachel zurück (kein leerer/kaputter Kasten).
+  tsc sauber, 55 Tests.
+
 ### (Commit) · 2026-07-08 · Echte Fotos: `image_url` + Anzeige (Placeholder-Fallback)
 > Die Bild-Anzeige, damit der `spot-images`-Bucket auch in der App sichtbar wird.
 - **Migration `0020_spot_image_url`:** neue Spalte `spots.image_url` (text, nullable).

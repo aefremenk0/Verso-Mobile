@@ -1,6 +1,6 @@
 # Handoff — Verso Mobile
 
-_Branch: `claude/charming-sagan-jyk0wh` · Last update: 2026-07-08 (Google + Apple OAuth configured; prior: Sentry, password UI, mock cleanup, push sender, spot-images bucket, insider-only spots, backend-driven cities)_
+_Branch: `claude/charming-sagan-jyk0wh` · Last update: 2026-07-08 (email-signup "check your inbox" flow, delete-account resets to light, photo onError fallback; prior: Google + Apple OAuth configured, Sentry, password UI, mock cleanup, push sender, spot-images bucket, insider-only spots, backend-driven cities, image_url photos)_
 
 ---
 
@@ -35,6 +35,15 @@ vitest suite green, and be committed + pushed to the feature branch.
 - Latest pushed commit: `7cee198` on `claude/charming-sagan-jyk0wh`.
 - CLAUDE.md changelog current through the 2026-07-07 UI-fixes entry.
 - `npm test` → **55/55** (added password-policy + initials + scrubProps tests).
+
+**2026-07-08 block (latest):** real-photo display (`spots.image_url`, migration
+`0020` + `ImagePlaceholder` `uri` prop, all callsites) with an `onError` fallback
+to the placeholder; backend-driven live cities (migration `0019` + `CatalogProvider`
+`isComingSoon`); insider-only spots ("verborgene Ebene", migration `0018`, RLS);
+email-signup now shows a **positive "Check your inbox"** flow instead of a scary
+error when the confirmation mailer hiccups (register.tsx) + `friendlyAuthError`
+gained precise mail-send / invalid-email cases; **delete account resets the theme
+to light**. tsc clean, 55 tests.
 
 **2026-07-07 block (on top of §4):** Sentry fetch-sink (inert until DSN); visible
 password-policy checklist (`src/lib/password.ts` + `PasswordHints.tsx`) + fixed the

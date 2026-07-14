@@ -102,6 +102,29 @@ export default function Register() {
         : await signIn(mail, password);
     if (res.error) {
       setBusy(false);
+      // On sign-up, a mailer hiccup (confirmation email couldn't be sent right
+      // now) is usually transient: the account often still gets created and the
+      // link arrives shortly. So instead of a scary "something went wrong", show
+      // the same positive "check your inbox" flow as a normal confirmation.
+      // Every other error keeps the calm generic wording.
+      const raw = res.error.toLowerCase();
+      const looksLikeMailIssue =
+        raw.includes("sending") ||
+        raw.includes("confirmation email") ||
+        raw.includes("smtp") ||
+        (raw.includes("email") && raw.includes("error"));
+      if (mode === "register" && looksLikeMailIssue) {
+        Alert.alert(
+          t("Check your inbox", "Schau in dein Postfach"),
+          t(
+            `We sent a confirmation link to ${mail}. Tap it, then log in.`,
+            `Wir haben einen Bestätigungslink an ${mail} geschickt. Tippe ihn an und melde dich dann an.`,
+          ),
+        );
+        setMode("login");
+        setPassword("");
+        return;
+      }
       setError(friendlyAuthError(res.error, lang));
       return;
     }
